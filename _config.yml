@@ -4,7 +4,7 @@
 
 url: http://sailxjx.github.com/blog
 title: novolander
-subtitle: tell me why
+subtitle: blog log og g ...
 author: tristan
 simple_search: http://google.com/search
 description:
@@ -26,7 +26,7 @@ email: sailxjx@gmail.com
 # ----------------------- #
 
 # If publishing to a subdirectory as in http://site.com/project set 'root: /project'
-root: /
+root: /blog
 permalink: /blog/:year/:month/:day/:title/
 source: source
 destination: public
