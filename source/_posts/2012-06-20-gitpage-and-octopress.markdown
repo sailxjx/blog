@@ -70,6 +70,11 @@ $ git checkout gh-pages
 {% endcodeblock %}
 
 <h2 id="octopress"><a href="#octopress">octopress</a></h2>
+
+[octopress](http://octopress.org/)是基于[Jekyll](http://github.com/mojombo/jekyll)的一个博客框架。所有的博文都用静态页面保存，不仅能很好的和gitpage集成，还有很高的可配置性，对于喜欢个性化的码农来说简直就是神器丫～
+
+
+
 <h2 id="scss"><a href="#scss">scss</a></h2>
 <h2 id="markdown"><a href="#markdown">markdown</a></h2>
 
