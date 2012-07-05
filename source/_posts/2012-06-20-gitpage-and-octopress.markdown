@@ -73,7 +73,46 @@ $ git checkout gh-pages
 
 [octopress](http://octopress.org/)是基于[Jekyll](http://github.com/mojombo/jekyll)的一个博客框架。所有的博文都用静态页面保存，不仅能很好的和gitpage集成，还有很高的可配置性，对于喜欢个性化的码农来说简直就是神器丫～
 
+进入正题，安装octopress，必须保证系统中已经安装了git,ruby[1.9.2以上]。然后从github复制一份octopress的拷贝
 
+{% codeblock 安装octopress lang:bash %}
+$ git clone git://github.com/imathis/octopress.git octopress
+$ cd octopress
+$ gem install bundler
+$ bundle install #安装依赖关系，在网络不好的情况下，这一步会相当相当的耗时，并且常有失败的情况。请一定要耐心，淡定。。。
+$ rake install #安装默认主题，以后可以用别的命令更新octopress的主题。不过官方的主题已经足够简洁大气了，遇到其他心仪的主题之前，我恐怕不会再去折腾这些了(>_<)
+{% endcodeblock %}
+
+ok，安装结束，除了蛋疼的网络等待，整个安装过程还是比较简单顺利的，下面进入配置阶段
+
+在根目录下的配置文件有四个，\_config.yml,config.rb,config.ru,Rakefile。其中Rakefile实现了部署更新的所有操作，一般情况下不许要修改。理想状态下只需要修改\_config.yml文件就可以了。
+
+{% codeblock _config.yml中与用户相关的配置项 %}
+url:                # 需要部署的博客站链接
+title:              # 又短又二的博客标题，如XX的窝，孤独的根号三等等
+subtitle:           # 小标题，会显示在网站头部，用来辩解标题其实没有那么二
+author:             # 用户名，说明到底是谁写出了这么二的标题
+simple_search:      # 站内搜索的工具，例如http://google.com/search，当然也可以用一样二的baidu
+description:        # 网站说明，会加在meta中，给搜索引擎看的东东
+subscribe_rss:      # rss文件路径，默认atom.xml
+subscribe_email:    # 联系邮箱，这里填写的内容会直接带入页首的mailto链接中，如"mailto: sailxjx#gmail.com?subject=greeting"
+email:              # 这里就是填写完整的邮箱地址啦，显示在页脚
+root                # 假如博客不是发布在根目录下，而是发布到类似domain.com/blog的二级目录，这里要设置成二级目录的名字(blog)。
+{% endcodeblock %}
+
+在下面还有一些第三方网站接入的配置，包括google，twitter，github，facebook，disqus等等。大部分都只需要填写注册的用户名和是否启用就行了。这里值得一提的是disqus，当填写了disqus用户名之后，在博文下面会加载disqus的回复功能，正好弥补了octopress缺少动态内容的缺陷。
+
+在默认配置下，可以很轻松的将博客部署到主站下面，在这里我将octopress部署在blog二级目录下面(gitpage只给我提供了一个域名，被博客全占了，多亏啊～～～)，需要修改_config.yml和config.rb中的对应目录配置
+
+{% codeblock _config.yml && config.rb %}
+## _config.yml 全站配置
+url:    http://sailxjx.github.com/blog
+root:   /blog
+## config.rb 这个文件主要影响一些静态文件的加载
+http_path = "/blog"
+http_images_path = "/blog/images"
+http_fonts_path = "/blog/fonts"
+{% endcodeblock %}
 
 <h2 id="scss"><a href="#scss">scss</a></h2>
 <h2 id="markdown"><a href="#markdown">markdown</a></h2>
