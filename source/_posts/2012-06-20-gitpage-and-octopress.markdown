@@ -10,7 +10,14 @@ categories: [gitpage, octopress, scss, ruby, markdown]
 
 写一些备忘，免得以后忘了。。。
 
-<h2 id="gitpage"><a href="#gitpage">gitpage</a></h2>
+- <a href="#gitpage">gitpage</a>
+- <a href="#octopress">octopress</a>
+- <a href="#scss">scss</a>
+- <a href="#markdown">markdown</a>
+
+<!--more-->
+
+<h2 id="gitpage">gitpage</h2>
 
 github给用户提供了一个非常cool的方式来搭建自己的主页，简单几步，就能完成网站的部署。
 
@@ -69,11 +76,11 @@ $ git fetch origin
 $ git checkout gh-pages
 {% endcodeblock %}
 
-<h2 id="octopress"><a href="#octopress">octopress</a></h2>
+<h2 id="octopress">octopress</h2>
 
 [octopress](http://octopress.org/)是基于[Jekyll](http://github.com/mojombo/jekyll)的一个博客框架。所有的博文都用静态页面保存，不仅能很好的和gitpage集成，还有很高的可配置性，对于喜欢个性化的码农来说简直就是神器丫～
 
-进入正题，安装octopress，必须保证系统中已经安装了git,ruby[1.9.2以上]。然后从github复制一份octopress的拷贝
+言归正传，安装octopress，必须保证系统中已经安装了git,ruby[1.9.2以上]。然后从github复制一份octopress的拷贝
 
 {% codeblock 安装octopress lang:bash %}
 $ git clone git://github.com/imathis/octopress.git octopress
@@ -85,7 +92,7 @@ $ rake install #安装默认主题，以后可以用别的命令更新octopress�
 
 ok，安装结束，除了蛋疼的网络等待，整个安装过程还是比较简单顺利的，下面进入配置阶段
 
-在根目录下的配置文件有四个，\_config.yml,config.rb,config.ru,Rakefile。其中Rakefile实现了部署更新的所有操作，一般情况下不许要修改。理想状态下只需要修改\_config.yml文件就可以了。
+在根目录下的配置文件有四个，\_config.yml,config.rb,config.ru,Rakefile。其中Rakefile实现了部署更新的所有操作，一般情况下不需要修改。理想状态下只需要修改\_config.yml文件就可以了。
 
 {% codeblock _config.yml中与用户相关的配置项 %}
 url:                # 需要部署的博客站链接
@@ -114,7 +121,36 @@ http_images_path = "/blog/images"
 http_fonts_path = "/blog/fonts"
 {% endcodeblock %}
 
-<h2 id="scss"><a href="#scss">scss</a></h2>
-<h2 id="markdown"><a href="#markdown">markdown</a></h2>
+现在开始写第一篇博客，只需要简单一个命令
+
+{% codeblock new_post lang:bash %}
+$ rake new_post['first blog']
+{% endcodeblock %}
+
+这条命令会在source/\_posts中生成一个名为YYYY-MM-DD-first-blog.markdown文件，惊喜的是，假如使用中文作为博客标题，这里的文件名（包括deploy后的url）会自动转成拼音。
+
+打开\_posts中的文件，这是一个以[markdown](http://daringfireball.net/projects/markdown/)语法写成的文档，具体语法下面再介绍，先看一下头部有用的信息
+
+{% codeblock post设置 %}
+layout: post
+title: "gitpage and octopress"                          //标题
+date: 2012-06-20 20:45                                  //生成的时间，会作为发布时间显示在页底
+comments: true                                          //设置成false可以关闭评论
+categories: [gitpage, octopress, scss, ruby, markdown]  //博客分类，这些tag可以用来做筛选
+author: Your Name                                       //假如有多个作者，可以添加在这里
+{% endcodeblock %}
+
+完成一篇博客以后，使用下面的命令可以将博客生成或者发布出去
+
+{% codeblock 发布博客 lang:bash %}
+$ rake setup_github_pages   //这个命令会让你填写可读写的github分支作为远程仓库，然后在_deploy文件夹中生成一个gh-pages分支
+$ rake generate             //在public文件夹中生成静态文件，可以在本地配置一个服务器指向这个文件夹预览博客发布后的样子
+$ rake deploy               //在deploy中生成静态文件，然后会自动调用git push将博客发布到github上
+{% endcodeblock %}
+
+写到这里基本已经完成了基本博客的发布，有兴趣可以学一学ruby，玩出自己的花样来。
+
+<h2 id="scss">scss</h2>
+<h2 id="markdown">markdown</h2>
 
 to be continue...
