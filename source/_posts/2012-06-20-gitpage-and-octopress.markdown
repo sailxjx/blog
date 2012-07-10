@@ -15,8 +15,6 @@ categories: [gitpage, octopress, scss, ruby, markdown]
 - <a href="#scss">scss</a>
 - <a href="#markdown">markdown</a>
 
-<!--more-->
-
 <h2 id="gitpage">gitpage</h2>
 
 github给用户提供了一个非常cool的方式来搭建自己的主页，简单几步，就能完成网站的部署。
@@ -75,6 +73,8 @@ $ cd {project}
 $ git fetch origin
 $ git checkout gh-pages
 {% endcodeblock %}
+
+<!--more-->
 
 <h2 id="octopress">octopress</h2>
 
