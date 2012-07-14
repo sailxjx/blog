@@ -10,10 +10,10 @@ categories: [gitpage, octopress, scss, ruby, markdown]
 
 写一些备忘，免得以后忘了。。。
 
-- <a href="#gitpage">gitpage</a>
-- <a href="#octopress">octopress</a>
-- <a href="#scss">scss</a>
-- <a href="#markdown">markdown</a>
+* <a href="#gitpage">gitpage</a>
+* <a href="#octopress">octopress</a>
+* <a href="#scss">scss</a>
+* <a href="#markdown">markdown</a>
 
 <h2 id="gitpage">gitpage</h2>
 
