@@ -34,10 +34,10 @@ $ git init
 $ gollum
 {% endcodeblock %}
 
-[{% img right /images/u/gollum-exec-succ.png 300 "gollum-exec-succ" %}](/images/u/gollum-exec-succ.png)
+[{% img right /images/u/gollum-exec-info.png 450 70 "gollum-exec-info" %}](/images/u/gollum-exec-info.png)
 看到右图就说明gollum已经正确的运行了，gollum默认监听4567端口，并且提供了一个可交互的前端，这个时候用户可以通过浏览器打开[http://localhost:4567](http://localhost:4567)来看一下gollum了
 
-[{% img /images/u/gollum-frontend.png "gollum-frontend" %}](/images/u/gollum-frontend)
+[{% img right /images/u/gollum-frontend.png 450 115 "gollum-frontend" %}](/images/u/gollum-frontend.png)
 
 界面实在是足够简洁，提供的几个button实现了wiki的基本功能增删改查，还能查看历史页面，而且还有一套开放的用户系统，name和email由git的使用者决定，头像则由gravatar生成。
 
@@ -52,6 +52,8 @@ $ git pull
 {% endcodeblock %}
 
 现在gowiki2中应该有了之前编辑过的几个页面，修改以后push到origin的master，就可以在wiki中看到刚刚的更新了。
+
+<!--more-->
 
 <h2 id="gollum_deploy">部署</h2>
 
@@ -76,7 +78,7 @@ gollum的前端app在gollum/frontend/public/下(将这个uri跟在上面找出�
 
 然后在${frontpath}(同上，真实路径)下新建一个文件config.ru，写入下面的内容
 
-{% codeblock config.ru lang:bash %}
+{% codeblock config.ru lang:ruby %}
 #!/usr/local/bin/env ruby
 require 'rubygems'
 require 'gollum/frontend/app'
