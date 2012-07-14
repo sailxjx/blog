@@ -103,7 +103,7 @@ run Precious::App
 
 <h2 id="gollum_bug">已发现的bug</h2>
 
-gollum绑定的grit库中存在一个关于编码的错误[[issue]](https://github.com/github/gollum/issues/147),当提交的文本中包含unicode字符时会导致一个fetal error。在grit2.5.0中修复了这个错误，所以在bundle之前需要先将grit版本设置为2.5.0。gollum最近的两个版本中需要修改的地方还不太一样，晕了～。输入`gollum --version`看一下版本，假如是2.0.0(gem安装的版本)，则修改gollum.gemspec，若是2.1.0(目前的HEAD版本)，则修改Gemfile.lock。将其中的grit版本改为2.5.0即可。
+gollum绑定的grit库中存在一个关于编码的错误[[issue](https://github.com/github/gollum/issues/147)],当提交的文本中包含unicode字符时会导致一个fetal error。在grit2.5.0中修复了这个错误，所以在bundle之前需要先将grit版本设置为2.5.0。gollum最近的两个版本中需要修改的地方还不太一样，晕了～。输入`gollum --version`看一下版本，假如是2.0.0(gem安装的版本)，则修改gollum.gemspec，若是2.1.0(目前的HEAD版本)，则修改Gemfile.lock。将其中的grit版本改为2.5.0即可。
 
 <h2 id="gollum_refer">参考资料</h2>
 
