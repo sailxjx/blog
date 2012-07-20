@@ -16,7 +16,7 @@ categories: [redis, nosql, test]
 ### 附加测试(single)：
 给redis设置一个hashes，只有一个field和value，反复读写，用于比较redis在hashes长度变化时性能的升降幅度
 
-<iframe id="highchart" src="http://sailxjx.github.com/demo/redis-hashes-test-chart.html" style="width: 100%; height: 290px;"></iframe>
+<iframe id="highchart" src="http://sailxjx.github.com/demo/redis-hashes-test-chart.html" style="width: 100%; height: 280px;"></iframe>
 测试对redis进行1000000次读写，使用本地loop，没有网络延迟，没有事务，结果基本没有多大意外。总结成三点：
 
 1. redis的读写速度基本持平
