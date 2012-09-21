@@ -19,3 +19,8 @@
 //$sidebar-pad-medium: 15px;
 //$sidebar-pad-wide: 20px;
 //$sidebar-width-wide: 300px;
+.left { float: left; margin-right: 1.5em; }
+.right { float: right; margin-left: 1.5em; }
+article .entry-content .caption{
+    display: none;
+}
