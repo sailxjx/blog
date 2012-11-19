@@ -8,7 +8,7 @@ categories: [git, gitlab, software, dev]
 
 冬天来了，不知github是不是也去冬眠了，速度慢的像在爬，没办法，屌丝买不起vps，只能自己内网部一套开源的。
 
-githubhq是github的一个开源版本，虽然不是官方的，但是已经做的有模有样，总之能想到的功能都已具备，放在国内随便改改UI就能上线建站的那种。安装文档那是写的相当滴详细，体现了码农罕有的耐性，查看文档请移步[gitlab文档](https://github.com/gitlabhq/gitlabhq/blob/master/doc/install/installation.md)
+gitlabhq是github的一个开源版本，虽然不是官方的，但是已经做的有模有样，总之能想到的功能都已具备，放在国内随便改改UI就能上线建站的那种。安装文档那是写的相当滴详细，体现了码农罕有的耐性，查看文档请移步[gitlab文档](https://github.com/gitlabhq/gitlabhq/blob/master/doc/install/installation.md)
 
 以前部署中在ssh上碰到一些问题，这次在[@mk-qi](https://github.com/mk-qi)童鞋的点拨下，进展是相当滴顺利，下面记录一些部署过程中的问题和解决方法。
 
