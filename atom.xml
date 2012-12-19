@@ -1,86 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
-<!DOCTYPE HTML>
-<html>
-<head>
-	<meta charset="utf-8">
-	<title>novolander</title>
-	<meta name="author" content="tristan">
+  <title><![CDATA[novolander]]></title>
+  <link href="http://sailxjx.github.com/blog/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.com/blog/"/>
+  <updated>2012-12-19T23:34:41+08:00</updated>
+  <id>http://sailxjx.github.com/blog/</id>
+  <author>
+    <name><![CDATA[tristan]]></name>
+    <email><![CDATA[sailxjx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
-	
-	<meta name="description" content="最近换了mac后，需要在公司和家中多地登录，两地的ip又没有设置成一样的，结果每次切换ip就发现ssh到虚拟机的终端没响应了，再连上之后，之前登录的用户就永远活在虚拟机心中啦~当然这也没什么，但是作为有一点点洁癖的我来说，不清除这几个用户总是一件不太舒服的事情，于是就去网上找找命令， &hellip;">
-	
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-	<link href="/blog/atom.xml" rel="alternate" title="novolander" type="application/atom+xml">
-	<link rel="canonical" href="">
-	<link href="/blog/favicon.ico" rel="shortcut icon">
-	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	
-</head>
-
-
-<body>
-	<header id="header" class="inner"><h1><a href="/blog/">novolander</a></h1>
-<nav id="main-nav"><ul class="main">
-	<li><a href="/blog/">Blog</a></li>
-	<li><a href="/blog/blog/archives">Archives</a></li>
-</ul>
-</nav>
-<nav id="mobile-nav">
-	<div class="alignleft menu">
-		<a class="button">Menu</a>
-		<div class="container"><ul class="main">
-	<li><a href="/blog/">Blog</a></li>
-	<li><a href="/blog/blog/archives">Archives</a></li>
-</ul>
-</div>
-	</div>
-	<div class="alignright search">
-		<a class="button"></a>
-		<div class="container">
-			<form action="http://google.com/search" method="get">
-				<input type="text" name="q" results="0">
-				<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
-			</form>
-		</div>
-	</div>
-</nav>
-<nav id="sub-nav" class="alignright">
-	<div class="social">
-		
-		
-		<a class="google" href="https://plus.google.com/sailxjx?rel=author" title="Google+">Google+</a>
-		
-		
-		
-		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
-		
-		
-		
-		
-		
-		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
-		
-	</div>
-	<form class="search" action="http://google.com/search" method="get">
-		<input class="alignright" type="text" name="q" results="0">
-		<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
-	</form>
-</nav>
-
-</header>
-	
-		
-	
-	<div id="content" class="inner">
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/12/19/linuxdeng-lu-yong-hu-guan-li/">Linux登录用户管理</a></h1>
-	<div class="entry-content">
-		<p>最近换了mac后，需要在公司和家中多地登录，两地的ip又没有设置成一样的，结果每次切换ip就发现ssh到虚拟机的终端没响应了，再连上之后，之前登录的用户就永远活在虚拟机心中啦~当然这也没什么，但是作为有一点点洁癖的我来说，不清除这几个用户总是一件不太舒服的事情，于是就去网上找找命令，结果发现找到的资料还挺齐全，学到不少，记录下来，以免下次忘了。</p>
+  
+  <entry>
+    <title type="html"><![CDATA[linux登录用户管理]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/12/19/linuxdeng-lu-yong-hu-guan-li/"/>
+    <updated>2012-12-19T22:35:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2012/12/19/linuxdeng-lu-yong-hu-guan-li</id>
+    <content type="html"><![CDATA[<p>最近换了mac后，需要在公司和家中多地登录，两地的ip又没有设置成一样的，结果每次切换ip就发现ssh到虚拟机的终端没响应了，再连上之后，之前登录的用户就永远活在虚拟机心中啦~当然这也没什么，但是作为有一点点洁癖的我来说，不清除这几个用户总是一件不太舒服的事情，于是就去网上找找命令，结果发现找到的资料还挺齐全，学到不少，记录下来，以免下次忘了。</p>
 
 <h3>who</h3>
 
@@ -155,72 +93,24 @@
 <li><p><a href="http://linux.about.com/library/cmd/blcmdl1_w.htm">Linux / Unix Command: w</a></p></li>
 </ul>
 
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
+]]></content>
+  </entry>
   
-
-
-<time datetime="2012-12-19T22:35:00+08:00" pubdate data-updated="true">2012.12.19</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/linux/'>linux</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/12/11/vagrantbi-ji/">Vagrant笔记</a></h1>
-	<div class="entry-content">
-		<h2>从virtualbox开始</h2>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
+  <entry>
+    <title type="html"><![CDATA[vagrant笔记]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/12/11/vagrantbi-ji/"/>
+    <updated>2012-12-11T23:16:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2012/12/11/vagrantbi-ji</id>
+    <content type="html"><![CDATA[<h2>从virtualbox开始</h2>
+]]></content>
+  </entry>
   
-
-
-<time datetime="2012-12-11T23:16:00+08:00" pubdate data-updated="true">2012.12.11</time></div>
-	<div class="tags">
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/11/14/gitlabhqbu-shu-xiao-ji/">Gitlabhq部署小记</a></h1>
-	<div class="entry-content">
-		<p>冬天来了，不知github是不是也去冬眠了，速度慢的像在爬，没办法，屌丝买不起vps，只能自己内网部一套开源的。</p>
+  <entry>
+    <title type="html"><![CDATA[gitlabhq部署小记]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/11/14/gitlabhqbu-shu-xiao-ji/"/>
+    <updated>2012-11-14T20:12:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2012/11/14/gitlabhqbu-shu-xiao-ji</id>
+    <content type="html"><![CDATA[<p>冬天来了，不知github是不是也去冬眠了，速度慢的像在爬，没办法，屌丝买不起vps，只能自己内网部一套开源的。</p>
 
 <p>gitlabhq是github的一个开源版本，虽然不是官方的，但是已经做的有模有样，总之能想到的功能都已具备，放在国内随便改改UI就能上线建站的那种。安装文档那是写的相当滴详细，体现了码农罕有的耐性，查看文档请移步<a href="https://github.com/gitlabhq/gitlabhq/blob/master/doc/install/installation.md">gitlab文档</a></p>
 
@@ -437,76 +327,24 @@
 <li><a href="https://wiki.archlinux.org/index.php/Gitlab">gitlab手册archwiki版</a></li>
 </ul>
 
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
+]]></content>
+  </entry>
   
-
-
-<time datetime="2012-11-14T20:12:00+08:00" pubdate data-updated="true">2012.11.14</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/dev/'>dev</a>, <a class='category' href='/blog/blog/categories/git/'>git</a>, <a class='category' href='/blog/blog/categories/gitlab/'>gitlab</a>, <a class='category' href='/blog/blog/categories/software/'>software</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/08/30/zshzi-dong-bu-quan/">Zsh自动补全</a></h1>
-	<div class="entry-content">
-		<p>最近被zsh搞的够郁闷，Mark一下，好好翻翻文档，下周写出自己的自动补全脚本</p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
+  <entry>
+    <title type="html"><![CDATA[zsh自动补全]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/08/30/zshzi-dong-bu-quan/"/>
+    <updated>2012-08-30T18:15:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2012/08/30/zshzi-dong-bu-quan</id>
+    <content type="html"><![CDATA[<p>最近被zsh搞的够郁闷，Mark一下，好好翻翻文档，下周写出自己的自动补全脚本</p>
+]]></content>
+  </entry>
   
-
-
-<time datetime="2012-08-30T18:15:00+08:00" pubdate data-updated="true">2012.08.30</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/blog/categories/zsh/'>zsh</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/08/13/mysqlduo-shi-li-qi-dong/">Mysql多实例启动</a></h1>
-	<div class="entry-content">
-		<p>当开发与生产环境在同一台机器上，或需要在一台机器上部署多套测试环境时，往往需要同时起多个mysqld进程，最近帮测试搭环境的时候就碰到了这样的问题。</p>
+  <entry>
+    <title type="html"><![CDATA[Mysql多实例启动]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/08/13/mysqlduo-shi-li-qi-dong/"/>
+    <updated>2012-08-13T17:03:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2012/08/13/mysqlduo-shi-li-qi-dong</id>
+    <content type="html"><![CDATA[<p>当开发与生产环境在同一台机器上，或需要在一台机器上部署多套测试环境时，往往需要同时起多个mysqld进程，最近帮测试搭环境的时候就碰到了这样的问题。</p>
 
 <p>还是从安装mysql开始，下载tarball安装，</p>
 
@@ -723,72 +561,24 @@
 <li><a href="http://blog.csdn.net/magicbreaker/article/details/2392764">MySQL设置密码的三种方法</a></li>
 </ul>
 
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
+]]></content>
+  </entry>
   
-
-
-<time datetime="2012-08-13T17:03:00+08:00" pubdate data-updated="true">2012.08.13</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/blog/categories/mysql/'>mysql</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/07/29/jing-ji-de-le-qu/">竞技的乐趣</a></h1>
-	<div class="entry-content">
-		
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
+  <entry>
+    <title type="html"><![CDATA[竞技的乐趣]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/07/29/jing-ji-de-le-qu/"/>
+    <updated>2012-07-29T19:06:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2012/07/29/jing-ji-de-le-qu</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
   
-
-
-<time datetime="2012-07-29T19:06:00+08:00" pubdate data-updated="true">2012.07.29</time></div>
-	<div class="tags">
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/07/19/redis-hashes-shi-jian/">Redis Hashes 实践</a></h1>
-	<div class="entry-content">
-		<p>这是项目中遇到的一个问题，mysql的用户表做了分表，主键可以通过取模来读取分表信息，但是往往在注册的时候需要检测邮箱的唯一性，这个email就无法定位到分表了，之前的做法是用另一张表emailtoid对邮箱和id做了一个映射，现在想将该表迁移到redis上。就想测试一下redis对hashes类型的处理性能了。</p>
+  <entry>
+    <title type="html"><![CDATA[redis hashes 实践]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/07/19/redis-hashes-shi-jian/"/>
+    <updated>2012-07-19T14:27:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2012/07/19/redis-hashes-shi-jian</id>
+    <content type="html"><![CDATA[<p>这是项目中遇到的一个问题，mysql的用户表做了分表，主键可以通过取模来读取分表信息，但是往往在注册的时候需要检测邮箱的唯一性，这个email就无法定位到分表了，之前的做法是用另一张表emailtoid对邮箱和id做了一个映射，现在想将该表迁移到redis上。就想测试一下redis对hashes类型的处理性能了。</p>
 
 <h3>方案一(multi)：</h3>
 
@@ -818,42 +608,16 @@
 
 <p>整个用户表数据在600w条左右，只存email,id对的话占用内存在60m左右，使用单个key来保存redis数据应该是足够满足性能的需求了。</p>
 
-<p><a href="/blog/raw/redis_hash_test.php">测试文件</a></p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
+<p><a href="http://sailxjx.github.com/blog/raw/redis_hash_test.php">测试文件</a></p>
+]]></content>
+  </entry>
   
-
-
-<time datetime="2012-07-19T14:27:00+08:00" pubdate data-updated="true">2012.07.19</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/nosql/'>nosql</a>, <a class='category' href='/blog/blog/categories/redis/'>redis</a>, <a class='category' href='/blog/blog/categories/test/'>test</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/07/12/ti-yan-gollum/">体验gollum</a></h1>
-	<div class="entry-content">
-		<p>gollum是一个轻量级的wiki系统，使用git作为版本管理和跟踪工具，支持markdown，mediawiki，texttile等多种语法，由github开发并且已经投入到githubwiki的应用中。</p>
+  <entry>
+    <title type="html"><![CDATA[体验gollum]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/07/12/ti-yan-gollum/"/>
+    <updated>2012-07-12T18:07:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2012/07/12/ti-yan-gollum</id>
+    <content type="html"><![CDATA[<p>gollum是一个轻量级的wiki系统，使用git作为版本管理和跟踪工具，支持markdown，mediawiki，texttile等多种语法，由github开发并且已经投入到githubwiki的应用中。</p>
 
 <ul>
 <li><a href="#gollum_install">安装</a></li>
@@ -892,10 +656,10 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p><a href="/blog/images/u/gollum-exec-info.png"><img class="right" src="/blog/images/u/gollum-exec-info.png" width="450" height="70" title="&#34;gollum-exec-info&#34;" alt="&#34;gollum-exec-info&#34;"></a>
+<p><a href="http://sailxjx.github.com/blog/images/u/gollum-exec-info.png"><img class="right" src="http://sailxjx.github.com/blog/images/u/gollum-exec-info.png" width="450" height="70" title="&#34;gollum-exec-info&#34;" alt="&#34;gollum-exec-info&#34;"></a>
 看到右图就说明gollum已经正确的运行了，gollum默认监听4567端口，并且提供了一个可交互的前端，这个时候用户可以通过浏览器打开<a href="http://localhost:4567">http://localhost:4567</a>来看一下gollum了</p>
 
-<p><a href="/blog/images/u/gollum-frontend.png"><img class="right" src="/blog/images/u/gollum-frontend.png" width="450" height="115" title="&#34;gollum-frontend&#34;" alt="&#34;gollum-frontend&#34;"></a></p>
+<p><a href="http://sailxjx.github.com/blog/images/u/gollum-frontend.png"><img class="right" src="http://sailxjx.github.com/blog/images/u/gollum-frontend.png" width="450" height="115" title="&#34;gollum-frontend&#34;" alt="&#34;gollum-frontend&#34;"></a></p>
 
 <p>界面实在是足够简洁，提供的几个button实现了wiki的基本功能增删改查，还能查看历史页面，而且还有一套开放的用户系统，name和email由git的使用者决定，头像则由gravatar生成。</p>
 
@@ -917,47 +681,112 @@
 
 <p>现在gowiki2中应该有了之前编辑过的几个页面，修改以后push到origin的master，就可以在wiki中看到刚刚的更新了。</p>
 
-
-		
-		<a href="/blog/blog/2012/07/12/ti-yan-gollum/" class="more-link">Read on &rarr;</a>
-	</div>
-
-
-<div class="meta">
-	<div class="date">
+<!--more-->
 
 
 
 
+<h2 id="gollum_deploy">部署</h2>
 
 
+<p>虽然gollum提供了一个命令行工具监听端口来提供web服务，但是没有daemon选项，也没有容错机制，何况想来也没有多少人会使用4567端口来访问webserver。那有没有办法将gollum托管给我们的web服务器呢，答案是肯定的，下面以apache为例。</p>
+
+<p>gollum由ruby写成，所以首先需要安装<a href="http://www.modrails.com">passenger(mod_rails)</a>模块，这个模块的安装在<a href="http://www.modrails.com/install.html">官网</a>上有详细的介绍，与其他apache模块的安装大同小异，下面主要介绍一下vhost的配置。</p>
+
+<p>首先进入gollum的安装路径，不知道的可以用下面的命令找一下</p>
+
+<figure class='code'><figcaption><span>查找gollum路径  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>gem which gollum
+</span><span class='line'>/usr/local/ruby/lib/ruby/gems/1.9.1/gems/gollum-2.0.0/lib/gollum.rb
+</span></code></pre></td></tr></table></div></figure>
 
 
+<p>gollum的前端app在gollum/frontend/public/下(将这个uri跟在上面找出来的路径下就行了)，下面将用<code>frontpath=/usr/local/ruby/lib/ruby/gems/1.9.1/gems/gollum-2.0.0/lib/gollum/frontend/</code>来替代，然后配置vhost</p>
+
+<figure class='code'><figcaption><span>apache的virtual-hosts配置  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;VirtualHost *&gt;
+</span><span class='line'>    ServerName www.gollum.local.com  <span class="c">#替换成自己的域名</span>
+</span><span class='line'>    DocumentRoot <span class="k">${</span><span class="nv">frontpath</span><span class="k">}</span>public/ <span class="c">#替换成本地路径</span>
+</span><span class='line'>&lt;/VirtualHost&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后在${frontpath}(同上，真实路径)下新建一个文件config.ru，写入下面的内容</p>
+
+<figure class='code'><figcaption><span>config.ru  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#!/usr/local/bin/env ruby</span>
+</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;rubygems&#39;</span>
+</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;gollum/frontend/app&#39;</span>
+</span><span class='line'><span class="nb">system</span><span class="p">(</span><span class="s2">&quot;which git&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="k">raise</span> <span class="s2">&quot;Looks like I can&#39;t find the git CLI in your path.</span><span class="se">\n</span><span class="s2">Your path is: </span><span class="si">#{</span><span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;PATH&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class='line'><span class="n">gollum_path</span> <span class="o">=</span> <span class="s1">&#39;/home/{user}/gowiki&#39;</span> <span class="c1">#这里的路径替换成实际想存放wiki文档的git目录</span>
+</span><span class='line'><span class="n">disable</span> <span class="ss">:run</span>
+</span><span class='line'><span class="n">configure</span> <span class="ss">:development</span><span class="p">,</span> <span class="ss">:staging</span><span class="p">,</span> <span class="ss">:production</span> <span class="k">do</span>
+</span><span class='line'> <span class="n">set</span> <span class="ss">:raise_errors</span><span class="p">,</span> <span class="kp">true</span>
+</span><span class='line'> <span class="n">set</span> <span class="ss">:show_exceptions</span><span class="p">,</span> <span class="kp">true</span>
+</span><span class='line'> <span class="n">set</span> <span class="ss">:dump_errors</span><span class="p">,</span> <span class="kp">true</span>
+</span><span class='line'> <span class="n">set</span> <span class="ss">:clean_trace</span><span class="p">,</span> <span class="kp">true</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="vg">$path</span> <span class="o">=</span> <span class="n">gollum_path</span>
+</span><span class='line'><span class="no">Precious</span><span class="o">::</span><span class="no">App</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="ss">:gollum_path</span><span class="p">,</span> <span class="n">gollum_path</span><span class="p">)</span>
+</span><span class='line'><span class="no">Precious</span><span class="o">::</span><span class="no">App</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="ss">:wiki_options</span><span class="p">,</span> <span class="p">{})</span>
+</span><span class='line'><span class="n">run</span> <span class="no">Precious</span><span class="o">::</span><span class="no">App</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>为了使/home/{user}/gowiki目录具有写权限，可以将这个目录的权限这是设为777或者让passenger进程的用户组设为user，修改httpd.conf增加一行<code>PassengerDefaultUser user</code>，这样我们通过web端更新wiki的时候就不会报权限问题了。</p>
+
+<p>现在重启apache，然后访问www.gollum.local.com，结果就与上面看到的页面一模一样啦～～。</p>
+
+<h2 id="gollum_bug">已发现的bug</h2>
+
+
+<p>gollum绑定的grit库中存在一个关于编码的错误[<a href="https://github.com/github/gollum/issues/147">issue</a>],当提交的文本中包含unicode字符时会导致一个fetal error。在grit2.5.0中修复了这个错误，所以在bundle之前需要先将grit版本设置为2.5.0。gollum最近的两个版本中需要修改的地方还不太一样，晕了～。输入<code>gollum --version</code>看一下版本，假如是2.0.0(gem安装的版本)，则修改gollum.gemspec，若是2.1.0(目前的HEAD版本)，则修改Gemfile.lock。将其中的grit版本改为2.5.0即可。</p>
+
+<h2 id="gollum_refer">参考资料</h2>
+
+
+<ul>
+<li><a href="https://github.com/github/gollum/blob/master/README.md">README</a></li>
+<li><a href="https://github.com/tecnh/gollum/wiki/Gollum-and-Passenger">Gollum and Passenger</a></li>
+</ul>
+
+]]></content>
+  </entry>
   
-
-
-<time datetime="2012-07-12T18:07:00+08:00" pubdate data-updated="true">2012.07.12</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/git/'>git</a>, <a class='category' href='/blog/blog/categories/github/'>github</a>, <a class='category' href='/blog/blog/categories/gollum/'>gollum</a>, <a class='category' href='/blog/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/blog/categories/wiki/'>wiki</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/06/28/thunderbird-and-davmail/">Thunderbird and Davmail</a></h1>
-	<div class="entry-content">
-		<p>邮件客户端之间的竞争在当今的软件貌似一直处在一个打酱油的位置（就像opera看浏览器之争），毕竟，web端的邮件体验是越做越完美了，传统的客户端不减减肥的话很难再在用户那边分到一杯羹。</p>
+  <entry>
+    <title type="html"><![CDATA[thunderbird and davmail]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/06/28/thunderbird-and-davmail/"/>
+    <updated>2012-06-28T12:23:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2012/06/28/thunderbird-and-davmail</id>
+    <content type="html"><![CDATA[<p>邮件客户端之间的竞争在当今的软件貌似一直处在一个打酱油的位置（就像opera看浏览器之争），毕竟，web端的邮件体验是越做越完美了，传统的客户端不减减肥的话很难再在用户那边分到一杯羹。</p>
 
 <p>不过，在办公领域客户端还是能占有一席之地的，毕竟云端容量有限，而且实时性也是个问题。公司使用内网的ms exchange，那么gmail之类的web端就不考虑了，况且几千封邮件的索引查找还是靠客户端比较靠谱。</p>
 
 <p>比较了一圈linux下的客户端，evolution用的时间最长，但是对html样式的支持不是太好，某些表格粘贴进去排版就乱了。正好ubuntu11.10以后就默认安装了thunderbird，试用以后感觉也不错，写篇备忘，主要是记录不同协议下的配置。</p>
 
-<p><a href="/blog/images/u/thunderbird-main-furry.png"><img class="right" src="/blog/images/u/thunderbird-main-furry.png" width="200" height="161" title="&#34;thunderbird-main-furry&#34;" alt="&#34;thunderbird-main-furry&#34;"></a>
+<p><a href="http://sailxjx.github.com/blog/images/u/thunderbird-main-furry.png"><img class="right" src="http://sailxjx.github.com/blog/images/u/thunderbird-main-furry.png" width="200" height="161" title="&#34;thunderbird-main-furry&#34;" alt="&#34;thunderbird-main-furry&#34;"></a>
 thunderbird诞生于mozilla的开源项目，有个叫firefox的高帅富兄弟，所以从菜单到细节处处都力争向高帅富靠拢，于是我们就看到了这个长得酷似浏览器的email客户端&#8211;多标签切换，附加组件。。。不幸的是，最近<a href="http://tech.sina.com.cn/s/2012-07-07/10247360817.shtml">mozilla宣布不再为thunderbird开发新功能</a>，看来以后还是得靠自己撸啊。</p>
 
 <p>添加账户很简单，编辑-账户设置-添加账户，输入用户名邮箱密码以后会自动在mozilla在线数据库中寻找适合的配置，像gmail,hotmail.163之流的基本都不需要额外的配置，直接确认就行。这里主要介绍一下exchange服务的配置。</p>
@@ -968,47 +797,21 @@ thunderbird诞生于mozilla的开源项目，有个叫firefox的高帅富兄弟�
 
 <p>根据官网上的介绍，davmail是一个通用的POP/IMAP/SMTP/Caldav/Carddav/LDAP交换接口，允许用户用任何客户端链接到exchange服务器。其他的鸟文就不做解释了，这不是重点，重点是，这玩意儿管用。ubuntu用户下可以在sourceforge下载deb包安装，<a href="http://sourceforge.net/projects/davmail/files/latest/download?source=files">下载地址</a>。</p>
 
-<p><a href="/blog/images/u/davmail-ui.png"><img class="right" src="/blog/images/u/davmail-ui.png" width="350" height="206" title="&#34;davmail-ui&#34;" alt="&#34;davmail-ui&#34;"></a>
+<p><a href="http://sailxjx.github.com/blog/images/u/davmail-ui.png"><img class="right" src="http://sailxjx.github.com/blog/images/u/davmail-ui.png" width="350" height="206" title="&#34;davmail-ui&#34;" alt="&#34;davmail-ui&#34;"></a>
 安装完成后，davmail提供了一个简陋的UI界面，不过对于配置来说已经足够了，在owaurl一栏填入域中使用的exchange owa地址，类似https://exchange.domain.com/owa的，不确定是否可用可以在浏览器里面直接访问一下试试。下面的协议端口都用默认的，save一下就ok。</p>
 
 <p>现在回到thunderbird，修改账户设置-发送SMTP服务器-添加或编辑，服务器名称填localhost，端口1025，选择密码验证，填写用户名，保存，现在试一试，应该可以正常的收发邮件了。</p>
 
 <p>davmail其实是在本地搭建了一个邮件收发服务器，用户与远程服务器的通信都通过davmail的代理，简化了不同平台的配置。当然软件的功能远远不止这些，这里只是为了解决thunderbird与exchange连接的问题。假如thunderbird插件能直接支持exchange的收发，那就更好了。</p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
+]]></content>
+  </entry>
   
-
-
-<time datetime="2012-06-28T12:23:00+08:00" pubdate data-updated="true">2012.06.28</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/email/'>email</a>, <a class='category' href='/blog/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/blog/categories/thunderbird/'>thunderbird</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/06/20/gitpage-and-octopress/">Gitpage and Octopress</a></h1>
-	<div class="entry-content">
-		<p>花了一天时间（上班时不务正业。。。），总算把gitpage主页和这个blog搭起来了</p>
+  <entry>
+    <title type="html"><![CDATA[gitpage and octopress]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/06/20/gitpage-and-octopress/"/>
+    <updated>2012-06-20T20:45:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2012/06/20/gitpage-and-octopress</id>
+    <content type="html"><![CDATA[<p>花了一天时间（上班时不务正业。。。），总算把gitpage主页和这个blog搭起来了</p>
 
 <p>写一些备忘，免得以后忘了。。。</p>
 
@@ -1101,83 +904,131 @@ thunderbird诞生于mozilla的开源项目，有个叫firefox的高帅富兄弟�
 
 
 
-
-		
-		<a href="/blog/blog/2012/06/20/gitpage-and-octopress/" class="more-link">Read on &rarr;</a>
-	</div>
-
-
-<div class="meta">
-	<div class="date">
+<!--more-->
 
 
 
 
+<h2 id="octopress">octopress</h2>
 
 
+<p><a href="http://octopress.org/">octopress</a>是基于<a href="http://github.com/mojombo/jekyll">Jekyll</a>的一个博客框架。所有的博文都用静态页面保存，不仅能很好的和gitpage集成，还有很高的可配置性，对于喜欢个性化的码农来说简直就是神器丫～</p>
+
+<p>言归正传，安装octopress，必须保证系统中已经安装了git,ruby[1.9.2以上]。然后从github复制一份octopress的拷贝</p>
+
+<figure class='code'><figcaption><span>安装octopress  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git clone git://github.com/imathis/octopress.git octopress
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>octopress
+</span><span class='line'><span class="nv">$ </span>gem install bundler
+</span><span class='line'><span class="nv">$ </span>bundle install <span class="c">#安装依赖关系，在网络不好的情况下，这一步会相当相当的耗时，并且常有失败的情况。请一定要耐心，淡定。。。</span>
+</span><span class='line'><span class="nv">$ </span>rake install <span class="c">#安装默认主题，以后可以用别的命令更新octopress的主题。不过官方的主题已经足够简洁大气了，遇到其他心仪的主题之前，我恐怕不会再去折腾这些了(&gt;_&lt;)</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
+<p>ok，安装结束，除了蛋疼的网络等待，整个安装过程还是比较简单顺利的，下面进入配置阶段</p>
+
+<p>在根目录下的配置文件有四个，_config.yml,config.rb,config.ru,Rakefile。其中Rakefile实现了部署更新的所有操作，一般情况下不需要修改。理想状态下只需要修改_config.yml文件就可以了。</p>
+
+<figure class='code'><figcaption><span>_config.yml中与用户相关的配置项 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">url</span><span class="p-Indicator">:</span>                <span class="c1"># 需要部署的博客站链接</span>
+</span><span class='line'><span class="l-Scalar-Plain">title</span><span class="p-Indicator">:</span>              <span class="c1"># 又短又二的博客标题，如XX的窝，孤独的根号三等等</span>
+</span><span class='line'><span class="l-Scalar-Plain">subtitle</span><span class="p-Indicator">:</span>           <span class="c1"># 小标题，会显示在网站头部，用来辩解标题其实没有那么二</span>
+</span><span class='line'><span class="l-Scalar-Plain">author</span><span class="p-Indicator">:</span>             <span class="c1"># 用户名，说明到底是谁写出了这么二的标题</span>
+</span><span class='line'><span class="l-Scalar-Plain">simple_search</span><span class="p-Indicator">:</span>      <span class="c1"># 站内搜索的工具，例如http://google.com/search，当然也可以用一样二的baidu</span>
+</span><span class='line'><span class="l-Scalar-Plain">description</span><span class="p-Indicator">:</span>        <span class="c1"># 网站说明，会加在meta中，给搜索引擎看的东东</span>
+</span><span class='line'><span class="l-Scalar-Plain">subscribe_rss</span><span class="p-Indicator">:</span>      <span class="c1"># rss文件路径，默认atom.xml</span>
+</span><span class='line'><span class="l-Scalar-Plain">subscribe_email</span><span class="p-Indicator">:</span>    <span class="c1"># 联系邮箱，这里填写的内容会直接带入页首的mailto链接中，如&quot;mailto: sailxjx#gmail.com?subject=greeting&quot;</span>
+</span><span class='line'><span class="l-Scalar-Plain">email</span><span class="p-Indicator">:</span>              <span class="c1"># 这里就是填写完整的邮箱地址啦，显示在页脚</span>
+</span><span class='line'><span class="l-Scalar-Plain">root</span>                <span class="c1"># 假如博客不是发布在根目录下，而是发布到类似domain.com/blog的二级目录，这里要设置成二级目录的名字(blog)。</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在下面还有一些第三方网站接入的配置，包括google，twitter，github，facebook，disqus等等。大部分都只需要填写注册的用户名和是否启用就行了。这里值得一提的是disqus，当填写了disqus用户名之后，在博文下面会加载disqus的回复功能，正好弥补了octopress缺少动态内容的缺陷。</p>
+
+<p>在默认配置下，可以很轻松的将博客部署到主站下面，在这里我将octopress部署在blog二级目录下面(gitpage只给我提供了一个域名，被博客全占了，多亏啊～～～)，需要修改_config.yml和config.rb中的对应目录配置</p>
+
+<figure class='code'><figcaption><span>_config.yml && config.rb </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="c1">## _config.yml 全站配置</span>
+</span><span class='line'><span class="n">url</span><span class="p">:</span>    <span class="n">http</span><span class="ss">:/</span><span class="o">/</span><span class="n">sailxjx</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">blog</span>
+</span><span class='line'><span class="n">root</span><span class="p">:</span>   <span class="sr">/blog</span>
+</span><span class='line'><span class="sr">## config.rb 这个文件主要影响一些静态文件的加载</span>
+</span><span class='line'><span class="sr">http_path = &quot;/</span><span class="n">blog</span><span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">http_images_path = &quot;</span><span class="o">/</span><span class="n">blog</span><span class="o">/</span><span class="n">images</span><span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">http_fonts_path = &quot;</span><span class="o">/</span><span class="n">blog</span><span class="o">/</span><span class="n">fonts</span><span class="s2">&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>现在开始写第一篇博客，只需要简单一个命令</p>
+
+<figure class='code'><figcaption><span>new_post  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>rake new_post<span class="o">[</span><span class="s1">&#39;first blog&#39;</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这条命令会在source/_posts中生成一个名为YYYY-MM-DD-first-blog.markdown文件，惊喜的是，假如使用中文作为博客标题，这里的文件名（包括deploy后的url）会自动转成拼音。</p>
+
+<p>打开_posts中的文件，这是一个以<a href="http://daringfireball.net/projects/markdown/">markdown</a>语法写成的文档，具体语法下面再介绍，先看一下头部有用的信息</p>
+
+<figure class='code'><figcaption><span>post设置 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>layout: post
+</span><span class='line'>title: "gitpage and octopress"                          //标题
+</span><span class='line'>date: 2012-06-20 20:45                                  //生成的时间，会作为发布时间显示在页底
+</span><span class='line'>comments: true                                          //设置成false可以关闭评论
+</span><span class='line'>categories: [gitpage, octopress, scss, ruby, markdown]  //博客分类，这些tag可以用来做筛选
+</span><span class='line'>author: Your Name                                       //假如有多个作者，可以添加在这里</span></code></pre></td></tr></table></div></figure>
+
+
+<p>完成一篇博客以后，使用下面的命令可以将博客生成或者发布出去</p>
+
+<figure class='code'><figcaption><span>发布博客  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>rake setup_github_pages   //这个命令会让你填写可读写的github分支作为远程仓库，然后在_deploy文件夹中生成一个gh-pages分支
+</span><span class='line'><span class="nv">$ </span>rake generate             //在public文件夹中生成静态文件，可以在本地配置一个服务器指向这个文件夹预览博客发布后的样子
+</span><span class='line'><span class="nv">$ </span>rake deploy               //在deploy中生成静态文件，然后会自动调用git push将博客发布到github上
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>写到这里基本已经完成了基本博客的发布，有兴趣可以学一学ruby，玩出自己的花样来。</p>
+
+<h2 id="scss">scss</h2>
+
+
+<h2 id="markdown">markdown</h2>
+
+
+<p>to be continue&#8230;</p>
+]]></content>
+  </entry>
   
-
-
-<time datetime="2012-06-20T20:45:00+08:00" pubdate data-updated="true">2012.06.20</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/gitpage/'>gitpage</a>, <a class='category' href='/blog/blog/categories/markdown/'>markdown</a>, <a class='category' href='/blog/blog/categories/octopress/'>octopress</a>, <a class='category' href='/blog/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/blog/categories/scss/'>scss</a>
-
-
-</div>
-	
-</div></article>
-
-<nav id="pagenavi">
-    
-    
-    <div class="center"><a href="/blog/blog/archives">Blog Archives</a></div>
-</nav></div>
-	<footer id="footer" class="inner">Copyright &copy; 2012
-
-    tristan
-
-</footer>
-	<script src="/blog/javascripts/slash.js"></script>
-<script src="/blog/javascripts/jquery.fancybox.pack.js"></script>
-<script type="text/javascript">
-(function($){
-	$('.fancybox').fancybox();
-})(jQuery);
-</script> <!-- Delete or comment this line to disable Fancybox -->
-
-
-<script type="text/javascript">
-      var disqus_shortname = 'sailxjx';
-      
-        
-        var disqus_script = 'count.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-	<script type="text/javascript">
-		var _gaq = _gaq || [];
-		_gaq.push(['_setAccount', 'UA-33186961-1']);
-		_gaq.push(['_trackPageview']);
-
-		(function() {
-			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		})();
-	</script>
-
-
-
-</body>
-</html>
+</feed>

@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: scss | novolander]]></title>
+  <link href="http://sailxjx.github.com/blog/blog/categories/scss/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.com/blog/"/>
+  <updated>2012-12-19T23:34:41+08:00</updated>
+  <id>http://sailxjx.github.com/blog/</id>
+  <author>
+    <name><![CDATA[tristan]]></name>
+    <email><![CDATA[sailxjx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[gitpage and octopress]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/06/20/gitpage-and-octopress/"/>
+    <updated>2012-06-20T20:45:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2012/06/20/gitpage-and-octopress</id>
+    <content type="html"><![CDATA[<p>花了一天时间（上班时不务正业。。。），总算把gitpage主页和这个blog搭起来了</p>
+
+<p>写一些备忘，免得以后忘了。。。</p>
+
+<ul>
+<li><a href="#gitpage">gitpage</a></li>
+<li><a href="#octopress">octopress</a></li>
+<li><a href="#scss">scss</a></li>
+<li><a href="#markdown">markdown</a></li>
+</ul>
+
+
+<h2 id="gitpage">gitpage</h2>
+
+
+<p>github给用户提供了一个非常cool的方式来搭建自己的主页，简单几步，就能完成网站的部署。</p>
+
+<h4>1.建立分支</h4>
+
+<p>github给每个用户提供了一个形似{user}.github.com的二级域名，只要首先在自己的帐号下建立名为{user}.github.com的分支，就可以通过git来维护自己的主页啦。</p>
+
+<h4>2.clone和commit</h4>
+
+<p>分支建立好之后，将{user}.github.com分支clone到本地，以方便编辑。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>本地gitpage  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git clone git@github.com:<span class="o">{</span>user<span class="o">}</span>/<span class="o">{</span>user<span class="o">}</span>.github.com <span class="o">{</span>your <span class="nb">local </span>dir<span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>然后就是建立自己的index啦，gitpage使用纯静态的方式来管理页面，可以通过本地程序预先将这些静态页面生成好再丢给github嘛。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>编辑提交首页  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;hello git-page&quot;</span> &gt; index.html
+</span><span class='line'><span class="nv">$ </span>git add .
+</span><span class='line'><span class="nv">$ </span>git commit -am <span class="s1">&#39;init&#39;</span>
+</span><span class='line'><span class="nv">$ </span>git push origin master
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>提交以后可以在github的通知中心和邮箱中收到页面建立的通知。第一次提交可能需要10多分钟才能看到效果，以后的提交基本都是立即生效的。</p>
+
+<p>现在访问<a href="http://sailxjx.github.com">{user}.github.com</a>看一下效果吧。</p>
+
+<h4>3.建立项目页面</h4>
+
+<p>除了首页，github还为用户的每一个项目提供了一个展示的平台，只需要在需要展示的项目下建立一个名为gh-pages的分支并push到github，剩余的操作就和首页如出一辙了。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>项目主页  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> <span class="o">{</span>project<span class="o">}</span>
+</span><span class='line'><span class="nv">$ </span>git branch gh-pages
+</span><span class='line'><span class="nv">$ </span>git checkout gh-pages
+</span><span class='line'><span class="nv">$ </span>git push origin gh-pages
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>提交以后会在github产生一个类似{user}.github.com/{project}的域名，访问的其实是<a href="https://github.com/sailxjx/blog/tree/gh-pages">gh-pages</a>分支下的index文件，这个<a href="http://sailxjx.github.com/blog">blog</a>就是托管给gitpage的项目页面的。</p>
+
+<h4>4.使用gitpage模板</h4>
+
+<p>github提供了一种最快捷的方式来建立pages</p>
+
+<ul>
+<li>进入你的<a href="https://github.com/{user}/{project}/admin">项目管理页</a></li>
+<li>点击右下角的<a href="https://github.com/{user}/{project}/generated_pages/new">Automatic Page Generator</a></li>
+<li>编辑内容并选择自己喜欢的模板</li>
+<li>done</li>
+</ul>
+
+
+<p>然后就可以将gitpage clone到本地进行编辑并提交了</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>编辑项目主页  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> <span class="o">{</span>project<span class="o">}</span>
+</span><span class='line'><span class="nv">$ </span>git fetch origin
+</span><span class='line'><span class="nv">$ </span>git checkout gh-pages
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<!--more-->
+
+
+
+
+<h2 id="octopress">octopress</h2>
+
+
+<p><a href="http://octopress.org/">octopress</a>是基于<a href="http://github.com/mojombo/jekyll">Jekyll</a>的一个博客框架。所有的博文都用静态页面保存，不仅能很好的和gitpage集成，还有很高的可配置性，对于喜欢个性化的码农来说简直就是神器丫～</p>
+
+<p>言归正传，安装octopress，必须保证系统中已经安装了git,ruby[1.9.2以上]。然后从github复制一份octopress的拷贝</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>安装octopress  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git clone git://github.com/imathis/octopress.git octopress
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>octopress
+</span><span class='line'><span class="nv">$ </span>gem install bundler
+</span><span class='line'><span class="nv">$ </span>bundle install <span class="c">#安装依赖关系，在网络不好的情况下，这一步会相当相当的耗时，并且常有失败的情况。请一定要耐心，淡定。。。</span>
+</span><span class='line'><span class="nv">$ </span>rake install <span class="c">#安装默认主题，以后可以用别的命令更新octopress的主题。不过官方的主题已经足够简洁大气了，遇到其他心仪的主题之前，我恐怕不会再去折腾这些了(&gt;_&amp;lt;)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>ok，安装结束，除了蛋疼的网络等待，整个安装过程还是比较简单顺利的，下面进入配置阶段</p>
+
+<p>在根目录下的配置文件有四个，_config.yml,config.rb,config.ru,Rakefile。其中Rakefile实现了部署更新的所有操作，一般情况下不需要修改。理想状态下只需要修改_config.yml文件就可以了。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>_config.yml中与用户相关的配置项 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">url</span><span class="p-Indicator">:</span>                <span class="c1"># 需要部署的博客站链接</span>
+</span><span class='line'><span class="l-Scalar-Plain">title</span><span class="p-Indicator">:</span>              <span class="c1"># 又短又二的博客标题，如XX的窝，孤独的根号三等等</span>
+</span><span class='line'><span class="l-Scalar-Plain">subtitle</span><span class="p-Indicator">:</span>           <span class="c1"># 小标题，会显示在网站头部，用来辩解标题其实没有那么二</span>
+</span><span class='line'><span class="l-Scalar-Plain">author</span><span class="p-Indicator">:</span>             <span class="c1"># 用户名，说明到底是谁写出了这么二的标题</span>
+</span><span class='line'><span class="l-Scalar-Plain">simple_search</span><span class="p-Indicator">:</span>      <span class="c1"># 站内搜索的工具，例如http://google.com/search，当然也可以用一样二的baidu</span>
+</span><span class='line'><span class="l-Scalar-Plain">description</span><span class="p-Indicator">:</span>        <span class="c1"># 网站说明，会加在meta中，给搜索引擎看的东东</span>
+</span><span class='line'><span class="l-Scalar-Plain">subscribe_rss</span><span class="p-Indicator">:</span>      <span class="c1"># rss文件路径，默认atom.xml</span>
+</span><span class='line'><span class="l-Scalar-Plain">subscribe_email</span><span class="p-Indicator">:</span>    <span class="c1"># 联系邮箱，这里填写的内容会直接带入页首的mailto链接中，如&quot;mailto: sailxjx#gmail.com?subject=greeting&quot;</span>
+</span><span class='line'><span class="l-Scalar-Plain">email</span><span class="p-Indicator">:</span>              <span class="c1"># 这里就是填写完整的邮箱地址啦，显示在页脚</span>
+</span><span class='line'><span class="l-Scalar-Plain">root</span>                <span class="c1"># 假如博客不是发布在根目录下，而是发布到类似domain.com/blog的二级目录，这里要设置成二级目录的名字(blog)。</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>在下面还有一些第三方网站接入的配置，包括google，twitter，github，facebook，disqus等等。大部分都只需要填写注册的用户名和是否启用就行了。这里值得一提的是disqus，当填写了disqus用户名之后，在博文下面会加载disqus的回复功能，正好弥补了octopress缺少动态内容的缺陷。</p>
+
+<p>在默认配置下，可以很轻松的将博客部署到主站下面，在这里我将octopress部署在blog二级目录下面(gitpage只给我提供了一个域名，被博客全占了，多亏啊～～～)，需要修改_config.yml和config.rb中的对应目录配置</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>_config.yml &amp;&amp; config.rb </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h2&gt;_config.yml 全站配置&lt;/</span><span class="n">h2</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">url</span><span class="p">:</span>    <span class="n">http</span><span class="ss">:/</span><span class="o">/</span><span class="n">sailxjx</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">blog</span>
+</span><span class='line'><span class="n">root</span><span class="p">:</span>   <span class="sr">/blog&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h2</span><span class="o">&gt;</span><span class="n">config</span><span class="o">.</span><span class="n">rb</span> <span class="err">这个文件主要影响一些静态文件的加载</span><span class="o">&lt;</span><span class="sr">/h2&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;http_path = &quot;/</span><span class="n">blog</span><span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">http_images_path = &quot;</span><span class="o">/</span><span class="n">blog</span><span class="o">/</span><span class="n">images</span><span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">http_fonts_path = &quot;</span><span class="o">/</span><span class="n">blog</span><span class="o">/</span><span class="n">fonts</span><span class="s2">&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>现在开始写第一篇博客，只需要简单一个命令</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>new_post  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>rake new_post<span class="o">[</span><span class="s1">&#39;first blog&#39;</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>这条命令会在source/_posts中生成一个名为YYYY-MM-DD-first-blog.markdown文件，惊喜的是，假如使用中文作为博客标题，这里的文件名（包括deploy后的url）会自动转成拼音。</p>
+
+<p>打开_posts中的文件，这是一个以<a href="http://daringfireball.net/projects/markdown/">markdown</a>语法写成的文档，具体语法下面再介绍，先看一下头部有用的信息</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>post设置 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>layout: post
+</span><span class='line'>title: "gitpage and octopress"                          //标题
+</span><span class='line'>date: 2012-06-20 20:45                                  //生成的时间，会作为发布时间显示在页底
+</span><span class='line'>comments: true                                          //设置成false可以关闭评论
+</span><span class='line'>categories: [gitpage, octopress, scss, ruby, markdown]  //博客分类，这些tag可以用来做筛选
+</span><span class='line'>author: Your Name                                       //假如有多个作者，可以添加在这里</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>完成一篇博客以后，使用下面的命令可以将博客生成或者发布出去</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>发布博客  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>rake setup_github_pages   //这个命令会让你填写可读写的github分支作为远程仓库，然后在_deploy文件夹中生成一个gh-pages分支
+</span><span class='line'><span class="nv">$ </span>rake generate             //在public文件夹中生成静态文件，可以在本地配置一个服务器指向这个文件夹预览博客发布后的样子
+</span><span class='line'><span class="nv">$ </span>rake deploy               //在deploy中生成静态文件，然后会自动调用git push将博客发布到github上
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>写到这里基本已经完成了基本博客的发布，有兴趣可以学一学ruby，玩出自己的花样来。</p>
+
+<h2 id="scss">scss</h2>
+
+
+<h2 id="markdown">markdown</h2>
+
+
+<p>to be continue...</p>
+]]></content>
+  </entry>
+  
+</feed>
