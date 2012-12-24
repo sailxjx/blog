@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "gitlabhq部署小记"
+title: "gitlabhq 部署小记"
 date: 2012-11-14 20:12
 comments: true
 categories: [git, gitlab, software, dev]

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Mysql多实例启动"
+title: "Mysql 多实例启动"
 date: 2012-08-13 17:03
 comments: true
 categories: [mysql, linux]
