@@ -11,3 +11,5 @@ source/_stash
 source/stylesheets/screen.css
 vendor
 node_modules
+.tags_sorted_by_file
+.tags
