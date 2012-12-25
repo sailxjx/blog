@@ -4,7 +4,7 @@
   <title><![CDATA[novolander]]></title>
   <link href="http://sailxjx.github.com/blog/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2012-12-19T23:34:41+08:00</updated>
+  <updated>2012-12-25T23:27:23+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -14,10 +14,259 @@
 
   
   <entry>
-    <title type="html"><![CDATA[linux登录用户管理]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2012/12/19/linuxdeng-lu-yong-hu-guan-li/"/>
+    <title type="html"><![CDATA[nginx+php-fpm 配置记录]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/12/24/nginx-plus-php-fpm-pei-zhi-ji-lu/"/>
+    <updated>2012-12-24T22:03:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2012/12/24/nginx-plus-php-fpm-pei-zhi-ji-lu</id>
+    <content type="html"><![CDATA[<h3>安装nginx</h3>
+
+<p>安装过程没什么好说的，不过tarball中没有包含init脚本，官网wiki中提供了<a href="http://wiki.nginx.org/Nginx-init-ubuntu">一个ubuntu的版本</a>，其实在所有linux发行版中都可用，下载下来放到/etc/init.d/nginx，大功告成。</p>
+
+<p>假如在启动过程中遇到<code>undefined function: log_daemon_msg</code>等等报错，那是缺少一些公用方法，下载或安装init-functions然后在头部引入即可，google到一个可用的<a href="http://www.linuxfromscratch.org/lfs/view/7.0/scripts/apds02.html">地址</a>，此外，假如使用的是ubuntu，在/lib/lsb/中有个文件。</p>
+
+<h3>安装php-fpm</h3>
+
+<p>fpm已经包含在php的远吗中，编译php的时候加上<code>--enable-fpm</code>即可，fpm的init脚本包含在<code>sapi/fpm/init.d.php-fpm</code>，稍加修改即可使用，非常贴心滴。默认配置文件<code>sapi/fpm/php-fm.conf</code>，我把它复制在/etc目录中以供调用。</p>
+
+<h3>配置php-fpm</h3>
+
+<p>fpm的配置文件已很多个pool块分割，global是全局配置，www是默认的pool，这里不做修改。</p>
+
+<figure class='code'><figcaption><span>php-fpm.conf  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='ini'><span class='line'><span class="k">[global]</span>
+</span><span class='line'><span class="na">user</span> <span class="o">=</span> <span class="s">tristan</span>
+</span><span class='line'><span class="na">group</span> <span class="o">=</span> <span class="s">tristan</span>
+</span><span class='line'><span class="na">pid</span> <span class="o">=</span> <span class="s">/var/run/php-fpm.pid</span>
+</span><span class='line'><span class="na">error_log</span> <span class="o">=</span> <span class="s">/var/log/php/fpm.err.log</span>
+</span><span class='line'><span class="c">; 下面三个值表示当一分钟内假如有10个子进程收到SIGSEGV或SIGBUS信号而退出的话，php-fpm会自动重启，应该是一种自我保护的机制</span>
+</span><span class='line'><span class="err">emergency_restart_threshold</span> <span class="err">10</span>
+</span><span class='line'><span class="err">emergency_restart_interval</span> <span class="err">1m</span>
+</span><span class='line'><span class="err">process_control_timeout</span> <span class="err">10s</span>
+</span><span class='line'><span class="c">; 超过十秒的慢请求会被记录到fpm.slow.$pool.log中并在errlog中产生一条notice记录</span>
+</span><span class='line'><span class="na">request_slowlog_timeout</span> <span class="o">=</span> <span class="s">10s</span>
+</span><span class='line'><span class="na">slowlog</span> <span class="o">=</span> <span class="s">/var/log/php/fpm.slow.$pool.log</span>
+</span><span class='line'><span class="c">; 允许任意客户端链接</span>
+</span><span class='line'><span class="na">listen.allowed_clients</span> <span class="o">=</span> <span class="s">any</span>
+</span><span class='line'><span class="c">; 可以包含一些分散的config文件</span>
+</span><span class='line'><span class="na">include</span><span class="o">=</span><span class="s">/etc/php-fpm.d/*.conf</span>
+</span><span class='line'><span class="c">; 下面是www pool的配置</span>
+</span><span class='line'><span class="k">[www]</span>
+</span><span class='line'><span class="c">; 设置子进程相关</span>
+</span><span class='line'><span class="na">pm</span> <span class="o">=</span> <span class="s">dynamic</span>
+</span><span class='line'><span class="na">pm.max_children</span> <span class="o">=</span> <span class="s">5</span>
+</span><span class='line'><span class="na">pm.start_servers</span> <span class="o">=</span> <span class="s">3</span>
+</span><span class='line'><span class="na">pm.min_spare_servers</span> <span class="o">=</span> <span class="s">2</span>
+</span><span class='line'><span class="na">pm.max_spare_servers</span> <span class="o">=</span> <span class="s">4</span>
+</span><span class='line'><span class="na">pm.max_requests</span> <span class="o">=</span> <span class="s">200</span>
+</span><span class='line'><span class="c">; 下面还可以用env设置一些环境变量</span>
+</span><span class='line'><span class="na">env[PATH]</span> <span class="o">=</span> <span class="s">/usr/local/bin:/usr/bin:/bin</span>
+</span><span class='line'><span class="na">env[TMP]</span> <span class="o">=</span> <span class="s">/tmp</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>配置完成后，<code>/etc/init.d/php-fpm start</code>即可启动php-fpm，通过<code>netstat -anp</code>可以看到9000端口被php-fpm占用了。</p>
+
+<h3>配置nginx</h3>
+
+<p>下面到了最艰苦卓绝的工作了，配置nginx。</p>
+
+<figure class='code'><figcaption><span>nginx </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>user tristan;
+</span><span class='line'>worker_processes 2;
+</span><span class='line'>error_log  /var/log/nginx/error.log;
+</span><span class='line'>pid        /var/run/nginx.pid;
+</span><span class='line'>events {
+</span><span class='line'>    worker_connections  1024;
+</span><span class='line'>}
+</span><span class='line'>http {
+</span><span class='line'>    include       mime.types;
+</span><span class='line'>    default_type  application/octet-stream;
+</span><span class='line'>    sendfile        on; 
+</span><span class='line'>    keepalive_timeout  65; 
+</span><span class='line'>    gzip on; 
+</span><span class='line'>    include /usr/local/nginx/conf/sites-enabled/*;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>主配置文件中基本没什么可写的，重点在对每个站点的配置上。</p>
+
+<p>对静态站点的配置是最简单的，比如下面的配置就部署了一个bootstrap的demo站点</p>
+
+<figure class='code'><figcaption><span>boot </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {
+</span><span class='line'>    listen *:80;
+</span><span class='line'>    server_name boot.local.com;
+</span><span class='line'>    access_log  /var/log/nginx/boot.log;
+</span><span class='line'>    location / {
+</span><span class='line'>        root /home/tristan/coding/github/bootstrap/docs; #根目录
+</span><span class='line'>        index index.html; #添加默认索引文件
+</span><span class='line'>    }   
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>动态站点稍微麻烦一点，通过fastcgi模式，使用php-fpm配置一个动态站点。</p>
+
+<figure class='code'><figcaption><span>fun </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {
+</span><span class='line'>    listen *:80;
+</span><span class='line'>    server_name fun.local.com;
+</span><span class='line'>    access_log /var/log/nginx/fun.log;
+</span><span class='line'>    location / { 
+</span><span class='line'>        index index.php;
+</span><span class='line'>        rewrite ^(.*)$ /index.php$1 last; #大部分站点都做成了单入口，将所有url rewrite到index文件
+</span><span class='line'>    }   
+</span><span class='line'>    location ~ ^/index.php {
+</span><span class='line'>        root /home/tristan/coding/webdata/fun;
+</span><span class='line'>        fastcgi_pass 127.0.0.1:9000;
+</span><span class='line'>        include fastcgi_params;
+</span><span class='line'>        if ($fastcgi_script_name ~ "^(.+?\.php)(/.+)$") {
+</span><span class='line'>            set $real_script_name $1; 
+</span><span class='line'>            set $path_info $2; 
+</span><span class='line'>        }   
+</span><span class='line'>        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class='line'>        fastcgi_param PATH_INFO $path_info; 
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>值得注意的是，有些框架使用pathinfo作为路由依据，默认情况下nginx并不会将pathinfo传递给php-fpm，所以上面需要通过正则匹配出准确的pathinfo，通过fastcgi_param传给fpm</p>
+
+<p>下面是一个使用minify的静态资源站点，其中既包含纯静态文件(css|js)，也包含由php压缩成的伪静态文件</p>
+
+<figure class='code'><figcaption><span>static </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {
+</span><span class='line'>    listen *:80;
+</span><span class='line'>    server_name static.local.com;
+</span><span class='line'>    access_log /var/log/nginx/static.log;
+</span><span class='line'>    root /home/tristan/coding/webdata/static;
+</span><span class='line'>    location / { 
+</span><span class='line'>        autoindex on; 
+</span><span class='line'>        index index.php;
+</span><span class='line'>        rewrite ^/static/(.*)\.(js|css)$ /static/index.php?g=$1 last;
+</span><span class='line'>    }   
+</span><span class='line'>    location ~ index.php {
+</span><span class='line'>        fastcgi_pass 127.0.0.1:9000;
+</span><span class='line'>        include fastcgi_params;
+</span><span class='line'>        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class='line'>    }   
+</span><span class='line'>    location ~ ^(?!\/static)(.*)\.(jpg|jpeg|gif|png|css|js|ico|xml)$ {
+</span><span class='line'>        access_log off; #关闭log
+</span><span class='line'>        log_not_found off;
+</span><span class='line'>        expires 30d; #纯静态文件设置缓存时间
+</span><span class='line'>    }   
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>参考资料</h2>
+
+<ul>
+<li><a href="http://www.if-not-true-then-false.com/2011/nginx-and-php-fpm-configuration-and-optimizing-tips-and-tricks/">Nginx and PHP-FPM Configuration and Optimizing Tips and Tricks</a></li>
+<li><a href="http://stackoverflow.com/questions/8265941/empty-value-to-path-info-in-nginx-returns-junk-value">stackoverflow: Empty value to PATH_INFO in nginx returns junk value</a></li>
+<li><a href="http://wiki.nginx.org/HttpFastcgiModule">HttpFastcgiModule</a></li>
+<li><a href="http://wiki.nginx.org/HttpRewriteModule">HttpRewriteModule</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[linux 登录用户管理]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/12/19/linux-deng-lu-yong-hu-guan-li/"/>
     <updated>2012-12-19T22:35:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2012/12/19/linuxdeng-lu-yong-hu-guan-li</id>
+    <id>http://sailxjx.github.com/blog/blog/2012/12/19/linux-deng-lu-yong-hu-guan-li</id>
     <content type="html"><![CDATA[<p>最近换了mac后，需要在公司和家中多地登录，两地的ip又没有设置成一样的，结果每次切换ip就发现ssh到虚拟机的终端没响应了，再连上之后，之前登录的用户就永远活在虚拟机心中啦~当然这也没什么，但是作为有一点点洁癖的我来说，不清除这几个用户总是一件不太舒服的事情，于是就去网上找找命令，结果发现找到的资料还挺齐全，学到不少，记录下来，以免下次忘了。</p>
 
 <h3>who</h3>
@@ -97,19 +346,19 @@
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[vagrant笔记]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2012/12/11/vagrantbi-ji/"/>
+    <title type="html"><![CDATA[vagrant 笔记]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/12/11/vagrant-bi-ji/"/>
     <updated>2012-12-11T23:16:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2012/12/11/vagrantbi-ji</id>
+    <id>http://sailxjx.github.com/blog/blog/2012/12/11/vagrant-bi-ji</id>
     <content type="html"><![CDATA[<h2>从virtualbox开始</h2>
 ]]></content>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[gitlabhq部署小记]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2012/11/14/gitlabhqbu-shu-xiao-ji/"/>
+    <title type="html"><![CDATA[gitlabhq 部署小记]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji/"/>
     <updated>2012-11-14T20:12:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2012/11/14/gitlabhqbu-shu-xiao-ji</id>
+    <id>http://sailxjx.github.com/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji</id>
     <content type="html"><![CDATA[<p>冬天来了，不知github是不是也去冬眠了，速度慢的像在爬，没办法，屌丝买不起vps，只能自己内网部一套开源的。</p>
 
 <p>gitlabhq是github的一个开源版本，虽然不是官方的，但是已经做的有模有样，总之能想到的功能都已具备，放在国内随便改改UI就能上线建站的那种。安装文档那是写的相当滴详细，体现了码农罕有的耐性，查看文档请移步<a href="https://github.com/gitlabhq/gitlabhq/blob/master/doc/install/installation.md">gitlab文档</a></p>
@@ -340,10 +589,10 @@
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Mysql多实例启动]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2012/08/13/mysqlduo-shi-li-qi-dong/"/>
+    <title type="html"><![CDATA[Mysql 多实例启动]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/08/13/mysql-duo-shi-li-qi-dong/"/>
     <updated>2012-08-13T17:03:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2012/08/13/mysqlduo-shi-li-qi-dong</id>
+    <id>http://sailxjx.github.com/blog/blog/2012/08/13/mysql-duo-shi-li-qi-dong</id>
     <content type="html"><![CDATA[<p>当开发与生产环境在同一台机器上，或需要在一台机器上部署多套测试环境时，往往需要同时起多个mysqld进程，最近帮测试搭环境的时候就碰到了这样的问题。</p>
 
 <p>还是从安装mysql开始，下载tarball安装，</p>

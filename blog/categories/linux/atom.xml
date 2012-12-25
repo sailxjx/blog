@@ -4,7 +4,7 @@
   <title><![CDATA[Category: linux | novolander]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/linux/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2012-12-19T23:34:41+08:00</updated>
+  <updated>2012-12-25T23:27:23+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -14,10 +14,10 @@
 
   
   <entry>
-    <title type="html"><![CDATA[linux登录用户管理]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2012/12/19/linuxdeng-lu-yong-hu-guan-li/"/>
+    <title type="html"><![CDATA[linux 登录用户管理]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/12/19/linux-deng-lu-yong-hu-guan-li/"/>
     <updated>2012-12-19T22:35:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2012/12/19/linuxdeng-lu-yong-hu-guan-li</id>
+    <id>http://sailxjx.github.com/blog/blog/2012/12/19/linux-deng-lu-yong-hu-guan-li</id>
     <content type="html"><![CDATA[<p>最近换了mac后，需要在公司和家中多地登录，两地的ip又没有设置成一样的，结果每次切换ip就发现ssh到虚拟机的终端没响应了，再连上之后，之前登录的用户就永远活在虚拟机心中啦~当然这也没什么，但是作为有一点点洁癖的我来说，不清除这几个用户总是一件不太舒服的事情，于是就去网上找找命令，结果发现找到的资料还挺齐全，学到不少，记录下来，以免下次忘了。</p>
 
 <h3>who</h3>
@@ -106,10 +106,10 @@
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Mysql多实例启动]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2012/08/13/mysqlduo-shi-li-qi-dong/"/>
+    <title type="html"><![CDATA[Mysql 多实例启动]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2012/08/13/mysql-duo-shi-li-qi-dong/"/>
     <updated>2012-08-13T17:03:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2012/08/13/mysqlduo-shi-li-qi-dong</id>
+    <id>http://sailxjx.github.com/blog/blog/2012/08/13/mysql-duo-shi-li-qi-dong</id>
     <content type="html"><![CDATA[<p>当开发与生产环境在同一台机器上，或需要在一台机器上部署多套测试环境时，往往需要同时起多个mysqld进程，最近帮测试搭环境的时候就碰到了这样的问题。</p>
 
 <p>还是从安装mysql开始，下载tarball安装，</p>
