@@ -4,7 +4,7 @@
   <title><![CDATA[novolander]]></title>
   <link href="http://sailxjx.github.com/blog/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-01-05T09:46:40+08:00</updated>
+  <updated>2013-01-05T09:52:04+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,15 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[doubanclaim484d6a162388866e]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/01/05/doubanclaim484d6a162388866e/"/>
-    <updated>2013-01-05T09:44:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/01/05/doubanclaim484d6a162388866e</id>
-    <content type="html"><![CDATA[<p>doubanclaim484d6a162388866e</p>
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[nginx+php-fpm 配置记录]]></title>
