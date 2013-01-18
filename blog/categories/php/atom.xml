@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php | novolander]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/php/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-01-05T09:52:04+08:00</updated>
+  <updated>2013-01-18T18:08:06+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,393 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[PHP 验证码]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/01/13/php-yan-zheng-ma/"/>
+    <updated>2013-01-13T14:20:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/01/13/php-yan-zheng-ma</id>
+    <content type="html"><![CDATA[<p>gd是一个强大的php图像处理库，最近在做验证码加强的策略，才发现用php作图也能玩出很多花样来。</p>
+
+<h2>几个重要函数</h2>
+
+<ul>
+<li><a href="http://php.net/manual/en/function.imagecreatetruecolor.php">imagecreatetruecolor</a> 创建一张空的画布</li>
+<li><a href="http://cn2.php.net/manual/zh/function.imagecreatefrompng.php">imagecreatefrompng</a> 从文件创建一个图片句柄</li>
+<li><a href="http://cn2.php.net/manual/zh/function.imagecolorallocate.php">imagecolorallocate</a> 拾取一种颜色(rgb)</li>
+<li><a href="http://cn2.php.net/manual/zh/function.imagettftext.php">imagettftext</a> 向画布写入文字</li>
+<li><a href="http://cn2.php.net/manual/zh/function.imagecopy.php">imagecopy</a> 合并两张图片，可指定拷贝区域及大小</li>
+<li><a href="http://cn2.php.net/manual/zh/function.imagecolorat.php">imagecolorat</a> 从图片指定像素点拾取一种颜色</li>
+<li><a href="http://cn2.php.net/manual/zh/function.imagesetpixel.php">imagesetpixel</a> 画一个像素点</li>
+<li><a href="http://cn2.php.net/manual/zh/function.imagearc.php">imagearc</a> 画一个椭圆，截取部分可用来绘制曲线</li>
+</ul>
+
+
+<p>php绘图用的最频繁的地方大概就是生成验证码了，我们最常见的验证码数字加英文的组合，生成这种验证码很简单，下面几行代码就可以搞定</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php</span>
+</span><span class='line'><span class="x">public function genCode($n = 4) {&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;$dict = &#39;ABCDEFGHIJKLNMPQRSTUVWXYZ123456789&#39;;</span>
+</span><span class='line'><span class="x">$dictlen = strlen($dict);</span>
+</span><span class='line'><span class="x">$image = $this-&amp;gt;image;</span>
+</span><span class='line'><span class="x">$verify = &#39;&#39;;</span>
+</span><span class='line'><span class="x">$fontfile = $this-&amp;gt;sourcedir . $this-&amp;gt;fonts[0];</span>
+</span><span class='line'><span class="x">$colors = array(</span>
+</span><span class='line'><span class="x">    imagecolorallocate($image, 255, 0, 0) , //红</span>
+</span><span class='line'><span class="x">    imagecolorallocate($image, 0, 0, 255) , //蓝</span>
+</span><span class='line'><span class="x">    imagecolorallocate($image, 0, 0, 0) , //黑</span>
+</span><span class='line'><span class="x">);</span>
+</span><span class='line'><span class="x">for ($i = 0;$i &amp;lt; $n;$i++) {</span>
+</span><span class='line'><span class="x">    $verify.= $code = substr($dict, mt_rand(0, $dictlen - 1) , 1);</span>
+</span><span class='line'><span class="x">    imagettftext($image, 20, mt_rand(-15, 15) , ($i * 15) + 3, mt_rand(20, 25) , $colors[array_rand($colors) ], $fontfile, $code);</span>
+</span><span class='line'><span class="x">}</span>
+</span><span class='line'><span class="x">return $this;</span>
+</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;p&gt;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>效果图：</p>
+
+<blockquote><p><img src="/images/u/verify-code-simple.png" title="&#34;verify-code-simple&#34;" alt="&#34;verify-code-simple&#34;"></p></blockquote>
+
+<p>其中合并了一张纹理背景并随机绘制出文字的颜色。下面我们再加点料，</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php</span>
+</span><span class='line'><span class="x">public function addNoise($n = 50) {&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;$image = $this-&amp;gt;image;</span>
+</span><span class='line'><span class="x">$color = imagecolorallocate($image, 0, 0, 0);</span>
+</span><span class='line'><span class="x">for ($i = 0;$i &amp;lt; $n;$i++) { //噪声点</span>
+</span><span class='line'><span class="x">    imagesetpixel($image, mt_rand(0, $this-&amp;gt;width) , mt_rand(0, $this-&amp;gt;height) , $color);</span>
+</span><span class='line'><span class="x">}</span>
+</span><span class='line'><span class="x">return $this;</span>
+</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;p&gt;}</span>
+</span><span class='line'><span class="x">public function addLine($n = 1) {&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;$image = $this-&amp;gt;image;</span>
+</span><span class='line'><span class="x">$color = imagecolorallocate($image, 0, 0, 0);</span>
+</span><span class='line'><span class="x">for ($i = 0;$i &amp;lt; $n;$i++) {</span>
+</span><span class='line'><span class="x">    imagearc($image, rand(-10, $this-&amp;gt;width + 10) , rand(-10, 0) , rand($this-&amp;gt;width * 2 + 10, $this-&amp;gt;width * 2 + 40) , rand($this-&amp;gt;height, $this-&amp;gt;height + 20) , 0, 360, $color);</span>
+</span><span class='line'><span class="x">}</span>
+</span><span class='line'><span class="x">return $this;</span>
+</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;p&gt;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>上面的方法往图像中加入了50个噪点和一条干扰曲线，于是验证码变成了这样：</p>
+
+<blockquote><p><img src="/images/u/verify-code-noise.png" title="&#34;verify-code-noise&#34;" alt="&#34;verify-code-noise&#34;"></p></blockquote>
+
+<p>下面来实现汉字和带公式的验证码
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php</span>
+</span><span class='line'><span class="x">public function genHanzi($n = 2) {&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;$dict = &quot;的一是在了不和有大这主中人上为们地个用工时要&quot;;</span>
+</span><span class='line'><span class="x">$dictlen = mb_strlen($dict, &#39;UTF-8&#39;);</span>
+</span><span class='line'><span class="x">$image = $this-&amp;gt;image;</span>
+</span><span class='line'><span class="x">$fontfile = $this-&amp;gt;sourcedir . $this-&amp;gt;fonts[array_rand($this-&amp;gt;fonts) ];</span>
+</span><span class='line'><span class="x">$color = imagecolorallocate($image, 0, 0, 0);</span>
+</span><span class='line'><span class="x">$verify = &#39;&#39;;</span>
+</span><span class='line'><span class="x">for ($i = 0;$i &amp;lt; $n;$i++) {</span>
+</span><span class='line'><span class="x">    $verify.= $word = mb_substr($dict, mt_rand(0, $dictlen - 1) , 1, &#39;UTF-8&#39;);</span>
+</span><span class='line'><span class="x">    imagettftext($image, rand(18, 22) , rand(-20, 20) , 5 + $i * 25, 25, $color, $fontfile, $word);</span>
+</span><span class='line'><span class="x">}</span>
+</span><span class='line'><span class="x">$this-&amp;gt;verify = $verify;</span>
+</span><span class='line'><span class="x">return $this;</span>
+</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;p&gt;}&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;p&gt;public function genFomula() {&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;$symbols = array(</span>
+</span><span class='line'><span class="x">    &#39;＋&#39; =&amp;gt; &#39;+&#39;,&#39;－&#39; =&amp;gt; &#39;-&#39;,&#39;×&#39; =&amp;gt; &#39;*&#39;,&#39;加&#39; =&amp;gt; &#39;+&#39;,&#39;减&#39; =&amp;gt; &#39;-&#39;,&#39;乘&#39; =&amp;gt; &#39;*&#39;</span>
+</span><span class='line'><span class="x">);</span>
+</span><span class='line'><span class="x">$numbers = array(</span>
+</span><span class='line'><span class="x">    &#39;0&#39; =&amp;gt; 0,&#39;1&#39; =&amp;gt; 1,&#39;2&#39; =&amp;gt; 2,&#39;3&#39; =&amp;gt; 3,&#39;4&#39; =&amp;gt; 4,&#39;5&#39; =&amp;gt; 5，&#39;叁&#39; =&amp;gt; 3,&#39;肆&#39; =&amp;gt; 4,&#39;伍&#39; =&amp;gt; 5,&#39;陆&#39; =&amp;gt; 6,&#39;柒&#39; =&amp;gt; 7,&#39;捌&#39; =&amp;gt; 8,&#39;玖&#39; =&amp;gt; 9,</span>
+</span><span class='line'><span class="x">);</span>
+</span><span class='line'><span class="x">$image = $this-&amp;gt;image;</span>
+</span><span class='line'><span class="x">$fontfile = $this-&amp;gt;sourcedir . $this-&amp;gt;fonts[array_rand($this-&amp;gt;fonts) ];</span>
+</span><span class='line'><span class="x">$numidx1 = array_rand($numbers);</span>
+</span><span class='line'><span class="x">$num1 = $numbers[$numidx1];</span>
+</span><span class='line'><span class="x">$symbol = array_rand($symbols);</span>
+</span><span class='line'><span class="x">$color = imagecolorallocate($image, 0, 0, 0);</span>
+</span><span class='line'><span class="x">while (1) {</span>
+</span><span class='line'><span class="x">    $numidx2 = array_rand($numbers);</span>
+</span><span class='line'><span class="x">    $num2 = $numbers[$numidx2];</span>
+</span><span class='line'><span class="x">    if ($symbols[$symbol] != &#39;-&#39; || $num2 &amp;lt;= $num1) { //减法结果不为负数</span>
+</span><span class='line'><span class="x">        break;</span>
+</span><span class='line'><span class="x">    }</span>
+</span><span class='line'><span class="x">}</span>
+</span><span class='line'><span class="x">eval(&quot;\$verify = &quot; . &quot;$num1&quot; . $symbols[$symbol] . &quot;$num2;&quot;);</span>
+</span><span class='line'><span class="x">$verify = intval($verify);</span>
+</span><span class='line'><span class="x">$codelist = array(</span>
+</span><span class='line'><span class="x">    $numidx1,</span>
+</span><span class='line'><span class="x">    $symbol,</span>
+</span><span class='line'><span class="x">    $numidx2,</span>
+</span><span class='line'><span class="x">    &#39;=&#39;</span>
+</span><span class='line'><span class="x">);</span>
+</span><span class='line'><span class="x">foreach ($codelist as $i =&amp;gt; $code) {</span>
+</span><span class='line'><span class="x">    imagettftext($image, mt_rand(14, 16) , mt_rand(-15, 15) , ($i * 18) + 3, mt_rand(20, 25) , $color, $fontfile, $code);</span>
+</span><span class='line'><span class="x">}</span>
+</span><span class='line'><span class="x">return $this;</span>
+</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;p&gt;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>生成汉字和上面的英文组合差不多，加个字典就可以，然后可以加入一下随机的字体变换，生成公式呢，其实也是预先定义好数字和符号的字典，靠随机组合来生成图片，然后吧计算结果记录下来就行了。</p>
+
+<blockquote><p><img src="/images/u/verify-hanzi.png" title="&#34;verify-hanzi&#34;" alt="&#34;verify-hanzi&#34;">
+<img src="/images/u/verify-fomula.png" title="&#34;verify-fomula&#34;" alt="&#34;verify-fomula&#34;"></p></blockquote>
+
+<p>很多验证码中还会对字体进行扭曲，这会让做的人和看的人都比较纠结。目前的方法大致是先生成一张正常的图，然后拾取图中每个像素点进行正弦变换位置后填入另一张相同大小的图，注意两张图的背景需要一致，否则边缘的图片就很不和谐咯。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">public function twist() {&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;$distImage = imagecreatetruecolor($this-&amp;gt;width, $this-&amp;gt;height);</span>
+</span><span class='line'><span class="x">imagecopy($distImage, $this-&amp;gt;backimg, 0, 0, 0, 0, $this-&amp;gt;width, $this-&amp;gt;height);</span>
+</span><span class='line'><span class="x">for ($x = 0;$x &amp;lt; $this-&amp;gt;width;$x++) {</span>
+</span><span class='line'><span class="x">    for ($y = 0;$y &amp;lt; $this-&amp;gt;height;$y++) {</span>
+</span><span class='line'><span class="x">        $rgb = imagecolorat($this-&amp;gt;image, $x, $y);</span>
+</span><span class='line'><span class="x">        imagesetpixel($distImage, (int)($x + sin($y / $this-&amp;gt;height * 2 * M_PI - M_PI * 0.1) * 4) , $y, $rgb);</span>
+</span><span class='line'><span class="x">    }</span>
+</span><span class='line'><span class="x">}</span>
+</span><span class='line'><span class="x">$this-&amp;gt;image = $distImage;</span>
+</span><span class='line'><span class="x">return $this;</span>
+</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;p&gt;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>效果图：</p>
+
+<blockquote><p><img src="/images/u/verify-code-twist.png" title="&#34;verify-code-twist&#34;" alt="&#34;verify-code-twist&#34;"></p></blockquote>
+
+<p>最后再加入一个gif动态图的例子，主要原理是预先生成每一帧的gif图像，然后合并为一张图片，对gif进行编码的类库使用的是网上下载的GIFEncoder，代码不多，但是够用。<code>less is more</code>嘛。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">public function genCodeAnimate($n = 4, $flags = 40) {&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;$dict = &#39;ABCDEFGHIJKLNMPQRSTUVWXYZ123456789&#39;;</span>
+</span><span class='line'><span class="x">$dictlen = strlen($dict);</span>
+</span><span class='line'><span class="x">$verify = &#39;&#39;;</span>
+</span><span class='line'><span class="x">$fontfile = $this-&amp;gt;sourcedir . $this-&amp;gt;fonts[0];</span>
+</span><span class='line'><span class="x">$colors = array(</span>
+</span><span class='line'><span class="x">    imagecolorallocate($this-&amp;gt;image, 255, 0, 0) , //红</span>
+</span><span class='line'><span class="x">    imagecolorallocate($this-&amp;gt;image, 0, 0, 255) , //蓝</span>
+</span><span class='line'><span class="x">    imagecolorallocate($this-&amp;gt;image, 0, 0, 0) , //黑</span>
+</span><span class='line'><span class="x">);</span>
+</span><span class='line'><span class="x">$fontColors = array();</span>
+</span><span class='line'><span class="x">$fontSizes = array();</span>
+</span><span class='line'><span class="x">$gifs = array();</span>
+</span><span class='line'><span class="x">for ($i = 0;$i &amp;lt; $n;$i++) {</span>
+</span><span class='line'><span class="x">    $verify.= substr($dict, mt_rand(0, $dictlen - 1) , 1);</span>
+</span><span class='line'><span class="x">    $fontColors[$i] = $colors[array_rand($colors) ];</span>
+</span><span class='line'><span class="x">    $fontSizes[$i] = rand(18, 22);</span>
+</span><span class='line'><span class="x">}</span>
+</span><span class='line'><span class="x">for ($f = 0;$f &amp;lt; $flags;$f++) {</span>
+</span><span class='line'><span class="x">    $image = $this-&amp;gt;imgClone($this-&amp;gt;image);</span>
+</span><span class='line'><span class="x">    $angle = - 15 + abs($f - $flags / 2) * 2; //角度</span>
+</span><span class='line'><span class="x">    $y = 20 + abs($f - $flags / 2) * 0.5;</span>
+</span><span class='line'><span class="x">    for ($i = 0;$i &amp;lt; $n;$i++) {</span>
+</span><span class='line'><span class="x">        $code = substr($verify, $i, 1);</span>
+</span><span class='line'><span class="x">        imagettftext($image, $fontSizes[$i], $angle, ($i * 15) - 20 + abs($f - $flags / 2) * 5, $y, $fontColors[$i], $fontfile, $code);</span>
+</span><span class='line'><span class="x">    }</span>
+</span><span class='line'><span class="x">    header(&quot;Content-type: image/gif&quot;);</span>
+</span><span class='line'><span class="x">    imagegif($image);</span>
+</span><span class='line'><span class="x">    imagedestroy($image);</span>
+</span><span class='line'><span class="x">    $gifs[] = ob_get_contents();</span>
+</span><span class='line'><span class="x">    ob_clean();</span>
+</span><span class='line'><span class="x">}</span>
+</span><span class='line'><span class="x">ob_start();</span>
+</span><span class='line'><span class="x">$gifEncoder = new GIFEncoder($gifs, 100, 0, 1, 0, 0, 1, &#39;bin&#39;);</span>
+</span><span class='line'><span class="x">header(&#39;Content-type: image/gif&#39;);</span>
+</span><span class='line'><span class="x">echo $gifEncoder-&amp;gt;GetAnimation();</span>
+</span><span class='line'><span class="x">return $verify;</span>
+</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;p&gt;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>效果图：</p>
+
+<blockquote><p><img src="/images/u/verify-code-animate.gif" title="&#34;verify-code-animate&#34;" alt="&#34;verify-code-animate&#34;"></p></blockquote>
+
+<h2>备忘</h2>
+
+<ul>
+<li><code>imagecreate</code>也是一个创建图像的方法，不过相对于<code>imagecreatetruecolor</code>，它会使用第一次由<code>imagecolorallocate</code>生成的颜色作为背景色，比较坑爹，不推荐。</li>
+</ul>
+
+
+<h2>下载</h2>
+
+<ul>
+<li><a href="/patches/verify.zip">源码</a></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[nginx+php-fpm 配置记录]]></title>
