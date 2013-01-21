@@ -3,7 +3,7 @@ layout: post
 title: "awk 学习笔记(1)"
 date: 2013-01-16 21:46
 comments: true
-categories: [awk, note]
+categories: [awk, learn]
 ---
 
 ##第一个awk程序
@@ -41,9 +41,11 @@ BEGIN {
 ##使用正则表达式
 {% codeblock lang:bash %}
 $ awk '/^foo/ { print $0 }' BBS-list
+$ awk '/^foo/ { print $0 }
+> /foo/ { print $0 }' BBS-list
 {% endcodeblock %}
 
-上面的命令在BBS-list中匹配出所有以`foo`开头的行
+上面的命令在BBS-list中匹配出所有以`foo`开头的行，多个表达式可以用在同一行上，会将匹配结果打印在不同行上。
 
 ##有用的内置参数
 * FS    定义分隔符
