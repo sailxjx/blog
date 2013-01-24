@@ -132,18 +132,67 @@ $ awk &#39;BEGIN { print &quot;Here is a single quote &hellip;">
 <h2>使用正则表达式</h2>
 
 <figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;/^foo/ { print $0 }&#39;</span> BBS-list
+</span><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;/^foo/ { print $0 }</span>
+</span><span class='line'><span class="s1">&gt; /foo/ { print $0 }&#39;</span> BBS-list
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>上面的命令在BBS-list中匹配出所有以<code>foo</code>开头的行</p>
+<p>上面的命令在BBS-list中匹配出所有以<code>foo</code>开头的行，多个表达式可以用在同一行上，会将匹配结果打印在不同行上。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;{ if($1 ~ /foo$/) print $0 }&#39;</span> BBS-list
+</span><span class='line'>macfoo       555-6480     1200/300          A
+</span><span class='line'>sabafoo      555-2127     1200/300          C
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在变量上使用正则表达式，使用<code>~</code>或<code>!~</code>符号，能满足多数的应用。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;{ REGEXP = &quot;^foo&quot;; if($1 ~ REGEXP) print $0 }&#39;</span> BBS-list
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>动态的设置正则表达式，变量中需要省去两边的<code>/</code>。</p>
+
+<h2>BEGIN/END</h2>
+
+<p>开头和结尾的两块表达式，可以用来做一些全局参数设定和数据统计。</p>
 
 <h2>有用的内置参数</h2>
 
 <ul>
-<li>FS    定义分隔符</li>
-<li>OFS   定义输出分隔符</li>
-<li>NF    行数</li>
+<li>FS            定义分隔符</li>
+<li>OFS           定义输出分隔符</li>
+<li>NF            列数</li>
+<li>NR            行号</li>
+<li>RS            输入条目分隔符，awk按这个字符来将整个文本分成不同条记录(默认为&#8221;\n&#8221;)</li>
+<li>ORS           输出条目分隔符</li>
+<li>IGNORECASE=1  忽略大小写(只支持gawk)</li>
+<li>FIELDWIDTHS   指定每列的宽度(只支持gawk)，实际场景中貌似用处不大，除非原文本的格式本身就非常工整(每个field的字符数相等)，下面是<code>FS</code>变量可能会影响<code>FIELDWIDTHS</code>的地方</li>
+</ul>
+
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;BEGIN{FS = &quot;a&quot;;FIELDWIDTHS= &quot;4 4&quot;}{print $1, FS}&#39;</span> BBS-list <span class="c"># FS不生效</span>
+</span><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;BEGIN{FIELDWIDTHS= &quot;4 4&quot;;FS = &quot;a&quot;}{print $1, FS}&#39;</span> BBS-list <span class="c"># FIELDWIDTHS不生效</span>
+</span><span class='line'><span class="nv">$ </span>awk -Fa <span class="s1">&#39;BEGIN{FIELDWIDTHS= &quot;4 4&quot;}{print $1, FS}&#39;</span> BBS-list <span class="c"># FS不生效</span>
+</span><span class='line'><span class="c"># 总而言之，就是哪个在后，哪个就优先。</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>PROCINFO      内置数组，用于记录一些程序信息，包括分隔符类型，进程号，用户组等等</li>
+<li>FPAT          gawk特有的一个变量，不能与FS，FIELDWIDTHS共存，利用正则匹配出对应的field，手册中给出了一个常用的例子，匹配csv文件，<code>awk -vFPAT="([^,]+)|(\"[^\"]+\")" '{print "NF=",NF; for(i =1 ;i&lt;NF;i++){print $i}}' str.csv</code>，不过这种写法不够直观，也容易出错，用来应急可以，真刀真枪的干，还是求助其他语言吧</li>
+<li>OFMT          输出格式，默认为<code>%.6g</code>，这在格式化数字时比较有效，例如用<code>%.1f</code>就是输出四舍五入后的一位小数，而用<code>%i</code>就是输出整数了。</li>
 </ul>
 
 
@@ -153,10 +202,11 @@ $ awk &#39;BEGIN { print &quot;Here is a single quote &hellip;">
 <li>length($1)    计算字符串或数组长度</li>
 <li>srand()       生成随机数种子</li>
 <li>rand()        生成一个浮点随机数，需要跟srand配合</li>
+<li>tolower()     转小写</li>
+<li>toupper()     转大写</li>
+<li>sub()         <code>$ awk '{ sub(/foo/, "FOO"); print }' BBS-list</code>将foo字符串替换成FOO。</li>
 </ul>
 
-
-<h3><a href="http://www.gnu.org/software/gawk/manual/gawk.html#Statements_002fLines">wiki tag</a></h3>
 </div>
 
 
@@ -177,7 +227,7 @@ $ awk &#39;BEGIN { print &quot;Here is a single quote &hellip;">
 	<div class="tags">
 
 
-	<a class='category' href='/blog/blog/categories/awk/'>awk</a>, <a class='category' href='/blog/blog/categories/note/'>note</a>
+	<a class='category' href='/blog/blog/categories/awk/'>awk</a>, <a class='category' href='/blog/blog/categories/learn/'>learn</a>
 
 
 </div>
