@@ -4,7 +4,7 @@
   <title><![CDATA[Category: neo4j | novolander]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/neo4j/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-01-27T19:21:40+08:00</updated>
+  <updated>2013-01-30T18:09:32+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,116 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[node-neo4j 学习笔记]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji/"/>
+    <updated>2013-01-28T11:49:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji</id>
+    <content type="html"><![CDATA[<h2><a href="https://github.com/thingdom/node-neo4j">node-neo4j</a></h2>
+
+<h3>查找节点</h3>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">neo4j = </span><span class="nx">require</span> <span class="s">&#39;neo4j&#39;</span>
+</span><span class='line'><span class="nv">db = </span><span class="k">new</span> <span class="nx">neo4j</span><span class="p">.</span><span class="nx">GraphDatabase</span><span class="p">(</span><span class="s">&#39;http://localhost:7474&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">(err, node)-&gt;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="k">if</span> <span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">err</span>
+</span><span class='line'><span class="k">else</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">node</span><span class="p">.</span><span class="nx">data</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+查找节点的api设计的很有dom的风格，与大多数nodejs方法一样，node-neo4j提供的api都是异步的，回调函数中第一个参数都是错误流，第二个因方法而异，<code>getNodeById</code>中的第二个参数node是一个完整的json对象，在这个对象上可以使用node-neo4j针对node的所有方法，要取得或修改node中的成员则可以通过<code>node.data</code>获取。</p>
+
+<h3>创建关系</h3>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="err">创建节点</span><span class="o">&lt;/</span><span class="nx">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">(err, n1)-&gt;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">n2</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
+</span><span class='line'>   <span class="c1">#当前节点                 目标节点 关系类型 关系结构</span>
+</span><span class='line'>    <span class="nx">n2</span><span class="p">.</span><span class="nx">createRelationshipTo</span> <span class="nx">n1</span><span class="p">,</span> <span class="s">&#39;isdogof&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nv">ctime: </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()},</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">r</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="err">查找节点</span><span class="o">&lt;/</span><span class="nx">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">db</span><span class="p">.</span><span class="nx">getRelationshipById</span> <span class="mi">0</span><span class="p">,</span> <span class="nf">(err, rel)-&gt;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+目前通过<code>node-neo4j</code>创建关系只能在node上做文章，通过<code>createRelationshipFrom</code>和<code>createRelationshipTo</code>来创建点对点的关系。客户端的作者很坑爹的在Graphdatabase._coffee中声明了一个<code>createRelationship</code>方法，但是没有实现，调用这个方法是不会有任何效果的。</p>
+
+<h3>查询关系</h3>
+
+<p><code>node-neo4j</code>中声明了四种方式来获取关于某个节点的关系，分别是
+* node.getRelationships 获取与节点相关的所有关系
+* node.outgoing         获取以该节点为起点的关系
+* node.incoming         获取以该节点为终点的关系
+* node.all              同getRelationships
+这些方法最终都调用<code>_getRelationships</code>，虽然我们也能直接调用这个方法，不过既然人家已声明其为私有，那还是直接调用上面的方法比较好。下面举例：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">2</span><span class="p">,</span> <span class="nf">(err, nBran)-&gt;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">nSnow</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">nSnow</span><span class="p">.</span><span class="nx">incoming</span> <span class="s">&#39;islittlebrotherof&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">rel</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">data</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>假如关系类型(type)不存在或者没有关联到这个节点的关系，getRelationships返回rel为一个空数组。否则返回节点在这个类型的所有关系数组，<code>rel[0].data</code>则是获取关系的属性。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[初试图形数据库 neo4j]]></title>
@@ -129,6 +239,17 @@
 <span class='line-number'>21</span>
 <span class='line-number'>22</span>
 <span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'>&lt;/p&gt;
 </span><span class='line'>
 </span><span class='line'>&lt;h1&gt;创建两个节点的关系&lt;/h1&gt;
@@ -143,6 +264,17 @@
 </span><span class='line'>Relationships created: 1
 </span><span class='line'>20 ms&lt;/p&gt;
 </span><span class='line'>
+</span><span class='line'>&lt;h1&gt;查找关系&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">r</span> <span class="o">=</span> rel<span class="o">(</span>0<span class="o">)</span> <span class="k">return </span>r;  &lt;br/&gt;
+</span><span class='line'>+-----------------------------------+
+</span><span class='line'>| r                                 |
+</span><span class='line'>+-----------------------------------+
+</span><span class='line'>| :isdogof<span class="o">[</span>0<span class="o">]</span> <span class="o">{</span>ctime:1359365331933<span class="o">}</span> |
+</span><span class='line'>+-----------------------------------+
+</span><span class='line'>1 row
+</span><span class='line'>1 ms&lt;/p&gt;
+</span><span class='line'>
 </span><span class='line'>&lt;h1&gt;删除某节点和它的所有关系&lt;/h1&gt;
 </span><span class='line'>
 </span><span class='line'>&lt;p&gt;neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">n</span> <span class="o">=</span> node<span class="o">(</span>34<span class="o">)</span> MATCH n-<span class="o">[</span>r<span class="o">]</span>-<span class="o">()</span> DELETE n, r;
@@ -153,6 +285,8 @@
 </span><span class='line'>Relationships deleted: 3
 </span><span class='line'>3 ms
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>有意思的是注意其中<code>CREATE a-[r:knowns]-&gt;b</code>中的箭头走向表示这种关系的指向，我们可以通过<code>CREATE a&lt;-[r:knowns]-b</code>来创建一个b到a的关系，但是当我想用<code>CREATE a&lt;-[r:knowns]-&gt;b</code>来创建一个双向关系时却没有成功，仍然只创建了从a到b的关系。</p>
 
 <p>在自己看来，<code>Cypher Query Language</code>的增删改语句还是比较直观的，但是一旦牵涉到关系就有点没节操了，一句查询中一半的操作符，真是让人看花眼，相较之下还是sql发展的比较成熟，也更易为人所接受了。<a href="http://docs.neo4j.org/chunked/milestone/cypher-query-lang.html">更多的操作符和更多的语法</a></p>
 
@@ -203,6 +337,10 @@
 </span><span class='line'>
 </span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>备份数据库</h2>
+
+<p>之前造出了那么多的脏数据，有点洁癖的人都想要把数据清理一下吧。网上找了找，发现只有'enterprise'版才有export的功能，这不是明摆着鄙视我等屌丝么。在<a href="http://www.mail-archive.com/user@lists.neo4j.org/msg08932.html">这里</a>(翻墙可入)有兄台说了一个很暴力的办法，直接删除<code>data/graph.db</code>文件夹，我试了一下，确实可行，重启后世界干干净净，只剩下了0号node，果断再用<code>start n = node(0) delete n;</code>删除之。这大概也是nosql的好处，数据就是文件，取消了维护索引，关系等等的麻烦，随去随用，冷备份和迁移的时候也简单，直接copy文件夹即可。</p>
 
 <h2>参考文档</h2>
 

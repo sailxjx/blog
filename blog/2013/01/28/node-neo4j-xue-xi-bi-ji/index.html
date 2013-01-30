@@ -1,0 +1,251 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>node-neo4j 学习笔记 - novolander</title>
+	<meta name="author" content="tristan">
+
+	
+	<meta name="description" content="node-neo4j 查找节点 1
+2
+3
+4
+5
+6
+7
+neo4j = require &#39;neo4j&#39;
+db = new neo4j.GraphDatabase(&#39;http://localhost:7474&#39;)
+db.getNodeById 1, (err, &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="novolander" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">novolander</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/sailxjx?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h1 class="title">Node-neo4j 学习笔记</h1>
+	<div class="entry-content"><h2><a href="https://github.com/thingdom/node-neo4j">node-neo4j</a></h2>
+
+<h3>查找节点</h3>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">neo4j = </span><span class="nx">require</span> <span class="s">&#39;neo4j&#39;</span>
+</span><span class='line'><span class="nv">db = </span><span class="k">new</span> <span class="nx">neo4j</span><span class="p">.</span><span class="nx">GraphDatabase</span><span class="p">(</span><span class="s">&#39;http://localhost:7474&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">(err, node)-&gt;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">err</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">node</span><span class="p">.</span><span class="nx">data</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查找节点的api设计的很有dom的风格，与大多数nodejs方法一样，node-neo4j提供的api都是异步的，回调函数中第一个参数都是错误流，第二个因方法而异，<code>getNodeById</code>中的第二个参数node是一个完整的json对象，在这个对象上可以使用node-neo4j针对node的所有方法，要取得或修改node中的成员则可以通过<code>node.data</code>获取。</p>
+
+<h3>创建关系</h3>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="c1"># 创建节点</span>
+</span><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">(err, n1)-&gt;</span>
+</span><span class='line'>    <span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">2</span><span class="p">,</span> <span class="nf">(err, n2)-&gt;</span>
+</span><span class='line'>       <span class="c1">#当前节点                 目标节点 关系类型 关系结构</span>
+</span><span class='line'>        <span class="nx">n2</span><span class="p">.</span><span class="nx">createRelationshipTo</span> <span class="nx">n1</span><span class="p">,</span> <span class="s">&#39;isdogof&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nv">ctime: </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()},</span> <span class="nf">(err, r)-&gt;</span>
+</span><span class='line'>            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">r</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># 查找节点</span>
+</span><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getRelationshipById</span> <span class="mi">0</span><span class="p">,</span> <span class="nf">(err, rel)-&gt;</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>目前通过<code>node-neo4j</code>创建关系只能在node上做文章，通过<code>createRelationshipFrom</code>和<code>createRelationshipTo</code>来创建点对点的关系。客户端的作者很坑爹的在Graphdatabase._coffee中声明了一个<code>createRelationship</code>方法，但是没有实现，调用这个方法是不会有任何效果的。</p>
+
+<h3>查询关系</h3>
+
+<p><code>node-neo4j</code>中声明了四种方式来获取关于某个节点的关系，分别是
+* node.getRelationships 获取与节点相关的所有关系
+* node.outgoing         获取以该节点为起点的关系
+* node.incoming         获取以该节点为终点的关系
+* node.all              同getRelationships
+这些方法最终都调用<code>_getRelationships</code>，虽然我们也能直接调用这个方法，不过既然人家已声明其为私有，那还是直接调用上面的方法比较好。下面举例：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">2</span><span class="p">,</span> <span class="nf">(err, nBran)-&gt;</span>
+</span><span class='line'>    <span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">(err, nSnow)-&gt;</span>
+</span><span class='line'>        <span class="nx">nSnow</span><span class="p">.</span><span class="nx">incoming</span> <span class="s">&#39;islittlebrotherof&#39;</span><span class="p">,</span> <span class="nf">(err, rel)-&gt;</span>
+</span><span class='line'>            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">data</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>假如关系类型(type)不存在或者没有关联到这个节点的关系，getRelationships返回rel为一个空数组。否则返回节点在这个类型的所有关系数组，<code>rel[0].data</code>则是获取关系的属性。</p>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-28T11:49:00+08:00" pubdate data-updated="true">2013.01.28</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/learn/'>learn</a>, <a class='category' href='/blog/blog/categories/neo4j/'>neo4j</a>, <a class='category' href='/blog/blog/categories/nodejs/'>nodejs</a>
+
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2013
+
+    tristan
+
+</footer>
+	<script src="/blog/javascripts/slash.js"></script>
+<script src="/blog/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sailxjx.github.com/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji/';
+        var disqus_url = 'http://sailxjx.github.com/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33186961-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+
+</body>
+</html>

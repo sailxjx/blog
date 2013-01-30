@@ -7,7 +7,7 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content=" 2012.07.29 ">
+	<meta name="description" content=" 最近被zsh搞的够郁闷，Mark一下，好好翻翻文档，下周写出自己的自动补全脚本 2012.08.30 linux, zsh ">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -75,6 +75,292 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2012/08/30/zshzi-dong-bu-quan/">Zsh自动补全</a></h1>
+	<div class="entry-content">
+		<p>最近被zsh搞的够郁闷，Mark一下，好好翻翻文档，下周写出自己的自动补全脚本</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-30T18:15:00+08:00" pubdate data-updated="true">2012.08.30</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/blog/categories/zsh/'>zsh</a>
+
+
+</div>
+	
+</div></article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2012/08/13/mysql-duo-shi-li-qi-dong/">Mysql 多实例启动</a></h1>
+	<div class="entry-content">
+		<p>当开发与生产环境在同一台机器上，或需要在一台机器上部署多套测试环境时，往往需要同时起多个mysqld进程，最近帮测试搭环境的时候就碰到了这样的问题。</p>
+
+<p>还是从安装mysql开始，下载tarball安装，</p>
+
+<figure class='code'><figcaption><span>安装mysql  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>groupadd mysql
+</span><span class='line'>useradd -g mysql mysql
+</span><span class='line'>cmake . -DCMAKE_INSTALL_PREFIX<span class="o">=</span>/usr/local/mysql5.5.27/  -DMYSQL_DATADIR<span class="o">=</span>/data/mysql  -DWITH_INNOBASE_STORAGE_ENGINE<span class="o">=</span>1  -DMYSQL_TCP_PORT<span class="o">=</span>3306  -DMYSQL_UNIX_ADDR<span class="o">=</span>/var/run/mysql/mysql.sock -DWITH_DEBUG<span class="o">=</span>0
+</span><span class='line'>make <span class="o">&amp;&amp;</span> make install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后配置my.cnf，从support-files里面拷贝一个my-medium.cnf到/etc/my.cnf，里面mysqld配置段的内容基本是这个样子</p>
+
+<figure class='code'><figcaption><span>my&#46;cnf配置 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>[mysqld]
+</span><span class='line'>port            = 3306
+</span><span class='line'>socket          = /var/run/mysql/mysql.sock
+</span><span class='line'>skip-external-locking
+</span><span class='line'>key_buffer_size = 16M 
+</span><span class='line'>max_allowed_packet = 1M
+</span><span class='line'>table_open_cache = 64
+</span><span class='line'>sort_buffer_size = 512K
+</span><span class='line'>net_buffer_length = 8K
+</span><span class='line'>read_buffer_size = 256K
+</span><span class='line'>read_rnd_buffer_size = 512K
+</span><span class='line'>myisam_sort_buffer_size = 8M</span></code></pre></td></tr></table></div></figure>
+
+
+<p>默认mysqld只启动一个实例，既然我们的目的是启动多个mysqld实例，需要使用mysqld_multi。它是一个perl脚本，在使用之前，需要给my.cnf加一些料。</p>
+
+<figure class='code'><figcaption><span>my&#46;cnf配置[增加mysqld_mutli] </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># mysqld_multi会读取这个配置短的内容
+</span><span class='line'>[mysqld_multi] 
+</span><span class='line'>mysqld = /usr/local/mysql/bin/mysqld
+</span><span class='line'>mysqladmin = /usr/local/mysql/bin/mysqladmin
+</span><span class='line'>
+</span><span class='line'># 第一个mysqld实例
+</span><span class='line'>[mysqld1]
+</span><span class='line'>port = 3306
+</span><span class='line'>socket = /var/run/mysql/mysql1.sock
+</span><span class='line'>datadir = /data/mysql1
+</span><span class='line'>general-log-file = /var/log/mysql/error.log
+</span><span class='line'>skip-external-locking
+</span><span class='line'>key_buffer_size = 16M 
+</span><span class='line'>max_allowed_packet = 1M
+</span><span class='line'>table_open_cache = 64
+</span><span class='line'>sort_buffer_size = 512K
+</span><span class='line'>net_buffer_length = 8K
+</span><span class='line'>read_buffer_size = 256K
+</span><span class='line'>read_rnd_buffer_size = 512K
+</span><span class='line'>myisam_sort_buffer_size = 8M
+</span><span class='line'>log-bin=mysql-bin
+</span><span class='line'>binlog_format=mixed
+</span><span class='line'>server-id       = 1 
+</span><span class='line'>user = mysql
+</span><span class='line'>
+</span><span class='line'># 第二个mysqld实例
+</span><span class='line'>[mysqld2]
+</span><span class='line'>port = 3307
+</span><span class='line'>socket = /var/run/mysql/mysql2.sock
+</span><span class='line'>datadir = /data/mysql2
+</span><span class='line'>general-log-file = /var/log/mysql/error.log
+</span><span class='line'>skip-external-locking
+</span><span class='line'>key_buffer_size = 16M 
+</span><span class='line'>max_allowed_packet = 1M
+</span><span class='line'>table_open_cache = 64
+</span><span class='line'>sort_buffer_size = 512K
+</span><span class='line'>net_buffer_length = 8K
+</span><span class='line'>read_buffer_size = 256K
+</span><span class='line'>read_rnd_buffer_size = 512K
+</span><span class='line'>myisam_sort_buffer_size = 8M
+</span><span class='line'>log-bin=mysql-bin
+</span><span class='line'>binlog_format=mixed
+</span><span class='line'>server-id       = 1 
+</span><span class='line'>user = mysql</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后依配置创建mysql运行时文件夹并用mysql_install_db脚本初始化系统库</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mkdir -p /data/mysql1 /data/mysql2 /var/log/mysql /var/run/mysql
+</span><span class='line'>chgrp mysql /data/mysql* /var/log/mysql /var/run/mysql
+</span><span class='line'>chown mysql /data/mysql* /var/log/mysql /var/run/mysql
+</span><span class='line'>mysql_install_db --datadir<span class="o">=</span>/data/mysql1 --user<span class="o">=</span>mysql
+</span><span class='line'>mysql_install_db --datadir<span class="o">=</span>/data/mysql2 --user<span class="o">=</span>mysql
+</span><span class='line'>mysqld_multi start 1-2
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后一条命令其实已经将我们配置好的mysqld1和mysqld2启动了，这时候在进程表中应该能看到两个mysqld进程，试着用-P参数指定端口能分别访问在/data/mysql1和/data/mysql2下面的两个库，两者互不影响，正好能满足测试的要求。当然需要配置更多的实例也是可以的。</p>
+
+<h2 id="mysql_extra">额外收获</h2>
+
+
+<p>这次配置过程中还遇到一些额外的问题，记下来备忘。</p>
+
+<ul>
+<li>假如使用的是ubuntu(我目前的版本还是11.10)，默认会安装apparmor，这个软件是一个诡异的存在，它就像一个暗恋者，一直默默限制软件的访问权限，然后又不被系统待见，以至于我根本不知道它的存在。其实它是一个白名单，在/etc/apparmor.d/中指定了/usr/sbin/mysqld对各文件的访问权限，当我想将mysql的数据文件夹迁移到别的位置时，一直报这个错误</li>
+</ul>
+
+
+<p><code>Can't create test file /data/mysql1/littleboy.lower-test</code></p>
+
+<p>而令人费解的就是mysql对这些文件夹是有读写权限的，其实只需要编辑/etc/apparmor.d/usr.sbin.mysqld文件，依样画葫芦地为文件夹加上rw权限就可以了</p>
+
+<ul>
+<li>给mysql设置远程访问权限，只需要下面这条sql</li>
+</ul>
+
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">INSERT</span> <span class="n">mysql</span><span class="p">.</span><span class="k">user</span> <span class="p">(</span> <span class="o">`</span><span class="k">Host</span><span class="o">`</span><span class="p">,</span> <span class="o">`</span><span class="k">User</span><span class="o">`</span><span class="p">,</span> <span class="o">`</span><span class="n">Password</span><span class="o">`</span> <span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span> <span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">(</span><span class="s1">&#39;123456&#39;</span><span class="p">)</span> <span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中最关键的就是那个&#8217;%&#8217;，表示通过任意host均可以访问到本机的mysql</p>
+
+<ul>
+<li>给mysql设置密码。</li>
+</ul>
+
+
+<p><code>mysqladmin -u root -h 127.0.0.1 password 123456</code></p>
+
+<p>上面那种是在不登录mysql的情况下修改密码，还有两种可以通过改表的方式。见<a href="#mysql_refer">MySQL设置密码的三种方法</a></p>
+
+<p>修改过密码以后，mysqld_multi可能就不能通过默认配置来结束mysqld进程了，这时候需要在配置里加上用户名和密码</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>[mysqld_multi]
+</span><span class='line'>mysqld = /usr/local/mysql/bin/mysqld
+</span><span class='line'>mysqladmin = /usr/local/mysql/bin/mysqladmin
+</span><span class='line'>user = root
+</span><span class='line'>password = 123456</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当然这样可能会有一些安全隐患，因为my.cnf是可见的。假如是多人使用，可以将password这行去掉，每次操作mysqld_multi的时候，在后面加上<code>--password=123456</code>参数就行了</p>
+
+<h2 id="mysql_refer">参考资料</h2>
+
+
+<ul>
+<li><a href="http://www.neocanable.com/error-for-mysql-multi-and-mysql-install-db/">解决apparmor引起的报错1</a></li>
+<li><a href="http://ubuntuforums.org/showthread.php?t=1861136">解决apparmor引起的报错2</a></li>
+<li><a href="http://blog.csdn.net/magicbreaker/article/details/2392764">MySQL设置密码的三种方法</a></li>
+</ul>
+
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-13T17:03:00+08:00" pubdate data-updated="true">2012.08.13</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/blog/categories/mysql/'>mysql</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">

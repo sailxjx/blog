@@ -7,7 +7,11 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content="安装 作为一个java软件，就得充分发挥它Write Once, Run Anywhere的精神。直接下载tarball，解压后运行即可。官方还很贴心的提供了一个init脚本(./bin/neo4j)，链接到init.d下就可以开搞啦。 默认的服务实例在localhost:7474， &hellip;">
+	<meta name="description" content="最近看了一些REST API设计的文章，被http中的四种请求类型搞的晕头转向，记录一下，以免忘记。 准备工具 Chrome插件REST Console
+一个用于接收参数的php文件 1
+2
+&lt;?php
+print_r($_REQUEST); 开始 在通常的lamp开发中， &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -75,6 +79,217 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/01/30/get-post-put-delete-sha-sha-fen-bu-qing-chu/">Get Post Put Delete 傻傻分不清楚</a></h1>
+	<div class="entry-content">
+		<p>最近看了一些REST API设计的文章，被http中的四种请求类型搞的晕头转向，记录一下，以免忘记。</p>
+
+<h2>准备工具</h2>
+
+<ul>
+<li><a href="https://chrome.google.com/webstore/detail/rest-console/cokgbflfommojglbmbpenpphppikmonn?utm_source=chrome-ntp-icon">Chrome插件REST Console</a></li>
+<li>一个用于接收参数的php文件</li>
+</ul>
+
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="nb">print_r</span><span class="p">(</span><span class="nv">$_REQUEST</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>开始</h2>
+
+<p>在通常的lamp开发中，我们最常用到的两种类型是<code>GET</code>和<code>POST</code>，例如用户注册的表单我们会通过<code>POST</code>方式提交到服务器，而一般的ajax接口我们通过<code>GET</code>方式调用。另两种方式不常用，根据w3c关于http1.1的草案，<code>PUT</code>在对象存在的时候用于更新，不存在时与<code>POST</code>相同，用于新建，<code>DELETE</code>顾名思义就是删除对象了。</p>
+
+<p>这也解释了为什么我们在一般的web接口设计中(即使想尽量迎合<code>restful</code>)很少用到<code>PUT</code>和<code>DELETE</code>了，就拿用户账号来说，一般我们的服务器api清楚用户需要做什么，一般分为以下几种情况。</p>
+
+<ul>
+<li>注册： 用户初来乍到，肯定是新建资料，这个时候用<code>POST</code></li>
+<li>登录： 登录需要获取用户信息和密码，用<code>GET</code></li>
+<li>修改账户： 修改的操作比较纠结，按照<code>rest</code>的设计风格，应该用<code>PUT</code>，但是我们一般在服务器端会先做校验，而且当用户信息不存在的情况下不会主动去做创建的操作，而是返回错误信息，更重要的一点是，目前的表单中只支持<code>GET</code>和<code>POST</code>两种方式，所以这个时候一般还是用<code>POST</code>。</li>
+<li>注销账户： 注销账户的情况比较少，而且一般不会做硬删除(否则用户后悔了找上门来咋办捏~)，所以这个时候实质上还是更新的操作，那么同上，一般会使用<code>POST</code>。</li>
+</ul>
+
+
+<p>如此看来，<code>PUT</code>和<code>DELETE</code>岂不是没有用武之地了？在很多server-to-server的api设计中，这些请求方式还是很有用的，灵活利用，可以设计出优雅易读的web-api来，<a href="https://github.com/sofish">@sofish</a>在数月之前有一篇<a href="http://sofish.de/2100">博文</a>很好的解释这种设计的理念和优势。</p>
+
+<h2>application/x-www-form-urlencoded</h2>
+
+<p>为了对比<code>GET</code>和<code>POST</code>的异同，在测试过程中还有一个新发现。REST console中默认发送<code>application/x-www-form-urlencoded</code>这个请求头，于是在使用<code>POST</code>方式时，服务器端的php代码不能正确的获得参数，查看请求头，发现本来应该是<code>POST DATA</code>的地方变成了下面这样。</p>
+
+<blockquote><p>Request Payload
+url=http%3A%2F%2Fwww.google.com</p></blockquote>
+
+<p>google了一个这个<code>Request Payload</code>，找到了<a href="http://stackoverflow.com/questions/9597052/how-to-retrieve-request-payload">stackoverflow君</a>，大意是说假如header中没有<code>application/x-www-form-urlencoded</code>的话，参数不是通过表单项来传递，而是作为request body的一部分。我们的server比较死板，自然认不出这些马甲咯。</p>
+
+<h2>安全与幂等</h2>
+
+<p><a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">w3c关于http method的定义</a>中有一段犹如天书一样的文字，解释了各种方式之间的异同，其中提到了<code>安全</code>与<code>幂等</code>两个概念，大致可以做如下解释。</p>
+
+<ul>
+<li>安全性： api的目的只是从服务器获取数据，无任何新建或更新操作，就认为是安全的。例如<code>GET</code>和<code>HEAD</code></li>
+<li>幂等性： 这个比较难解释的，概括一下可以说是不管一个api调用多少次，返回的结果应该都是唯一的。比如设计的比较规范的<code>GET</code>和<code>DELETE</code>接口。</li>
+</ul>
+
+
+<h2>rest api的效率问题</h2>
+
+<p>api的效率其实就是http的效率，可以用一个例子来说明。</p>
+
+<p>redis是一个高性能的nosql数据库，但是没有提供rest api。通过tcp连接redis读写效率快的没话说，可是假如对外提供api则需要通过php等客户端做中间件。一次请求需要经过<code>http request-&gt;nginx-&gt;php-&gt;redis</code>层层深入，才能到达最终目标，降低了效率，<a href="https://github.com/nicolasff/webdis">webdis</a>则通过提供redis的rest api将流程简化成了<code>http request-&gt;webdis-&gt;redis</code>，省去了中间的周折，效率自然也就上去了。</p>
+
+<h2>所有method类型</h2>
+
+<p><a href="http://hc.apache.org/httpclient-3.x/apidocs/org/apache/commons/httpclient/HttpMethod.html">apache的interface httpmethod</a>中列举了所有已知的类型，林林总总加起来有十多项了，可以作为一个查询的索引。不过最常用的应该还是<code>GET</code>，<code>POST</code>，<code>PUT</code>，<code>DELETE</code>四种了。</p>
+
+<h2>参考资料</h2>
+
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/Representational_state_transfer#RESTful_web_services">RESTful_web_services</a></li>
+<li><a href="http://sofish.de/2100">让牛懂琴 by sofish</a></li>
+<li><a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">rfc2616</a></li>
+<li><a href="http://coolshell.cn/articles/4787.html">HTTP幂等性概念和应用 by </a></li>
+<li><a href="http://hc.apache.org/httpclient-3.x/apidocs/org/apache/commons/httpclient/HttpMethod.html">Interface HttpMethod</a></li>
+</ul>
+
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-30T12:41:00+08:00" pubdate data-updated="true">2013.01.30</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/http/'>http</a>, <a class='category' href='/blog/blog/categories/rest/'>rest</a>
+
+
+</div>
+	
+</div></article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji/">Node-neo4j 学习笔记</a></h1>
+	<div class="entry-content">
+		<h2><a href="https://github.com/thingdom/node-neo4j">node-neo4j</a></h2>
+
+<h3>查找节点</h3>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">neo4j = </span><span class="nx">require</span> <span class="s">&#39;neo4j&#39;</span>
+</span><span class='line'><span class="nv">db = </span><span class="k">new</span> <span class="nx">neo4j</span><span class="p">.</span><span class="nx">GraphDatabase</span><span class="p">(</span><span class="s">&#39;http://localhost:7474&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">(err, node)-&gt;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">err</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">node</span><span class="p">.</span><span class="nx">data</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查找节点的api设计的很有dom的风格，与大多数nodejs方法一样，node-neo4j提供的api都是异步的，回调函数中第一个参数都是错误流，第二个因方法而异，<code>getNodeById</code>中的第二个参数node是一个完整的json对象，在这个对象上可以使用node-neo4j针对node的所有方法，要取得或修改node中的成员则可以通过<code>node.data</code>获取。</p>
+
+<h3>创建关系</h3>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="c1"># 创建节点</span>
+</span><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">(err, n1)-&gt;</span>
+</span><span class='line'>    <span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">2</span><span class="p">,</span> <span class="nf">(err, n2)-&gt;</span>
+</span><span class='line'>       <span class="c1">#当前节点                 目标节点 关系类型 关系结构</span>
+</span><span class='line'>        <span class="nx">n2</span><span class="p">.</span><span class="nx">createRelationshipTo</span> <span class="nx">n1</span><span class="p">,</span> <span class="s">&#39;isdogof&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nv">ctime: </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()},</span> <span class="nf">(err, r)-&gt;</span>
+</span><span class='line'>            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">r</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># 查找节点</span>
+</span><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getRelationshipById</span> <span class="mi">0</span><span class="p">,</span> <span class="nf">(err, rel)-&gt;</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>目前通过<code>node-neo4j</code>创建关系只能在node上做文章，通过<code>createRelationshipFrom</code>和<code>createRelationshipTo</code>来创建点对点的关系。客户端的作者很坑爹的在Graphdatabase._coffee中声明了一个<code>createRelationship</code>方法，但是没有实现，调用这个方法是不会有任何效果的。</p>
+
+<h3>查询关系</h3>
+
+<p><code>node-neo4j</code>中声明了四种方式来获取关于某个节点的关系，分别是
+* node.getRelationships 获取与节点相关的所有关系
+* node.outgoing         获取以该节点为起点的关系
+* node.incoming         获取以该节点为终点的关系
+* node.all              同getRelationships
+这些方法最终都调用<code>_getRelationships</code>，虽然我们也能直接调用这个方法，不过既然人家已声明其为私有，那还是直接调用上面的方法比较好。下面举例：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">2</span><span class="p">,</span> <span class="nf">(err, nBran)-&gt;</span>
+</span><span class='line'>    <span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">(err, nSnow)-&gt;</span>
+</span><span class='line'>        <span class="nx">nSnow</span><span class="p">.</span><span class="nx">incoming</span> <span class="s">&#39;islittlebrotherof&#39;</span><span class="p">,</span> <span class="nf">(err, rel)-&gt;</span>
+</span><span class='line'>            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">data</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>假如关系类型(type)不存在或者没有关联到这个节点的关系，getRelationships返回rel为一个空数组。否则返回节点在这个类型的所有关系数组，<code>rel[0].data</code>则是获取关系的属性。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-28T11:49:00+08:00" pubdate data-updated="true">2013.01.28</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/learn/'>learn</a>, <a class='category' href='/blog/blog/categories/neo4j/'>neo4j</a>, <a class='category' href='/blog/blog/categories/nodejs/'>nodejs</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -173,6 +388,15 @@
 <span class='line-number'>16</span>
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># 创建两个节点的关系</span>
 </span><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">a</span> <span class="o">=</span> node<span class="o">(</span>34<span class="o">)</span>, <span class="nv">b</span> <span class="o">=</span> node<span class="o">(</span>36<span class="o">)</span> CREATE a-<span class="o">[</span>r:knowns<span class="o">]</span>-&gt;b RETURN r;
 </span><span class='line'>+---------------+
@@ -183,6 +407,15 @@
 </span><span class='line'>1 row
 </span><span class='line'>Relationships created: 1
 </span><span class='line'>20 ms
+</span><span class='line'><span class="c"># 查找关系</span>
+</span><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">r</span> <span class="o">=</span> rel<span class="o">(</span>0<span class="o">)</span> <span class="k">return </span>r;
+</span><span class='line'>+-----------------------------------+
+</span><span class='line'>| r                                 |
+</span><span class='line'>+-----------------------------------+
+</span><span class='line'>| :isdogof<span class="o">[</span>0<span class="o">]</span> <span class="o">{</span>ctime:1359365331933<span class="o">}</span> |
+</span><span class='line'>+-----------------------------------+
+</span><span class='line'>1 row
+</span><span class='line'>1 ms
 </span><span class='line'><span class="c"># 删除某节点和它的所有关系</span>
 </span><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">n</span> <span class="o">=</span> node<span class="o">(</span>34<span class="o">)</span> MATCH n-<span class="o">[</span>r<span class="o">]</span>-<span class="o">()</span> DELETE n, r;
 </span><span class='line'>+-------------------+
@@ -193,6 +426,8 @@
 </span><span class='line'>3 ms
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p>有意思的是注意其中<code>CREATE a-[r:knowns]-&gt;b</code>中的箭头走向表示这种关系的指向，我们可以通过<code>CREATE a&lt;-[r:knowns]-b</code>来创建一个b到a的关系，但是当我想用<code>CREATE a&lt;-[r:knowns]-&gt;b</code>来创建一个双向关系时却没有成功，仍然只创建了从a到b的关系。</p>
 
 <p>在自己看来，<code>Cypher Query Language</code>的增删改语句还是比较直观的，但是一旦牵涉到关系就有点没节操了，一句查询中一半的操作符，真是让人看花眼，相较之下还是sql发展的比较成熟，也更易为人所接受了。<a href="http://docs.neo4j.org/chunked/milestone/cypher-query-lang.html">更多的操作符和更多的语法</a></p>
 
@@ -230,6 +465,10 @@
 </span><span class='line'>    <span class="nx">node</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>             <span class="c1">#不要忘了再次保存</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<h2>备份数据库</h2>
+
+<p>之前造出了那么多的脏数据，有点洁癖的人都想要把数据清理一下吧。网上找了找，发现只有&#8217;enterprise&#8217;版才有export的功能，这不是明摆着鄙视我等屌丝么。在<a href="http://www.mail-archive.com/user@lists.neo4j.org/msg08932.html">这里</a>(翻墙可入)有兄台说了一个很暴力的办法，直接删除<code>data/graph.db</code>文件夹，我试了一下，确实可行，重启后世界干干净净，只剩下了0号node，果断再用<code>start n = node(0) delete n;</code>删除之。这大概也是nosql的好处，数据就是文件，取消了维护索引，关系等等的麻烦，随去随用，冷备份和迁移的时候也简单，直接copy文件夹即可。</p>
 
 <h2>参考文档</h2>
 
@@ -376,6 +615,15 @@
 <h2>I/O</h2>
 
 <p>awk可以用<code>&gt;</code>,<code>&gt;&gt;</code>,<code>|</code>将输出定向到文件或管道，但需要注意的是后面的文件名或命令都需要用双引号包起来。</p>
+
+<h2>switch</h2>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>top -bn1|grep java|grep -v grep|awk <span class="s1">&#39;{ switch ($6) { case /m$/: print $6*1024;break; default: print $6; } }&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>switch语句与C中相同，注意break的使用。此外，在兼容模式下不可用。</p>
 
 <h2>man tag</h2>
 
@@ -1604,292 +1852,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/dev/'>dev</a>, <a class='category' href='/blog/blog/categories/git/'>git</a>, <a class='category' href='/blog/blog/categories/gitlab/'>gitlab</a>, <a class='category' href='/blog/blog/categories/software/'>software</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/08/30/zshzi-dong-bu-quan/">Zsh自动补全</a></h1>
-	<div class="entry-content">
-		<p>最近被zsh搞的够郁闷，Mark一下，好好翻翻文档，下周写出自己的自动补全脚本</p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-30T18:15:00+08:00" pubdate data-updated="true">2012.08.30</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/blog/categories/zsh/'>zsh</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/08/13/mysql-duo-shi-li-qi-dong/">Mysql 多实例启动</a></h1>
-	<div class="entry-content">
-		<p>当开发与生产环境在同一台机器上，或需要在一台机器上部署多套测试环境时，往往需要同时起多个mysqld进程，最近帮测试搭环境的时候就碰到了这样的问题。</p>
-
-<p>还是从安装mysql开始，下载tarball安装，</p>
-
-<figure class='code'><figcaption><span>安装mysql  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>groupadd mysql
-</span><span class='line'>useradd -g mysql mysql
-</span><span class='line'>cmake . -DCMAKE_INSTALL_PREFIX<span class="o">=</span>/usr/local/mysql5.5.27/  -DMYSQL_DATADIR<span class="o">=</span>/data/mysql  -DWITH_INNOBASE_STORAGE_ENGINE<span class="o">=</span>1  -DMYSQL_TCP_PORT<span class="o">=</span>3306  -DMYSQL_UNIX_ADDR<span class="o">=</span>/var/run/mysql/mysql.sock -DWITH_DEBUG<span class="o">=</span>0
-</span><span class='line'>make <span class="o">&amp;&amp;</span> make install
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后配置my.cnf，从support-files里面拷贝一个my-medium.cnf到/etc/my.cnf，里面mysqld配置段的内容基本是这个样子</p>
-
-<figure class='code'><figcaption><span>my&#46;cnf配置 </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>[mysqld]
-</span><span class='line'>port            = 3306
-</span><span class='line'>socket          = /var/run/mysql/mysql.sock
-</span><span class='line'>skip-external-locking
-</span><span class='line'>key_buffer_size = 16M 
-</span><span class='line'>max_allowed_packet = 1M
-</span><span class='line'>table_open_cache = 64
-</span><span class='line'>sort_buffer_size = 512K
-</span><span class='line'>net_buffer_length = 8K
-</span><span class='line'>read_buffer_size = 256K
-</span><span class='line'>read_rnd_buffer_size = 512K
-</span><span class='line'>myisam_sort_buffer_size = 8M</span></code></pre></td></tr></table></div></figure>
-
-
-<p>默认mysqld只启动一个实例，既然我们的目的是启动多个mysqld实例，需要使用mysqld_multi。它是一个perl脚本，在使用之前，需要给my.cnf加一些料。</p>
-
-<figure class='code'><figcaption><span>my&#46;cnf配置[增加mysqld_mutli] </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'># mysqld_multi会读取这个配置短的内容
-</span><span class='line'>[mysqld_multi] 
-</span><span class='line'>mysqld = /usr/local/mysql/bin/mysqld
-</span><span class='line'>mysqladmin = /usr/local/mysql/bin/mysqladmin
-</span><span class='line'>
-</span><span class='line'># 第一个mysqld实例
-</span><span class='line'>[mysqld1]
-</span><span class='line'>port = 3306
-</span><span class='line'>socket = /var/run/mysql/mysql1.sock
-</span><span class='line'>datadir = /data/mysql1
-</span><span class='line'>general-log-file = /var/log/mysql/error.log
-</span><span class='line'>skip-external-locking
-</span><span class='line'>key_buffer_size = 16M 
-</span><span class='line'>max_allowed_packet = 1M
-</span><span class='line'>table_open_cache = 64
-</span><span class='line'>sort_buffer_size = 512K
-</span><span class='line'>net_buffer_length = 8K
-</span><span class='line'>read_buffer_size = 256K
-</span><span class='line'>read_rnd_buffer_size = 512K
-</span><span class='line'>myisam_sort_buffer_size = 8M
-</span><span class='line'>log-bin=mysql-bin
-</span><span class='line'>binlog_format=mixed
-</span><span class='line'>server-id       = 1 
-</span><span class='line'>user = mysql
-</span><span class='line'>
-</span><span class='line'># 第二个mysqld实例
-</span><span class='line'>[mysqld2]
-</span><span class='line'>port = 3307
-</span><span class='line'>socket = /var/run/mysql/mysql2.sock
-</span><span class='line'>datadir = /data/mysql2
-</span><span class='line'>general-log-file = /var/log/mysql/error.log
-</span><span class='line'>skip-external-locking
-</span><span class='line'>key_buffer_size = 16M 
-</span><span class='line'>max_allowed_packet = 1M
-</span><span class='line'>table_open_cache = 64
-</span><span class='line'>sort_buffer_size = 512K
-</span><span class='line'>net_buffer_length = 8K
-</span><span class='line'>read_buffer_size = 256K
-</span><span class='line'>read_rnd_buffer_size = 512K
-</span><span class='line'>myisam_sort_buffer_size = 8M
-</span><span class='line'>log-bin=mysql-bin
-</span><span class='line'>binlog_format=mixed
-</span><span class='line'>server-id       = 1 
-</span><span class='line'>user = mysql</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后依配置创建mysql运行时文件夹并用mysql_install_db脚本初始化系统库</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mkdir -p /data/mysql1 /data/mysql2 /var/log/mysql /var/run/mysql
-</span><span class='line'>chgrp mysql /data/mysql* /var/log/mysql /var/run/mysql
-</span><span class='line'>chown mysql /data/mysql* /var/log/mysql /var/run/mysql
-</span><span class='line'>mysql_install_db --datadir<span class="o">=</span>/data/mysql1 --user<span class="o">=</span>mysql
-</span><span class='line'>mysql_install_db --datadir<span class="o">=</span>/data/mysql2 --user<span class="o">=</span>mysql
-</span><span class='line'>mysqld_multi start 1-2
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后一条命令其实已经将我们配置好的mysqld1和mysqld2启动了，这时候在进程表中应该能看到两个mysqld进程，试着用-P参数指定端口能分别访问在/data/mysql1和/data/mysql2下面的两个库，两者互不影响，正好能满足测试的要求。当然需要配置更多的实例也是可以的。</p>
-
-<h2 id="mysql_extra">额外收获</h2>
-
-
-<p>这次配置过程中还遇到一些额外的问题，记下来备忘。</p>
-
-<ul>
-<li>假如使用的是ubuntu(我目前的版本还是11.10)，默认会安装apparmor，这个软件是一个诡异的存在，它就像一个暗恋者，一直默默限制软件的访问权限，然后又不被系统待见，以至于我根本不知道它的存在。其实它是一个白名单，在/etc/apparmor.d/中指定了/usr/sbin/mysqld对各文件的访问权限，当我想将mysql的数据文件夹迁移到别的位置时，一直报这个错误</li>
-</ul>
-
-
-<p><code>Can't create test file /data/mysql1/littleboy.lower-test</code></p>
-
-<p>而令人费解的就是mysql对这些文件夹是有读写权限的，其实只需要编辑/etc/apparmor.d/usr.sbin.mysqld文件，依样画葫芦地为文件夹加上rw权限就可以了</p>
-
-<ul>
-<li>给mysql设置远程访问权限，只需要下面这条sql</li>
-</ul>
-
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">INSERT</span> <span class="n">mysql</span><span class="p">.</span><span class="k">user</span> <span class="p">(</span> <span class="o">`</span><span class="k">Host</span><span class="o">`</span><span class="p">,</span> <span class="o">`</span><span class="k">User</span><span class="o">`</span><span class="p">,</span> <span class="o">`</span><span class="n">Password</span><span class="o">`</span> <span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span> <span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">(</span><span class="s1">&#39;123456&#39;</span><span class="p">)</span> <span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其中最关键的就是那个&#8217;%&#8217;，表示通过任意host均可以访问到本机的mysql</p>
-
-<ul>
-<li>给mysql设置密码。</li>
-</ul>
-
-
-<p><code>mysqladmin -u root -h 127.0.0.1 password 123456</code></p>
-
-<p>上面那种是在不登录mysql的情况下修改密码，还有两种可以通过改表的方式。见<a href="#mysql_refer">MySQL设置密码的三种方法</a></p>
-
-<p>修改过密码以后，mysqld_multi可能就不能通过默认配置来结束mysqld进程了，这时候需要在配置里加上用户名和密码</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>[mysqld_multi]
-</span><span class='line'>mysqld = /usr/local/mysql/bin/mysqld
-</span><span class='line'>mysqladmin = /usr/local/mysql/bin/mysqladmin
-</span><span class='line'>user = root
-</span><span class='line'>password = 123456</span></code></pre></td></tr></table></div></figure>
-
-
-<p>当然这样可能会有一些安全隐患，因为my.cnf是可见的。假如是多人使用，可以将password这行去掉，每次操作mysqld_multi的时候，在后面加上<code>--password=123456</code>参数就行了</p>
-
-<h2 id="mysql_refer">参考资料</h2>
-
-
-<ul>
-<li><a href="http://www.neocanable.com/error-for-mysql-multi-and-mysql-install-db/">解决apparmor引起的报错1</a></li>
-<li><a href="http://ubuntuforums.org/showthread.php?t=1861136">解决apparmor引起的报错2</a></li>
-<li><a href="http://blog.csdn.net/magicbreaker/article/details/2392764">MySQL设置密码的三种方法</a></li>
-</ul>
-
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-08-13T17:03:00+08:00" pubdate data-updated="true">2012.08.13</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/blog/categories/mysql/'>mysql</a>
 
 
 </div>

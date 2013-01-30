@@ -4,7 +4,7 @@
   <title><![CDATA[Category: awk | novolander]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/awk/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-01-27T19:21:40+08:00</updated>
+  <updated>2013-01-30T18:09:32+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -120,6 +120,13 @@
 <h2>I/O</h2>
 
 <p>awk可以用<code>&gt;</code>,<code>&gt;&gt;</code>,<code>|</code>将输出定向到文件或管道，但需要注意的是后面的文件名或命令都需要用双引号包起来。</p>
+
+<h2>switch</h2>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>top -bn1|grep java|grep -v grep|awk <span class="s1">&#39;{ switch ($6) { case /m$/: print $6*1024;break; default: print $6; } }&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+switch语句与C中相同，注意break的使用。此外，在兼容模式下不可用。</p>
 
 <h2>man tag</h2>
 

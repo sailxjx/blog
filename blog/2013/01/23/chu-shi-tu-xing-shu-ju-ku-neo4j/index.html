@@ -169,6 +169,15 @@
 <span class='line-number'>16</span>
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># 创建两个节点的关系</span>
 </span><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">a</span> <span class="o">=</span> node<span class="o">(</span>34<span class="o">)</span>, <span class="nv">b</span> <span class="o">=</span> node<span class="o">(</span>36<span class="o">)</span> CREATE a-<span class="o">[</span>r:knowns<span class="o">]</span>-&gt;b RETURN r;
 </span><span class='line'>+---------------+
@@ -179,6 +188,15 @@
 </span><span class='line'>1 row
 </span><span class='line'>Relationships created: 1
 </span><span class='line'>20 ms
+</span><span class='line'><span class="c"># 查找关系</span>
+</span><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">r</span> <span class="o">=</span> rel<span class="o">(</span>0<span class="o">)</span> <span class="k">return </span>r;
+</span><span class='line'>+-----------------------------------+
+</span><span class='line'>| r                                 |
+</span><span class='line'>+-----------------------------------+
+</span><span class='line'>| :isdogof<span class="o">[</span>0<span class="o">]</span> <span class="o">{</span>ctime:1359365331933<span class="o">}</span> |
+</span><span class='line'>+-----------------------------------+
+</span><span class='line'>1 row
+</span><span class='line'>1 ms
 </span><span class='line'><span class="c"># 删除某节点和它的所有关系</span>
 </span><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">n</span> <span class="o">=</span> node<span class="o">(</span>34<span class="o">)</span> MATCH n-<span class="o">[</span>r<span class="o">]</span>-<span class="o">()</span> DELETE n, r;
 </span><span class='line'>+-------------------+
@@ -189,6 +207,8 @@
 </span><span class='line'>3 ms
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p>有意思的是注意其中<code>CREATE a-[r:knowns]-&gt;b</code>中的箭头走向表示这种关系的指向，我们可以通过<code>CREATE a&lt;-[r:knowns]-b</code>来创建一个b到a的关系，但是当我想用<code>CREATE a&lt;-[r:knowns]-&gt;b</code>来创建一个双向关系时却没有成功，仍然只创建了从a到b的关系。</p>
 
 <p>在自己看来，<code>Cypher Query Language</code>的增删改语句还是比较直观的，但是一旦牵涉到关系就有点没节操了，一句查询中一半的操作符，真是让人看花眼，相较之下还是sql发展的比较成熟，也更易为人所接受了。<a href="http://docs.neo4j.org/chunked/milestone/cypher-query-lang.html">更多的操作符和更多的语法</a></p>
 
@@ -226,6 +246,10 @@
 </span><span class='line'>    <span class="nx">node</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>             <span class="c1">#不要忘了再次保存</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<h2>备份数据库</h2>
+
+<p>之前造出了那么多的脏数据，有点洁癖的人都想要把数据清理一下吧。网上找了找，发现只有&#8217;enterprise&#8217;版才有export的功能，这不是明摆着鄙视我等屌丝么。在<a href="http://www.mail-archive.com/user@lists.neo4j.org/msg08932.html">这里</a>(翻墙可入)有兄台说了一个很暴力的办法，直接删除<code>data/graph.db</code>文件夹，我试了一下，确实可行，重启后世界干干净净，只剩下了0号node，果断再用<code>start n = node(0) delete n;</code>删除之。这大概也是nosql的好处，数据就是文件，取消了维护索引，关系等等的麻烦，随去随用，冷备份和迁移的时候也简单，直接copy文件夹即可。</p>
 
 <h2>参考文档</h2>
 
