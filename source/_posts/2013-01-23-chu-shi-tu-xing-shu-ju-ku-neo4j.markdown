@@ -61,6 +61,15 @@ neo4j-sh (?)$ START a = node(34), b = node(36) CREATE a-[r:knowns]->b RETURN r;
 1 row
 Relationships created: 1
 20 ms
+# 查找关系
+neo4j-sh (?)$ start r = rel(0) return r;    
++-----------------------------------+
+| r                                 |
++-----------------------------------+
+| :isdogof[0] {ctime:1359365331933} |
++-----------------------------------+
+1 row
+1 ms
 # 删除某节点和它的所有关系
 neo4j-sh (?)$ START n = node(34) MATCH n-[r]-() DELETE n, r;
 +-------------------+
@@ -70,6 +79,8 @@ Nodes deleted: 1
 Relationships deleted: 3
 3 ms
 {% endcodeblock %}
+
+有意思的是注意其中`CREATE a-[r:knowns]->b`中的箭头走向表示这种关系的指向，我们可以通过`CREATE a<-[r:knowns]-b`来创建一个b到a的关系，但是当我想用`CREATE a<-[r:knowns]->b`来创建一个双向关系时却没有成功，仍然只创建了从a到b的关系。
 
 在自己看来，`Cypher Query Language`的增删改语句还是比较直观的，但是一旦牵涉到关系就有点没节操了，一句查询中一半的操作符，真是让人看花眼，相较之下还是sql发展的比较成熟，也更易为人所接受了。[更多的操作符和更多的语法](http://docs.neo4j.org/chunked/milestone/cypher-query-lang.html)
 
@@ -93,6 +104,9 @@ node.save (err, node)->       #需要save才能真正的保存这个节点到数
     }
     node.save()             #不要忘了再次保存
 {% endcodeblock %}
+
+##备份数据库
+之前造出了那么多的脏数据，有点洁癖的人都想要把数据清理一下吧。网上找了找，发现只有'enterprise'版才有export的功能，这不是明摆着鄙视我等屌丝么。在[这里](http://www.mail-archive.com/user@lists.neo4j.org/msg08932.html)(翻墙可入)有兄台说了一个很暴力的办法，直接删除`data/graph.db`文件夹，我试了一下，确实可行，重启后世界干干净净，只剩下了0号node，果断再用`start n = node(0) delete n;`删除之。这大概也是nosql的好处，数据就是文件，取消了维护索引，关系等等的麻烦，随去随用，冷备份和迁移的时候也简单，直接copy文件夹即可。
 
 ##参考文档
 * [v1.9手册](http://docs.neo4j.org/chunked/milestone/)

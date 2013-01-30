@@ -66,6 +66,12 @@ OFMT与printf中用到的格式化控制符可以参考c中的printf，具体可
 ##I/O
 awk可以用`>`,`>>`,`|`将输出定向到文件或管道，但需要注意的是后面的文件名或命令都需要用双引号包起来。
 
+##switch
+{% codeblock lang:bash %}
+$ top -bn1|grep java|grep -v grep|awk '{ switch ($6) { case /m$/: print $6*1024;break; default: print $6; } }'
+{% endcodeblock %}
+switch语句与C中相同，注意break的使用。此外，在兼容模式下不可用。
+
 ##man tag
 [Special-Files](http://www.gnu.org/software/gawk/manual/gawk.html#Special-Files)
 
