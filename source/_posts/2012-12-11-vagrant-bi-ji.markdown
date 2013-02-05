@@ -6,4 +6,4 @@ comments: true
 categories: 
 ---
 
-## 从virtualbox开始
+## ~~从virtualbox开始~~

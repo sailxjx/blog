@@ -52,4 +52,30 @@ db.getNodeById 2, (err, nBran)->
 
 假如关系类型(type)不存在或者没有关联到这个节点的关系，getRelationships返回rel为一个空数组。否则返回节点在这个类型的所有关系数组，`rel[0].data`则是获取关系的属性。
 
+###根据关系种类查询
+neo4j的关系中还有个比较重要的概念是种类(type)，在`Cypher`中可以通过`type()`方法来获取某个关系的种类
+{% codeblock lang:sh %}
+neo4j-sh (?)$ start r = rel(*) return type(r);
++---------------------+
+| type(r)             |
++---------------------+
+| "islittlebrotherof" |
++---------------------+
+1 row
+0 ms
+{% endcodeblock %}
+在`node-neo4j`中，`getRelationships`可以获取某节点某个种类的关系，
+{% codeblock lang:coffeescript %}
+db.getNodeById 13, (err, bran)->
+    bran.getRelationships 'islittlebrotherof', (err, rel)->
+        console.log rel[0].data
+{% endcodeblock %}
+callback中返回的是一个关系对象数组。
+
+###万能的query
+db对象上有一个万能的`query`方法，就是直接通过`Cypher`语句得到查询结果啦，这个弥补了作者很多没有实现的方法。
+
+###索引
+
+
 

@@ -78,9 +78,44 @@ neo4j-sh (?)$ START n = node(34) MATCH n-[r]-() DELETE n, r;
 Nodes deleted: 1
 Relationships deleted: 3
 3 ms
+# 查找节点的关系
+neo4j-sh (?)$ start a = node(2) match a<-[r:isfamilyof]->b RETURN a,r,b;
++----------------------------------------------------------------------------------------+
+| a                           | r                          | b                           |
++----------------------------------------------------------------------------------------+
+| Node[2]{name:"bran",age:10} | :isfamilyof[2] {ctime:200} | Node[1]{name:"snow",age:17} |
++----------------------------------------------------------------------------------------+
 {% endcodeblock %}
 
-有意思的是注意其中`CREATE a-[r:knowns]->b`中的箭头走向表示这种关系的指向，我们可以通过`CREATE a<-[r:knowns]-b`来创建一个b到a的关系，但是当我想用`CREATE a<-[r:knowns]->b`来创建一个双向关系时却没有成功，仍然只创建了从a到b的关系。
+有意思的是注意其中`CREATE a-[r:knowns]->b`中的箭头走向表示这种关系的指向，我们可以通过`CREATE a<-[r:knowns]-b`来创建一个b到a的关系，但是当我想用`CREATE a<-[r:knowns]->b`来创建一个双向关系时却没有成功，仍然只创建了从a到b的关系。而在查找某个节点的关系时，双向箭头确是起作用的，应该算做一个bug。
+
+###删除所有节点和关系
+`Cypher`中可以使用通配符`*`来找出所有的节点或者关系，那么假如我们需要删除所有节点，语句如下
+{% codeblock lang:sh %}
+# 如果节点上还有对应的关系，该节点是无法删除的，所以需要先删除所有关系
+neo4j-sh (?)$ start r = rel(*) delete r; 
++--------------------------------------------+
+| No data returned, and nothing was changed. |
++--------------------------------------------+
+0 ms
+# 删除节点
+neo4j-sh (?)$ start n = node(*) delete n;
++-------------------+
+| No data returned. |
++-------------------+
+Nodes deleted: 2
+4 ms
+{% endcodeblock %}
+删除所有节点后，在web端显示的节点数和关系数可能会对不上真实的数据，这些数量官方叫做"Primitive count"，其实在`neo4j-shell`下可以用下面的命令得到，按字面意思应该表示一个估算值，并不准确。
+{% codeblock lang:sh %}
+neo4j-sh (0)$ dbinfo -g "Primitive count"
+{
+  "NumberOfNodeIdsInUse": 1,
+  "NumberOfPropertyIdsInUse": 0,
+  "NumberOfRelationshipIdsInUse": 0,
+  "NumberOfRelationshipTypeIdsInUse": 0
+}
+{% endcodeblock %}
 
 在自己看来，`Cypher Query Language`的增删改语句还是比较直观的，但是一旦牵涉到关系就有点没节操了，一句查询中一半的操作符，真是让人看花眼，相较之下还是sql发展的比较成熟，也更易为人所接受了。[更多的操作符和更多的语法](http://docs.neo4j.org/chunked/milestone/cypher-query-lang.html)
 
