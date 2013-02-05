@@ -4,7 +4,7 @@
   <title><![CDATA[Category: nodejs | novolander]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/nodejs/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-01-30T18:09:32+08:00</updated>
+  <updated>2013-02-05T16:10:52+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -120,6 +120,50 @@
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>假如关系类型(type)不存在或者没有关联到这个节点的关系，getRelationships返回rel为一个空数组。否则返回节点在这个类型的所有关系数组，<code>rel[0].data</code>则是获取关系的属性。</p>
+
+<h3>根据关系种类查询</h3>
+
+<p>neo4j的关系中还有个比较重要的概念是种类(type)，在<code>Cypher</code>中可以通过<code>type()</code>方法来获取某个关系的种类
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">r</span> <span class="o">=</span> rel<span class="o">(</span>*<span class="o">)</span> <span class="k">return </span><span class="nb">type</span><span class="o">(</span>r<span class="o">)</span>;
+</span><span class='line'>+---------------------+
+</span><span class='line'>| <span class="nb">type</span><span class="o">(</span>r<span class="o">)</span>             |
+</span><span class='line'>+---------------------+
+</span><span class='line'>| <span class="s2">&quot;islittlebrotherof&quot;</span> |
+</span><span class='line'>+---------------------+
+</span><span class='line'>1 row
+</span><span class='line'>0 ms
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+在<code>node-neo4j</code>中，<code>getRelationships</code>可以获取某节点某个种类的关系，
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">13</span><span class="p">,</span> <span class="nf">(err, bran)-&gt;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="nx">bran</span><span class="p">.</span><span class="nx">getRelationships</span> <span class="s">&#39;islittlebrotherof&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">rel</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">data</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+callback中返回的是一个关系对象数组。</p>
+
+<h3>万能的query</h3>
+
+<p>db对象上有一个万能的<code>query</code>方法，就是直接通过<code>Cypher</code>语句得到查询结果啦，这个弥补了作者很多没有实现的方法。</p>
+
+<h3>索引</h3>
 ]]></content>
   </entry>
   
@@ -250,6 +294,15 @@
 <span class='line-number'>32</span>
 <span class='line-number'>33</span>
 <span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'>&lt;/p&gt;
 </span><span class='line'>
 </span><span class='line'>&lt;h1&gt;创建两个节点的关系&lt;/h1&gt;
@@ -283,10 +336,76 @@
 </span><span class='line'>+-------------------+
 </span><span class='line'>Nodes deleted: 1
 </span><span class='line'>Relationships deleted: 3
-</span><span class='line'>3 ms
+</span><span class='line'>3 ms&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;查找节点的关系&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">a</span> <span class="o">=</span> node<span class="o">(</span>2<span class="o">)</span> match a&amp;lt;-<span class="o">[</span>r:isfamilyof<span class="o">]</span>-&gt;b RETURN a,r,b;
+</span><span class='line'>+----------------------------------------------------------------------------------------+
+</span><span class='line'>| a                           | r                          | b                           |
+</span><span class='line'>+----------------------------------------------------------------------------------------+
+</span><span class='line'>| Node<span class="o">[</span>2<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span> | :isfamilyof<span class="o">[</span>2<span class="o">]</span> <span class="o">{</span>ctime:200<span class="o">}</span> | Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;snow&quot;</span>,age:17<span class="o">}</span> |
+</span><span class='line'>+----------------------------------------------------------------------------------------+
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<p>有意思的是注意其中<code>CREATE a-[r:knowns]-&gt;b</code>中的箭头走向表示这种关系的指向，我们可以通过<code>CREATE a&lt;-[r:knowns]-b</code>来创建一个b到a的关系，但是当我想用<code>CREATE a&lt;-[r:knowns]-&gt;b</code>来创建一个双向关系时却没有成功，仍然只创建了从a到b的关系。</p>
+<p>有意思的是注意其中<code>CREATE a-[r:knowns]-&gt;b</code>中的箭头走向表示这种关系的指向，我们可以通过<code>CREATE a&lt;-[r:knowns]-b</code>来创建一个b到a的关系，但是当我想用<code>CREATE a&lt;-[r:knowns]-&gt;b</code>来创建一个双向关系时却没有成功，仍然只创建了从a到b的关系。而在查找某个节点的关系时，双向箭头确是起作用的，应该算做一个bug。</p>
+
+<h3>删除所有节点和关系</h3>
+
+<p><code>Cypher</code>中可以使用通配符<code>*</code>来找出所有的节点或者关系，那么假如我们需要删除所有节点，语句如下
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;如果节点上还有对应的关系，该节点是无法删除的，所以需要先删除所有关系&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">r</span> <span class="o">=</span> rel<span class="o">(</span>*<span class="o">)</span> delete r;
+</span><span class='line'>+--------------------------------------------+
+</span><span class='line'>| No data returned, and nothing was changed. |
+</span><span class='line'>+--------------------------------------------+
+</span><span class='line'>0 ms&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;删除节点&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">n</span> <span class="o">=</span> node<span class="o">(</span>*<span class="o">)</span> delete n;
+</span><span class='line'>+-------------------+
+</span><span class='line'>| No data returned. |
+</span><span class='line'>+-------------------+
+</span><span class='line'>Nodes deleted: 2
+</span><span class='line'>4 ms
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+删除所有节点后，在web端显示的节点数和关系数可能会对不上真实的数据，这些数量官方叫做"Primitive count"，其实在<code>neo4j-shell</code>下可以用下面的命令得到，按字面意思应该表示一个估算值，并不准确。
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>0<span class="o">)</span><span class="nv">$ </span>dbinfo -g <span class="s2">&quot;Primitive count&quot;</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  <span class="s2">&quot;NumberOfNodeIdsInUse&quot;</span>: 1,
+</span><span class='line'>  <span class="s2">&quot;NumberOfPropertyIdsInUse&quot;</span>: 0,
+</span><span class='line'>  <span class="s2">&quot;NumberOfRelationshipIdsInUse&quot;</span>: 0,
+</span><span class='line'>  <span class="s2">&quot;NumberOfRelationshipTypeIdsInUse&quot;</span>: 0
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>在自己看来，<code>Cypher Query Language</code>的增删改语句还是比较直观的，但是一旦牵涉到关系就有点没节操了，一句查询中一半的操作符，真是让人看花眼，相较之下还是sql发展的比较成熟，也更易为人所接受了。<a href="http://docs.neo4j.org/chunked/milestone/cypher-query-lang.html">更多的操作符和更多的语法</a></p>
 

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: learn | novolander]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/learn/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-01-30T18:09:32+08:00</updated>
+  <updated>2013-02-05T16:10:52+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,247 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Cypher Query Language 学习笔记(1)]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/02/01/cypher-query-language-xue-xi-bi-ji-1/"/>
+    <updated>2013-02-01T11:30:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/02/01/cypher-query-language-xue-xi-bi-ji-1</id>
+    <content type="html"><![CDATA[<p>紧接前文<a href="http://sailxjx.github.com/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j/">初试图形数据库 neo4j</a>初窥了这种语言的特性，几天使用下来，初期不适应的便秘感慢慢退去，渐入佳境，竟然觉得有些妙不可言鸟。就如同nodejs基于事件的特点和函数式语法对传统编程方法的改变，学习<code>Cypher</code>同样需要改改传统<code>Sql</code>的思路，下面记录一下最近的新发现。</p>
+
+<h3>版本号</h3>
+
+<p><code>dbinfo</code>可以用于查询一些与数据库状态相关的信息，查看版本号是其中一个应用。
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>dbinfo -g Kernel              &lt;br/&gt;
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  <span class="s2">&quot;KernelStartTime&quot;</span>: <span class="s2">&quot;Mon Feb 04 14:45:48 CST 2013&quot;</span>,
+</span><span class='line'>  <span class="s2">&quot;KernelVersion&quot;</span>: <span class="s2">&quot;Neo4j - Graph Database Kernel 1.9.M04&quot;</span>,
+</span><span class='line'>  <span class="s2">&quot;MBeanQuery&quot;</span>: <span class="s2">&quot;org.neo4j:instance=kernel#0,name=*&quot;</span>,
+</span><span class='line'>  <span class="s2">&quot;ReadOnly&quot;</span>: <span class="nb">false</span>,
+</span><span class='line'>  <span class="s2">&quot;StoreCreationDate&quot;</span>: <span class="s2">&quot;Thu Jan 31 16:42:31 CST 2013&quot;</span>,
+</span><span class='line'>  <span class="s2">&quot;StoreDirectory&quot;</span>: <span class="s2">&quot;/usr/local/neo4j/data/graph.db&quot;</span>,
+</span><span class='line'>  <span class="s2">&quot;StoreId&quot;</span>: <span class="s2">&quot;b9dcdac5ae2b9e82&quot;</span>,
+</span><span class='line'>  <span class="s2">&quot;StoreLogVersion&quot;</span>: 1
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h3>match</h3>
+
+<p>说起这<code>match</code>真是个很神奇的东西，可以用<code>sql</code>中的<code>where</code>作类比，但是又不同于<code>where</code>，因为<code>Cypher</code>中有专门的<code>where</code>。</p>
+
+<p>这个<code>match</code>可以比作正则中的捕获组，还兼具了赋值的功能，如下面的例子
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>13<span class="o">)</span> match bran-<span class="o">[</span>r<span class="o">]</span>-&gt;b <span class="k">return </span>r, b;
+</span><span class='line'>+--------------------------------------------------------------------------+
+</span><span class='line'>| r                                         | b                            |
+</span><span class='line'>+--------------------------------------------------------------------------+
+</span><span class='line'>| :islittlebrotherof<span class="o">[</span>2<span class="o">]</span> <span class="o">{</span>age:1359622995523<span class="o">}</span> | Node<span class="o">[</span>14<span class="o">]{</span>name:<span class="s2">&quot;snow&quot;</span>,age:17<span class="o">}</span> |
+</span><span class='line'>+--------------------------------------------------------------------------+
+</span><span class='line'>1 row
+</span><span class='line'>0 ms
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+上面的例子中通过<code>match</code>找出了节点bran出去的所有关系r和所有终点b，这在传统的<code>sql</code>中可以比较难办到的哦。</p>
+
+<p><code>match</code>一般需要和下面要提到的独有的模式(pattern)配合使用，比如下面这个很神奇的语句，能匹配出与节点summer和snow都有关系的中间节点，甚至你可以在中途添加一些表达式来获得沿途的关系对象。
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">summer</span> <span class="o">=</span> node<span class="o">(</span>15<span class="o">)</span>, <span class="nv">snow</span> <span class="o">=</span> node<span class="o">(</span>14<span class="o">)</span> match summer-<span class="o">[</span>r<span class="o">]</span>-&gt;n&amp;lt;--snow <span class="k">return </span>n, r;
+</span><span class='line'>+--------------------------------------------------------+
+</span><span class='line'>| n                            | r                       |
+</span><span class='line'>+--------------------------------------------------------+
+</span><span class='line'>| Node<span class="o">[</span>13<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span> | :isdogof<span class="o">[</span>3<span class="o">]</span> <span class="o">{</span>ctime:100<span class="o">}</span> |
+</span><span class='line'>+--------------------------------------------------------+
+</span><span class='line'>1 row
+</span><span class='line'>1 ms
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+当你不想要将匹配结果赋值时，可以使用()来代替node，用[]来代替relationship，当然，relationship不填写也是可以的。</p>
+
+<p><code>match</code>中还有一种表示深度的方式，类似于<code>coffee</code>中的数组定义<code>[0..10]</code>来表示深度范围。
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">s</span> <span class="o">=</span> node<span class="o">(</span>15<span class="o">)</span>, <span class="nv">snow</span> <span class="o">=</span> node<span class="o">(</span>14<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> s-<span class="o">[</span>r:knowns&lt;em&gt;1..2<span class="o">]</span>-&gt;snow <span class="k">return </span>r; &lt;br/&gt;
+</span><span class='line'>+-------------------------------+
+</span><span class='line'>| r                             |
+</span><span class='line'>+-------------------------------+
+</span><span class='line'>| <span class="o">[</span>:knowns<span class="o">[</span>6<span class="o">]</span> <span class="o">{}</span>,:knowns<span class="o">[</span>7<span class="o">]</span> <span class="o">{}]</span> |
+</span><span class='line'>+-------------------------------+
+</span><span class='line'>1 row
+</span><span class='line'>1 ms
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+官网手册中还提供了一个深度为0的例子，表示指向自己的relationship。同样如果不需要赋值或者不需要指定类型，用[</em>1..2]代替。</p>
+
+<p>求最短路径在很多地方都会应用到,neo4j提供了<code>shortestpath</code>方法来提供两点间的最短路径</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>1<span class="o">)</span>, <span class="nv">jon</span> <span class="o">=</span> node<span class="o">(</span>2<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> shortestpath<span class="o">(</span>bran-<span class="o">[</span>*..2<span class="o">]</span>-&gt;jon<span class="o">)</span> <span class="k">return </span>p;
+</span><span class='line'>+------------------------------------------------------------------------------------------------------+
+</span><span class='line'>| p                                                                                                    |
+</span><span class='line'>+------------------------------------------------------------------------------------------------------+
+</span><span class='line'>| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span>,:islittlebrotherof<span class="o">[</span>0<span class="o">]</span> <span class="o">{</span>ctime:1359963465947<span class="o">}</span>,Node<span class="o">[</span>2<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}]</span> |
+</span><span class='line'>+------------------------------------------------------------------------------------------------------+
+</span><span class='line'>1 row
+</span><span class='line'>1 ms
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>不过假如在<code>shortestpath</code>参数中指定最短长度值的话会报错(如<code>p = shortestpath(bran-[*0..2]-&gt;jon)</code>)，不过貌似没有<code>longestpath</code>来获得最长路径，可能一是因为应用场景较少，二是在算法上也会复杂很多，略显遗憾。</p>
+
+<h3>pattern</h3>
+
+<p>现在再记录pattern有点本末倒置的感觉，毕竟前面的match已经用到了很多种pattern，那么这里权作总结，将常用的pattern归归类。</p>
+
+<ul>
+<li><code>a--&gt;b</code> 最简单的，由一个node到另一个node</li>
+<li><code>a-[r]-&gt;b</code> 加上了relationship的path</li>
+<li><code>()-[]-&gt;b</code> 如果都不想要标注变量，可用<code>()</code>表示一个node（或一个子pattern），用<code>[]</code>表示一个relationship</li>
+<li><code>a-[r:TYPE1|TYPE2]-&gt;b</code> 指定relationship type，其中type可以指定多个，为或的关系。</li>
+<li><code>a-[?*]-&gt;b</code> 得到node a到node b的所有路径，如果不存在路径则返回null。（假如没有<code>?</code>则返回空）
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">a</span> <span class="o">=</span> node<span class="o">(</span>1<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> a-<span class="o">[</span>*<span class="o">]</span>-&gt;b <span class="k">return </span>p;
+</span><span class='line'>+----------------------------------------------------------------------------------------------------------------------+
+</span><span class='line'>| p                                                                                                                    |
+</span><span class='line'>+----------------------------------------------------------------------------------------------------------------------+
+</span><span class='line'>| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span>,:islittlebrotherof<span class="o">[</span>0<span class="o">]</span> <span class="o">{</span>ctime:1359963465947<span class="o">}</span>,Node<span class="o">[</span>2<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}]</span>                 |
+</span><span class='line'>| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span>,:isownerof<span class="o">[</span>1<span class="o">]</span> <span class="o">{}</span>,Node<span class="o">[</span>3<span class="o">]{</span>name:<span class="s2">&quot;summer&quot;</span>,age:4<span class="o">}]</span>                                          |
+</span><span class='line'>| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span>,:isownerof<span class="o">[</span>1<span class="o">]</span> <span class="o">{}</span>,Node<span class="o">[</span>3<span class="o">]{</span>name:<span class="s2">&quot;summer&quot;</span>,age:4<span class="o">}</span>,:knowns<span class="o">[</span>5<span class="o">]</span> <span class="o">{}</span>,Node<span class="o">[</span>2<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}]</span> |
+</span><span class='line'>+----------------------------------------------------------------------------------------------------------------------+
+</span><span class='line'>3 rows
+</span><span class='line'>1 ms
+</span></code></pre></td></tr></table></div></figure></notextile></div></li>
+<li><code>a-[*3..5]-&gt;b</code> 指定path的深度，是可以是一个范围值。</li>
+<li><code>me-[:KNOWS*1..2]-remote_friend</code> 将前面集中pattern整合一下，主要是注意其中各pattern的位置，不能搞乱。</li>
+</ul>
+
+
+<h3>index</h3>
+
+<p><code>neo4j</code>的索引是一个key=>value对，基于lucene，据说也可以换其他的引擎，没试过。通过索引可以供<code>Cypher</code>或Rest api查找对应的node或relationship或任何想要的集合。</p>
+
+<p>索引分为两种，自动索引和手动索引，就目前的<code>Cypher</code>版本(1.9.M04)来说，还没有提供创建手动索引的功能，遗憾的是，在nodejs客户端中同样没有完善这一功能，所以我找到了一个ruby版本的客户端用于实验这一功能。</p>
+
+<p><a href="https://github.com/maxdemarzi/neography">neography</a>是官方推荐的一个ruby driver(其实官方推荐中排名更靠前的是<a href="https://github.com/andreasronge/neo4j">neo4j.rb</a>，但是基于jruby的，出于对java的不感冒，还是绕行了)，文档很详细，不赘述了</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s1">&#39;neography&#39;</span>
+</span><span class='line'><span class="vi">@neo</span> <span class="o">=</span> <span class="no">Neography</span><span class="o">::</span><span class="no">Rest</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'><span class="vi">@neo</span><span class="o">.</span><span class="n">create_node_index</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>                      <span class="c1">#新增一个索引，其中第一个参数是索引主键</span>
+</span><span class='line'><span class="vi">@neo</span><span class="o">.</span><span class="n">add_node_to_index</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;bran&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>   <span class="c1">#将一个node添加到索引，其中最后的&lt;code&gt;1&lt;/code&gt;是node id，也可以是一个node对象，很神奇，很kiss</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>建好一个索引之后，就可以由<code>Cypher</code>出场了。<code>Cypher</code>中通过索引可以查到对应的node和relationship。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;节点:索引主键<span class="o">(</span><span class="nv">key</span><span class="o">=</span>value<span class="o">)</span>&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">n</span> <span class="o">=</span> node:name<span class="o">(</span><span class="nv">name</span><span class="o">=</span><span class="s2">&quot;bran&quot;</span><span class="o">)</span> <span class="k">return </span>n;
+</span><span class='line'>+-----------------------------+
+</span><span class='line'>| n                           |
+</span><span class='line'>+-----------------------------+
+</span><span class='line'>| Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span> |
+</span><span class='line'>+-----------------------------+
+</span><span class='line'>1 row
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>使用<code>Cypher</code>可以创建自动索引，前提是配置中打开了<code>node_auto_indexing</code>(针对node)或<code>relationship_auto_indexing</code>(针对relationship)这一项，而且这个索引是后写入的，也就是说假如之前已经存在的node，在没有改动的情况下，是不会加入到索引中的。</p>
+
+<p>自动索引可以设定需要的fields，在配置文件中用<code>node_keys_indexable</code>和<code>relationship_keys_indexable</code>表示</p>
+
+<p>创建索引的<code>Cypher</code>语句如下：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>index --create node_auto_index -t node
+</span><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>index --indexes
+</span><span class='line'>Node indexes:
+</span><span class='line'>  name
+</span><span class='line'>  node_auto_index&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Relationship indexes:
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>自动索引默认是关闭的，可能是出于效率的考虑，毕竟在正常的应用中我们不需要对所有node进行索引。而且自动索引是只读的，就是说索引建立以后，除了清空数据库，木有别的方法删掉它啊~。</p>
+
+<h2>注意事项</h2>
+
+<ul>
+<li><code>Cypher</code>中遇到某些查询条件中包含空格或别的非英文字符的，可以用`把字符串包起来。</li>
+</ul>
+
+
+<h2>参考资料</h2>
+
+<ul>
+<li><a href="http://docs.neo4j.org/chunked/milestone/">v1.9手册</a></li>
+<li><a href="https://github.com/maxdemarzi/neography/wiki">neography wiki</a></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[node-neo4j 学习笔记]]></title>
@@ -120,6 +361,50 @@
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>假如关系类型(type)不存在或者没有关联到这个节点的关系，getRelationships返回rel为一个空数组。否则返回节点在这个类型的所有关系数组，<code>rel[0].data</code>则是获取关系的属性。</p>
+
+<h3>根据关系种类查询</h3>
+
+<p>neo4j的关系中还有个比较重要的概念是种类(type)，在<code>Cypher</code>中可以通过<code>type()</code>方法来获取某个关系的种类
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">r</span> <span class="o">=</span> rel<span class="o">(</span>*<span class="o">)</span> <span class="k">return </span><span class="nb">type</span><span class="o">(</span>r<span class="o">)</span>;
+</span><span class='line'>+---------------------+
+</span><span class='line'>| <span class="nb">type</span><span class="o">(</span>r<span class="o">)</span>             |
+</span><span class='line'>+---------------------+
+</span><span class='line'>| <span class="s2">&quot;islittlebrotherof&quot;</span> |
+</span><span class='line'>+---------------------+
+</span><span class='line'>1 row
+</span><span class='line'>0 ms
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+在<code>node-neo4j</code>中，<code>getRelationships</code>可以获取某节点某个种类的关系，
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">13</span><span class="p">,</span> <span class="nf">(err, bran)-&gt;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="nx">bran</span><span class="p">.</span><span class="nx">getRelationships</span> <span class="s">&#39;islittlebrotherof&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">rel</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">data</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+callback中返回的是一个关系对象数组。</p>
+
+<h3>万能的query</h3>
+
+<p>db对象上有一个万能的<code>query</code>方法，就是直接通过<code>Cypher</code>语句得到查询结果啦，这个弥补了作者很多没有实现的方法。</p>
+
+<h3>索引</h3>
 ]]></content>
   </entry>
   

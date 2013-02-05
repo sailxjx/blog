@@ -156,6 +156,48 @@ db.getNodeById 1, (err, &hellip;">
 
 
 <p>假如关系类型(type)不存在或者没有关联到这个节点的关系，getRelationships返回rel为一个空数组。否则返回节点在这个类型的所有关系数组，<code>rel[0].data</code>则是获取关系的属性。</p>
+
+<h3>根据关系种类查询</h3>
+
+<p>neo4j的关系中还有个比较重要的概念是种类(type)，在<code>Cypher</code>中可以通过<code>type()</code>方法来获取某个关系的种类</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">r</span> <span class="o">=</span> rel<span class="o">(</span>*<span class="o">)</span> <span class="k">return </span><span class="nb">type</span><span class="o">(</span>r<span class="o">)</span>;
+</span><span class='line'>+---------------------+
+</span><span class='line'>| <span class="nb">type</span><span class="o">(</span>r<span class="o">)</span>             |
+</span><span class='line'>+---------------------+
+</span><span class='line'>| <span class="s2">&quot;islittlebrotherof&quot;</span> |
+</span><span class='line'>+---------------------+
+</span><span class='line'>1 row
+</span><span class='line'>0 ms
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在<code>node-neo4j</code>中，<code>getRelationships</code>可以获取某节点某个种类的关系，</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">13</span><span class="p">,</span> <span class="nf">(err, bran)-&gt;</span>
+</span><span class='line'>    <span class="nx">bran</span><span class="p">.</span><span class="nx">getRelationships</span> <span class="s">&#39;islittlebrotherof&#39;</span><span class="p">,</span> <span class="nf">(err, rel)-&gt;</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">data</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>callback中返回的是一个关系对象数组。</p>
+
+<h3>万能的query</h3>
+
+<p>db对象上有一个万能的<code>query</code>方法，就是直接通过<code>Cypher</code>语句得到查询结果啦，这个弥补了作者很多没有实现的方法。</p>
+
+<h3>索引</h3>
 </div>
 
 
