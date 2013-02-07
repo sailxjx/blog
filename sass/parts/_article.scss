@@ -77,6 +77,7 @@ article{
 			border-left: 5px solid $color-gray03;
 			padding: 15px 20px;
 			margin-top: 10px;
+                        font-family: $font-mono;
 			& > p:first-of-type{
 				margin-top: 0;
 			}
