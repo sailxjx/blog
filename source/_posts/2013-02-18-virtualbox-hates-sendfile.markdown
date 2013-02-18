@@ -30,3 +30,4 @@ apache和nginx中都有个默认开启的选项sendfile，表示通过内核文�
 * [serverfault](http://serverfault.com/questions/269420/disable-caching-when-serving-static-files-with-nginx-for-development)
 * [virtualbox forum](https://forums.virtualbox.org/viewtopic.php?f=1&t=24905)
 * [nginx wiki](http://wiki.nginx.org/HttpCoreModule#sendfile)
+* [mac中samba共享的问题](http://comments.gmane.org/gmane.linux.kernel.cifs/3517)
