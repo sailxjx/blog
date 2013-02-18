@@ -4,7 +4,7 @@
   <title><![CDATA[Category: nginx | novolander]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/nginx/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-02-18T18:07:23+08:00</updated>
+  <updated>2013-02-18T18:18:54+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -45,6 +45,7 @@
 <li><a href="http://serverfault.com/questions/269420/disable-caching-when-serving-static-files-with-nginx-for-development">serverfault</a></li>
 <li><a href="https://forums.virtualbox.org/viewtopic.php?f=1&amp;t=24905">virtualbox forum</a></li>
 <li><a href="http://wiki.nginx.org/HttpCoreModule#sendfile">nginx wiki</a></li>
+<li><a href="http://comments.gmane.org/gmane.linux.kernel.cifs/3517">mac中samba共享的问题</a></li>
 </ul>
 
 ]]></content>
