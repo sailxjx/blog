@@ -4,7 +4,7 @@
   <title><![CDATA[Category: nodejs | novolander]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/nodejs/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-02-07T15:32:04+08:00</updated>
+  <updated>2013-02-18T18:07:23+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -162,8 +162,6 @@ callback中返回的是一个关系对象数组。</p>
 <h3>万能的query</h3>
 
 <p>db对象上有一个万能的<code>query</code>方法，就是直接通过<code>Cypher</code>语句得到查询结果啦，这个弥补了作者很多没有实现的方法。</p>
-
-<h3>索引</h3>
 ]]></content>
   </entry>
   
