@@ -102,10 +102,7 @@
 
 <p>假如我们有另一个php文件myname2.php，需要include myname1.php。用下面几种方式是可以的。</p>
 
-<ol>
-<li>在同一namespace下</li>
-</ol>
-
+<p>一. 在同一namespace下</p>
 
 <figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -120,10 +117,7 @@
 
 <p>从输出结果可以看出实例名已经变成了<code>my\name1\MyClass Object</code>，命名空间会自动的加到类名前面。</p>
 
-<ol>
-<li>在不同namespace下用<code>use</code></li>
-</ol>
-
+<p>二. 在不同namespace下用<code>use</code></p>
 
 <figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -138,10 +132,7 @@
 
 <p>需要注意的是，在使用namespace前需要以<code>\</code>开头，否则会自动加到当前的namespace后面，变成<code>my\name2\my\name1\MYCONST</code>，也就得不到正确的结果了。这个有点类似url或*nux系统中用<code>/</code>来表示PATH的根目录。</p>
 
-<ol>
-<li>在不同namespace下用<code>use .. as ..</code></li>
-</ol>
-
+<p>三. 在不同namespace下用<code>use .. as ..</code></p>
 
 <figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
