@@ -7,7 +7,9 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content="安装nginx 安装过程没什么好说的，不过tarball中没有包含init脚本，官网wiki中提供了一个ubuntu的版本，其实在所有linux发行版中都可用，下载下来放到/etc/init.d/nginx，大功告成。 假如在启动过程中遇到undefined function: &hellip;">
+	<meta name="description" content="gd是一个强大的php图像处理库，最近在做验证码加强的策略，才发现用php作图也能玩出很多花样来。 几个重要函数 imagecreatetruecolor 创建一张空的画布
+imagecreatefrompng 从文件创建一个图片句柄
+imagecolorallocate 拾取一种颜色(rgb &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -75,6 +77,383 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/01/13/php-yan-zheng-ma/">PHP 验证码</a></h1>
+	<div class="entry-content">
+		<p>gd是一个强大的php图像处理库，最近在做验证码加强的策略，才发现用php作图也能玩出很多花样来。</p>
+
+<h2>几个重要函数</h2>
+
+<ul>
+<li><a href="http://php.net/manual/en/function.imagecreatetruecolor.php">imagecreatetruecolor</a> 创建一张空的画布</li>
+<li><a href="http://cn2.php.net/manual/zh/function.imagecreatefrompng.php">imagecreatefrompng</a> 从文件创建一个图片句柄</li>
+<li><a href="http://cn2.php.net/manual/zh/function.imagecolorallocate.php">imagecolorallocate</a> 拾取一种颜色(rgb)</li>
+<li><a href="http://cn2.php.net/manual/zh/function.imagettftext.php">imagettftext</a> 向画布写入文字</li>
+<li><a href="http://cn2.php.net/manual/zh/function.imagecopy.php">imagecopy</a> 合并两张图片，可指定拷贝区域及大小</li>
+<li><a href="http://cn2.php.net/manual/zh/function.imagecolorat.php">imagecolorat</a> 从图片指定像素点拾取一种颜色</li>
+<li><a href="http://cn2.php.net/manual/zh/function.imagesetpixel.php">imagesetpixel</a> 画一个像素点</li>
+<li><a href="http://cn2.php.net/manual/zh/function.imagearc.php">imagearc</a> 画一个椭圆，截取部分可用来绘制曲线</li>
+</ul>
+
+
+<p>php绘图用的最频繁的地方大概就是生成验证码了，我们最常见的验证码数字加英文的组合，生成这种验证码很简单，下面几行代码就可以搞定</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">genCode</span><span class="p">(</span><span class="nv">$n</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nv">$dict</span> <span class="o">=</span> <span class="s1">&#39;ABCDEFGHIJKLNMPQRSTUVWXYZ123456789&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$dictlen</span> <span class="o">=</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$dict</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$image</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">image</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$verify</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$fontfile</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sourcedir</span> <span class="o">.</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fonts</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span><span class='line'>    <span class="nv">$colors</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>        <span class="nx">imagecolorallocate</span><span class="p">(</span><span class="nv">$image</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="c1">//红</span>
+</span><span class='line'>        <span class="nx">imagecolorallocate</span><span class="p">(</span><span class="nv">$image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span> <span class="p">,</span> <span class="c1">//蓝</span>
+</span><span class='line'>        <span class="nx">imagecolorallocate</span><span class="p">(</span><span class="nv">$image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="c1">//黑</span>
+</span><span class='line'>    <span class="p">);</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="nv">$i</span> <span class="o">&lt;</span> <span class="nv">$n</span><span class="p">;</span><span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$verify</span><span class="o">.=</span> <span class="nv">$code</span> <span class="o">=</span> <span class="nx">substr</span><span class="p">(</span><span class="nv">$dict</span><span class="p">,</span> <span class="nx">mt_rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">$dictlen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">imagettftext</span><span class="p">(</span><span class="nv">$image</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="nx">mt_rand</span><span class="p">(</span><span class="o">-</span><span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span> <span class="p">,</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">*</span> <span class="mi">15</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span> <span class="nx">mt_rand</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span> <span class="p">,</span> <span class="nv">$colors</span><span class="p">[</span><span class="nb">array_rand</span><span class="p">(</span><span class="nv">$colors</span><span class="p">)</span> <span class="p">],</span> <span class="nv">$fontfile</span><span class="p">,</span> <span class="nv">$code</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>效果图：</p>
+
+<blockquote><p><img src="/blog/images/u/verify-code-simple.png" title="&#34;verify-code-simple&#34;" alt="&#34;verify-code-simple&#34;"></p></blockquote>
+
+<p>其中合并了一张纹理背景并随机绘制出文字的颜色。下面我们再加点料，</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">addNoise</span><span class="p">(</span><span class="nv">$n</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nv">$image</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">image</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$color</span> <span class="o">=</span> <span class="nx">imagecolorallocate</span><span class="p">(</span><span class="nv">$image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="nv">$i</span> <span class="o">&lt;</span> <span class="nv">$n</span><span class="p">;</span><span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//噪声点</span>
+</span><span class='line'>        <span class="nx">imagesetpixel</span><span class="p">(</span><span class="nv">$image</span><span class="p">,</span> <span class="nx">mt_rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">width</span><span class="p">)</span> <span class="p">,</span> <span class="nx">mt_rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">height</span><span class="p">)</span> <span class="p">,</span> <span class="nv">$color</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">addLine</span><span class="p">(</span><span class="nv">$n</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nv">$image</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">image</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$color</span> <span class="o">=</span> <span class="nx">imagecolorallocate</span><span class="p">(</span><span class="nv">$image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="nv">$i</span> <span class="o">&lt;</span> <span class="nv">$n</span><span class="p">;</span><span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">imagearc</span><span class="p">(</span><span class="nv">$image</span><span class="p">,</span> <span class="nx">rand</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">width</span> <span class="o">+</span> <span class="mi">10</span><span class="p">)</span> <span class="p">,</span> <span class="nx">rand</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">,</span> <span class="nx">rand</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">width</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">10</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">width</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">40</span><span class="p">)</span> <span class="p">,</span> <span class="nx">rand</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">height</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">height</span> <span class="o">+</span> <span class="mi">20</span><span class="p">)</span> <span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="nv">$color</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上面的方法往图像中加入了50个噪点和一条干扰曲线，于是验证码变成了这样：</p>
+
+<blockquote><p><img src="/blog/images/u/verify-code-noise.png" title="&#34;verify-code-noise&#34;" alt="&#34;verify-code-noise&#34;"></p></blockquote>
+
+<p>下面来实现汉字和带公式的验证码</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">genHanzi</span><span class="p">(</span><span class="nv">$n</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nv">$dict</span> <span class="o">=</span> <span class="s2">&quot;的一是在了不和有大这主中人上为们地个用工时要&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$dictlen</span> <span class="o">=</span> <span class="nb">mb_strlen</span><span class="p">(</span><span class="nv">$dict</span><span class="p">,</span> <span class="s1">&#39;UTF-8&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$image</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">image</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$fontfile</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sourcedir</span> <span class="o">.</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fonts</span><span class="p">[</span><span class="nb">array_rand</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fonts</span><span class="p">)</span> <span class="p">];</span>
+</span><span class='line'>    <span class="nv">$color</span> <span class="o">=</span> <span class="nx">imagecolorallocate</span><span class="p">(</span><span class="nv">$image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$verify</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="nv">$i</span> <span class="o">&lt;</span> <span class="nv">$n</span><span class="p">;</span><span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$verify</span><span class="o">.=</span> <span class="nv">$word</span> <span class="o">=</span> <span class="nb">mb_substr</span><span class="p">(</span><span class="nv">$dict</span><span class="p">,</span> <span class="nx">mt_rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">$dictlen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;UTF-8&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">imagettftext</span><span class="p">(</span><span class="nv">$image</span><span class="p">,</span> <span class="nx">rand</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">22</span><span class="p">)</span> <span class="p">,</span> <span class="nx">rand</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span> <span class="p">,</span> <span class="mi">5</span> <span class="o">+</span> <span class="nv">$i</span> <span class="o">*</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="nv">$color</span><span class="p">,</span> <span class="nv">$fontfile</span><span class="p">,</span> <span class="nv">$word</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">verify</span> <span class="o">=</span> <span class="nv">$verify</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">genFomula</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nv">$symbols</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>        <span class="s1">&#39;＋&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span><span class="s1">&#39;－&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;×&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span><span class="s1">&#39;加&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span><span class="s1">&#39;减&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;乘&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;*&#39;</span>
+</span><span class='line'>    <span class="p">);</span>
+</span><span class='line'>    <span class="nv">$numbers</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>        <span class="s1">&#39;0&#39;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span><span class="s1">&#39;1&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span><span class="s1">&#39;2&#39;</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">,</span><span class="s1">&#39;3&#39;</span> <span class="o">=&gt;</span> <span class="mi">3</span><span class="p">,</span><span class="s1">&#39;4&#39;</span> <span class="o">=&gt;</span> <span class="mi">4</span><span class="p">,</span><span class="s1">&#39;5&#39;</span> <span class="o">=&gt;</span> <span class="mi">5</span><span class="err">，</span><span class="s1">&#39;叁&#39;</span> <span class="o">=&gt;</span> <span class="mi">3</span><span class="p">,</span><span class="s1">&#39;肆&#39;</span> <span class="o">=&gt;</span> <span class="mi">4</span><span class="p">,</span><span class="s1">&#39;伍&#39;</span> <span class="o">=&gt;</span> <span class="mi">5</span><span class="p">,</span><span class="s1">&#39;陆&#39;</span> <span class="o">=&gt;</span> <span class="mi">6</span><span class="p">,</span><span class="s1">&#39;柒&#39;</span> <span class="o">=&gt;</span> <span class="mi">7</span><span class="p">,</span><span class="s1">&#39;捌&#39;</span> <span class="o">=&gt;</span> <span class="mi">8</span><span class="p">,</span><span class="s1">&#39;玖&#39;</span> <span class="o">=&gt;</span> <span class="mi">9</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">);</span>
+</span><span class='line'>    <span class="nv">$image</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">image</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$fontfile</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sourcedir</span> <span class="o">.</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fonts</span><span class="p">[</span><span class="nb">array_rand</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fonts</span><span class="p">)</span> <span class="p">];</span>
+</span><span class='line'>    <span class="nv">$numidx1</span> <span class="o">=</span> <span class="nb">array_rand</span><span class="p">(</span><span class="nv">$numbers</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$num1</span> <span class="o">=</span> <span class="nv">$numbers</span><span class="p">[</span><span class="nv">$numidx1</span><span class="p">];</span>
+</span><span class='line'>    <span class="nv">$symbol</span> <span class="o">=</span> <span class="nb">array_rand</span><span class="p">(</span><span class="nv">$symbols</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$color</span> <span class="o">=</span> <span class="nx">imagecolorallocate</span><span class="p">(</span><span class="nv">$image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$numidx2</span> <span class="o">=</span> <span class="nb">array_rand</span><span class="p">(</span><span class="nv">$numbers</span><span class="p">);</span>
+</span><span class='line'>        <span class="nv">$num2</span> <span class="o">=</span> <span class="nv">$numbers</span><span class="p">[</span><span class="nv">$numidx2</span><span class="p">];</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nv">$symbols</span><span class="p">[</span><span class="nv">$symbol</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;-&#39;</span> <span class="o">||</span> <span class="nv">$num2</span> <span class="o">&lt;=</span> <span class="nv">$num1</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//减法结果不为负数</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">eval</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\$</span><span class="s2">verify = &quot;</span> <span class="o">.</span> <span class="s2">&quot;</span><span class="si">$num1</span><span class="s2">&quot;</span> <span class="o">.</span> <span class="nv">$symbols</span><span class="p">[</span><span class="nv">$symbol</span><span class="p">]</span> <span class="o">.</span> <span class="s2">&quot;</span><span class="si">$num2</span><span class="s2">;&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$verify</span> <span class="o">=</span> <span class="nb">intval</span><span class="p">(</span><span class="nv">$verify</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$codelist</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>        <span class="nv">$numidx1</span><span class="p">,</span>
+</span><span class='line'>        <span class="nv">$symbol</span><span class="p">,</span>
+</span><span class='line'>        <span class="nv">$numidx2</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;=&#39;</span>
+</span><span class='line'>    <span class="p">);</span>
+</span><span class='line'>    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$codelist</span> <span class="k">as</span> <span class="nv">$i</span> <span class="o">=&gt;</span> <span class="nv">$code</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">imagettftext</span><span class="p">(</span><span class="nv">$image</span><span class="p">,</span> <span class="nx">mt_rand</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span> <span class="p">,</span> <span class="nx">mt_rand</span><span class="p">(</span><span class="o">-</span><span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span> <span class="p">,</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">*</span> <span class="mi">18</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span> <span class="nx">mt_rand</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span> <span class="p">,</span> <span class="nv">$color</span><span class="p">,</span> <span class="nv">$fontfile</span><span class="p">,</span> <span class="nv">$code</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>生成汉字和上面的英文组合差不多，加个字典就可以，然后可以加入一下随机的字体变换，生成公式呢，其实也是预先定义好数字和符号的字典，靠随机组合来生成图片，然后吧计算结果记录下来就行了。</p>
+
+<blockquote><p><img src="/blog/images/u/verify-hanzi.png" title="&#34;verify-hanzi&#34;" alt="&#34;verify-hanzi&#34;">
+<img src="/blog/images/u/verify-fomula.png" title="&#34;verify-fomula&#34;" alt="&#34;verify-fomula&#34;"></p></blockquote>
+
+<p>很多验证码中还会对字体进行扭曲，这会让做的人和看的人都比较纠结。目前的方法大致是先生成一张正常的图，然后拾取图中每个像素点进行正弦变换位置后填入另一张相同大小的图，注意两张图的背景需要一致，否则边缘的图片就很不和谐咯。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">public function twist() {</span>
+</span><span class='line'><span class="x">    $distImage = imagecreatetruecolor($this-&gt;width, $this-&gt;height);</span>
+</span><span class='line'><span class="x">    imagecopy($distImage, $this-&gt;backimg, 0, 0, 0, 0, $this-&gt;width, $this-&gt;height);</span>
+</span><span class='line'><span class="x">    for ($x = 0;$x &lt; $this-&gt;width;$x++) {</span>
+</span><span class='line'><span class="x">        for ($y = 0;$y &lt; $this-&gt;height;$y++) {</span>
+</span><span class='line'><span class="x">            $rgb = imagecolorat($this-&gt;image, $x, $y);</span>
+</span><span class='line'><span class="x">            imagesetpixel($distImage, (int)($x + sin($y / $this-&gt;height * 2 * M_PI - M_PI * 0.1) * 4) , $y, $rgb);</span>
+</span><span class='line'><span class="x">        }</span>
+</span><span class='line'><span class="x">    }</span>
+</span><span class='line'><span class="x">    $this-&gt;image = $distImage;</span>
+</span><span class='line'><span class="x">    return $this;</span>
+</span><span class='line'><span class="x">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>效果图：</p>
+
+<blockquote><p><img src="/blog/images/u/verify-code-twist.png" title="&#34;verify-code-twist&#34;" alt="&#34;verify-code-twist&#34;"></p></blockquote>
+
+<p>最后再加入一个gif动态图的例子，主要原理是预先生成每一帧的gif图像，然后合并为一张图片，对gif进行编码的类库使用的是网上下载的GIFEncoder，代码不多，但是够用。<code>less is more</code>嘛。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">public function genCodeAnimate($n = 4, $flags = 40) {</span>
+</span><span class='line'><span class="x">    $dict = &#39;ABCDEFGHIJKLNMPQRSTUVWXYZ123456789&#39;;</span>
+</span><span class='line'><span class="x">    $dictlen = strlen($dict);</span>
+</span><span class='line'><span class="x">    $verify = &#39;&#39;;</span>
+</span><span class='line'><span class="x">    $fontfile = $this-&gt;sourcedir . $this-&gt;fonts[0];</span>
+</span><span class='line'><span class="x">    $colors = array(</span>
+</span><span class='line'><span class="x">        imagecolorallocate($this-&gt;image, 255, 0, 0) , //红</span>
+</span><span class='line'><span class="x">        imagecolorallocate($this-&gt;image, 0, 0, 255) , //蓝</span>
+</span><span class='line'><span class="x">        imagecolorallocate($this-&gt;image, 0, 0, 0) , //黑</span>
+</span><span class='line'><span class="x">    );</span>
+</span><span class='line'><span class="x">    $fontColors = array();</span>
+</span><span class='line'><span class="x">    $fontSizes = array();</span>
+</span><span class='line'><span class="x">    $gifs = array();</span>
+</span><span class='line'><span class="x">    for ($i = 0;$i &lt; $n;$i++) {</span>
+</span><span class='line'><span class="x">        $verify.= substr($dict, mt_rand(0, $dictlen - 1) , 1);</span>
+</span><span class='line'><span class="x">        $fontColors[$i] = $colors[array_rand($colors) ];</span>
+</span><span class='line'><span class="x">        $fontSizes[$i] = rand(18, 22);</span>
+</span><span class='line'><span class="x">    }</span>
+</span><span class='line'><span class="x">    for ($f = 0;$f &lt; $flags;$f++) {</span>
+</span><span class='line'><span class="x">        $image = $this-&gt;imgClone($this-&gt;image);</span>
+</span><span class='line'><span class="x">        $angle = - 15 + abs($f - $flags / 2) * 2; //角度</span>
+</span><span class='line'><span class="x">        $y = 20 + abs($f - $flags / 2) * 0.5;</span>
+</span><span class='line'><span class="x">        for ($i = 0;$i &lt; $n;$i++) {</span>
+</span><span class='line'><span class="x">            $code = substr($verify, $i, 1);</span>
+</span><span class='line'><span class="x">            imagettftext($image, $fontSizes[$i], $angle, ($i * 15) - 20 + abs($f - $flags / 2) * 5, $y, $fontColors[$i], $fontfile, $code);</span>
+</span><span class='line'><span class="x">        }</span>
+</span><span class='line'><span class="x">        header(&quot;Content-type: image/gif&quot;);</span>
+</span><span class='line'><span class="x">        imagegif($image);</span>
+</span><span class='line'><span class="x">        imagedestroy($image);</span>
+</span><span class='line'><span class="x">        $gifs[] = ob_get_contents();</span>
+</span><span class='line'><span class="x">        ob_clean();</span>
+</span><span class='line'><span class="x">    }</span>
+</span><span class='line'><span class="x">    ob_start();</span>
+</span><span class='line'><span class="x">    $gifEncoder = new GIFEncoder($gifs, 100, 0, 1, 0, 0, 1, &#39;bin&#39;);</span>
+</span><span class='line'><span class="x">    header(&#39;Content-type: image/gif&#39;);</span>
+</span><span class='line'><span class="x">    echo $gifEncoder-&gt;GetAnimation();</span>
+</span><span class='line'><span class="x">    return $verify;</span>
+</span><span class='line'><span class="x">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>效果图：</p>
+
+<blockquote><p><img src="/blog/images/u/verify-code-animate.gif" title="&#34;verify-code-animate&#34;" alt="&#34;verify-code-animate&#34;"></p></blockquote>
+
+<h2>备忘</h2>
+
+<ul>
+<li><code>imagecreate</code>也是一个创建图像的方法，不过相对于<code>imagecreatetruecolor</code>，它会使用第一次由<code>imagecolorallocate</code>生成的颜色作为背景色，比较坑爹，不推荐。</li>
+</ul>
+
+
+<h2>下载</h2>
+
+<ul>
+<li><a href="/blog/patches/verify.zip">源码</a></li>
+</ul>
+
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-13T14:20:00+08:00" pubdate data-updated="true">2013.01.13</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/php/'>php</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1216,63 +1595,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/git/'>git</a>, <a class='category' href='/blog/blog/categories/github/'>github</a>, <a class='category' href='/blog/blog/categories/gollum/'>gollum</a>, <a class='category' href='/blog/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/blog/categories/wiki/'>wiki</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/06/28/thunderbird-and-davmail/">Thunderbird and Davmail</a></h1>
-	<div class="entry-content">
-		<p>邮件客户端之间的竞争在当今的软件貌似一直处在一个打酱油的位置（就像opera看浏览器之争），毕竟，web端的邮件体验是越做越完美了，传统的客户端不减减肥的话很难再在用户那边分到一杯羹。</p>
-
-<p>不过，在办公领域客户端还是能占有一席之地的，毕竟云端容量有限，而且实时性也是个问题。公司使用内网的ms exchange，那么gmail之类的web端就不考虑了，况且几千封邮件的索引查找还是靠客户端比较靠谱。</p>
-
-<p>比较了一圈linux下的客户端，evolution用的时间最长，但是对html样式的支持不是太好，某些表格粘贴进去排版就乱了。正好ubuntu11.10以后就默认安装了thunderbird，试用以后感觉也不错，写篇备忘，主要是记录不同协议下的配置。</p>
-
-<p><a href="/blog/images/u/thunderbird-main-furry.png"><img class="right" src="/blog/images/u/thunderbird-main-furry.png" width="200" height="161" title="&#34;thunderbird-main-furry&#34;" alt="&#34;thunderbird-main-furry&#34;"></a>
-thunderbird诞生于mozilla的开源项目，有个叫firefox的高帅富兄弟，所以从菜单到细节处处都力争向高帅富靠拢，于是我们就看到了这个长得酷似浏览器的email客户端&#8211;多标签切换，附加组件。。。不幸的是，最近<a href="http://tech.sina.com.cn/s/2012-07-07/10247360817.shtml">mozilla宣布不再为thunderbird开发新功能</a>，看来以后还是得靠自己撸啊。</p>
-
-<p>添加账户很简单，编辑-账户设置-添加账户，输入用户名邮箱密码以后会自动在mozilla在线数据库中寻找适合的配置，像gmail,hotmail.163之流的基本都不需要额外的配置，直接确认就行。这里主要介绍一下exchange服务的配置。</p>
-
-<p>默认情况下没有安装exchange的支持，在工具-附加组件里搜索exchange安装一个&#8221;Provider for Microsoft Exchange&#8221;的插件，再回到账户配置中选择手动配置，就有相应exchange的接收协议选项了，然后手动填写域名用户名密码，确定以后就可以开始接收邮件了。</p>
-
-<p>接收邮件，对，我只提到收邮件。这个插件只提供了exchange同步接收的功能，配置SMTP服务器时遇到了问题，无论尝试哪种验证方式，连接远程服务器时都会报错，网上搜罗了一下相关的帖子也没有找到有效的解决方案。但exchange服务确是可以通过https/ssl访问的，无奈只能采用曲线救国的方式，就是下面要介绍的<a href="http://davmail.sourceforge.net/">davmail</a>。</p>
-
-<p>根据官网上的介绍，davmail是一个通用的POP/IMAP/SMTP/Caldav/Carddav/LDAP交换接口，允许用户用任何客户端链接到exchange服务器。其他的鸟文就不做解释了，这不是重点，重点是，这玩意儿管用。ubuntu用户下可以在sourceforge下载deb包安装，<a href="http://sourceforge.net/projects/davmail/files/latest/download?source=files">下载地址</a>。</p>
-
-<p><a href="/blog/images/u/davmail-ui.png"><img class="right" src="/blog/images/u/davmail-ui.png" width="350" height="206" title="&#34;davmail-ui&#34;" alt="&#34;davmail-ui&#34;"></a>
-安装完成后，davmail提供了一个简陋的UI界面，不过对于配置来说已经足够了，在owaurl一栏填入域中使用的exchange owa地址，类似https://exchange.domain.com/owa的，不确定是否可用可以在浏览器里面直接访问一下试试。下面的协议端口都用默认的，save一下就ok。</p>
-
-<p>现在回到thunderbird，修改账户设置-发送SMTP服务器-添加或编辑，服务器名称填localhost，端口1025，选择密码验证，填写用户名，保存，现在试一试，应该可以正常的收发邮件了。</p>
-
-<p>davmail其实是在本地搭建了一个邮件收发服务器，用户与远程服务器的通信都通过davmail的代理，简化了不同平台的配置。当然软件的功能远远不止这些，这里只是为了解决thunderbird与exchange连接的问题。假如thunderbird插件能直接支持exchange的收发，那就更好了。</p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-28T12:23:00+08:00" pubdate data-updated="true">2012.06.28</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/email/'>email</a>, <a class='category' href='/blog/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/blog/categories/thunderbird/'>thunderbird</a>
 
 
 </div>
