@@ -22,7 +22,7 @@ const MYCONST = 1; //定义常量
 
 假如我们有另一个php文件myname2.php，需要include myname1.php。用下面几种方式是可以的。
 
-1. 在同一namespace下
+一. 在同一namespace下
 {% codeblock lang:php %}
 <?php
 namespace my\name1;
@@ -31,7 +31,7 @@ print_r(new MyClass);
 {% endcodeblock %}
 从输出结果可以看出实例名已经变成了`my\name1\MyClass Object`，命名空间会自动的加到类名前面。
 
-2. 在不同namespace下用`use`
+二. 在不同namespace下用`use`
 {% codeblock lang:php %}
 namespace my\name2; //不同的命名空间
 include 'myname1.php';
@@ -40,7 +40,7 @@ print_r(\my\name1\MYCONST); //这里用调用常量举例
 {% endcodeblock %}
 需要注意的是，在使用namespace前需要以`\`开头，否则会自动加到当前的namespace后面，变成`my\name2\my\name1\MYCONST`，也就得不到正确的结果了。这个有点类似url或*nux系统中用`/`来表示PATH的根目录。
 
-3. 在不同namespace下用`use .. as ..`
+三. 在不同namespace下用`use .. as ..`
 {% codeblock lang:php %}
 namespace my\name2;
 include 'myname1.php';
