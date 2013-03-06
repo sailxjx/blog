@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "react.php 中的异步实现"
-date: 2013-03-04 15:29
+date: 2013-03-05 15:29
 comments: true
 categories: [php, react]
 ---
