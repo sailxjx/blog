@@ -7,7 +7,7 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content="php中命名空间的概念出现的比较晚(>=5.3)，这也造成了很多人写php程序的时候忽略了这个问题(包括我:)，不过，最近很多老外的开源项目中渐渐流行起在php中使用命名空间。于是我也跟风一把，看看究竟好在哪儿。 在php namespace语句出现之前，通行的做法是根据文件路径定义类名， &hellip;">
+	<meta name="description" content="在基于事件的异步模型大行其道的今天，各语言都相继推出了自己的异步框架，nodejs原生的异步模型当然是其中的翘楚，然后python有Twisted，ruby有EventMachine(名字俗了点)。php也有一个不错的异步框架，react。下面我们从内而外的看看这个异步模型是怎么实现的。 &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -75,6 +75,328 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/03/05/react-dot-php-zhong-de-yi-bu-shi-xian/">react.php 中的异步实现</a></h1>
+	<div class="entry-content">
+		<p>在基于事件的异步模型大行其道的今天，各语言都相继推出了自己的异步框架，nodejs原生的异步模型当然是其中的翘楚，然后python有Twisted，ruby有EventMachine(名字俗了点)。php也有一个不错的异步框架，<a href="https://github.com/reactphp/react">react</a>。下面我们从内而外的看看这个异步模型是怎么实现的。</p>
+
+<h3>événement</h3>
+
+<p>首先react的事件模型是建立在一个叫<a href="https://github.com/igorw/evenement">événement</a>的框架上，也是react作者所作，代码只有短短的74行，实现了<code>on</code>(事件监听),<code>emit</code>(触发事件)等方法。下面就单就这两个事件方法分析一下。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">on</span><span class="p">(</span><span class="nv">$event</span><span class="p">,</span> <span class="nv">$listener</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">is_callable</span><span class="p">(</span><span class="nv">$listener</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nx">\InvalidArgumentException</span><span class="p">(</span><span class="s1">&#39;The provided listener was not a valid callable.&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listeners</span><span class="p">[</span><span class="nv">$event</span><span class="p">]))</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listeners</span><span class="p">[</span><span class="nv">$event</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listeners</span><span class="p">[</span><span class="nv">$event</span><span class="p">][]</span> <span class="o">=</span> <span class="nv">$listener</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">emit</span><span class="p">(</span><span class="nv">$event</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$arguments</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listeners</span><span class="p">(</span><span class="nv">$event</span><span class="p">)</span> <span class="k">as</span> <span class="nv">$listener</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nb">call_user_func_array</span><span class="p">(</span><span class="nv">$listener</span><span class="p">,</span> <span class="nv">$arguments</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上面的<code>$event</code>其实就是一个事件标识，一般是一个字符串，<code>$listener</code>是一个回调方法。调用<code>on</code>时用数组listeners记录所有回调方法，调用<code>emit</code>时再按次序触发，由此还衍生了<code>once</code>(只触发一次就解除绑定的事件)，<code>removeListener</code>(移除事件)等方法。</p>
+
+<h3>EventLoop</h3>
+
+<p>更进一步，react事件模型的上一层是一个监听循环，叫做<code>EventLoop</code>，有了这个，就往消息队列或webserver的异步处理模型更近了一步。</p>
+
+<p>下面可以看一下<code>EventLoop</code>的接口文件<code>LoopInterface.php</code>：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="k">namespace</span> <span class="nx">React\EventLoop</span><span class="p">;</span>
+</span><span class='line'><span class="k">interface</span> <span class="nx">LoopInterface</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">addReadStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">,</span> <span class="nv">$listener</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">addWriteStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">,</span> <span class="nv">$listener</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">removeReadStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">removeWriteStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">removeStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">addTimer</span><span class="p">(</span><span class="nv">$interval</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">addPeriodicTimer</span><span class="p">(</span><span class="nv">$interval</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">cancelTimer</span><span class="p">(</span><span class="nv">$signature</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">tick</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">run</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">stop</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>react</code>支持php的社区库<code>libevent</code>提供的事件支持，同时有个<code>LibEventLoop.php</code>用来实现<code>LoopInterface</code>接口，但是<code>react</code>也有自己的实现方案<code>StreamSelectLoop</code>，与<code>LibEventLoop</code>不兼容，这点可以在<code>EventLoop\LibEventLoop\Factory</code>中看到。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">create</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// @codeCoverageIgnoreStart</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nb">function_exists</span><span class="p">(</span><span class="s1">&#39;event_base_new&#39;</span><span class="p">))</span> <span class="p">{</span> <span class="c1">//使用libevent</span>
+</span><span class='line'>            <span class="k">return</span> <span class="k">new</span> <span class="nx">LibEventLoop</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">return</span> <span class="k">new</span> <span class="nx">StreamSelectLoop</span><span class="p">();</span> <span class="c1">//不使用libevent</span>
+</span><span class='line'>        <span class="c1">// @codeCoverageIgnoreEnd</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>我们主要来看看<code>StreamSelectLoop</code>的实现。<code>LoopInterface</code>中几个重要的方法<code>addReadStream</code>, <code>addWriteStream</code>, <code>addTimer</code>, <code>tick</code>都可以在<code>StreamSelectLoop</code>找到踪影。下面先说一下<code>addReadStream</code>中的两个参数：</p>
+
+<p><em><code>$stream</code>是一个由<code>stream_socket_server</code>方法生成的socket句柄，支持tcp或文件socket等方式。
+</em><code>$listener</code>其实就是一个callback方法，在这个方法中就需要实现具体的应用逻辑了。</p>
+
+<p><code>addWriteStream</code>与<code>addReadStream</code>方法差不多，这两个方法其实啥都没做，只是注册一下两个方法，以供后面调用。真正起作用的方法是<code>tick</code>和<code>runStreamSelect</code>。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'>    <span class="k">protected</span> <span class="k">function</span> <span class="nf">runStreamSelect</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$read</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">readStreams</span> <span class="o">?:</span> <span class="k">null</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$write</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">writeStreams</span> <span class="o">?:</span> <span class="k">null</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$except</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$read</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nv">$write</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sleepOnPendingTimers</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nb">stream_select</span><span class="p">(</span><span class="nv">$read</span><span class="p">,</span> <span class="nv">$write</span><span class="p">,</span> <span class="nv">$except</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getNextEventTimeInMicroSeconds</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nv">$read</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">foreach</span> <span class="p">(</span><span class="nv">$read</span> <span class="k">as</span> <span class="nv">$stream</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="nv">$listener</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">readListeners</span><span class="p">[(</span><span class="nx">int</span><span class="p">)</span> <span class="nv">$stream</span><span class="p">];</span>
+</span><span class='line'>                    <span class="k">if</span> <span class="p">(</span><span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$listener</span><span class="p">,</span> <span class="nv">$stream</span><span class="p">,</span> <span class="nv">$this</span><span class="p">)</span> <span class="o">===</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">removeReadStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>                <span class="p">}</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nv">$write</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">foreach</span> <span class="p">(</span><span class="nv">$write</span> <span class="k">as</span> <span class="nv">$stream</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">writeListeners</span><span class="p">[(</span><span class="nx">int</span><span class="p">)</span> <span class="nv">$stream</span><span class="p">]))</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="k">continue</span><span class="p">;</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="nv">$listener</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">writeListeners</span><span class="p">[(</span><span class="nx">int</span><span class="p">)</span> <span class="nv">$stream</span><span class="p">];</span>
+</span><span class='line'>                    <span class="k">if</span> <span class="p">(</span><span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$listener</span><span class="p">,</span> <span class="nv">$stream</span><span class="p">,</span> <span class="nv">$this</span><span class="p">)</span> <span class="o">===</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">removeWriteStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>                <span class="p">}</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>runStreamSelect</code>方法在<code>tick</code>方法中被调用，目的是在每个间隔中重复调用之前绑定的<code>$listener</code>方法，这个可以理解，因为本来<code>EventLoop</code>的目的就是实现事件的监听，监听的最简单方法就是通过轮询的方式来调用，假如某些方法不希望被重复调用或者希望在某次成功之后就不再调用，那么在定义<code>$listener</code>方法时，将返回值设置成false即可。至于这个间隔，则是通过<code>Timer</code>来实现的。</p>
+
+<p>在<code>runStreamSelect</code>中调用了一个有意思的方法<a href="http://php.net/manual/en/function.stream-select.php"><code>stream_select</code></a>，用timeout取代传统的<code>sleep</code>，并兼具监听socket端口的功能，一旦有新的连接或者改动，<code>stream_select</code>会立刻返回read或write中被修改的socket连接总数。这样，既能合理的释放cpu资源，又能及时对事件发起响应。比起传统的<code>while+sleep</code>，实在是高明很多。</p>
+
+<h3>Timer</h3>
+
+<p>说到<code>tick</code>就不得不提<code>Timer</code>，<code>react</code>中用一个<code>Timer</code>类来模拟步进操作。每隔一定的ticket会唤起一个事件，这样才能保证异步操作能正确的被调用，这个ticket的数量有讲究，设置的太小会让系统耗用大量资源，设置的太大又不能保证异步事件能及时的被调用。下面我们来看看<code>Timer</code>中的tick。</p>
+
+<p><code>Timer</code>中使用一个队列来记录所有将触发的事件，并且将它们按照优先级(也就是触发事件)排序，最后每次调用优先级最高的事件。</p>
+
+<p><code>react</code>中使用<code>SplPriorityQueue</code>类来做优先级队列，这是php5.3后新增的一个标准库类，其功能很简单，就是实现一个按照rank排序的队列，有点类似redis中的zset，但是其值是可以重复的，所以它不是一个集合。它实现了<code>insert</code>, <code>count</code>, <code>count</code>, <code>extract</code>等方法，通过<code>insert</code>往队列中插入的数据会自动按照优先级(priority)由小到大排序，免去了sort的麻烦，然后可以通过<code>extract</code>方法得到队列顶部优先级(priority)最小的数据。</p>
+
+<p>有了Timer，用户就可以给<code>react</code>设置延迟事件，可以参考js中的<code>setTimeout</code>方法。</p>
+
+<p>最后，<code>react</code>通过<code>EventLoop</code>中的<code>run</code>方法将tick放入一个while循环，实现了监听的目的。</p>
+
+<p>总结一下，<code>react</code>的异步事件模型：</p>
+
+<p>核心的on-emit事件模型 &#8211;> EventLoop实现响应socket事件 &#8211;> Timer实现事件优先级排序 &#8211;> while循环来pending服务端的程序。</p>
+
+<p><code>react</code>还提供了很多的示例文件，一个简单的http-server可以实现如下：</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="k">require</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$app</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$response</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="o">&amp;</span><span class="nv">$i</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nv">$i</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$text</span> <span class="o">=</span> <span class="s2">&quot;This is request number </span><span class="si">$i</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">writeHead</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="nv">$headers</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">end</span><span class="p">(</span><span class="nv">$text</span><span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="nv">$loop</span> <span class="o">=</span> <span class="nx">React\EventLoop\Factory</span><span class="o">::</span><span class="na">create</span><span class="p">();</span>
+</span><span class='line'><span class="nv">$socket</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">React\Socket\Server</span><span class="p">(</span><span class="nv">$loop</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$http</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">React\Http\Server</span><span class="p">(</span><span class="nv">$socket</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$http</span><span class="o">-&gt;</span><span class="na">on</span><span class="p">(</span><span class="s1">&#39;request&#39;</span><span class="p">,</span> <span class="nv">$app</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$socket</span><span class="o">-&gt;</span><span class="na">listen</span><span class="p">(</span><span class="mi">1337</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$loop</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>后记</h2>
+
+<p><code>react</code>中用到了很多php5.3之后才出现的新特性(EventEmitter2甚至只支持5.4以上的php版本)，很多方法以前也没有接触过，可以说相比于国内对php的应用，老外对语言的研究更加透彻。想起国内这么普及的php应用，很多人只是略知皮毛，就喜欢大言不惭，甚至能人云亦云的挑出一堆语言的弊端。老外的钻研精神确实值得学习。</p>
+
+<p>记录一下几个可能有用但是不常用的类或方法：</p>
+
+<ul>
+<li><a href="http://php.net/manual/en/function.stream-socket-server.php"><code>stream_socket_server</code></a> 创建一个服务端套接字。</li>
+<li><a href="http://php.net/manual/en/function.stream-select.php"><code>stream_select</code></a> 监听读写socket状态的变化，带timeout时间</li>
+<li><a href="http://www.php.net/manual/en/splpriorityqueue.insert.php"><code>SplPriorityQueue</code></a> 创建一个带优先级的有序队列</li>
+</ul>
+
+
+<h2>参考文档</h2>
+
+<p><a href="http://www.mwop.net/blog/253-Taming-SplPriorityQueue.html">Taming SplPriorityQueue</a></p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-05T15:29:00+08:00" pubdate data-updated="true">2013.03.05</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/php/'>php</a>, <a class='category' href='/blog/blog/categories/react/'>react</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1432,163 +1754,6 @@ url=http%3A%2F%2Fwww.google.com</p></blockquote>
 
 
 <time datetime="2013-01-21T17:42:00+08:00" pubdate data-updated="true">2013.01.21</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/awk/'>awk</a>, <a class='category' href='/blog/blog/categories/learn/'>learn</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/01/16/awk-xue-xi-bi-ji-1/">Awk 学习笔记(1)</a></h1>
-	<div class="entry-content">
-		<h2>第一个awk程序</h2>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="c1">#!/bin/awk -f</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="kr">print</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这个程序会将所有的输入原封不动的输出，直到EOF(ctrl+d)</p>
-
-<h2>在shell中使用awk</h2>
-
-<h3>命令行</h3>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;BEGIN { print &quot;Here is a single quote &lt;&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;&gt;&quot; }&#39;</span>
-</span><span class='line'>Here is a single quote &lt;<span class="err">&#39;</span>&gt;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>需要注意的是，在命令行下引号的嵌套可能会造成一些难以预料的错误，假如在awk脚本内需要用到单引号，那就在它之前使用转义符<code>\</code>，并且不要忘了用另一个单引号结束它前面的字符，就上上面做的那样，实际分成了三段awk脚本，shell将他们链接起来之后实际就成了<code>BEGIN { print "Here is a single quote &lt;'&gt;" }</code>。</p>
-
-<h3>在shell文件中</h3>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">FIND_DATA</span><span class="o">=</span><span class="k">$(</span>awk <span class="s1">&#39;</span>
-</span><span class='line'><span class="s1">BEGIN {</span>
-</span><span class='line'><span class="s1">    print &quot;here is a single quote &lt;&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;&gt;&quot;</span>
-</span><span class='line'><span class="s1">}</span>
-</span><span class='line'><span class="s1">&#39;</span><span class="k">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>有的时候awk会写的很长，这个时候需要换行，直接用单引号两边包住即可，注意脚本中的单引号还是需要转义的。</p>
-
-<h2>使用正则表达式</h2>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;/^foo/ { print $0 }&#39;</span> BBS-list
-</span><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;/^foo/ { print $0 }</span>
-</span><span class='line'><span class="s1">&gt; /foo/ { print $0 }&#39;</span> BBS-list
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>上面的命令在BBS-list中匹配出所有以<code>foo</code>开头的行，多个表达式可以用在同一行上，会将匹配结果打印在不同行上。</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;{ if($1 ~ /foo$/) print $0 }&#39;</span> BBS-list
-</span><span class='line'>macfoo       555-6480     1200/300          A
-</span><span class='line'>sabafoo      555-2127     1200/300          C
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在变量上使用正则表达式，使用<code>~</code>或<code>!~</code>符号，能满足多数的应用。</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;{ REGEXP = &quot;^foo&quot;; if($1 ~ REGEXP) print $0 }&#39;</span> BBS-list
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>动态的设置正则表达式，变量中需要省去两边的<code>/</code>。</p>
-
-<h2>BEGIN/END</h2>
-
-<p>开头和结尾的两块表达式，可以用来做一些全局参数设定和数据统计。</p>
-
-<h2>有用的内置参数</h2>
-
-<ul>
-<li>FS            定义分隔符</li>
-<li>OFS           定义输出分隔符</li>
-<li>NF            列数</li>
-<li>NR            行号</li>
-<li>RS            输入条目分隔符，awk按这个字符来将整个文本分成不同条记录(默认为&#8221;\n&#8221;)</li>
-<li>ORS           输出条目分隔符</li>
-<li>IGNORECASE=1  忽略大小写(只支持gawk)</li>
-<li>FIELDWIDTHS   指定每列的宽度(只支持gawk)，实际场景中貌似用处不大，除非原文本的格式本身就非常工整(每个field的字符数相等)，下面是<code>FS</code>变量可能会影响<code>FIELDWIDTHS</code>的地方</li>
-</ul>
-
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;BEGIN{FS = &quot;a&quot;;FIELDWIDTHS= &quot;4 4&quot;}{print $1, FS}&#39;</span> BBS-list <span class="c"># FS不生效</span>
-</span><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;BEGIN{FIELDWIDTHS= &quot;4 4&quot;;FS = &quot;a&quot;}{print $1, FS}&#39;</span> BBS-list <span class="c"># FIELDWIDTHS不生效</span>
-</span><span class='line'><span class="nv">$ </span>awk -Fa <span class="s1">&#39;BEGIN{FIELDWIDTHS= &quot;4 4&quot;}{print $1, FS}&#39;</span> BBS-list <span class="c"># FS不生效</span>
-</span><span class='line'><span class="c"># 总而言之，就是哪个在后，哪个就优先。</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<ul>
-<li>PROCINFO      内置数组，用于记录一些程序信息，包括分隔符类型，进程号，用户组等等</li>
-<li>FPAT          gawk特有的一个变量，不能与FS，FIELDWIDTHS共存，利用正则匹配出对应的field，手册中给出了一个常用的例子，匹配csv文件，<code>awk -vFPAT="([^,]+)|(\"[^\"]+\")" '{print "NF=",NF; for(i =1 ;i&lt;NF;i++){print $i}}' str.csv</code>，不过这种写法不够直观，也容易出错，用来应急可以，真刀真枪的干，还是求助其他语言吧</li>
-<li>OFMT          输出格式，默认为<code>%.6g</code>，这在格式化数字时比较有效，例如用<code>%.1f</code>就是输出四舍五入后的一位小数，而用<code>%i</code>就是输出整数了。</li>
-</ul>
-
-
-<h2>有用的方法</h2>
-
-<ul>
-<li>length($1)    计算字符串或数组长度</li>
-<li>srand()       生成随机数种子</li>
-<li>rand()        生成一个浮点随机数，需要跟srand配合</li>
-<li>tolower()     转小写</li>
-<li>toupper()     转大写</li>
-<li>sub()         <code>$ awk '{ sub(/foo/, "FOO"); print }' BBS-list</code>将foo字符串替换成FOO。</li>
-</ul>
-
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-01-16T21:46:00+08:00" pubdate data-updated="true">2013.01.16</time></div>
 	<div class="tags">
 
 

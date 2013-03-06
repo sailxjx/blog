@@ -7,9 +7,15 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content="gd是一个强大的php图像处理库，最近在做验证码加强的策略，才发现用php作图也能玩出很多花样来。 几个重要函数 imagecreatetruecolor 创建一张空的画布
-imagecreatefrompng 从文件创建一个图片句柄
-imagecolorallocate 拾取一种颜色(rgb &hellip;">
+	<meta name="description" content="第一个awk程序 1
+2
+3
+4
+#!/bin/awk -f
+{ print
+} 这个程序会将所有的输入原封不动的输出，直到EOF(ctrl+d) 在shell中使用awk 命令行 1
+2
+$ awk &#39;BEGIN { print &quot;Here is a single quote &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -77,6 +83,163 @@ imagecolorallocate 拾取一种颜色(rgb &hellip;">
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/01/16/awk-xue-xi-bi-ji-1/">Awk 学习笔记(1)</a></h1>
+	<div class="entry-content">
+		<h2>第一个awk程序</h2>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="c1">#!/bin/awk -f</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="kr">print</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个程序会将所有的输入原封不动的输出，直到EOF(ctrl+d)</p>
+
+<h2>在shell中使用awk</h2>
+
+<h3>命令行</h3>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;BEGIN { print &quot;Here is a single quote &lt;&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;&gt;&quot; }&#39;</span>
+</span><span class='line'>Here is a single quote &lt;<span class="err">&#39;</span>&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>需要注意的是，在命令行下引号的嵌套可能会造成一些难以预料的错误，假如在awk脚本内需要用到单引号，那就在它之前使用转义符<code>\</code>，并且不要忘了用另一个单引号结束它前面的字符，就上上面做的那样，实际分成了三段awk脚本，shell将他们链接起来之后实际就成了<code>BEGIN { print "Here is a single quote &lt;'&gt;" }</code>。</p>
+
+<h3>在shell文件中</h3>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">FIND_DATA</span><span class="o">=</span><span class="k">$(</span>awk <span class="s1">&#39;</span>
+</span><span class='line'><span class="s1">BEGIN {</span>
+</span><span class='line'><span class="s1">    print &quot;here is a single quote &lt;&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;&gt;&quot;</span>
+</span><span class='line'><span class="s1">}</span>
+</span><span class='line'><span class="s1">&#39;</span><span class="k">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>有的时候awk会写的很长，这个时候需要换行，直接用单引号两边包住即可，注意脚本中的单引号还是需要转义的。</p>
+
+<h2>使用正则表达式</h2>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;/^foo/ { print $0 }&#39;</span> BBS-list
+</span><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;/^foo/ { print $0 }</span>
+</span><span class='line'><span class="s1">&gt; /foo/ { print $0 }&#39;</span> BBS-list
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上面的命令在BBS-list中匹配出所有以<code>foo</code>开头的行，多个表达式可以用在同一行上，会将匹配结果打印在不同行上。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;{ if($1 ~ /foo$/) print $0 }&#39;</span> BBS-list
+</span><span class='line'>macfoo       555-6480     1200/300          A
+</span><span class='line'>sabafoo      555-2127     1200/300          C
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在变量上使用正则表达式，使用<code>~</code>或<code>!~</code>符号，能满足多数的应用。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;{ REGEXP = &quot;^foo&quot;; if($1 ~ REGEXP) print $0 }&#39;</span> BBS-list
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>动态的设置正则表达式，变量中需要省去两边的<code>/</code>。</p>
+
+<h2>BEGIN/END</h2>
+
+<p>开头和结尾的两块表达式，可以用来做一些全局参数设定和数据统计。</p>
+
+<h2>有用的内置参数</h2>
+
+<ul>
+<li>FS            定义分隔符</li>
+<li>OFS           定义输出分隔符</li>
+<li>NF            列数</li>
+<li>NR            行号</li>
+<li>RS            输入条目分隔符，awk按这个字符来将整个文本分成不同条记录(默认为&#8221;\n&#8221;)</li>
+<li>ORS           输出条目分隔符</li>
+<li>IGNORECASE=1  忽略大小写(只支持gawk)</li>
+<li>FIELDWIDTHS   指定每列的宽度(只支持gawk)，实际场景中貌似用处不大，除非原文本的格式本身就非常工整(每个field的字符数相等)，下面是<code>FS</code>变量可能会影响<code>FIELDWIDTHS</code>的地方</li>
+</ul>
+
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;BEGIN{FS = &quot;a&quot;;FIELDWIDTHS= &quot;4 4&quot;}{print $1, FS}&#39;</span> BBS-list <span class="c"># FS不生效</span>
+</span><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;BEGIN{FIELDWIDTHS= &quot;4 4&quot;;FS = &quot;a&quot;}{print $1, FS}&#39;</span> BBS-list <span class="c"># FIELDWIDTHS不生效</span>
+</span><span class='line'><span class="nv">$ </span>awk -Fa <span class="s1">&#39;BEGIN{FIELDWIDTHS= &quot;4 4&quot;}{print $1, FS}&#39;</span> BBS-list <span class="c"># FS不生效</span>
+</span><span class='line'><span class="c"># 总而言之，就是哪个在后，哪个就优先。</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>PROCINFO      内置数组，用于记录一些程序信息，包括分隔符类型，进程号，用户组等等</li>
+<li>FPAT          gawk特有的一个变量，不能与FS，FIELDWIDTHS共存，利用正则匹配出对应的field，手册中给出了一个常用的例子，匹配csv文件，<code>awk -vFPAT="([^,]+)|(\"[^\"]+\")" '{print "NF=",NF; for(i =1 ;i&lt;NF;i++){print $i}}' str.csv</code>，不过这种写法不够直观，也容易出错，用来应急可以，真刀真枪的干，还是求助其他语言吧</li>
+<li>OFMT          输出格式，默认为<code>%.6g</code>，这在格式化数字时比较有效，例如用<code>%.1f</code>就是输出四舍五入后的一位小数，而用<code>%i</code>就是输出整数了。</li>
+</ul>
+
+
+<h2>有用的方法</h2>
+
+<ul>
+<li>length($1)    计算字符串或数组长度</li>
+<li>srand()       生成随机数种子</li>
+<li>rand()        生成一个浮点随机数，需要跟srand配合</li>
+<li>tolower()     转小写</li>
+<li>toupper()     转大写</li>
+<li>sub()         <code>$ awk '{ sub(/foo/, "FOO"); print }' BBS-list</code>将foo字符串替换成FOO。</li>
+</ul>
+
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-16T21:46:00+08:00" pubdate data-updated="true">2013.01.16</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/awk/'>awk</a>, <a class='category' href='/blog/blog/categories/learn/'>learn</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1497,104 +1660,6 @@ imagecolorallocate 拾取一种颜色(rgb &hellip;">
 
 
 	<a class='category' href='/blog/blog/categories/nosql/'>nosql</a>, <a class='category' href='/blog/blog/categories/redis/'>redis</a>, <a class='category' href='/blog/blog/categories/test/'>test</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/07/12/ti-yan-gollum/">体验gollum</a></h1>
-	<div class="entry-content">
-		<p>gollum是一个轻量级的wiki系统，使用git作为版本管理和跟踪工具，支持markdown，mediawiki，texttile等多种语法，由github开发并且已经投入到githubwiki的应用中。</p>
-
-<ul>
-<li><a href="#gollum_install">安装</a></li>
-<li><a href="#gollum_deploy">部署</a></li>
-<li><a href="#gollum_bug">已发现的bug</a></li>
-<li><a href="#gollum_refer">参考资料</a></li>
-</ul>
-
-
-<h2 id="gollum_install">安装</h2>
-
-
-<p>gollum与指环王中某个屌丝同名，不知道开发人员的命名灵感是不是来自那里，我们知道，程序员老是喜欢用一些稀奇古怪的东西来给自己的软件命名，像python（莽蛇），octopress（章鱼）等等，搞得好像人人都是动物保护主义者一样～</p>
-
-<p>根据<a href="https://github.com/github/gollum">github主页</a>的说明，gollum的安装非常简单，一条命令解决</p>
-
-<figure class='code'><figcaption><span>安装gollum  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="o">[</span>sudo<span class="o">]</span> gem install gollum
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>假如你喜欢追新，觉得这样安装的版本太老，想直接上HEAD的话，clone一个镜像使用<code>bundle install</code>安装好依赖之后，其bin文件夹下面的gollum就直接可以执行了，绝对绿色环保无污染。</p>
-
-<p>现在就来体验一下gollum带来的不同与其他wiki的小清新感觉吧，在主目录下使用以下命令</p>
-
-<figure class='code'><figcaption><span>执行gollum  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>mkdir gowiki
-</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>gowiki
-</span><span class='line'><span class="nv">$ </span>git init
-</span><span class='line'><span class="nv">$ </span>gollum
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><a href="/blog/images/u/gollum-exec-info.png"><img class="right" src="/blog/images/u/gollum-exec-info.png" width="450" height="70" title="&#34;gollum-exec-info&#34;" alt="&#34;gollum-exec-info&#34;"></a>
-看到右图就说明gollum已经正确的运行了，gollum默认监听4567端口，并且提供了一个可交互的前端，这个时候用户可以通过浏览器打开<a href="http://localhost:4567">http://localhost:4567</a>来看一下gollum了</p>
-
-<p><a href="/blog/images/u/gollum-frontend.png"><img class="right" src="/blog/images/u/gollum-frontend.png" width="450" height="115" title="&#34;gollum-frontend&#34;" alt="&#34;gollum-frontend&#34;"></a></p>
-
-<p>界面实在是足够简洁，提供的几个button实现了wiki的基本功能增删改查，还能查看历史页面，而且还有一套开放的用户系统，name和email由git的使用者决定，头像则由gravatar生成。</p>
-
-<p>除了通过页面编辑wiki以外，gollum还支持直接由git提交版本来更新页面。由于我们gollum默认读取master分支，而我们正checkout在master上，不方便其他人的编辑，所以我们暂时新建一个demo分支来避免冲突。</p>
-
-<figure class='code'><figcaption><span>用git来写wiki  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch demo
-</span><span class='line'><span class="nv">$ </span>git checkout demo
-</span><span class='line'><span class="nv">$ </span>mkdir ../gowiki2 <span class="o">&amp;&amp;</span> <span class="nb">cd</span> ../gowiki2
-</span><span class='line'><span class="nv">$ </span>git init <span class="o">&amp;&amp;</span> git remote add origin ../gowiki
-</span><span class='line'><span class="nv">$ </span>git pull
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>现在gowiki2中应该有了之前编辑过的几个页面，修改以后push到origin的master，就可以在wiki中看到刚刚的更新了。</p>
-
-
-		
-		<a href="/blog/blog/2012/07/12/ti-yan-gollum/" class="more-link">Read on &rarr;</a>
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-12T18:07:00+08:00" pubdate data-updated="true">2012.07.12</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/git/'>git</a>, <a class='category' href='/blog/blog/categories/github/'>github</a>, <a class='category' href='/blog/blog/categories/gollum/'>gollum</a>, <a class='category' href='/blog/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/blog/categories/wiki/'>wiki</a>
 
 
 </div>
