@@ -4,7 +4,7 @@
   <title><![CDATA[Category: react | novolander]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/react/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-03-06T16:23:07+08:00</updated>
+  <updated>2013-03-06T17:19:05+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -267,7 +267,7 @@
 
 <p><code>Timer</code>中使用一个队列来记录所有将触发的事件，并且将它们按照优先级(也就是触发事件)排序，最后每次调用优先级最高的事件。</p>
 
-<p><code>react</code>中使用<code>SplPriorityQueue</code>类来做优先级队列，这是php5.3后新增的一个标准库类，其功能很简单，就是实现一个按照rank排序的队列，有点类似redis中的zset，但是其值是可以重复的，所以它不是一个集合。它实现了<code>insert</code>, <code>count</code>, <code>count</code>, <code>extract</code>等方法，通过<code>insert</code>往队列中插入的数据会自动按照优先级(priority)由小到大排序，免去了sort的麻烦，然后可以通过<code>extract</code>方法得到队列顶部优先级(priority)最小的数据。</p>
+<p><code>react</code>中使用<code>SplPriorityQueue</code>类来做优先级队列，这是php5.3后新增的一个标准库类，其功能很简单，就是实现一个按照rank排序的队列，有点类似redis中的zset，但是其值是可以重复的，所以它不是一个集合。它实现了<code>insert</code>, <code>count</code>, <code>count</code>, <code>extract</code>等方法，通过<code>insert</code>往队列中插入的数据会自动按照优先级(priority)由大到小排序(<code>react</code>中根据interval时间取负，实现了由小到大排序)，免去了sort的麻烦，然后可以通过<code>extract</code>方法得到队列顶部优先级(priority)最高的数据。</p>
 
 <p>有了Timer，用户就可以给<code>react</code>设置延迟事件，可以参考js中的<code>setTimeout</code>方法。</p>
 
