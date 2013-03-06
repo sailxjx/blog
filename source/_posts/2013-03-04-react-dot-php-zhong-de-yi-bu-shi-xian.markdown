@@ -140,7 +140,7 @@ interface LoopInterface
 
 `Timer`中使用一个队列来记录所有将触发的事件，并且将它们按照优先级(也就是触发事件)排序，最后每次调用优先级最高的事件。
 
-`react`中使用`SplPriorityQueue`类来做优先级队列，这是php5.3后新增的一个标准库类，其功能很简单，就是实现一个按照rank排序的队列，有点类似redis中的zset，但是其值是可以重复的，所以它不是一个集合。它实现了`insert`, `count`, `count`, `extract`等方法，通过`insert`往队列中插入的数据会自动按照优先级(priority)由小到大排序，免去了sort的麻烦，然后可以通过`extract`方法得到队列顶部优先级(priority)最小的数据。
+`react`中使用`SplPriorityQueue`类来做优先级队列，这是php5.3后新增的一个标准库类，其功能很简单，就是实现一个按照rank排序的队列，有点类似redis中的zset，但是其值是可以重复的，所以它不是一个集合。它实现了`insert`, `count`, `count`, `extract`等方法，通过`insert`往队列中插入的数据会自动按照优先级(priority)由大到小排序(`react`中根据interval时间取负，实现了由小到大排序)，免去了sort的麻烦，然后可以通过`extract`方法得到队列顶部优先级(priority)最高的数据。
 
 有了Timer，用户就可以给`react`设置延迟事件，可以参考js中的`setTimeout`方法。
 
