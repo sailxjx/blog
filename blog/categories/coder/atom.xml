@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: coder | 绿豆敲代码]]></title>
+  <link href="http://sailxjx.github.com/blog/blog/categories/coder/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.com/blog/"/>
+  <updated>2013-03-09T15:51:18+08:00</updated>
+  <id>http://sailxjx.github.com/blog/</id>
+  <author>
+    <name><![CDATA[tristan]]></name>
+    <email><![CDATA[sailxjx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[程序猿与脏话]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/03/08/cheng-xu-yuan-yu-zang-hua/"/>
+    <updated>2013-03-08T09:51:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/03/08/cheng-xu-yuan-yu-zang-hua</id>
+    <content type="html"><![CDATA[<p>俗话说林子大了什么鸟都有，在程序猿这个群体中，脏话和吹牛是两大显著特征。脏话的种类也是花样百出，下面就来归归类</p>
+
+<h3>第一类，加强语气型</h3>
+
+<p>常见的有<code>damn</code>,<code>f**k</code>，<code>shit</code>等等，往往后面还跟着些动词与形容词，像<code>stupid</code>啦，<code>idiot</code>啦，没啥创意但是足够醒目。</p>
+
+<h3>第二类，表达不满型</h3>
+
+<p>这一类就没有第一类那么无脑啦，至少人家不是词不达意嘛~如<code>what the f**k</code>，<code>a** hole</code>，<code>son of a b*tch</code>，<code>f**k off</code>，<code>beast</code>等等，常作用于老板和项目经理等不招人待见的群体。</p>
+
+<h3>第三类，口头禅</h3>
+
+<p>这一类人往往从第一类进化而来，某些词说习惯了就很难改过来啦，说着说着就喜欢夹一些动词进来，没办法，不然哪像个大老爷们嘛~</p>
+
+<h3>第四类，自嘲型</h3>
+
+<p>这一类就得注意语境啦，说的好了人家会心一笑，说不好人家可真能拔刀相见。</p>
+
+<p>程序猿向来都是独来独往，心高气傲，自然不甘与程序小白为伍啦，甚至在圈内也是互相看不惯的嘛，于是才有了<code>geek</code>的称号，而<code>geek</code>本身就有着讨厌鬼的意思。不少人以<code>geek</code>自居，嘴上更是得理不饶人。因为很多真正的大牛据说也是脾气古怪，比如linus torvalds，就常常在公众场合竖中指，在邮件中更是口无遮拦，著名的有那句<code>Read the F**ing Source Code</code>，顿时霸气十足，节操掉一地。</p>
+
+<p>这是在网上，但是在生活中，我所接触的程序猿往往又成了别人眼里内向，闷骚的代名词，时不时也能冒出一两句冷笑话，提高下存在感。这种现实与虚拟中的反差很有意思，喜欢心理的可以研究一下。</p>
+
+<p>而且在东西方程序猿的文化上，也有差异，老外骂人直来直往，少不了那一个动词。国人比较含蓄，除了问候一家老小七大姑八大姨之外，还会拐弯抹角，引经据典，凸显我大中华之悠久历史，比如最近流行的<code>去年买了个表</code>，就颇具亲和力。在这方面，猫扑天涯是集大成者，但这又不在我们讨论范围内了。</p>
+
+<p>程序猿的脏话，往往见于注释，这也成了代码中的一道亮丽风景，辛辛苦苦读了一天代码，发现一头雾水，这个时候，要是看到这些注释，发现前人也在这里大吐苦水，心里也就释然了。</p>
+
+<p>在这个大数据横行的时候，什么都得靠挖掘嘛，如果写个爬虫，去抓一下各大论坛的脏话做个统计，应该是一件很有意思的事情。</p>
+]]></content>
+  </entry>
+  
+</feed>
