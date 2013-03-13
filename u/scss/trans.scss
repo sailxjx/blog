@@ -1,0 +1,139 @@
+@mixin keyframes($name) {
+  @-webkit-keyframes #{$name} {
+    @content; 
+  }
+  @-moz-keyframes #{$name} {
+    @content;
+  }
+  @-ms-keyframes #{$name} {
+    @content;
+  }
+  @keyframes #{$name} {
+    @content;
+  } 
+}
+
+@mixin transition($prop: all, $duration: .7s) {
+    transition: $prop $duration;
+    -moz-transition: $prop $duration; /* Firefox 4 */
+    -webkit-transition: $prop $duration; /* Safari and Chrome */
+    -o-transition: $prop $duration; /* Opera */
+}
+
+@mixin transform($func) {
+    transform: $func;
+    -moz-transform: $func;
+    -webkit-transform: $func;
+    -o-transition: $func;
+}
+
+@mixin animate($func, $time: 5s, $loop: infinite, $timeFunc: ease) {
+    animation: $func $time $loop $timeFunc;
+    -moz-animation: $func $time $loop $timeFunc;
+    -webkit-animation: $func $time $loop $timeFunc;
+    -o-animation: $func $time $loop $timeFunc;
+}
+
+@include keyframes(rotate) {
+    0% {
+        @include transform(rotate(0deg));
+    }
+    100% {
+        @include transform(rotate(360deg));
+    }
+}
+
+@include keyframes(trans_color) {
+    0%, 100% {
+        background: green;
+    }
+    50% {
+        background: yellow;
+    }
+}
+
+@include keyframes(move) {
+    0%, 100% {
+        left: 0;
+        @include transform(rotate(0));
+    }
+    50% {
+        left: 300px;
+        @include transform(rotate(180deg));
+    }
+}
+
+@include keyframes(dj) {
+    0% {
+        @include transform(rotate(0));
+    }
+    100% {
+        @include transform(rotate(360deg));
+    }
+}
+
+.color-demo, .transform-demo, .animate-demo {
+    color: black;
+    display: inline-block;
+    margin-right: 20px;
+    cursor: default;
+    height: 60px;
+    width: 100px;
+    border-radius: 5px;
+    border: 1px solid #CCC;
+    text-align: center;
+    background: green;
+}
+
+.color-demo {
+    &:hover {
+        background: yellow;
+    }
+}
+
+.color-transition {
+    @include transition(background);
+}
+
+.transform-rotate {
+    @include transform(rotate(30deg));
+}
+
+.transform-scale {
+    @include transform(scale(1.2))
+}
+
+.rotate-arrow {
+    width: 15px;
+    height: 15px;
+    position: relative;
+    left: 20px;
+    top: 10px;
+    z-index: 0;
+    border: 3px solid green;
+    background: white;
+    border-right: none;
+    border-bottom: none;
+    @include transform(rotate(45deg));
+}
+
+.input-tip {
+    height: 30px;
+    width: 200px;
+    border: 3px solid green;
+    border-radius: 3px;
+    padding: 10px;
+    background: white;
+}
+
+.animate-move {
+    position: relative;
+    @include animate(move);
+}
+
+.album {
+    width: 300px;
+    height: 300px;
+    border-radius: 150px;
+    @include animate(dj, 10s, infinite, linear);
+}
