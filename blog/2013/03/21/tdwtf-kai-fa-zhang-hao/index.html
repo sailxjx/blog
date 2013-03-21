@@ -1,0 +1,210 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>[TDWTF] 开发账号 - CodeBean</title>
+	<meta name="author" content="tristan">
+
+	
+	<meta name="description" content="Karen在办公桌旁瞪着Tom。“你在电脑上安装了Visual Studio？” “对啊”，Tom搞不明白她为啥要暴走。 “而且你访问了Oracle数据库？” “额。。。是啊” “你为什么要这样干？” 为什么？Tom刚刚作为财务部门的一名开发者加入了这家财富500强公司，并且直接向Karen（ &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="CodeBean" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">CodeBean</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/sailxjx?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h1 class="title">[TDWTF] 开发账号</h1>
+	<div class="entry-content"><p>Karen在办公桌旁瞪着Tom。“你在电脑上安装了Visual Studio？”</p>
+
+<p>“对啊”，Tom搞不明白她为啥要暴走。</p>
+
+<p>“而且你访问了Oracle数据库？”</p>
+
+<p>“额。。。是啊”</p>
+
+<p>“你为什么要这样干？”</p>
+
+<p>为什么？Tom刚刚作为财务部门的一名开发者加入了这家财富500强公司，并且直接向Karen（一个财务专家）汇报，大部分时间都从事一些财务相关的工作。事实上，在这里他见过的唯一一个IT工作人员是帮他装电脑的。</p>
+
+<p>第一天，Karen让他修复一个财务预测系统，简称FFS。“它性能很差，而且没人搞得懂它到底是怎么工作的甚至它是干什么的。不搞坏点东西的话我就没法向它添加报告记录。把它搞明白，有问题就问财务会计人员。”</p>
+
+<p>Tom没花多久就搞清楚这个系统为什么会比像超车道上过马路的老头还慢了。FFS用的是Access数据库，但是超出了Access处理能力15倍。为什么是这个特殊的数字？因为数据文件被分成了15个2GB的文件。而第16个小得多的文件中包含的VBA代码将这个系统整合在一起。它不是由程序员开发的，而是由某个路人甲搞出来的玩意儿。</p>
+
+<p>不同于传统的链接表结构，在提交表单前VBA会在数个DB文件中执行语句。基本的Access特征，像语句和报告并不能很容易的得到结果。大多数报告记录是手写的VBA表单。（这段没看明白，瞎蒙了。。。）</p>
+
+<p>Karen并没兴趣对Tom进行技术指导，他只能慢慢往下查。第一步是将一些数据迁移到真正的数据库上。他可以慢慢将一些功能迁移到一个.net应用上并且保持原有的需求。这样做有点像一个“牛仔码农”，但是相对于他们已有的系统，这是个巨大的进步。</p>
+
+<p>“我不敢相信你居然干了这种事！” Karen说。“只有研发有权限安装Visual Studio，并且只有研发可以访问数据库。你现在把这些权限搞的一团糟。”</p>
+
+<p>Tom有点迷惑。“我想我应该<em>是</em>一个研发”</p>
+
+<p>“在组织架构上，你不是。” Karen说。“你是一个会计，我们部门不允许招聘研发。”</p>
+
+<p>Tom克制住打开手机查查翻译软件的冲动；他现在相信自己跟Karen没有共同语言。“假如你不能招聘研发，为什么你又招聘他们然后假装他们是会计？”</p>
+
+<p>“集团的IT拒绝支持FFS，”她说。“至少在我们付钱给他们升级.net之前他们不干。但是我们没有这么多的IT经费预算。所以我们试图找一些人来支持Access应用。你唯一需要的研发工具就<em>应该是</em>Access。”</p>
+
+<p>Tom想找出一些理由或名言警句来说服Karen认识到自己的错误，最后他只能放弃了。她的逻辑用官僚主义铸成了一道密不透风的墙。</p>
+
+<p>Tom回到他的座位，开始卸载Visual Studio。在机器硬盘发出轧轧声的时候，他打开一个被<em>允许</em>使用的研发工具-Word-开始更新他的简历。</p>
+
+<p>原文链接: <a href="http://thedailywtf.com/Articles/Accounting-for-Development.aspx">Accounting for Development</a></p>
+
+<h1>后记</h1>
+
+<p>翻译真是个技术活。。。老外的俚语也很多啊，好多搞不懂啊！~慢慢来吧。</p>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-21T16:43:00+08:00" pubdate data-updated="true">2013.03.21</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/joke/'>joke</a>, <a class='category' href='/blog/blog/categories/translation/'>translation</a>
+
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2013
+
+    tristan
+
+</footer>
+	<script src="/blog/javascripts/slash.js"></script>
+<script src="/blog/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sailxjx.github.com/blog/blog/2013/03/21/tdwtf-kai-fa-zhang-hao/';
+        var disqus_url = 'http://sailxjx.github.com/blog/blog/2013/03/21/tdwtf-kai-fa-zhang-hao/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33186961-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+
+</body>
+</html>
