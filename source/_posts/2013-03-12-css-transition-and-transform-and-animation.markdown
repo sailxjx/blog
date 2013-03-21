@@ -167,6 +167,8 @@ keyframes是一个预定义的方法，将它与animation结合，就能实现�
     <img src="/images/u/album-milk.jpg" alt="album-milk" class="album">
 </p>
 
+<embed src="http://www.xiami.com/widget/0_1771372335/singlePlayer.swf" type="application/x-shockwave-flash" width="257" height="33" wmode="transparent"></embed>
+
 ## 后记
 
 上面的效果没有用到一行js。css真是将技术与艺术完美结合的产物，这些动画无疑需要激发人无限的创意，随着浏览器的支持度提高，在web上的应用也会越来越广，应用的明天会非常美好。
