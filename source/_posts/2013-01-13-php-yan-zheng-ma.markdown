@@ -44,7 +44,7 @@ public function genCode($n = 4) {
 
 效果图：
 
-> {% img /images/u/verify-code-simple.png "verify-code-simple" %}
+> {% img /u/image/verify-code-simple.png "verify-code-simple" %}
 
 其中合并了一张纹理背景并随机绘制出文字的颜色。下面我们再加点料，
 
@@ -70,7 +70,7 @@ public function addLine($n = 1) {
 
 上面的方法往图像中加入了50个噪点和一条干扰曲线，于是验证码变成了这样：
 
-> {% img /images/u/verify-code-noise.png "verify-code-noise" %}
+> {% img /u/image/verify-code-noise.png "verify-code-noise" %}
 
 下面来实现汉字和带公式的验证码
 {% codeblock lang:php %}
@@ -127,8 +127,8 @@ public function genFomula() {
 
 生成汉字和上面的英文组合差不多，加个字典就可以，然后可以加入一下随机的字体变换，生成公式呢，其实也是预先定义好数字和符号的字典，靠随机组合来生成图片，然后吧计算结果记录下来就行了。
 
-> {% img /images/u/verify-hanzi.png "verify-hanzi" %}
-> {% img /images/u/verify-fomula.png "verify-fomula" %}
+> {% img /u/image/verify-hanzi.png "verify-hanzi" %}
+> {% img /u/image/verify-fomula.png "verify-fomula" %}
 
 很多验证码中还会对字体进行扭曲，这会让做的人和看的人都比较纠结。目前的方法大致是先生成一张正常的图，然后拾取图中每个像素点进行正弦变换位置后填入另一张相同大小的图，注意两张图的背景需要一致，否则边缘的图片就很不和谐咯。
 
@@ -149,7 +149,7 @@ public function twist() {
 
 效果图：
 
-> {% img /images/u/verify-code-twist.png "verify-code-twist" %}
+> {% img /u/image/verify-code-twist.png "verify-code-twist" %}
 
 最后再加入一个gif动态图的例子，主要原理是预先生成每一帧的gif图像，然后合并为一张图片，对gif进行编码的类库使用的是网上下载的GIFEncoder，代码不多，但是够用。`less is more`嘛。
 
@@ -196,10 +196,10 @@ public function genCodeAnimate($n = 4, $flags = 40) {
 
 效果图：
 
-> {% img /images/u/verify-code-animate.gif "verify-code-animate" %}
+> {% img /u/image/verify-code-animate.gif "verify-code-animate" %}
 
 ## 备忘
 * `imagecreate`也是一个创建图像的方法，不过相对于`imagecreatetruecolor`，它会使用第一次由`imagecolorallocate`生成的颜色作为背景色，比较坑爹，不推荐。
 
 ## 下载
-* [源码](/patches/verify.zip)
+* [源码](/u/patch/verify.zip)

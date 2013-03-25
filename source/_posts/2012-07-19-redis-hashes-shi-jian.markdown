@@ -16,7 +16,7 @@ categories: [redis, nosql, test]
 ### 附加测试(single)：
 给redis设置一个hashes，只有一个field和value，反复读写，用于比较redis在hashes长度变化时性能的升降幅度
 
-<iframe id="highchart" src="http://sailxjx.github.com/demo/redis-hashes-test-chart.html" style="width: 100%; height: 280px;"></iframe>
+<iframe id="highchart" src="/u/html/redis-hashes-test-chart.html" style="width: 100%; height: 280px;"></iframe>
 测试对redis进行1000000次读写，使用本地loop，没有网络延迟，没有事务，结果基本没有多大意外。总结成三点：
 
 1. redis的读写速度基本持平
@@ -27,4 +27,4 @@ categories: [redis, nosql, test]
 
 整个用户表数据在600w条左右，只存email,id对的话占用内存在60m左右，使用单个key来保存redis数据应该是足够满足性能的需求了。
 
-[测试文件](/raw/redis_hash_test.php)
+[测试文件](/u/raw/redis_hash_test.php)

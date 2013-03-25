@@ -34,10 +34,10 @@ $ git init
 $ gollum
 {% endcodeblock %}
 
-[{% img right /images/u/gollum-exec-info.png 450 70 "gollum-exec-info" %}](/images/u/gollum-exec-info.png)
+[{% img right /u/image/gollum-exec-info.png 450 70 "gollum-exec-info" %}](/u/image/gollum-exec-info.png)
 看到右图就说明gollum已经正确的运行了，gollum默认监听4567端口，并且提供了一个可交互的前端，这个时候用户可以通过浏览器打开[http://localhost:4567](http://localhost:4567)来看一下gollum了
 
-[{% img right /images/u/gollum-frontend.png 450 115 "gollum-frontend" %}](/images/u/gollum-frontend.png)
+[{% img right /u/image/gollum-frontend.png 450 115 "gollum-frontend" %}](/u/image/gollum-frontend.png)
 
 界面实在是足够简洁，提供的几个button实现了wiki的基本功能增删改查，还能查看历史页面，而且还有一套开放的用户系统，name和email由git的使用者决定，头像则由gravatar生成。
 

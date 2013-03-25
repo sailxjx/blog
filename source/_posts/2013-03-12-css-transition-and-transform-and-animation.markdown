@@ -164,7 +164,7 @@ keyframes是一个预定义的方法，将它与animation结合，就能实现�
 {% endcodeblock %}
 
 <p>
-    <img src="/images/u/album-milk.jpg" alt="album-milk" class="album">
+    <img src="/u/image/album-milk.jpg" alt="album-milk" class="album">
 </p>
 
 <embed src="http://www.xiami.com/widget/0_1771372335/singlePlayer.swf" type="application/x-shockwave-flash" width="257" height="33" wmode="transparent"></embed>
