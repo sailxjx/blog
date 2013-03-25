@@ -4,7 +4,7 @@
   <title><![CDATA[Category: git | CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/git/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-03-21T22:08:08+08:00</updated>
+  <updated>2013-03-25T10:58:58+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -358,10 +358,10 @@
 </span><span class='line'><span class="nv">$ </span>gollum
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<p><a href="/images/u/gollum-exec-info.png"><img class="right" src="/images/u/gollum-exec-info.png" width="450" height="70" title="&#34;gollum-exec-info&#34;" alt="&#34;gollum-exec-info&#34;"></a>
+<p><a href="/u/image/gollum-exec-info.png"><img class="right" src="/u/image/gollum-exec-info.png" width="450" height="70" title="&#34;gollum-exec-info&#34;" alt="&#34;gollum-exec-info&#34;"></a>
 看到右图就说明gollum已经正确的运行了，gollum默认监听4567端口，并且提供了一个可交互的前端，这个时候用户可以通过浏览器打开<a href="http://localhost:4567">http://localhost:4567</a>来看一下gollum了</p>
 
-<p><a href="/images/u/gollum-frontend.png"><img class="right" src="/images/u/gollum-frontend.png" width="450" height="115" title="&#34;gollum-frontend&#34;" alt="&#34;gollum-frontend&#34;"></a></p>
+<p><a href="/u/image/gollum-frontend.png"><img class="right" src="/u/image/gollum-frontend.png" width="450" height="115" title="&#34;gollum-frontend&#34;" alt="&#34;gollum-frontend&#34;"></a></p>
 
 <p>界面实在是足够简洁，提供的几个button实现了wiki的基本功能增删改查，还能查看历史页面，而且还有一套开放的用户系统，name和email由git的使用者决定，头像则由gravatar生成。</p>
 

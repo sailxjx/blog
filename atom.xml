@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-03-21T22:08:08+08:00</updated>
+  <updated>2013-03-25T10:58:58+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -297,7 +297,7 @@
 
 
 <p>
-    <img src="http://sailxjx.github.com/blog/images/u/album-milk.jpg" alt="album-milk" class="album">
+    <img src="http://sailxjx.github.com/blog/u/image/album-milk.jpg" alt="album-milk" class="album">
 </p>
 
 
@@ -1973,7 +1973,7 @@ url=http%3A%2F%2Fwww.google.com</p></blockquote>
 
 <p>效果图：</p>
 
-<blockquote><p><img src="http://sailxjx.github.com/blog/images/u/verify-code-simple.png" title="&#34;verify-code-simple&#34;" alt="&#34;verify-code-simple&#34;"></p></blockquote>
+<blockquote><p><img src="http://sailxjx.github.com/blog/u/image/verify-code-simple.png" title="&#34;verify-code-simple&#34;" alt="&#34;verify-code-simple&#34;"></p></blockquote>
 
 <p>其中合并了一张纹理背景并随机绘制出文字的颜色。下面我们再加点料，</p>
 
@@ -2016,7 +2016,7 @@ url=http%3A%2F%2Fwww.google.com</p></blockquote>
 
 <p>上面的方法往图像中加入了50个噪点和一条干扰曲线，于是验证码变成了这样：</p>
 
-<blockquote><p><img src="http://sailxjx.github.com/blog/images/u/verify-code-noise.png" title="&#34;verify-code-noise&#34;" alt="&#34;verify-code-noise&#34;"></p></blockquote>
+<blockquote><p><img src="http://sailxjx.github.com/blog/u/image/verify-code-noise.png" title="&#34;verify-code-noise&#34;" alt="&#34;verify-code-noise&#34;"></p></blockquote>
 
 <p>下面来实现汉字和带公式的验证码</p>
 
@@ -2123,8 +2123,8 @@ url=http%3A%2F%2Fwww.google.com</p></blockquote>
 
 <p>生成汉字和上面的英文组合差不多，加个字典就可以，然后可以加入一下随机的字体变换，生成公式呢，其实也是预先定义好数字和符号的字典，靠随机组合来生成图片，然后吧计算结果记录下来就行了。</p>
 
-<blockquote><p><img src="http://sailxjx.github.com/blog/images/u/verify-hanzi.png" title="&#34;verify-hanzi&#34;" alt="&#34;verify-hanzi&#34;">
-<img src="http://sailxjx.github.com/blog/images/u/verify-fomula.png" title="&#34;verify-fomula&#34;" alt="&#34;verify-fomula&#34;"></p></blockquote>
+<blockquote><p><img src="http://sailxjx.github.com/blog/u/image/verify-hanzi.png" title="&#34;verify-hanzi&#34;" alt="&#34;verify-hanzi&#34;">
+<img src="http://sailxjx.github.com/blog/u/image/verify-fomula.png" title="&#34;verify-fomula&#34;" alt="&#34;verify-fomula&#34;"></p></blockquote>
 
 <p>很多验证码中还会对字体进行扭曲，这会让做的人和看的人都比较纠结。目前的方法大致是先生成一张正常的图，然后拾取图中每个像素点进行正弦变换位置后填入另一张相同大小的图，注意两张图的背景需要一致，否则边缘的图片就很不和谐咯。</p>
 
@@ -2157,7 +2157,7 @@ url=http%3A%2F%2Fwww.google.com</p></blockquote>
 
 <p>效果图：</p>
 
-<blockquote><p><img src="http://sailxjx.github.com/blog/images/u/verify-code-twist.png" title="&#34;verify-code-twist&#34;" alt="&#34;verify-code-twist&#34;"></p></blockquote>
+<blockquote><p><img src="http://sailxjx.github.com/blog/u/image/verify-code-twist.png" title="&#34;verify-code-twist&#34;" alt="&#34;verify-code-twist&#34;"></p></blockquote>
 
 <p>最后再加入一个gif动态图的例子，主要原理是预先生成每一帧的gif图像，然后合并为一张图片，对gif进行编码的类库使用的是网上下载的GIFEncoder，代码不多，但是够用。<code>less is more</code>嘛。</p>
 
@@ -2242,7 +2242,7 @@ url=http%3A%2F%2Fwww.google.com</p></blockquote>
 
 <p>效果图：</p>
 
-<blockquote><p><img src="http://sailxjx.github.com/blog/images/u/verify-code-animate.gif" title="&#34;verify-code-animate&#34;" alt="&#34;verify-code-animate&#34;"></p></blockquote>
+<blockquote><p><img src="http://sailxjx.github.com/blog/u/image/verify-code-animate.gif" title="&#34;verify-code-animate&#34;" alt="&#34;verify-code-animate&#34;"></p></blockquote>
 
 <h2>备忘</h2>
 
@@ -2254,7 +2254,7 @@ url=http%3A%2F%2Fwww.google.com</p></blockquote>
 <h2>下载</h2>
 
 <ul>
-<li><a href="http://sailxjx.github.com/blog/patches/verify.zip">源码</a></li>
+<li><a href="http://sailxjx.github.com/blog/u/patch/verify.zip">源码</a></li>
 </ul>
 
 ]]></content>
