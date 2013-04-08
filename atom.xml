@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-04-08T11:43:18+08:00</updated>
+  <updated>2013-04-08T17:49:03+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,163 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[动态规划求解数组最大差值]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/04/08/dong-tai-gui-hua-qiu-jie-shu-zu-zui-da-chai-zhi/"/>
+    <updated>2013-04-08T12:47:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/04/08/dong-tai-gui-hua-qiu-jie-shu-zu-zui-da-chai-zhi</id>
+    <content type="html"><![CDATA[<p>前几天碰到一道有趣的面试题，见微知著，由此记录一下一些新的启发和发现。</p>
+
+<p>题目很简单，给一个数组，其中有n个数字，求后面的数与前面的数的差值，将最大差值的两个数找出来。映射到生活中，就是一个股票何时买入何时卖出能达到最大收益的情况（前提是能预知未来的所有报价）。</p>
+
+<p>一个测试用例是下面这样：</p>
+
+<ul>
+<li>输入：[3,10,11,9,1,2,-1,10,7]</li>
+<li>输出：[-1, 10]</li>
+</ul>
+
+
+<p>这个题目乍看上去相当的简单，我第一个想到的就是，既然要求最大差值，那可以先将每个值与的数之间的差值求出来，然后再进行一次排序，结果不就出来了嘛。这样需要用到两次循环，代码可以参考下面。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">stepIn</span><span class="p">(</span><span class="n">dataInput</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">dataLen</span> <span class="o">=</span> <span class="n">dataInput</span><span class="o">.</span><span class="n">length</span>
+</span><span class='line'>  <span class="n">diff</span> <span class="o">=</span> <span class="kp">nil</span>
+</span><span class='line'>  <span class="n">dataResule</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class='line'>  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">dataLen</span><span class="o">-</span><span class="mi">1</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">n</span> <span class="k">in</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">dataLen</span>
+</span><span class='line'>      <span class="n">diff2</span> <span class="o">=</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">n</span><span class="o">]</span> <span class="o">-</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">i</span><span class="o">]</span>
+</span><span class='line'>      <span class="k">if</span> <span class="n">diff</span> <span class="o">==</span> <span class="kp">nil</span> <span class="ow">or</span> <span class="n">diff</span> <span class="o">&lt;</span> <span class="n">diff2</span>
+</span><span class='line'>        <span class="n">diff</span> <span class="o">=</span> <span class="n">diff2</span>
+</span><span class='line'>        <span class="n">dataResule</span><span class="o">[</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">i</span><span class="si">}</span><span class="s2">,</span><span class="si">#{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="n">diff</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="n">rIdxs</span> <span class="o">=</span> <span class="n">dataResule</span><span class="o">.</span><span class="n">sort_by</span> <span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="o">-</span><span class="n">v</span><span class="p">}</span> <span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">].</span><span class="n">split</span> <span class="s1">&#39;,&#39;</span>
+</span><span class='line'>  <span class="k">return</span> <span class="o">[</span><span class="n">dataInput</span><span class="o">[</span><span class="n">rIdxs</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">to_i</span><span class="o">]</span><span class="p">,</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">rIdxs</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_i</span><span class="o">]]</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上面的代码已经经过了优化，在每次循环后，保留了之前计算的差值的结果，下面的循环中小于这个差值的索引值就被抛弃了，这样的一个好处是可以减少最后sort时花费的时间。假如保留所有两数之间的差值，假设使用冒泡排序，输入数组长度是m，排序算法复杂度是O(n<sup>2)，而这个n会达到(m+1)*m/2，所以总的算法复杂度就成了O(n<sup>4)。而在循环中预处理之后，最后参与排序的元素个数最大不会超过m，总的时间复杂度还是O(n<sup>2)。其实这只是针对最后的sort而言，而这个程序真正的耗时在上面的嵌套循环，这里的复杂度不管有没有优化，其实都是一样的O(n<sup>2)，下面sort的消费可以忽略不计。</sup></sup></sup></sup></p>
+
+<p>这是一种比较直观的解法了，事实证明，没有经过斟酌的想法都是不完善的（事实也证明，很多灵光一闪的想法都很很靠谱滴，不过在这里不适用<sup>_<sup>）。经人启发，才知道有一种解法，只需要一次循环，时间复杂度是O(n)。</sup></sup></p>
+
+<p>这个叫做动态规划的算法说的太笼统，网上的解释也实在是太理论，我们联系实际，就以上面的题目为例。</p>
+
+<p>动态规划的思想通常可以分成下面几部：</p>
+
+<ol>
+<li>给问题分阶段</li>
+<li>确定每个阶段的状态</li>
+<li>确定相邻阶段的之间的递推关系（也就是找出从前一个阶段转化到后一个阶段的条件）</li>
+</ol>
+
+
+<p>上面的例子很容易可以分出三个阶段</p>
+
+<ol>
+<li>开始阶段，将数组中开头的两个元素作为最大，最小值记录在结果数组中，[3,10]</li>
+<li>过程阶段，将后面的数与前面的数比较，比如将11与10比较，并将符合条件的值替换结果数组</li>
+<li>结束阶段，当游标抵达数组最后一个元素时，跳出循环。</li>
+</ol>
+
+
+<p>而这几个状态之间的转移条件在上面已有了说明，主要在第二个阶段，哪些条件能决定替换结果数组，这些条件称为决策</p>
+
+<ol>
+<li>游标所指的数大于结果数组中的最大值，比如后面有11，那么结果数组就变成[3,11]</li>
+<li>游标所指的数小于结果数组中的最小值，那么它就有可能在后面替换结果数组中的最小值，例如后面出现了1，这个时候不能立刻替换掉3，需要找个临时变量将1保存下来。</li>
+<li>游标所指的数与临时最小值之差大于结果数组中两数字之差。这个条件应该优先于决策2和决策1，一旦这个决策生效，将同时替换结果数组中的最大最小值，决策1和决策2在这个时候应该不生效。例如后面出现了12，那么结果数组就应该变成[1,12]。假如这个时候决策1优先生效，那么结果数组会变成[3,12]，而临时变量1将永远没有上位之日了。</li>
+</ol>
+
+
+<p>有了上面的阶段和决策之后，代码就很容易实现了</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">stepIn</span><span class="p">(</span><span class="n">list</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">min</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># minimal index</span>
+</span><span class='line'>  <span class="n">max</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># maximal index</span>
+</span><span class='line'>  <span class="n">differ</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># max differ</span>
+</span><span class='line'>  <span class="n">minTmp</span> <span class="o">=</span> <span class="kp">nil</span>  <span class="c1"># temp minimal index</span>
+</span><span class='line'>  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">length</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">minTmp</span> <span class="o">!=</span> <span class="kp">nil</span> <span class="ow">and</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">differ</span>  <span class="c1"># if current index minus temp minimal index is bigger than differ, replace it</span>
+</span><span class='line'>      <span class="n">differ</span> <span class="o">=</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span>  <span class="c1"># new differ</span>
+</span><span class='line'>      <span class="n">min</span> <span class="o">=</span> <span class="n">minTmp</span>  <span class="c1"># new minimal index</span>
+</span><span class='line'>      <span class="n">max</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># new maximal index</span>
+</span><span class='line'>    <span class="k">elsif</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">list</span><span class="o">[</span><span class="n">max</span><span class="o">]</span>  <span class="c1"># replace the maximal index</span>
+</span><span class='line'>      <span class="n">max</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># new maximal index</span>
+</span><span class='line'>      <span class="n">differ</span> <span class="o">=</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span>  <span class="c1"># new differ</span>
+</span><span class='line'>    <span class="k">elsif</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span> <span class="ow">and</span> <span class="p">(</span> <span class="n">minTmp</span> <span class="o">==</span> <span class="kp">nil</span> <span class="ow">or</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span> <span class="p">)</span>  <span class="c1"># replace the temp minimal index</span>
+</span><span class='line'>      <span class="n">minTmp</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># change temp minimal index</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="k">next</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="k">return</span> <span class="o">[</span><span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span><span class="p">,</span> <span class="n">list</span><span class="o">[</span><span class="n">max</span><span class="o">]]</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这种解法可能读起来需要稍微绕点弯，而且隐含问题，我在第一次写这段代码的时候就将决策3和决策1的顺序搞反了，但是几个测试脚本都顺利通过了，这就是一个“不明显的bug”，往往比“明显的bug”还要致命，因为根本无迹可查。</p>
+
+<p>不过，相对于性能的提高，牺牲一点可读性还是值得的。在上面的例子中不太明显，但是当我将输入数组的长度变成1000甚至5000时，两种算法的反差是相当惊人的。</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>bash<span class="nv">$ </span>ruby benchmark.rb 1000
+</span><span class='line'>dysort: 0.000435
+</span><span class='line'>trsort: 0.13827
+</span><span class='line'>bash<span class="nv">$ </span>ruby benchmark.rb 5000
+</span><span class='line'>dysort: 0.002027
+</span><span class='line'>trsort: 3.28997
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上面是分别在1000和5000的数组长度下运行的结果，可以看出使用第二种算法的时间增长基本是线性的，而使用第一种算法的耗时则会指数级的增长。两种算法横向比较更是高下立分，本来想画图来表示，结果发现差距太大，使用第二种算法的时间柱在图上基本看不到了，于是作罢。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 升级Windows7]]></title>
@@ -2627,231 +2784,6 @@ url=http%3A%2F%2Fwww.google.com</p></blockquote>
     <updated>2012-12-11T23:16:00+08:00</updated>
     <id>http://sailxjx.github.com/blog/blog/2012/12/11/vagrant-bi-ji</id>
     <content type="html"><![CDATA[<h2><del>从virtualbox开始</del></h2>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[gitlabhq 部署小记]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji/"/>
-    <updated>2012-11-14T20:12:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji</id>
-    <content type="html"><![CDATA[<p>冬天来了，不知github是不是也去冬眠了，速度慢的像在爬，没办法，屌丝买不起vps，只能自己内网部一套开源的。</p>
-
-<p>gitlabhq是github的一个开源版本，虽然不是官方的，但是已经做的有模有样，总之能想到的功能都已具备，放在国内随便改改UI就能上线建站的那种。安装文档那是写的相当滴详细，体现了码农罕有的耐性，查看文档请移步<a href="https://github.com/gitlabhq/gitlabhq/blob/master/doc/install/installation.md">gitlab文档</a></p>
-
-<p>以前部署中在ssh上碰到一些问题，这次在<a href="https://github.com/mk-qi">@mk-qi</a>童鞋的点拨下，进展是相当滴顺利，下面记录一些部署过程中的问题和解决方法。</p>
-
-<p>自动部署脚本如下，基本由文档转成，可以省掉很多事情(但是遇到问题要学会google哦)，假如使用的是ubuntu，官方以前也提供了一个一键安装脚本，后来不知怎么又去掉了，估计是计划赶不上变化吧</p>
-
-<figure class='code'><figcaption><span>gitlabhq自动化部署脚本  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/bash</span>
-</span><span class='line'><span class="c"># add user git</span>
-</span><span class='line'>sudo adduser --system --shell /bin/bash --gecos <span class="s1">&#39;git version control&#39;</span> --group --disabled-password --home /home/git git
-</span><span class='line'><span class="c"># add user gitlab</span>
-</span><span class='line'>sudo adduser --disabled-login --gecos <span class="s1">&#39;gitlab system&#39;</span> gitlab
-</span><span class='line'><span class="c"># move user gitlab to group git</span>
-</span><span class='line'>sudo usermod -a -G git gitlab
-</span><span class='line'>sudo usermod -a -G gitlab git
-</span><span class='line'><span class="c"># generate key</span>
-</span><span class='line'>sudo -H -u gitlab ssh-keygen -q -N <span class="s1">&#39;&#39;</span> -t rsa -f /home/gitlab/.ssh/id_rsa
-</span><span class='line'><span class="c"># clone gitlab&#39;s fork to the gitolite source code</span>
-</span><span class='line'><span class="nb">cd</span> /home/git
-</span><span class='line'>sudo -H -u git git clone -b gl-v304 https://github.com/gitlabhq/gitolite.git /home/git/gitolite
-</span><span class='line'><span class="c"># setup</span>
-</span><span class='line'><span class="nb">cd</span> /home/git
-</span><span class='line'>sudo -u git -H mkdir bin
-</span><span class='line'>sudo -u git sh -c <span class="s1">&#39;echo -e &quot;PATH=\$PATH:/home/git/bin\nexport PATH&quot; &gt;&gt; /home/git/.profile&#39;</span>
-</span><span class='line'>sudo -u git sh -c <span class="s1">&#39;gitolite/install -ln /home/git/bin&#39;</span>
-</span><span class='line'>sudo cp /home/gitlab/.ssh/id_rsa.pub /home/git/gitlab.pub
-</span><span class='line'>sudo chmod 0444 /home/git/gitlab.pub
-</span><span class='line'>sudo -u git -H sh -c <span class="s2">&quot;PATH=/home/git/bin:$PATH; gitolite setup -pk /home/git/gitlab.pub&quot;</span>
-</span><span class='line'><span class="c"># permissions</span>
-</span><span class='line'>sudo chmod -R g+rwX /home/git/repositories/
-</span><span class='line'>sudo chown -R git:git /home/git/repositories/
-</span><span class='line'>sudo -u gitlab -H git clone git@localhost:gitolite-admin.git /tmp/gitolite-admin
-</span><span class='line'>
-</span><span class='line'><span class="k">if</span> <span class="o">[[</span> <span class="nv">$?</span> !<span class="o">=</span> 0 <span class="o">]]</span>;<span class="k">then</span>
-</span><span class='line'><span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;error: gitolite is not installed correct, or the ssh key is not right&quot;</span>
-</span><span class='line'>    <span class="nb">exit </span>1
-</span><span class='line'><span class="k">fi</span>
-</span><span class='line'>
-</span><span class='line'>sudo rm -rf /tmp/gitolite-admin
-</span><span class='line'><span class="c"># clone gitlab source and install prerequisites</span>
-</span><span class='line'>sudo gem install charlock_holmes
-</span><span class='line'>sudo pip install pygments
-</span><span class='line'><span class="nb">cd</span> /home/gitlab
-</span><span class='line'>sudo -H -u gitlab git clone git://github.com/51fanli/gitlabhq.git gitlab
-</span><span class='line'><span class="nb">cd </span>gitlab
-</span><span class='line'>sudo -u gitlab cp config/gitlab.yml.example config/gitlab.yml
-</span><span class='line'><span class="c"># mysql databases init</span>
-</span><span class='line'><span class="nb">echo</span> <span class="s2">&quot;connect to mysql&quot;</span>
-</span><span class='line'>mysql -h127.0.0.1 -uroot -p
-</span><span class='line'><span class="c"># CREATE DATABASE IF NOT EXISTS `gitlabhq_production` DEFAULT CHARACTER SET `utf8` COLLATE `utf8_unicode_ci`;</span>
-</span><span class='line'><span class="c"># CREATE USER &#39;gitlab&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;123456&#39;;</span>
-</span><span class='line'><span class="c"># GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON `gitlabhq_production`.* TO &#39;gitlab&#39;@&#39;localhost&#39;;</span>
-</span><span class='line'>sudo -u gitlab cp config/database.yml.example config/database.yml
-</span><span class='line'>sudo -u gitlab -H bundle install --without development <span class="nb">test </span>sqlite postgres --deployment
-</span><span class='line'>sudo -u gitlab -H git config --global user.email <span class="s2">&quot;gitlab@localhost&quot;</span>
-</span><span class='line'>sudo -u gitlab -H git config --global user.name <span class="s2">&quot;Gitlab&quot;</span>
-</span><span class='line'>sudo -u gitlab cp config/resque.yml.example config/resque.yml
-</span><span class='line'>sudo -u gitlab cp config/unicorn.rb.example config/unicorn.rb
-</span><span class='line'><span class="c"># init tables</span>
-</span><span class='line'>sudo -u gitlab bundle <span class="nb">exec </span>rake gitlab:app:setup <span class="nv">RAILS_ENV</span><span class="o">=</span>production
-</span><span class='line'>sudo cp ./lib/hooks/post-receive /home/git/.gitolite/hooks/common/post-receive
-</span><span class='line'>sudo chown git:git /home/git/.gitolite/hooks/common/post-receive
-</span><span class='line'><span class="c"># check status</span>
-</span><span class='line'>sudo -u gitlab bundle <span class="nb">exec </span>rake gitlab:app:status <span class="nv">RAILS_ENV</span><span class="o">=</span>production
-</span><span class='line'>sudo wget https://raw.github.com/gitlabhq/gitlab-recipes/master/init.d/gitlab -P /etc/init.d/
-</span><span class='line'>sudo chmod +x /etc/init.d/gitlab
-</span><span class='line'>sudo update-rc.d gitlab defaults 21
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>gitlabhq3.0后改用unicorn(紧跟github步伐)作为默认的启动server,要将它与nginx或apache一起使用请参考<a href="https://wiki.archlinux.org/index.php/Gitlab#Web_server_configuration">archwiki的gitlab手册</a>,下面是apache中的vhost配置(需要预先编译proxy模块)</p>
-
-<figure class='code'><figcaption><span>apache vhost配置  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;VirtualHost *:80&gt;
-</span><span class='line'>  ServerName gitlab.myserver.com
-</span><span class='line'>  ServerAlias www.gitlab.myserver.com
-</span><span class='line'>  DocumentRoot /home/gitlab/gitlab/public
-</span><span class='line'>  ErrorLog /var/log/httpd/gitlab_error_log
-</span><span class='line'>  CustomLog /var/log/httpd/gitlab_access_log combined
-</span><span class='line'>
-</span><span class='line'>  &lt;Proxy balancer://unicornservers&gt;
-</span><span class='line'>      BalancerMember http://127.0.0.1:8080
-</span><span class='line'>  &lt;/Proxy&gt;
-</span><span class='line'>
-</span><span class='line'>  &lt;Directory /home/gitlab/gitlab/public&gt;
-</span><span class='line'>    AllowOverride All
-</span><span class='line'>    Options -MultiViews
-</span><span class='line'>  &lt;/Directory&gt;
-</span><span class='line'>
-</span><span class='line'>  RewriteEngine on
-</span><span class='line'>  RewriteCond %<span class="o">{</span>DOCUMENT_ROOT<span class="o">}</span>/%<span class="o">{</span>REQUEST_FILENAME<span class="o">}</span> !-f
-</span><span class='line'>  RewriteRule ^/<span class="o">(</span>.*<span class="o">)</span><span class="nv">$ </span>balancer://unicornservers%<span class="o">{</span>REQUEST_URI<span class="o">}</span> <span class="o">[</span>P,QSA,L<span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>  ProxyPass /uploads !
-</span><span class='line'>  ProxyPass / balancer://unicornservers/
-</span><span class='line'>  ProxyPassReverse / balancer://unicornservers/
-</span><span class='line'>  ProxyPreserveHost on
-</span><span class='line'>
-</span><span class='line'>   &lt;Proxy *&gt;
-</span><span class='line'>      Order deny,allow
-</span><span class='line'>      Allow from all
-</span><span class='line'>   &lt;/Proxy&gt;
-</span><span class='line'>&lt;/VirtualHost&gt;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>unicorn的配置文件在config/unicorn.rb，修改其中的 <code>listen="127.0.0.1:8080"</code>，然后重启apache，通过 <code>service gitlab start</code> 重启unicorn，访问一下gitlab.myserver.com吧，看到登录页面就说明大功告成啦。</p>
-
-<h2>Q&amp;A</h2>
-
-<h3>Q: 在装完gitolite后尝试<code>git clone git@localhost:gitolite-admin.git /tmp/gitolite-admin</code>遇到&#8217;remote hang-up unexpected&#8217;(貌似是这么写，意会。。。)</h3>
-
-<p>A: 我在centos6.2上遇到过这个问题，其他发行版上不知道有没有这个问题，修改</p>
-
-<p><code>sudo chmod 400 /home/git/.ssh/authorized_keys</code></p>
-
-<p>可以修复这个问题。貌似是centos的安全策略造成ssh私钥不生效</p>
-
-<h2>参考资料</h2>
-
-<ul>
-<li><a href="https://github.com/gitlabhq/gitlabhq/blob/master/doc/install/installation.md">gitlab安装手册官方版</a></li>
-<li><a href="https://wiki.archlinux.org/index.php/Gitlab">gitlab手册archwiki版</a></li>
-</ul>
-
 ]]></content>
   </entry>
   
