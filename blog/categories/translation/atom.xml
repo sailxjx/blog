@@ -4,7 +4,7 @@
   <title><![CDATA[Category: translation | CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/translation/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-03-25T10:58:58+08:00</updated>
+  <updated>2013-04-08T11:43:18+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,35 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[[TDWTF] 升级Windows7]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/04/07/tdwtf-sheng-ji-windows7/"/>
+    <updated>2013-04-07T14:48:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/04/07/tdwtf-sheng-ji-windows7</id>
+    <content type="html"><![CDATA[<p>在随心所欲的创业公司，最新的时髦可能是BYOD(带自己的设备来上班)，但是政府部门往往会比较保守，尤其是在处理机密数据的部门。当Miguel开始在一个州立部门供职时，他们提供给他一个笔记本电脑。出于安全考虑，他被禁止使用其他的设备，其他人也不允许使用他的。同样是出于安全的原因，那个笔记本不能离开他的桌子，它被一条短短的保险链锁定在桌面上，所能移动的范围只有几英尺而已。</p>
+
+<p>这台电脑很奇葩。它非常陈旧，以至于可以让考古学家将它放在博物馆里。在其使用过程中它得到了一些升级。它的硬盘是500GB的，内存上限是2GB。这给Miguel带来了些挑战，因为除了他们的SAAS报告软件，他还需要安装VS2003，VS2005，VS2008，VS2010。这台机器一瘸一拐的跑着Windows XP。</p>
+
+<p>Miguel和他可敬的电脑每天辛勤地为程序套件解决bug。同时，IT部门在忙着他们自己的事儿。有些人注意到（微软对）Window XP的支持将在2014年结束。意识到将所有的用户迁移到新的平台上对于他们来说将是个史诗般的挑战，这帮人决定现在开始行动，而最佳的开始目标就是IT外包部门。</p>
+
+<p>周一，Miguel去上班的时候发现他的笔记本不见了。取而代之的是一张升级中的字条。Miguel不能使用别的电脑，所以整个周一和周二的大部分时间，他所做的就是暖椅子和玩手机游戏。周二下午很晚的时候，他的电脑回来了，并且装上了Windows7和Office2003，其他什么都没有。</p>
+
+<p>Miguel开始重新安装他的开发工具。他先进入保留存了Visual Studio镜像文件的共享文件夹，开始第一步安装，然后发现这次升级撤回了他的管理员权限，禁止他安装任何软件。他用邮箱给控制台提交了一个需求，申请需要的权限。</p>
+
+<p>同样因为安全的原因，就像禁止Miguel使用其他电脑一样，控制台不能轻易授予他这些权限，即使他仅仅是在最初的几天需要这些权限。他们需要经理的签字。而且需要三个人的签名，事实上，这个礼拜其中一个经理请假了。而等到他回来上班，另一个又度假去了。</p>
+
+<p>Miguel花了两个礼拜好不容易等到这些官老爷们聚在一起（世纪之交么？）。在这期间，Miguel什么都没做，每天他就玩着愤怒的小鸟，看着截止日期一天天过去，因为他没有什么事能做。</p>
+
+<p>最后，Miguel的权限终于批下来了。他开始安装需要的工具。时间一分一秒的过去，但是日志系统仍然需要六个小时才能装完，并且每三十分钟就需要他确认一次管理员权限。而在这一切之后，他有不得不把这些都卸载掉，因为他将这些组件的安装顺序搞错了，以至于现在软件没法运行起来。</p>
+
+<p>在这次升级20天后，Miguel终于将一切搞定。他“迫不及待”的打开IE并转向他们的BUG跟踪系统。他预计这计周累积了一大堆的工作任务，但是，他只看到一个错误提示：他们的BUG跟踪系统使用的ActiveX与Windows7不兼容。彻底跪了，他给控制台打电话求助。</p>
+
+<p>“这是个已知的问题，”控制台懒懒的说道：“假如你想要进入BUG跟踪系统，你需要安装一个Windows XP虚拟机。”</p>
+
+<p>原文链接：<a href="http://thedailywtf.com/Articles/The-Windows-7-Upgrade.aspx">The Windows 7 Upgrade</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 开发账号]]></title>
