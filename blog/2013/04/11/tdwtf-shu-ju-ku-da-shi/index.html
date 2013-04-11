@@ -1,0 +1,200 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>[TDWTF] 数据库大师 - CodeBean</title>
+	<meta name="author" content="tristan">
+
+	
+	<meta name="description" content="Maurice一直很好奇，他所在的公司经常不经过测试就把新成员招进来。这样看起来是为了节省了公司的时间和金钱。人力资源部门新招的“IT系统专家”在他刚来的那几个礼拜轻而易举的让Maurice毁三观了。 这个奇葩专家很喜欢自吹自擂。无论谁在他附近都能听见他在吹牛。有一天， &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="CodeBean" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">CodeBean</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/102588932744890343699?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h1 class="title">[TDWTF] 数据库大师</h1>
+	<div class="entry-content"><p>Maurice一直很好奇，他所在的公司经常不经过测试就把新成员招进来。这样看起来是为了节省了公司的时间和金钱。人力资源部门新招的“IT系统专家”在他刚来的那几个礼拜轻而易举的让Maurice毁三观了。</p>
+
+<p>这个奇葩专家很喜欢自吹自擂。无论谁在他附近都能听见他在吹牛。有一天，他向Maurice吹嘘他最得意的事情，是在一个大电信企业的成功故事。这个时候电话铃响了：有个分公司部门没法进入Maurice和他的团队维护的系统了。于是他对Ben说：</p>
+
+<p>“试试你能不能ping到他们的机器 - hostname是RHODODENDRON ”</p>
+
+<p>Ben停止了吹嘘，眨了眨眼睛，仿佛从一个美好的梦中醒了过来。“我该怎么做？”</p>
+
+<p>Maurice很好奇他的“专家”到底是哪个地方没听懂。“你。。。你打开命令提示符，然后输入ping RHODODENDRON。”</p>
+
+<p>“我知道，”Ben说道。“但是。。。我上哪儿去找命令提示符？”</p>
+
+<p>Maurice恨不得自己上了，但是这个时候分公司又打了个电话来请求更新状态。他不得不去亲自去处理另一个问题 - 一个配置错误的客户端。</p>
+
+<p>当Maurice接管后，Ben继续吹他的故事。虽然Maurice心不在焉，他还是注意到在Ben的掌控下，一个通常需要跑整晚的报告只跑了一个小时。事实上，很多同事称Ben为“数据库大师”。</p>
+
+<p>“。。。既然你需要管理数据库，”Ben愉快的宣称，“我就是你要找的人！”</p>
+
+<p>决定不再让Ben在命令行间闲逛，Maurice接受了他这个新同事的建议，给他展示他们的生产数据库，一个有着四十G数据的Sql Server数据库。考虑到数据库的增长量，Maurice向他的“数据库大师”征询意见。</p>
+
+<p>“第一件事，”Ben说道，启动管理工具，“确认里面到底有多少条数据。我喜欢说这是为数据库把脉。我们需要先统计总条目数。”</p>
+
+<p>在Ben咕哝了一阵子之后，Maurice从他肩头看过去。控制台上显示着一条SQL语法错误，仿佛在嘲笑这位“数据库大师”：</p>
+
+<blockquote><p>select count() rowID</p></blockquote>
+
+<p>虽然数据库的增长模式仍然是个迷，Maurice却开始认识到“数据库大师”的“专业模式”。不仅仅他语句有问题，他还选错了数据库：他选择了Sql Server的内建数据库。嗯，当然也叫大师（&#8217;master&#8217;）。</p>
+
+<p>原文链接：<a href="http://thedailywtf.com/Articles/The-Database-Master.aspx">The Database Master</a></p>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-11T12:41:00+08:00" pubdate data-updated="true">2013.04.11</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/joke/'>joke</a>, <a class='category' href='/blog/blog/categories/translation/'>translation</a>
+
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2013
+
+    tristan
+
+</footer>
+	<script src="/blog/javascripts/slash.js"></script>
+<script src="/blog/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sailxjx.github.com/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi/';
+        var disqus_url = 'http://sailxjx.github.com/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33186961-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+
+</body>
+</html>
