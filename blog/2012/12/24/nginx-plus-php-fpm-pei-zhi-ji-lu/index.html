@@ -7,7 +7,8 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content="安装nginx 安装过程没什么好说的，不过tarball中没有包含init脚本，官网wiki中提供了一个ubuntu的版本，其实在所有linux发行版中都可用，下载下来放到/etc/init.d/nginx，大功告成。 假如在启动过程中遇到undefined function: &hellip;">
+	<meta name="description" content="安装nginx
+安装过程没什么好说的，不过tarball中没有包含init脚本，官网wiki中提供了一个ubuntu的版本，其实在所有linux发行版中都可用，下载下来放到/etc/init.d/nginx，大功告成。 假如在启动过程中遇到undefined function: &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -76,247 +77,243 @@
 	
 	<div id="content" class="inner"><article class="post">
 	<h1 class="title">Nginx+php-fpm 配置记录</h1>
-	<div class="entry-content"><h3>安装nginx</h3>
-
+	<div class="entry-content"><h3 id="nginx">安装nginx</h3>
 <p>安装过程没什么好说的，不过tarball中没有包含init脚本，官网wiki中提供了<a href="http://wiki.nginx.org/Nginx-init-ubuntu">一个ubuntu的版本</a>，其实在所有linux发行版中都可用，下载下来放到/etc/init.d/nginx，大功告成。</p>
 
 <p>假如在启动过程中遇到<code>undefined function: log_daemon_msg</code>等等报错，那是缺少一些公用方法，下载或安装init-functions然后在头部引入即可，google到一个可用的<a href="http://www.linuxfromscratch.org/lfs/view/7.0/scripts/apds02.html">地址</a>，此外，假如使用的是ubuntu，在/lib/lsb/中有个文件。</p>
 
-<h3>安装php-fpm</h3>
-
+<h3 id="php-fpm">安装php-fpm</h3>
 <p>fpm已经包含在php的远吗中，编译php的时候加上<code>--enable-fpm</code>即可，fpm的init脚本包含在<code>sapi/fpm/init.d.php-fpm</code>，稍加修改即可使用，非常贴心滴。默认配置文件<code>sapi/fpm/php-fm.conf</code>，我把它复制在/etc目录中以供调用。</p>
 
-<h3>配置php-fpm</h3>
-
+<h3 id="php-fpm-1">配置php-fpm</h3>
 <p>fpm的配置文件已很多个pool块分割，global是全局配置，www是默认的pool，这里不做修改。</p>
 
-<figure class='code'><figcaption><span>php-fpm.conf  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class='ini'><span class='line'><span class="k">[global]</span>
-</span><span class='line'><span class="na">user</span> <span class="o">=</span> <span class="s">tristan</span>
-</span><span class='line'><span class="na">group</span> <span class="o">=</span> <span class="s">tristan</span>
-</span><span class='line'><span class="na">pid</span> <span class="o">=</span> <span class="s">/var/run/php-fpm.pid</span>
-</span><span class='line'><span class="na">error_log</span> <span class="o">=</span> <span class="s">/var/log/php/fpm.err.log</span>
-</span><span class='line'><span class="c">; 下面三个值表示当一分钟内假如有10个子进程收到SIGSEGV或SIGBUS信号而退出的话，php-fpm会自动重启，应该是一种自我保护的机制</span>
-</span><span class='line'><span class="err">emergency_restart_threshold</span> <span class="err">10</span>
-</span><span class='line'><span class="err">emergency_restart_interval</span> <span class="err">1m</span>
-</span><span class='line'><span class="err">process_control_timeout</span> <span class="err">10s</span>
-</span><span class='line'><span class="c">; 超过十秒的慢请求会被记录到fpm.slow.$pool.log中并在errlog中产生一条notice记录</span>
-</span><span class='line'><span class="na">request_slowlog_timeout</span> <span class="o">=</span> <span class="s">10s</span>
-</span><span class='line'><span class="na">slowlog</span> <span class="o">=</span> <span class="s">/var/log/php/fpm.slow.$pool.log</span>
-</span><span class='line'><span class="c">; 允许任意客户端链接</span>
-</span><span class='line'><span class="na">listen.allowed_clients</span> <span class="o">=</span> <span class="s">any</span>
-</span><span class='line'><span class="c">; 可以包含一些分散的config文件</span>
-</span><span class='line'><span class="na">include</span><span class="o">=</span><span class="s">/etc/php-fpm.d/*.conf</span>
-</span><span class='line'><span class="c">; 下面是www pool的配置</span>
-</span><span class='line'><span class="k">[www]</span>
-</span><span class='line'><span class="c">; 设置子进程相关</span>
-</span><span class='line'><span class="na">pm</span> <span class="o">=</span> <span class="s">dynamic</span>
-</span><span class='line'><span class="na">pm.max_children</span> <span class="o">=</span> <span class="s">5</span>
-</span><span class='line'><span class="na">pm.start_servers</span> <span class="o">=</span> <span class="s">3</span>
-</span><span class='line'><span class="na">pm.min_spare_servers</span> <span class="o">=</span> <span class="s">2</span>
-</span><span class='line'><span class="na">pm.max_spare_servers</span> <span class="o">=</span> <span class="s">4</span>
-</span><span class='line'><span class="na">pm.max_requests</span> <span class="o">=</span> <span class="s">200</span>
-</span><span class='line'><span class="c">; 下面还可以用env设置一些环境变量</span>
-</span><span class='line'><span class="na">env[PATH]</span> <span class="o">=</span> <span class="s">/usr/local/bin:/usr/bin:/bin</span>
-</span><span class='line'><span class="na">env[TMP]</span> <span class="o">=</span> <span class="s">/tmp</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>php-fpm.conf  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+</pre></td><td class="code"><pre><code class="ini"><span class="line"><span class="k">[global]</span>
+</span><span class="line"><span class="na">user</span> <span class="o">=</span> <span class="s">tristan</span>
+</span><span class="line"><span class="na">group</span> <span class="o">=</span> <span class="s">tristan</span>
+</span><span class="line"><span class="na">pid</span> <span class="o">=</span> <span class="s">/var/run/php-fpm.pid</span>
+</span><span class="line"><span class="na">error_log</span> <span class="o">=</span> <span class="s">/var/log/php/fpm.err.log</span>
+</span><span class="line"><span class="c">; 下面三个值表示当一分钟内假如有10个子进程收到SIGSEGV或SIGBUS信号而退出的话，php-fpm会自动重启，应该是一种自我保护的机制</span>
+</span><span class="line"><span class="err">emergency_restart_threshold</span> <span class="err">10</span>
+</span><span class="line"><span class="err">emergency_restart_interval</span> <span class="err">1m</span>
+</span><span class="line"><span class="err">process_control_timeout</span> <span class="err">10s</span>
+</span><span class="line"><span class="c">; 超过十秒的慢请求会被记录到fpm.slow.$pool.log中并在errlog中产生一条notice记录</span>
+</span><span class="line"><span class="na">request_slowlog_timeout</span> <span class="o">=</span> <span class="s">10s</span>
+</span><span class="line"><span class="na">slowlog</span> <span class="o">=</span> <span class="s">/var/log/php/fpm.slow.$pool.log</span>
+</span><span class="line"><span class="c">; 允许任意客户端链接</span>
+</span><span class="line"><span class="na">listen.allowed_clients</span> <span class="o">=</span> <span class="s">any</span>
+</span><span class="line"><span class="c">; 可以包含一些分散的config文件</span>
+</span><span class="line"><span class="na">include</span><span class="o">=</span><span class="s">/etc/php-fpm.d/*.conf</span>
+</span><span class="line"><span class="c">; 下面是www pool的配置</span>
+</span><span class="line"><span class="k">[www]</span>
+</span><span class="line"><span class="c">; 设置子进程相关</span>
+</span><span class="line"><span class="na">pm</span> <span class="o">=</span> <span class="s">dynamic</span>
+</span><span class="line"><span class="na">pm.max_children</span> <span class="o">=</span> <span class="s">5</span>
+</span><span class="line"><span class="na">pm.start_servers</span> <span class="o">=</span> <span class="s">3</span>
+</span><span class="line"><span class="na">pm.min_spare_servers</span> <span class="o">=</span> <span class="s">2</span>
+</span><span class="line"><span class="na">pm.max_spare_servers</span> <span class="o">=</span> <span class="s">4</span>
+</span><span class="line"><span class="na">pm.max_requests</span> <span class="o">=</span> <span class="s">200</span>
+</span><span class="line"><span class="c">; 下面还可以用env设置一些环境变量</span>
+</span><span class="line"><span class="na">env[PATH]</span> <span class="o">=</span> <span class="s">/usr/local/bin:/usr/bin:/bin</span>
+</span><span class="line"><span class="na">env[TMP]</span> <span class="o">=</span> <span class="s">/tmp</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>配置完成后，<code>/etc/init.d/php-fpm start</code>即可启动php-fpm，通过<code>netstat -anp</code>可以看到9000端口被php-fpm占用了。</p>
 
-<h3>配置nginx</h3>
-
+<h3 id="nginx-1">配置nginx</h3>
 <p>下面到了最艰苦卓绝的工作了，配置nginx。</p>
 
-<figure class='code'><figcaption><span>nginx </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user tristan;
-</span><span class='line'>worker_processes 2;
-</span><span class='line'>error_log  /var/log/nginx/error.log;
-</span><span class='line'>pid        /var/run/nginx.pid;
-</span><span class='line'>events {
-</span><span class='line'>    worker_connections  1024;
-</span><span class='line'>}
-</span><span class='line'>http {
-</span><span class='line'>    include       mime.types;
-</span><span class='line'>    default_type  application/octet-stream;
-</span><span class='line'>    sendfile        on; 
-</span><span class='line'>    keepalive_timeout  65; 
-</span><span class='line'>    gzip on; 
-</span><span class='line'>    include /usr/local/nginx/conf/sites-enabled/*;
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>nginx </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">user tristan;
+</span><span class="line">worker_processes 2;
+</span><span class="line">error_log  /var/log/nginx/error.log;
+</span><span class="line">pid        /var/run/nginx.pid;
+</span><span class="line">events {
+</span><span class="line">    worker_connections  1024;
+</span><span class="line">}
+</span><span class="line">http {
+</span><span class="line">    include       mime.types;
+</span><span class="line">    default_type  application/octet-stream;
+</span><span class="line">    sendfile        on; 
+</span><span class="line">    keepalive_timeout  65; 
+</span><span class="line">    gzip on; 
+</span><span class="line">    include /usr/local/nginx/conf/sites-enabled/*;
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>主配置文件中基本没什么可写的，重点在对每个站点的配置上。</p>
 
 <p>对静态站点的配置是最简单的，比如下面的配置就部署了一个bootstrap的demo站点</p>
 
-<figure class='code'><figcaption><span>boot </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>server {
-</span><span class='line'>    listen *:80;
-</span><span class='line'>    server_name boot.local.com;
-</span><span class='line'>    access_log  /var/log/nginx/boot.log;
-</span><span class='line'>    location / {
-</span><span class='line'>        root /home/tristan/coding/github/bootstrap/docs; #根目录
-</span><span class='line'>        index index.html; #添加默认索引文件
-</span><span class='line'>    }   
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>boot </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">server {
+</span><span class="line">    listen *:80;
+</span><span class="line">    server_name boot.local.com;
+</span><span class="line">    access_log  /var/log/nginx/boot.log;
+</span><span class="line">    location / {
+</span><span class="line">        root /home/tristan/coding/github/bootstrap/docs; #根目录
+</span><span class="line">        index index.html; #添加默认索引文件
+</span><span class="line">    }   
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>动态站点稍微麻烦一点，通过fastcgi模式，使用php-fpm配置一个动态站点。</p>
 
-<figure class='code'><figcaption><span>fun </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>server {
-</span><span class='line'>    listen *:80;
-</span><span class='line'>    server_name fun.local.com;
-</span><span class='line'>    access_log /var/log/nginx/fun.log;
-</span><span class='line'>    location / { 
-</span><span class='line'>        index index.php;
-</span><span class='line'>        rewrite ^(.*)$ /index.php$1 last; #大部分站点都做成了单入口，将所有url rewrite到index文件
-</span><span class='line'>    }   
-</span><span class='line'>    location ~ ^/index.php {
-</span><span class='line'>        root /home/tristan/coding/webdata/fun;
-</span><span class='line'>        fastcgi_pass 127.0.0.1:9000;
-</span><span class='line'>        include fastcgi_params;
-</span><span class='line'>        if ($fastcgi_script_name ~ "^(.+?\.php)(/.+)$") {
-</span><span class='line'>            set $real_script_name $1; 
-</span><span class='line'>            set $path_info $2; 
-</span><span class='line'>        }   
-</span><span class='line'>        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-</span><span class='line'>        fastcgi_param PATH_INFO $path_info; 
-</span><span class='line'>    }
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>fun </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">server {
+</span><span class="line">    listen *:80;
+</span><span class="line">    server_name fun.local.com;
+</span><span class="line">    access_log /var/log/nginx/fun.log;
+</span><span class="line">    location / { 
+</span><span class="line">        index index.php;
+</span><span class="line">        rewrite ^(.*)$ /index.php$1 last; #大部分站点都做成了单入口，将所有url rewrite到index文件
+</span><span class="line">    }   
+</span><span class="line">    location ~ ^/index.php {
+</span><span class="line">        root /home/tristan/coding/webdata/fun;
+</span><span class="line">        fastcgi_pass 127.0.0.1:9000;
+</span><span class="line">        include fastcgi_params;
+</span><span class="line">        if ($fastcgi_script_name ~ "^(.+?\.php)(/.+)$") {
+</span><span class="line">            set $real_script_name $1; 
+</span><span class="line">            set $path_info $2; 
+</span><span class="line">        }   
+</span><span class="line">        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class="line">        fastcgi_param PATH_INFO $path_info; 
+</span><span class="line">    }
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>值得注意的是，有些框架使用pathinfo作为路由依据，默认情况下nginx并不会将pathinfo传递给php-fpm，所以上面需要通过正则匹配出准确的pathinfo，通过fastcgi_param传给fpm</p>
 
-<p>下面是一个使用minify的静态资源站点，其中既包含纯静态文件(css|js)，也包含由php压缩成的伪静态文件</p>
+<table>
+  <tbody>
+    <tr>
+      <td>下面是一个使用minify的静态资源站点，其中既包含纯静态文件(css</td>
+      <td>js)，也包含由php压缩成的伪静态文件</td>
+    </tr>
+  </tbody>
+</table>
 
-<figure class='code'><figcaption><span>static </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>server {
-</span><span class='line'>    listen *:80;
-</span><span class='line'>    server_name static.local.com;
-</span><span class='line'>    access_log /var/log/nginx/static.log;
-</span><span class='line'>    root /home/tristan/coding/webdata/static;
-</span><span class='line'>    location / { 
-</span><span class='line'>        autoindex on; 
-</span><span class='line'>        index index.php;
-</span><span class='line'>        rewrite ^/static/(.*)\.(js|css)$ /static/index.php?g=$1 last;
-</span><span class='line'>    }   
-</span><span class='line'>    location ~ index.php {
-</span><span class='line'>        fastcgi_pass 127.0.0.1:9000;
-</span><span class='line'>        include fastcgi_params;
-</span><span class='line'>        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-</span><span class='line'>    }   
-</span><span class='line'>    location ~ ^(?!\/static)(.*)\.(jpg|jpeg|gif|png|css|js|ico|xml)$ {
-</span><span class='line'>        access_log off; #关闭log
-</span><span class='line'>        log_not_found off;
-</span><span class='line'>        expires 30d; #纯静态文件设置缓存时间
-</span><span class='line'>    }   
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>static </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">server {
+</span><span class="line">    listen *:80;
+</span><span class="line">    server_name static.local.com;
+</span><span class="line">    access_log /var/log/nginx/static.log;
+</span><span class="line">    root /home/tristan/coding/webdata/static;
+</span><span class="line">    location / { 
+</span><span class="line">        autoindex on; 
+</span><span class="line">        index index.php;
+</span><span class="line">        rewrite ^/static/(.*)\.(js|css)$ /static/index.php?g=$1 last;
+</span><span class="line">    }   
+</span><span class="line">    location ~ index.php {
+</span><span class="line">        fastcgi_pass 127.0.0.1:9000;
+</span><span class="line">        include fastcgi_params;
+</span><span class="line">        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class="line">    }   
+</span><span class="line">    location ~ ^(?!\/static)(.*)\.(jpg|jpeg|gif|png|css|js|ico|xml)$ {
+</span><span class="line">        access_log off; #关闭log
+</span><span class="line">        log_not_found off;
+</span><span class="line">        expires 30d; #纯静态文件设置缓存时间
+</span><span class="line">    }   
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<h2>参考资料</h2>
-
+<h2 id="section">参考资料</h2>
 <ul>
-<li><a href="http://www.if-not-true-then-false.com/2011/nginx-and-php-fpm-configuration-and-optimizing-tips-and-tricks/">Nginx and PHP-FPM Configuration and Optimizing Tips and Tricks</a></li>
-<li><a href="http://stackoverflow.com/questions/8265941/empty-value-to-path-info-in-nginx-returns-junk-value">stackoverflow: Empty value to PATH_INFO in nginx returns junk value</a></li>
-<li><a href="http://wiki.nginx.org/HttpFastcgiModule">HttpFastcgiModule</a></li>
-<li><a href="http://wiki.nginx.org/HttpRewriteModule">HttpRewriteModule</a></li>
+  <li><a href="http://www.if-not-true-then-false.com/2011/nginx-and-php-fpm-configuration-and-optimizing-tips-and-tricks/">Nginx and PHP-FPM Configuration and Optimizing Tips and Tricks</a></li>
+  <li><a href="http://stackoverflow.com/questions/8265941/empty-value-to-path-info-in-nginx-returns-junk-value">stackoverflow: Empty value to PATH_INFO in nginx returns junk value</a></li>
+  <li><a href="http://wiki.nginx.org/HttpFastcgiModule">HttpFastcgiModule</a></li>
+  <li><a href="http://wiki.nginx.org/HttpRewriteModule">HttpRewriteModule</a></li>
 </ul>
-
 </div>
 
 

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: learn | CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/learn/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-04-13T09:40:36+08:00</updated>
+  <updated>2013-04-14T20:34:06+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -18,8 +18,7 @@
     <link href="http://sailxjx.github.com/blog/blog/2013/02/06/cypher-query-language-xue-xi-bi-ji-2/"/>
     <updated>2013-02-06T14:32:00+08:00</updated>
     <id>http://sailxjx.github.com/blog/blog/2013/02/06/cypher-query-language-xue-xi-bi-ji-2</id>
-    <content type="html"><![CDATA[<h3>create unique</h3>
-
+    <content type="html"><![CDATA[<h3 id="create-unique">create unique</h3>
 <p>顾名思义，<code>create unique</code>与<code>create</code>在功能上是类似的，不过当新建的node或relationship已经存在时，<code>create unique</code>不会再生成一个新的node或relationship。</p>
 
 <p>另一个区别是<code>create unique</code>只能在一个<code>path</code>表达式中使用，例如下面的代码：</p>
@@ -31,16 +30,16 @@
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> create unique bran-<span class="o">[</span>r:littlebrotherof<span class="o">]</span>-&gt;<span class="o">(</span>n<span class="o">{</span>name:<span class="s2">&quot;jon&quot;</span><span class="o">})</span> <span class="k">return </span>n;
-</span><span class='line'>+----------------------------+
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> create unique bran-<span class="o">[</span>r:littlebrotherof<span class="o">]</span>-&amp;gt;<span class="o">(</span>n<span class="o">{</span>name:”jon”<span class="o">})</span> <span class="k">return </span>n;
+</span><span class='line'>+—————————-+
 </span><span class='line'>| n                          |
-</span><span class='line'>+----------------------------+
-</span><span class='line'>| Node<span class="o">[</span>7<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}</span> |
-</span><span class='line'>+----------------------------+
+</span><span class='line'>+—————————-+
+</span><span class='line'>| Node<span class="o">[</span>7<span class="o">]{</span>name:”jon”,age:17<span class="o">}</span> |
+</span><span class='line'>+—————————-+
 </span><span class='line'>1 row
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<p>上面的代码中，path中name="jon"的node已经存在，neo4j认为这是一个<code>unique node</code>，所以不会再新建一个node，稍加修改，将age属性调整一下，就可以新建一个不同的node。</p>
+<p>上面的代码中，path中name=”jon”的node已经存在，neo4j认为这是一个<code>unique node</code>，所以不会再新建一个node，稍加修改，将age属性调整一下，就可以新建一个不同的node。</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -52,12 +51,12 @@
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> create unique bran-<span class="o">[</span>r:littlebrotherof<span class="o">]</span>-&gt;<span class="o">(</span>n<span class="o">{</span>name:<span class="s2">&quot;jon&quot;</span>,age:18<span class="o">})</span> <span class="k">return </span>n;
-</span><span class='line'>+----------------------------+
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> create unique bran-<span class="o">[</span>r:littlebrotherof<span class="o">]</span>-&amp;gt;<span class="o">(</span>n<span class="o">{</span>name:”jon”,age:18<span class="o">})</span> <span class="k">return </span>n;
+</span><span class='line'>+—————————-+
 </span><span class='line'>| n                          |
-</span><span class='line'>+----------------------------+
-</span><span class='line'>| Node<span class="o">[</span>8<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:18<span class="o">}</span> |
-</span><span class='line'>+----------------------------+
+</span><span class='line'>+—————————-+
+</span><span class='line'>| Node<span class="o">[</span>8<span class="o">]{</span>name:”jon”,age:18<span class="o">}</span> |
+</span><span class='line'>+—————————-+
 </span><span class='line'>1 row
 </span><span class='line'>Nodes created: 1
 </span><span class='line'>Relationships created: 1
@@ -66,8 +65,7 @@
 
 <p>新建relationship的方式和上面差不多，举一反三即可。</p>
 
-<h3>foreach</h3>
-
+<h3 id="foreach">foreach</h3>
 <p>foreach针对的neo4j中的集合做遍历，可以做一些批量的修改操作。其语法块需要用括号围起来，像下面的代码，更新path p关联的所有node的uptime属性为100。</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -75,10 +73,10 @@
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> bran-<span class="o">[]</span>-&gt;<span class="o">()</span> foreach <span class="o">(</span>n in nodes<span class="o">(</span>p<span class="o">)</span>: <span class="nb">set </span>n.uptime <span class="o">=</span> 100<span class="o">)</span>;
-</span><span class='line'>+-------------------+
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> bran-<span class="o">[]</span>-&amp;gt;<span class="o">()</span> foreach <span class="o">(</span>n in nodes<span class="o">(</span>p<span class="o">)</span>: <span class="nb">set </span>n.uptime <span class="o">=</span> 100<span class="o">)</span>;
+</span><span class='line'>+——————-+
 </span><span class='line'>| No data returned. |
-</span><span class='line'>+-------------------+
+</span><span class='line'>+——————-+
 </span><span class='line'>Properties <span class="nb">set</span>: 4
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
@@ -90,14 +88,13 @@
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span>, <span class="nv">jon</span> <span class="o">=</span> node<span class="o">(</span>7<span class="o">)</span> foreach <span class="o">(</span>n in <span class="o">[</span>bran, jon<span class="o">]</span>: <span class="nb">set </span>n.uptime <span class="o">=</span> 101<span class="o">)</span>;
-</span><span class='line'>+-------------------+
+</span><span class='line'>+——————-+
 </span><span class='line'>| No data returned. |
-</span><span class='line'>+-------------------+
+</span><span class='line'>+——————-+
 </span><span class='line'>Properties <span class="nb">set</span>: 2
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h3>functions</h3>
-
+<h3 id="functions">functions</h3>
 <p><a href="http://docs.neo4j.org/chunked/milestone/query-function.html">官方手册</a>中罗列了所有的可用方法，非常详尽，需要慢慢研究了。</p>
 ]]></content>
   </entry>
@@ -109,8 +106,7 @@
     <id>http://sailxjx.github.com/blog/blog/2013/02/01/cypher-query-language-xue-xi-bi-ji-1</id>
     <content type="html"><![CDATA[<p>紧接前文<a href="http://sailxjx.github.com/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j/">初试图形数据库 neo4j</a>初窥了这种语言的特性，几天使用下来，初期不适应的便秘感慢慢退去，渐入佳境，竟然觉得有些妙不可言鸟。就如同nodejs基于事件的特点和函数式语法对传统编程方法的改变，学习<code>Cypher</code>同样需要改改传统<code>Sql</code>的思路，下面记录一下最近的新发现。</p>
 
-<h3>版本号</h3>
-
+<h3 id="section">版本号</h3>
 <p><code>dbinfo</code>可以用于查询一些与数据库状态相关的信息，查看版本号是其中一个应用。
 <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -123,21 +119,20 @@
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>dbinfo -g Kernel              &lt;br/&gt;
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>dbinfo -g Kernel              &lt;br /&gt;
 </span><span class='line'><span class="o">{</span>
-</span><span class='line'>  <span class="s2">&quot;KernelStartTime&quot;</span>: <span class="s2">&quot;Mon Feb 04 14:45:48 CST 2013&quot;</span>,
-</span><span class='line'>  <span class="s2">&quot;KernelVersion&quot;</span>: <span class="s2">&quot;Neo4j - Graph Database Kernel 1.9.M04&quot;</span>,
-</span><span class='line'>  <span class="s2">&quot;MBeanQuery&quot;</span>: <span class="s2">&quot;org.neo4j:instance=kernel#0,name=*&quot;</span>,
-</span><span class='line'>  <span class="s2">&quot;ReadOnly&quot;</span>: <span class="nb">false</span>,
-</span><span class='line'>  <span class="s2">&quot;StoreCreationDate&quot;</span>: <span class="s2">&quot;Thu Jan 31 16:42:31 CST 2013&quot;</span>,
-</span><span class='line'>  <span class="s2">&quot;StoreDirectory&quot;</span>: <span class="s2">&quot;/usr/local/neo4j/data/graph.db&quot;</span>,
-</span><span class='line'>  <span class="s2">&quot;StoreId&quot;</span>: <span class="s2">&quot;b9dcdac5ae2b9e82&quot;</span>,
-</span><span class='line'>  <span class="s2">&quot;StoreLogVersion&quot;</span>: 1
+</span><span class='line'>  “KernelStartTime”: “Mon Feb 04 14:45:48 CST 2013”,
+</span><span class='line'>  “KernelVersion”: “Neo4j - Graph Database Kernel 1.9.M04”,
+</span><span class='line'>  “MBeanQuery”: “org.neo4j:instance<span class="o">=</span>kernel#0,name<span class="o">=</span>*”,
+</span><span class='line'>  “ReadOnly”: <span class="nb">false</span>,
+</span><span class='line'>  “StoreCreationDate”: “Thu Jan 31 16:42:31 CST 2013”,
+</span><span class='line'>  “StoreDirectory”: “/usr/local/neo4j/data/graph.db”,
+</span><span class='line'>  “StoreId”: “b9dcdac5ae2b9e82”,
+</span><span class='line'>  “StoreLogVersion”: 1
 </span><span class='line'><span class="o">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h3>match</h3>
-
+<h3 id="match">match</h3>
 <p>说起这<code>match</code>真是个很神奇的东西，可以用<code>sql</code>中的<code>where</code>作类比，但是又不同于<code>where</code>，因为<code>Cypher</code>中有专门的<code>where</code>。</p>
 
 <p>这个<code>match</code>可以比作正则中的捕获组，还兼具了赋值的功能，如下面的例子
@@ -149,12 +144,12 @@
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>13<span class="o">)</span> match bran-<span class="o">[</span>r<span class="o">]</span>-&gt;b <span class="k">return </span>r, b;
-</span><span class='line'>+--------------------------------------------------------------------------+
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>13<span class="o">)</span> match bran-<span class="o">[</span>r<span class="o">]</span>-&amp;gt;b <span class="k">return </span>r, b;
+</span><span class='line'>+————————————————————————–+
 </span><span class='line'>| r                                         | b                            |
-</span><span class='line'>+--------------------------------------------------------------------------+
-</span><span class='line'>| :islittlebrotherof<span class="o">[</span>2<span class="o">]</span> <span class="o">{</span>age:1359622995523<span class="o">}</span> | Node<span class="o">[</span>14<span class="o">]{</span>name:<span class="s2">&quot;snow&quot;</span>,age:17<span class="o">}</span> |
-</span><span class='line'>+--------------------------------------------------------------------------+
+</span><span class='line'>+————————————————————————–+
+</span><span class='line'>| :islittlebrotherof<span class="o">[</span>2<span class="o">]</span> <span class="o">{</span>age:1359622995523<span class="o">}</span> | Node<span class="o">[</span>14<span class="o">]{</span>name:”snow”,age:17<span class="o">}</span> |
+</span><span class='line'>+————————————————————————–+
 </span><span class='line'>1 row
 </span><span class='line'>0 ms
 </span></code></pre></td></tr></table></div></figure></notextile></div>
@@ -169,12 +164,12 @@
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">summer</span> <span class="o">=</span> node<span class="o">(</span>15<span class="o">)</span>, <span class="nv">snow</span> <span class="o">=</span> node<span class="o">(</span>14<span class="o">)</span> match summer-<span class="o">[</span>r<span class="o">]</span>-&gt;n&amp;lt;--snow <span class="k">return </span>n, r;
-</span><span class='line'>+--------------------------------------------------------+
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">summer</span> <span class="o">=</span> node<span class="o">(</span>15<span class="o">)</span>, <span class="nv">snow</span> <span class="o">=</span> node<span class="o">(</span>14<span class="o">)</span> match summer-<span class="o">[</span>r<span class="o">]</span>-&amp;gt;n&amp;lt;–snow <span class="k">return </span>n, r;
+</span><span class='line'>+——————————————————–+
 </span><span class='line'>| n                            | r                       |
-</span><span class='line'>+--------------------------------------------------------+
-</span><span class='line'>| Node<span class="o">[</span>13<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span> | :isdogof<span class="o">[</span>3<span class="o">]</span> <span class="o">{</span>ctime:100<span class="o">}</span> |
-</span><span class='line'>+--------------------------------------------------------+
+</span><span class='line'>+——————————————————–+
+</span><span class='line'>| Node<span class="o">[</span>13<span class="o">]{</span>name:”bran”,age:10<span class="o">}</span> | :isdogof<span class="o">[</span>3<span class="o">]</span> <span class="o">{</span>ctime:100<span class="o">}</span> |
+</span><span class='line'>+——————————————————–+
 </span><span class='line'>1 row
 </span><span class='line'>1 ms
 </span></code></pre></td></tr></table></div></figure></notextile></div>
@@ -189,12 +184,12 @@
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">s</span> <span class="o">=</span> node<span class="o">(</span>15<span class="o">)</span>, <span class="nv">snow</span> <span class="o">=</span> node<span class="o">(</span>14<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> s-<span class="o">[</span>r:knowns&lt;em&gt;1..2<span class="o">]</span>-&gt;snow <span class="k">return </span>r; &lt;br/&gt;
-</span><span class='line'>+-------------------------------+
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">s</span> <span class="o">=</span> node<span class="o">(</span>15<span class="o">)</span>, <span class="nv">snow</span> <span class="o">=</span> node<span class="o">(</span>14<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> s-<span class="o">[</span>r:knowns&lt;em&gt;1..2<span class="o">]</span>-&amp;gt;snow <span class="k">return </span>r; &lt;br /&gt;
+</span><span class='line'>+——————————-+
 </span><span class='line'>| r                             |
-</span><span class='line'>+-------------------------------+
+</span><span class='line'>+——————————-+
 </span><span class='line'>| <span class="o">[</span>:knowns<span class="o">[</span>6<span class="o">]</span> <span class="o">{}</span>,:knowns<span class="o">[</span>7<span class="o">]</span> <span class="o">{}]</span> |
-</span><span class='line'>+-------------------------------+
+</span><span class='line'>+——————————-+
 </span><span class='line'>1 row
 </span><span class='line'>1 ms
 </span></code></pre></td></tr></table></div></figure></notextile></div>
@@ -210,28 +205,27 @@
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>1<span class="o">)</span>, <span class="nv">jon</span> <span class="o">=</span> node<span class="o">(</span>2<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> shortestpath<span class="o">(</span>bran-<span class="o">[</span>*..2<span class="o">]</span>-&gt;jon<span class="o">)</span> <span class="k">return </span>p;
-</span><span class='line'>+------------------------------------------------------------------------------------------------------+
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>1<span class="o">)</span>, <span class="nv">jon</span> <span class="o">=</span> node<span class="o">(</span>2<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> shortestpath<span class="o">(</span>bran-<span class="o">[</span>*..2<span class="o">]</span>-&amp;gt;jon<span class="o">)</span> <span class="k">return </span>p;
+</span><span class='line'>+——————————————————————————————————+
 </span><span class='line'>| p                                                                                                    |
-</span><span class='line'>+------------------------------------------------------------------------------------------------------+
-</span><span class='line'>| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span>,:islittlebrotherof<span class="o">[</span>0<span class="o">]</span> <span class="o">{</span>ctime:1359963465947<span class="o">}</span>,Node<span class="o">[</span>2<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}]</span> |
-</span><span class='line'>+------------------------------------------------------------------------------------------------------+
+</span><span class='line'>+——————————————————————————————————+
+</span><span class='line'>| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:”bran”,age:10<span class="o">}</span>,:islittlebrotherof<span class="o">[</span>0<span class="o">]</span> <span class="o">{</span>ctime:1359963465947<span class="o">}</span>,Node<span class="o">[</span>2<span class="o">]{</span>name:”jon”,age:17<span class="o">}]</span> |
+</span><span class='line'>+——————————————————————————————————+
 </span><span class='line'>1 row
 </span><span class='line'>1 ms
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>不过假如在<code>shortestpath</code>参数中指定最短长度值的话会报错(如<code>p = shortestpath(bran-[*0..2]-&gt;jon)</code>)，不过貌似没有<code>longestpath</code>来获得最长路径，可能一是因为应用场景较少，二是在算法上也会复杂很多，略显遗憾。</p>
 
-<h3>pattern</h3>
-
+<h3 id="pattern">pattern</h3>
 <p>现在再记录pattern有点本末倒置的感觉，毕竟前面的match已经用到了很多种pattern，那么这里权作总结，将常用的pattern归归类。</p>
 
 <ul>
-<li><code>a--&gt;b</code> 最简单的，由一个node到另一个node</li>
-<li><code>a-[r]-&gt;b</code> 加上了relationship的path</li>
-<li><code>()-[]-&gt;b</code> 如果都不想要标注变量，可用<code>()</code>表示一个node（或一个子pattern），用<code>[]</code>表示一个relationship</li>
-<li><code>a-[r:TYPE1|TYPE2]-&gt;b</code> 指定relationship type，其中type可以指定多个，为或的关系。</li>
-<li><code>a-[?*]-&gt;b</code> 得到node a到node b的所有路径，如果不存在路径则返回null。（假如没有<code>?</code>则返回空）
+  <li><code>a--&gt;b</code> 最简单的，由一个node到另一个node</li>
+  <li><code>a-[r]-&gt;b</code> 加上了relationship的path</li>
+  <li><code>()-[]-&gt;b</code> 如果都不想要标注变量，可用<code>()</code>表示一个node（或一个子pattern），用<code>[]</code>表示一个relationship</li>
+  <li><code>a-[r:TYPE1|TYPE2]-&gt;b</code> 指定relationship type，其中type可以指定多个，为或的关系。</li>
+  <li><code>a-[?*]-&gt;b</code> 得到node a到node b的所有路径，如果不存在路径则返回null。（假如没有<code>?</code>则返回空）
 <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -242,25 +236,23 @@
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">a</span> <span class="o">=</span> node<span class="o">(</span>1<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> a-<span class="o">[</span>*<span class="o">]</span>-&gt;b <span class="k">return </span>p;
-</span><span class='line'>+----------------------------------------------------------------------------------------------------------------------+
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">a</span> <span class="o">=</span> node<span class="o">(</span>1<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> a-<span class="o">[</span>*<span class="o">]</span>-&amp;gt;b <span class="k">return </span>p;
+</span><span class='line'>+———————————————————————————————————————-+
 </span><span class='line'>| p                                                                                                                    |
-</span><span class='line'>+----------------------------------------------------------------------------------------------------------------------+
-</span><span class='line'>| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span>,:islittlebrotherof<span class="o">[</span>0<span class="o">]</span> <span class="o">{</span>ctime:1359963465947<span class="o">}</span>,Node<span class="o">[</span>2<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}]</span>                 |
-</span><span class='line'>| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span>,:isownerof<span class="o">[</span>1<span class="o">]</span> <span class="o">{}</span>,Node<span class="o">[</span>3<span class="o">]{</span>name:<span class="s2">&quot;summer&quot;</span>,age:4<span class="o">}]</span>                                          |
-</span><span class='line'>| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span>,:isownerof<span class="o">[</span>1<span class="o">]</span> <span class="o">{}</span>,Node<span class="o">[</span>3<span class="o">]{</span>name:<span class="s2">&quot;summer&quot;</span>,age:4<span class="o">}</span>,:knowns<span class="o">[</span>5<span class="o">]</span> <span class="o">{}</span>,Node<span class="o">[</span>2<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}]</span> |
-</span><span class='line'>+----------------------------------------------------------------------------------------------------------------------+
+</span><span class='line'>+———————————————————————————————————————-+
+</span><span class='line'>| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:”bran”,age:10<span class="o">}</span>,:islittlebrotherof<span class="o">[</span>0<span class="o">]</span> <span class="o">{</span>ctime:1359963465947<span class="o">}</span>,Node<span class="o">[</span>2<span class="o">]{</span>name:”jon”,age:17<span class="o">}]</span>                 |
+</span><span class='line'>| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:”bran”,age:10<span class="o">}</span>,:isownerof<span class="o">[</span>1<span class="o">]</span> <span class="o">{}</span>,Node<span class="o">[</span>3<span class="o">]{</span>name:”summer”,age:4<span class="o">}]</span>                                          |
+</span><span class='line'>| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:”bran”,age:10<span class="o">}</span>,:isownerof<span class="o">[</span>1<span class="o">]</span> <span class="o">{}</span>,Node<span class="o">[</span>3<span class="o">]{</span>name:”summer”,age:4<span class="o">}</span>,:knowns<span class="o">[</span>5<span class="o">]</span> <span class="o">{}</span>,Node<span class="o">[</span>2<span class="o">]{</span>name:”jon”,age:17<span class="o">}]</span> |
+</span><span class='line'>+———————————————————————————————————————-+
 </span><span class='line'>3 rows
 </span><span class='line'>1 ms
 </span></code></pre></td></tr></table></div></figure></notextile></div></li>
-<li><code>a-[*3..5]-&gt;b</code> 指定path的深度，是可以是一个范围值。</li>
-<li><code>me-[:KNOWS*1..2]-remote_friend</code> 将前面集中pattern整合一下，主要是注意其中各pattern的位置，不能搞乱。</li>
+  <li><code>a-[*3..5]-&gt;b</code> 指定path的深度，是可以是一个范围值。</li>
+  <li><code>me-[:KNOWS*1..2]-remote_friend</code> 将前面集中pattern整合一下，主要是注意其中各pattern的位置，不能搞乱。</li>
 </ul>
 
-
-<h3>index</h3>
-
-<p><code>neo4j</code>的索引是一个key=>value对，基于lucene，据说也可以换其他的引擎，没试过。通过索引可以供<code>Cypher</code>或Rest api查找对应的node或relationship或任何想要的集合。</p>
+<h3 id="index">index</h3>
+<p><code>neo4j</code>的索引是一个key=&gt;value对，基于lucene，据说也可以换其他的引擎，没试过。通过索引可以供<code>Cypher</code>或Rest api查找对应的node或relationship或任何想要的集合。</p>
 
 <p>索引分为两种，自动索引和手动索引，就目前的<code>Cypher</code>版本(1.9.M04)来说，还没有提供创建手动索引的功能，遗憾的是，在nodejs客户端中同样没有完善这一功能，所以我找到了一个ruby版本的客户端用于实验这一功能。</p>
 
@@ -270,10 +262,10 @@
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s1">&#39;neography&#39;</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="err">‘</span><span class="n">neography</span><span class="err">’</span>
 </span><span class='line'><span class="vi">@neo</span> <span class="o">=</span> <span class="no">Neography</span><span class="o">::</span><span class="no">Rest</span><span class="o">.</span><span class="n">new</span>
-</span><span class='line'><span class="vi">@neo</span><span class="o">.</span><span class="n">create_node_index</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>                      <span class="c1">#新增一个索引，其中第一个参数是索引主键</span>
-</span><span class='line'><span class="vi">@neo</span><span class="o">.</span><span class="n">add_node_to_index</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;bran&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>   <span class="c1">#将一个node添加到索引，其中最后的&lt;code&gt;1&lt;/code&gt;是node id，也可以是一个node对象，很神奇，很kiss</span>
+</span><span class='line'><span class="vi">@neo</span><span class="o">.</span><span class="n">create_node_index</span><span class="p">(</span><span class="err">‘</span><span class="nb">name</span><span class="err">’</span><span class="p">)</span>                      <span class="c1">#新增一个索引，其中第一个参数是索引主键</span>
+</span><span class='line'><span class="vi">@neo</span><span class="o">.</span><span class="n">add_node_to_index</span><span class="p">(</span><span class="err">‘</span><span class="nb">name</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="nb">name</span><span class="err">’</span><span class="p">,</span> <span class="err">‘</span><span class="n">bran</span><span class="err">’</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>   <span class="c1">#将一个node添加到索引，其中最后的&lt;code&gt;1&lt;/code&gt;是node id，也可以是一个node对象，很神奇，很kiss</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>建好一个索引之后，就可以由<code>Cypher</code>出场了。<code>Cypher</code>中通过索引可以查到对应的node和relationship。</p>
@@ -286,19 +278,13 @@
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;h1&gt;节点:索引主键<span class="o">(</span><span class="nv">key</span><span class="o">=</span>value<span class="o">)</span>&lt;/h1&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">n</span> <span class="o">=</span> node:name<span class="o">(</span><span class="nv">name</span><span class="o">=</span><span class="s2">&quot;bran&quot;</span><span class="o">)</span> <span class="k">return </span>n;
-</span><span class='line'>+-----------------------------+
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#                       节点:索引主键(key=value)</span>
+</span><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">n</span> <span class="o">=</span> node:name<span class="o">(</span><span class="nv">name</span><span class="o">=</span>”bran”<span class="o">)</span> <span class="k">return </span>n;
+</span><span class='line'>+—————————–+
 </span><span class='line'>| n                           |
-</span><span class='line'>+-----------------------------+
-</span><span class='line'>| Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span> |
-</span><span class='line'>+-----------------------------+
+</span><span class='line'>+—————————–+
+</span><span class='line'>| Node<span class="o">[</span>1<span class="o">]{</span>name:”bran”,age:10<span class="o">}</span> |
+</span><span class='line'>+—————————–+
 </span><span class='line'>1 row
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
@@ -315,8 +301,8 @@
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>index --create node_auto_index -t node
-</span><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>index --indexes
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>index –create node_auto_index -t node
+</span><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>index –indexes
 </span><span class='line'>Node indexes:
 </span><span class='line'>  name
 </span><span class='line'>  node_auto_index&lt;/p&gt;
@@ -326,20 +312,17 @@
 
 <p>自动索引默认是关闭的，可能是出于效率的考虑，毕竟在正常的应用中我们不需要对所有node进行索引。而且自动索引是只读的，就是说索引建立以后，除了清空数据库，木有别的方法删掉它啊~。</p>
 
-<h2>注意事项</h2>
+<h2 id="section-1">注意事项</h2>
 
 <ul>
-<li><code>Cypher</code>中遇到某些查询条件中包含空格或别的非英文字符的，可以用`把字符串包起来。</li>
+  <li><code>Cypher</code>中遇到某些查询条件中包含空格或别的非英文字符的，可以用`把字符串包起来。</li>
 </ul>
 
-
-<h2>参考资料</h2>
-
+<h2 id="section-2">参考资料</h2>
 <ul>
-<li><a href="http://docs.neo4j.org/chunked/milestone/">v1.9手册</a></li>
-<li><a href="https://github.com/maxdemarzi/neography/wiki">neography wiki</a></li>
+  <li><a href="http://docs.neo4j.org/chunked/milestone/">v1.9手册</a></li>
+  <li><a href="https://github.com/maxdemarzi/neography/wiki">neography wiki</a></li>
 </ul>
-
 ]]></content>
   </entry>
   
@@ -348,10 +331,9 @@
     <link href="http://sailxjx.github.com/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji/"/>
     <updated>2013-01-28T11:49:00+08:00</updated>
     <id>http://sailxjx.github.com/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji</id>
-    <content type="html"><![CDATA[<h2><a href="https://github.com/thingdom/node-neo4j">node-neo4j</a></h2>
+    <content type="html"><![CDATA[<h2 id="node-neo4jhttpsgithubcomthingdomnode-neo4j"><a href="https://github.com/thingdom/node-neo4j">node-neo4j</a></h2>
 
-<h3>查找节点</h3>
-
+<h3 id="section">查找节点</h3>
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -359,26 +341,17 @@
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">neo4j = </span><span class="nx">require</span> <span class="s">&#39;neo4j&#39;</span>
-</span><span class='line'><span class="nv">db = </span><span class="k">new</span> <span class="nx">neo4j</span><span class="p">.</span><span class="nx">GraphDatabase</span><span class="p">(</span><span class="s">&#39;http://localhost:7474&#39;</span><span class="p">)</span>
-</span><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">(err, node)-&gt;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="k">if</span> <span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span>
-</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">err</span>
-</span><span class='line'><span class="k">else</span>
-</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">node</span><span class="p">.</span><span class="nx">data</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">neo4j = </span><span class="nx">require</span> <span class="err">‘</span><span class="nx">neo4j</span><span class="err">’</span>
+</span><span class='line'><span class="nv">db = </span><span class="k">new</span> <span class="nx">neo4j</span><span class="p">.</span><span class="nx">GraphDatabase</span><span class="p">(</span><span class="err">‘</span><span class="nx">http</span><span class="o">://</span><span class="nx">localhost</span><span class="o">:</span><span class="mi">7474</span><span class="err">’</span><span class="p">)</span>
+</span><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">err</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">node</span><span class="p">.</span><span class="nx">data</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 查找节点的api设计的很有dom的风格，与大多数nodejs方法一样，node-neo4j提供的api都是异步的，回调函数中第一个参数都是错误流，第二个因方法而异，<code>getNodeById</code>中的第二个参数node是一个完整的json对象，在这个对象上可以使用node-neo4j针对node的所有方法，要取得或修改node中的成员则可以通过<code>node.data</code>获取。</p>
 
-<h3>创建关系</h3>
-
+<h3 id="section-1">创建关系</h3>
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -389,41 +362,20 @@
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="c1"># 创建节点</span>
+</span><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">n1</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">n2</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
+</span><span class='line'>       <span class="c1">#当前节点                 目标节点 关系类型 关系结构</span>
+</span><span class='line'>        <span class="nx">n2</span><span class="p">.</span><span class="nx">createRelationshipTo</span> <span class="nx">n1</span><span class="p">,</span> <span class="err">‘</span><span class="nx">isdogof</span><span class="err">’</span><span class="p">,</span> <span class="p">{</span><span class="nv">ctime: </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()},</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
+</span><span class='line'>            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">r</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="err">创建节点</span><span class="o">&lt;/</span><span class="nx">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">(err, n1)-&gt;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">n2</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>   <span class="c1">#当前节点                 目标节点 关系类型 关系结构</span>
-</span><span class='line'>    <span class="nx">n2</span><span class="p">.</span><span class="nx">createRelationshipTo</span> <span class="nx">n1</span><span class="p">,</span> <span class="s">&#39;isdogof&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nv">ctime: </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()},</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">r</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="err">查找节点</span><span class="o">&lt;/</span><span class="nx">h1</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">db</span><span class="p">.</span><span class="nx">getRelationshipById</span> <span class="mi">0</span><span class="p">,</span> <span class="nf">(err, rel)-&gt;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">h1</span> <span class="nx">id</span><span class="o">=</span><span class="s">&quot;section-2&quot;</span><span class="o">&gt;</span><span class="err">查找节点</span><span class="o">&lt;/</span><span class="nx">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">db</span><span class="p">.</span><span class="nx">getRelationshipById</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">rel</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span>          <span class="o">&lt;</span><span class="nx">br</span> <span class="o">/&gt;</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 目前通过<code>node-neo4j</code>创建关系只能在node上做文章，通过<code>createRelationshipFrom</code>和<code>createRelationshipTo</code>来创建点对点的关系。客户端的作者很坑爹的在Graphdatabase._coffee中声明了一个<code>createRelationship</code>方法，但是没有实现，调用这个方法是不会有任何效果的。</p>
 
-<h3>查询关系</h3>
-
+<h3 id="section-3">查询关系</h3>
 <p><code>node-neo4j</code>中声明了四种方式来获取关于某个节点的关系，分别是
 * node.getRelationships 获取与节点相关的所有关系
 * node.outgoing         获取以该节点为起点的关系
@@ -435,24 +387,15 @@
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">2</span><span class="p">,</span> <span class="nf">(err, nBran)-&gt;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">nSnow</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>    <span class="nx">nSnow</span><span class="p">.</span><span class="nx">incoming</span> <span class="s">&#39;islittlebrotherof&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">rel</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">data</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">nBran</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">nSnow</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">nSnow</span><span class="p">.</span><span class="nx">incoming</span> <span class="err">‘</span><span class="nx">islittlebrotherof</span><span class="err">’</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">rel</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
+</span><span class='line'>            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">data</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>假如关系类型(type)不存在或者没有关联到这个节点的关系，getRelationships返回rel为一个空数组。否则返回节点在这个类型的所有关系数组，<code>rel[0].data</code>则是获取关系的属性。</p>
 
-<h3>根据关系种类查询</h3>
-
+<h3 id="section-4">根据关系种类查询</h3>
 <p>neo4j的关系中还有个比较重要的概念是种类(type)，在<code>Cypher</code>中可以通过<code>type()</code>方法来获取某个关系的种类
 <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -463,11 +406,11 @@
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">r</span> <span class="o">=</span> rel<span class="o">(</span>*<span class="o">)</span> <span class="k">return </span><span class="nb">type</span><span class="o">(</span>r<span class="o">)</span>;
-</span><span class='line'>+---------------------+
+</span><span class='line'>+———————+
 </span><span class='line'>| <span class="nb">type</span><span class="o">(</span>r<span class="o">)</span>             |
-</span><span class='line'>+---------------------+
-</span><span class='line'>| <span class="s2">&quot;islittlebrotherof&quot;</span> |
-</span><span class='line'>+---------------------+
+</span><span class='line'>+———————+
+</span><span class='line'>| “islittlebrotherof” |
+</span><span class='line'>+———————+
 </span><span class='line'>1 row
 </span><span class='line'>0 ms
 </span></code></pre></td></tr></table></div></figure></notextile></div>
@@ -475,23 +418,15 @@
 <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">13</span><span class="p">,</span> <span class="nf">(err, bran)-&gt;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="nx">bran</span><span class="p">.</span><span class="nx">getRelationships</span> <span class="s">&#39;islittlebrotherof&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">rel</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">data</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">13</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">bran</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">bran</span><span class="p">.</span><span class="nx">getRelationships</span> <span class="err">‘</span><span class="nx">islittlebrotherof</span><span class="err">’</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">rel</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">data</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 callback中返回的是一个关系对象数组。</p>
 
-<h3>万能的query</h3>
-
+<h3 id="query">万能的query</h3>
 <p>db对象上有一个万能的<code>query</code>方法，就是直接通过<code>Cypher</code>语句得到查询结果啦，这个弥补了作者很多没有实现的方法。</p>
+
 ]]></content>
   </entry>
   
@@ -500,12 +435,11 @@ callback中返回的是一个关系对象数组。</p>
     <link href="http://sailxjx.github.com/blog/blog/2013/01/21/awk-xue-xi-bi-ji-2/"/>
     <updated>2013-01-21T17:42:00+08:00</updated>
     <id>http://sailxjx.github.com/blog/blog/2013/01/21/awk-xue-xi-bi-ji-2</id>
-    <content type="html"><![CDATA[<h2>常用的选项</h2>
-
+    <content type="html"><![CDATA[<h2 id="section">常用的选项</h2>
 <ul>
-<li>-F 指定分隔符</li>
-<li>-f 指定调用脚本，可以多次引用，不同文件会被合并成一个awk脚本</li>
-<li>-d 输出所有变量到文件，默认输出到awkvars.out，也可以通过在-d后加文件路径来指定文件，但是注意-d与文件名之间不能有空格。调试的时候这个选项会非常有用。
+  <li>-F 指定分隔符</li>
+  <li>-f 指定调用脚本，可以多次引用，不同文件会被合并成一个awk脚本</li>
+  <li>-d 输出所有变量到文件，默认输出到awkvars.out，也可以通过在-d后加文件路径来指定文件，但是注意-d与文件名之间不能有空格。调试的时候这个选项会非常有用。
 <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -513,49 +447,39 @@ callback中返回的是一个关系对象数组。</p>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk -d./awk.dump <span class="s1">&#39;BEGIN { foo = &quot;test&quot; } /&lt;sup&gt;foo/&lt;/sup&gt; { print $0 }&#39;</span> BBS-list
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk -d./awk.dump ‘BEGIN <span class="o">{</span> <span class="nv">foo</span> <span class="o">=</span> “test” <span class="o">}</span> /^foo/ <span class="o">{</span> print <span class="nv">$0</span> <span class="o">}</span>’ BBS-list
 </span><span class='line'><span class="nv">$ </span>cat ./awk.dump
 </span><span class='line'>ARGC: 2
 </span><span class='line'>ARGIND: 1
 </span><span class='line'>ARGV: array, 2 elements
-</span><span class='line'>foo: <span class="s2">&quot;test&quot;</span>
-</span><span class='line'>...
+</span><span class='line'>foo: “test”
+</span><span class='line'>…
 </span></code></pre></td></tr></table></div></figure></notextile></div></li>
-<li>-p 将命令行下的awk脚本格式化输出到awkprof.out文件，可以在-p后加文件路径来指定文件，注意也不能有空格</li>
-<li>-v 预设置awk程序变量，可以设置多次</li>
+  <li>-p 将命令行下的awk脚本格式化输出到awkprof.out文件，可以在-p后加文件路径来指定文件，注意也不能有空格</li>
+  <li>-v 预设置awk程序变量，可以设置多次</li>
 </ul>
 
-
-<h2>分隔符的四种形式</h2>
-
+<h2 id="section-1">分隔符的四种形式</h2>
 <ul>
-<li><code>-F " "</code>      默认，以空格或tab分隔，首尾的空格会被排除掉</li>
-<li><code>-F "a"</code>      以普通字符串分隔，用户指定</li>
-<li><code>-F "[: ]"</code>   以正则表达式分隔，一般在设定多个分隔符时比较有用（如右边就是按<code>:</code>或空格分隔）</li>
-<li><code>-F ""</code>       每个字符都是单独的一列，只在gawk中支持</li>
+  <li><code>-F " "</code>      默认，以空格或tab分隔，首尾的空格会被排除掉</li>
+  <li><code>-F "a"</code>      以普通字符串分隔，用户指定</li>
+  <li><code>-F "[: ]"</code>   以正则表达式分隔，一般在设定多个分隔符时比较有用（如右边就是按<code>:</code>或空格分隔）</li>
+  <li><code>-F ""</code>       每个字符都是单独的一列，只在gawk中支持</li>
 </ul>
 
-
-<h2>@include</h2>
+<h2 id="include">@include</h2>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="err">@</span><span class="o">in</span><span class="nx">clude</span> <span class="s1">&#39;./libfoo.awk&#39;</span>
-</span><span class='line'><span class="nx">END</span> <span class="p">{</span><span class="o">&lt;</span><span class="err">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="kr">print</span> <span class="s2">&quot;end of file&quot;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="err">/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="err">@</span><span class="o">in</span><span class="nx">clude</span> <span class="err">‘</span><span class="p">.</span><span class="o">/</span><span class="nx">libfoo</span><span class="p">.</span><span class="nx">awk</span><span class="err">’</span>
+</span><span class='line'><span class="nx">END</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">print</span> <span class="err">“</span><span class="nx">end</span> <span class="nx">of</span> <span class="nx">file</span><span class="err">”</span>
+</span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h2>多行记录</h2>
-
+<h2 id="section-2">多行记录</h2>
 <p>有些文件中相关联的数据可能会分为多行显示，<a href="http://www.gnu.org/software/gawk/manual/gawk.html#Multiple-Line">看手册中的例子</a>
 <div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -579,40 +503,31 @@ callback中返回的是一个关系对象数组。</p>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">BEGIN</span> <span class="p">{</span> <span class="nb">RS</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="p">;</span> <span class="nb">FS</span> <span class="o">=</span> <span class="s2">&quot;\n&quot;</span> <span class="p">}</span>
-</span><span class='line'><span class="p">{</span><span class="o">&lt;</span><span class="err">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="kr">print</span> <span class="s2">&quot;Name is:&quot;</span><span class="p">,</span> <span class="o">$</span><span class="mi">1</span>
-</span><span class='line'><span class="kr">print</span> <span class="s2">&quot;Address is:&quot;</span><span class="p">,</span> <span class="o">$</span><span class="mi">2</span>
-</span><span class='line'><span class="kr">print</span> <span class="s2">&quot;City and State are:&quot;</span><span class="p">,</span> <span class="o">$</span><span class="mi">3</span>
-</span><span class='line'><span class="kr">print</span> <span class="s2">&quot;&quot;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="err">/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">BEGIN</span> <span class="p">{</span> <span class="nb">RS</span> <span class="o">=</span> <span class="err">“”</span> <span class="p">;</span> <span class="nb">FS</span> <span class="o">=</span> <span class="err">“\</span><span class="nx">n</span><span class="err">”</span> <span class="p">}</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="kr">print</span> <span class="err">“</span><span class="nx">Name</span> <span class="nx">is</span><span class="err">:”</span><span class="p">,</span> <span class="o">$</span><span class="mi">1</span>
+</span><span class='line'>    <span class="kr">print</span> <span class="err">“</span><span class="nx">Address</span> <span class="nx">is</span><span class="err">:”</span><span class="p">,</span> <span class="o">$</span><span class="mi">2</span>
+</span><span class='line'>    <span class="kr">print</span> <span class="err">“</span><span class="nx">City</span> <span class="nx">and</span> <span class="nx">State</span> <span class="nx">are</span><span class="err">:”</span><span class="p">,</span> <span class="o">$</span><span class="mi">3</span>
+</span><span class='line'>    <span class="kr">print</span> <span class="err">“”</span>
+</span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 这里的RS也是支持正则表达式的</p>
 
-<h2>格式化控制符</h2>
-
+<h2 id="section-3">格式化控制符</h2>
 <p>OFMT与printf中用到的格式化控制符可以参考c中的printf，具体可以<a href="http://www.gnu.org/software/gawk/manual/gawk.html#Control-Letters">参考手册</a></p>
 
-<h2>I/O</h2>
-
+<h2 id="io">I/O</h2>
 <p>awk可以用<code>&gt;</code>,<code>&gt;&gt;</code>,<code>|</code>将输出定向到文件或管道，但需要注意的是后面的文件名或命令都需要用双引号包起来。</p>
 
-<h2>switch</h2>
-
+<h2 id="switch">switch</h2>
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>top -bn1|grep java|grep -v grep|awk <span class="s1">&#39;{ switch ($6) { case /m$/: print $6*1024;break; default: print $6; } }&#39;</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>top -bn1|grep java|grep -v grep|awk ‘<span class="o">{</span> switch <span class="o">(</span><span class="nv">$6</span><span class="o">)</span> <span class="o">{</span> <span class="k">case</span> /m<span class="nv">$/</span>: print <span class="nv">$6</span>*1024;break; default: print <span class="nv">$6</span>; <span class="o">}</span> <span class="o">}</span>’
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 switch语句与C中相同，注意break的使用。此外，在兼容模式下不可用。</p>
 
-<h2>man tag</h2>
-
+<h2 id="man-tag">man tag</h2>
 <p><a href="http://www.gnu.org/software/gawk/manual/gawk.html#Special-Files">Special-Files</a></p>
+
 ]]></content>
   </entry>
   
@@ -621,84 +536,61 @@ switch语句与C中相同，注意break的使用。此外，在兼容模式下�
     <link href="http://sailxjx.github.com/blog/blog/2013/01/16/awk-xue-xi-bi-ji-1/"/>
     <updated>2013-01-16T21:46:00+08:00</updated>
     <id>http://sailxjx.github.com/blog/blog/2013/01/16/awk-xue-xi-bi-ji-1</id>
-    <content type="html"><![CDATA[<h2>第一个awk程序</h2>
+    <content type="html"><![CDATA[<h2 id="awk">第一个awk程序</h2>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="o">&lt;</span><span class="err">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;!</span><span class="err">/bin/awk -f&lt;/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">{</span><span class="o">&lt;</span><span class="err">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="kr">print</span>
-</span><span class='line'><span class="o">&lt;</span><span class="err">/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="c1">#!/bin/awk -f</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="kr">print</span>
+</span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>这个程序会将所有的输入原封不动的输出，直到EOF(ctrl+d)</p>
 
-<h2>在shell中使用awk</h2>
+<h2 id="shellawk">在shell中使用awk</h2>
 
-<h3>命令行</h3>
-
+<h3 id="section">命令行</h3>
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;BEGIN { print &quot;Here is a single quote &amp;lt;&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;&gt;&quot; }&#39;</span>
-</span><span class='line'>Here is a single quote &amp;lt;<span class="err">&#39;</span>&gt;
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk ‘BEGIN <span class="o">{</span> print “Here is a single quote &amp;lt;’<span class="err">&#39;</span>’&amp;gt;” <span class="o">}</span>’
+</span><span class='line'>Here is a single quote &amp;lt;’&amp;gt;
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>需要注意的是，在命令行下引号的嵌套可能会造成一些难以预料的错误，假如在awk脚本内需要用到单引号，那就在它之前使用转义符<code>\</code>，并且不要忘了用另一个单引号结束它前面的字符，就上上面做的那样，实际分成了三段awk脚本，shell将他们链接起来之后实际就成了<code>BEGIN { print "Here is a single quote &lt;'&gt;" }</code>。</p>
 
-<h3>在shell文件中</h3>
-
+<h3 id="shell">在shell文件中</h3>
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">FIND_DATA</span><span class="o">=</span><span class="k">$(</span>awk <span class="s1">&#39;</span>
-</span><span class='line'><span class="s1">BEGIN {&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="s1">&lt;pre&gt;&lt;code&gt;print &quot;here is a single quote &amp;lt;&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;&amp;gt;&quot;</span>
-</span><span class='line'><span class="s1">&lt;/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="s1">&lt;p&gt;}</span>
-</span><span class='line'><span class="s1">&#39;</span><span class="k">)</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">FIND_DATA</span><span class="o">=</span><span class="k">$(</span>awk ‘
+</span><span class='line'>BEGIN <span class="o">{</span>
+</span><span class='line'>    print “here is a single quote &amp;lt;’<span class="err">&#39;</span>’&amp;gt;”
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>‘<span class="k">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>有的时候awk会写的很长，这个时候需要换行，直接用单引号两边包住即可，注意脚本中的单引号还是需要转义的。</p>
 
-<h2>使用正则表达式</h2>
-
+<h2 id="section-1">使用正则表达式</h2>
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;/&lt;sup&gt;foo/&lt;/sup&gt; { print $0 }&#39;</span> BBS-list
-</span><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;/&lt;sup&gt;foo/&lt;/sup&gt; { print $0 }&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="s1">&lt;blockquote&gt;&lt;p&gt;/foo/ { print $0 }&#39;</span> BBS-list
-</span></code></pre></td></tr></table></div></figure></notextile></div></p></blockquote>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk ‘/^foo/ <span class="o">{</span> print <span class="nv">$0</span> <span class="o">}</span>’ BBS-list
+</span><span class='line'><span class="nv">$ </span>awk ‘/^foo/ <span class="o">{</span> print <span class="nv">$0</span> <span class="o">}</span>
+</span><span class='line'>&amp;gt; /foo/ <span class="o">{</span> print <span class="nv">$0</span> <span class="o">}</span>’ BBS-list
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>上面的命令在BBS-list中匹配出所有以<code>foo</code>开头的行，多个表达式可以用在同一行上，会将匹配结果打印在不同行上。</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;{ if($1 ~ /foo$/) print $0 }&#39;</span> BBS-list
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk ‘<span class="o">{</span> <span class="k">if</span><span class="o">(</span><span class="nv">$1</span> ~ /foo<span class="nv">$/</span><span class="o">)</span> print <span class="nv">$0</span> <span class="o">}</span>’ BBS-list
 </span><span class='line'>macfoo       555-6480     1200/300          A
 </span><span class='line'>sabafoo      555-2127     1200/300          C
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
@@ -706,58 +598,48 @@ switch语句与C中相同，注意break的使用。此外，在兼容模式下�
 <p>在变量上使用正则表达式，使用<code>~</code>或<code>!~</code>符号，能满足多数的应用。</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;{ REGEXP = &quot;&lt;sup&gt;foo&quot;;&lt;/sup&gt; if($1 ~ REGEXP) print $0 }&#39;</span> BBS-list
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk ‘<span class="o">{</span> <span class="nv">REGEXP</span> <span class="o">=</span> “^foo”; <span class="k">if</span><span class="o">(</span><span class="nv">$1</span> ~ REGEXP<span class="o">)</span> print <span class="nv">$0</span> <span class="o">}</span>’ BBS-list
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>动态的设置正则表达式，变量中需要省去两边的<code>/</code>。</p>
 
-<h2>BEGIN/END</h2>
+<h2 id="beginend">BEGIN/END</h2>
 
 <p>开头和结尾的两块表达式，可以用来做一些全局参数设定和数据统计。</p>
 
-<h2>有用的内置参数</h2>
-
+<h2 id="section-2">有用的内置参数</h2>
 <ul>
-<li>FS            定义分隔符</li>
-<li>OFS           定义输出分隔符</li>
-<li>NF            列数</li>
-<li>NR            行号</li>
-<li>RS            输入条目分隔符，awk按这个字符来将整个文本分成不同条记录(默认为"\n")</li>
-<li>ORS           输出条目分隔符</li>
-<li>IGNORECASE=1  忽略大小写(只支持gawk)</li>
-<li>FIELDWIDTHS   指定每列的宽度(只支持gawk)，实际场景中貌似用处不大，除非原文本的格式本身就非常工整(每个field的字符数相等)，下面是<code>FS</code>变量可能会影响<code>FIELDWIDTHS</code>的地方
+  <li>FS            定义分隔符</li>
+  <li>OFS           定义输出分隔符</li>
+  <li>NF            列数</li>
+  <li>NR            行号</li>
+  <li>RS            输入条目分隔符，awk按这个字符来将整个文本分成不同条记录(默认为”\n”)</li>
+  <li>ORS           输出条目分隔符</li>
+  <li>IGNORECASE=1  忽略大小写(只支持gawk)</li>
+  <li>FIELDWIDTHS   指定每列的宽度(只支持gawk)，实际场景中貌似用处不大，除非原文本的格式本身就非常工整(每个field的字符数相等)，下面是<code>FS</code>变量可能会影响<code>FIELDWIDTHS</code>的地方
 <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;BEGIN{FS = &quot;a&quot;;FIELDWIDTHS= &quot;4 4&quot;}{print $1, FS}&#39;</span> BBS-list <span class="c"># FS不生效</span>
-</span><span class='line'><span class="nv">$ </span>awk <span class="s1">&#39;BEGIN{FIELDWIDTHS= &quot;4 4&quot;;FS = &quot;a&quot;}{print $1, FS}&#39;</span> BBS-list <span class="c"># FIELDWIDTHS不生效</span>
-</span><span class='line'><span class="nv">$ </span>awk -Fa <span class="s1">&#39;BEGIN{FIELDWIDTHS= &quot;4 4&quot;}{print $1, FS}&#39;</span> BBS-list <span class="c"># FS不生效</span>
-</span><span class='line'>
-</span><span class='line'>&lt;h1&gt;总而言之，就是哪个在后，哪个就优先。&lt;/h1&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;
-</span></code></pre></td></tr></table></div></figure></notextile></div></p></li>
-<li>PROCINFO      内置数组，用于记录一些程序信息，包括分隔符类型，进程号，用户组等等</li>
-<li>FPAT          gawk特有的一个变量，不能与FS，FIELDWIDTHS共存，利用正则匹配出对应的field，手册中给出了一个常用的例子，匹配csv文件，<code>awk -vFPAT="([^,]+)|(\"[^\"]+\")" '{print "NF=",NF; for(i =1 ;i&lt;NF;i++){print $i}}' str.csv</code>，不过这种写法不够直观，也容易出错，用来应急可以，真刀真枪的干，还是求助其他语言吧</li>
-<li>OFMT          输出格式，默认为<code>%.6g</code>，这在格式化数字时比较有效，例如用<code>%.1f</code>就是输出四舍五入后的一位小数，而用<code>%i</code>就是输出整数了。</li>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk ‘BEGIN<span class="o">{</span><span class="nv">FS</span> <span class="o">=</span> “a”;FIELDWIDTHS<span class="o">=</span> “4 4”<span class="o">}{</span>print <span class="nv">$1</span>, FS<span class="o">}</span>’ BBS-list <span class="c"># FS不生效</span>
+</span><span class='line'><span class="nv">$ </span>awk ‘BEGIN<span class="o">{</span><span class="nv">FIELDWIDTHS</span><span class="o">=</span> “4 4”;FS <span class="o">=</span> “a”<span class="o">}{</span>print <span class="nv">$1</span>, FS<span class="o">}</span>’ BBS-list <span class="c"># FIELDWIDTHS不生效</span>
+</span><span class='line'><span class="nv">$ </span>awk -Fa ‘BEGIN<span class="o">{</span><span class="nv">FIELDWIDTHS</span><span class="o">=</span> “4 4”<span class="o">}{</span>print <span class="nv">$1</span>, FS<span class="o">}</span>’ BBS-list <span class="c"># FS不生效</span>
+</span><span class='line'><span class="c"># 总而言之，就是哪个在后，哪个就优先。</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></li>
+  <li>PROCINFO      内置数组，用于记录一些程序信息，包括分隔符类型，进程号，用户组等等</li>
+  <li>FPAT          gawk特有的一个变量，不能与FS，FIELDWIDTHS共存，利用正则匹配出对应的field，手册中给出了一个常用的例子，匹配csv文件，<code>awk -vFPAT="([^,]+)|(\"[^\"]+\")" '{print "NF=",NF; for(i =1 ;i&lt;NF;i++){print $i}}' str.csv</code>，不过这种写法不够直观，也容易出错，用来应急可以，真刀真枪的干，还是求助其他语言吧</li>
+  <li>OFMT          输出格式，默认为<code>%.6g</code>，这在格式化数字时比较有效，例如用<code>%.1f</code>就是输出四舍五入后的一位小数，而用<code>%i</code>就是输出整数了。</li>
 </ul>
 
-
-<h2>有用的方法</h2>
-
+<h2 id="section-3">有用的方法</h2>
 <ul>
-<li>length($1)    计算字符串或数组长度</li>
-<li>srand()       生成随机数种子</li>
-<li>rand()        生成一个浮点随机数，需要跟srand配合</li>
-<li>tolower()     转小写</li>
-<li>toupper()     转大写</li>
-<li>sub()         <code>$ awk '{ sub(/foo/, "FOO"); print }' BBS-list</code>将foo字符串替换成FOO。</li>
+  <li>length($1)    计算字符串或数组长度</li>
+  <li>srand()       生成随机数种子</li>
+  <li>rand()        生成一个浮点随机数，需要跟srand配合</li>
+  <li>tolower()     转小写</li>
+  <li>toupper()     转大写</li>
+  <li>sub()         <code>$ awk '{ sub(/foo/, "FOO"); print }' BBS-list</code>将foo字符串替换成FOO。</li>
 </ul>
-
 ]]></content>
   </entry>
   

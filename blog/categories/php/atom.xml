@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php | CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/php/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-04-13T09:40:36+08:00</updated>
+  <updated>2013-04-14T20:34:06+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -20,7 +20,7 @@
     <id>http://sailxjx.github.com/blog/blog/2013/03/05/react-dot-php-zhong-de-yi-bu-shi-xian</id>
     <content type="html"><![CDATA[<p>在基于事件的异步模型大行其道的今天，各语言都相继推出了自己的异步框架，nodejs原生的异步模型当然是其中的翘楚，然后python有Twisted，ruby有EventMachine(名字俗了点)。php也有一个不错的异步框架，<a href="https://github.com/reactphp/react">react</a>。下面我们从内而外的看看这个异步模型是怎么实现的。</p>
 
-<h3>événement</h3>
+<h3 id="vnement">événement</h3>
 
 <p>首先react的事件模型是建立在一个叫<a href="https://github.com/igorw/evenement">événement</a>的框架上，也是react作者所作，代码只有短短的74行，实现了<code>on</code>(事件监听),<code>emit</code>(触发事件)等方法。下面就单就这两个事件方法分析一下。</p>
 
@@ -42,45 +42,30 @@
 <span class='line-number'>16</span>
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
 </pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php</span>
-</span><span class='line'><span class="x">public function on($event, $listener)&lt;/p&gt;</span>
+</span><span class='line'><span class="x">public function on($event, $listener)</span>
+</span><span class='line'><span class="x">    {</span>
+</span><span class='line'><span class="x">        if (!is_callable($listener)) {</span>
+</span><span class='line'><span class="x">            throw new \InvalidArgumentException(‘The provided listener was not a valid callable.’);</span>
+</span><span class='line'><span class="x">        }&lt;/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;{</span>
-</span><span class='line'><span class="x">    if (!is_callable($listener)) {</span>
-</span><span class='line'><span class="x">        throw new \InvalidArgumentException(&#39;The provided listener was not a valid callable.&#39;);</span>
-</span><span class='line'><span class="x">    }</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">    if (!isset($this-&amp;gt;listeners[$event])) {</span>
+</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;    if (!isset($this-&amp;gt;listeners[$event])) {</span>
 </span><span class='line'><span class="x">        $this-&amp;gt;listeners[$event] = array();</span>
 </span><span class='line'><span class="x">    }</span>
 </span><span class='line'>
 </span><span class='line'><span class="x">    $this-&amp;gt;listeners[$event][] = $listener;</span>
-</span><span class='line'><span class="x">}</span>
-</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;p&gt;public function emit($event, array $arguments = array())&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;{</span>
+</span><span class='line'><span class="x">} public function emit($event, array $arguments = array())</span>
+</span><span class='line'><span class="x">{</span>
 </span><span class='line'><span class="x">    foreach ($this-&amp;gt;listeners($event) as $listener) {</span>
 </span><span class='line'><span class="x">        call_user_func_array($listener, $arguments);</span>
 </span><span class='line'><span class="x">    }</span>
-</span><span class='line'><span class="x">}</span>
-</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;p&gt;?&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+</span><span class='line'><span class="x">} ?&amp;gt; </span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+</code></pre>
 
 <p>上面的<code>$event</code>其实就是一个事件标识，一般是一个字符串，<code>$listener</code>是一个回调方法。调用<code>on</code>时用数组listeners记录所有回调方法，调用<code>emit</code>时再按次序触发，由此还衍生了<code>once</code>(只触发一次就解除绑定的事件)，<code>removeListener</code>(移除事件)等方法。</p>
 
-<h3>EventLoop</h3>
+<h3 id="eventloop">EventLoop</h3>
 
 <p>更进一步，react事件模型的上一层是一个监听循环，叫做<code>EventLoop</code>，有了这个，就往消息队列或webserver的异步处理模型更近了一步。</p>
 
@@ -104,20 +89,14 @@
 <span class='line-number'>16</span>
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
 </pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php</span>
 </span><span class='line'><span class="x">namespace React\EventLoop;</span>
 </span><span class='line'><span class="x">interface LoopInterface</span>
-</span><span class='line'><span class="x">{&lt;/p&gt;</span>
+</span><span class='line'><span class="x">{</span>
+</span><span class='line'><span class="x">    public function addReadStream($stream, $listener);</span>
+</span><span class='line'><span class="x">    public function addWriteStream($stream, $listener);&lt;/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;public function addReadStream($stream, $listener);</span>
-</span><span class='line'><span class="x">public function addWriteStream($stream, $listener);</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">public function removeReadStream($stream);</span>
+</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;public function removeReadStream($stream);</span>
 </span><span class='line'><span class="x">public function removeWriteStream($stream);</span>
 </span><span class='line'><span class="x">public function removeStream($stream);</span>
 </span><span class='line'>
@@ -127,12 +106,9 @@
 </span><span class='line'>
 </span><span class='line'><span class="x">public function tick();</span>
 </span><span class='line'><span class="x">public function run();</span>
-</span><span class='line'><span class="x">public function stop();</span>
-</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;p&gt;}</span>
-</span><span class='line'><span class="x">?&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+</span><span class='line'><span class="x">public function stop(); } ?&amp;gt; </span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+</code></pre>
 
 <p><code>react</code>支持php的社区库<code>libevent</code>提供的事件支持，同时有个<code>LibEventLoop.php</code>用来实现<code>LoopInterface</code>接口，但是<code>react</code>也有自己的实现方案<code>StreamSelectLoop</code>，与<code>LibEventLoop</code>不兼容，这点可以在<code>EventLoop\LibEventLoop\Factory</code>中看到。</p>
 
@@ -147,29 +123,23 @@
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;public static function create()</span>
-</span><span class='line'><span class="x">{</span>
-</span><span class='line'><span class="x">    // @codeCoverageIgnoreStart</span>
-</span><span class='line'><span class="x">    if (function_exists(&#39;event_base_new&#39;)) { //使用libevent</span>
-</span><span class='line'><span class="x">        return new LibEventLoop();</span>
-</span><span class='line'><span class="x">    }</span>
-</span><span class='line'><span class="x">    return new StreamSelectLoop(); //不使用libevent</span>
-</span><span class='line'><span class="x">    // @codeCoverageIgnoreEnd</span>
-</span><span class='line'><span class="x">}</span>
-</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;p&gt;?&gt;</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">create</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// @codeCoverageIgnoreStart</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nb">function_exists</span><span class="p">(</span><span class="s1">&#39;event_base_new&#39;</span><span class="p">))</span> <span class="p">{</span> <span class="c1">//使用libevent</span>
+</span><span class='line'>            <span class="k">return</span> <span class="k">new</span> <span class="nx">LibEventLoop</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">return</span> <span class="k">new</span> <span class="nx">StreamSelectLoop</span><span class="p">();</span> <span class="c1">//不使用libevent</span>
+</span><span class='line'>        <span class="c1">// @codeCoverageIgnoreEnd</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>我们主要来看看<code>StreamSelectLoop</code>的实现。<code>LoopInterface</code>中几个重要的方法<code>addReadStream</code>, <code>addWriteStream</code>, <code>addTimer</code>, <code>tick</code>都可以在<code>StreamSelectLoop</code>找到踪影。下面先说一下<code>addReadStream</code>中的两个参数：</p>
 
-<p><em><code>$stream</code>是一个由<code>stream_socket_server</code>方法生成的socket句柄，支持tcp或文件socket等方式。
-</em><code>$listener</code>其实就是一个callback方法，在这个方法中就需要实现具体的应用逻辑了。</p>
+<p>*<code>$stream</code>是一个由<code>stream_socket_server</code>方法生成的socket句柄，支持tcp或文件socket等方式。
+*<code>$listener</code>其实就是一个callback方法，在这个方法中就需要实现具体的应用逻辑了。</p>
 
 <p><code>addWriteStream</code>与<code>addReadStream</code>方法差不多，这两个方法其实啥都没做，只是注册一下两个方法，以供后面调用。真正起作用的方法是<code>tick</code>和<code>runStreamSelect</code>。</p>
 
@@ -210,19 +180,14 @@
 <span class='line-number'>35</span>
 <span class='line-number'>36</span>
 <span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php&lt;/p&gt;</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php</span>
+</span><span class='line'><span class="x">    protected function runStreamSelect()</span>
+</span><span class='line'><span class="x">    {</span>
+</span><span class='line'><span class="x">        $read = $this-&amp;gt;readStreams ?: null;</span>
+</span><span class='line'><span class="x">        $write = $this-&amp;gt;writeStreams ?: null;</span>
+</span><span class='line'><span class="x">        $except = null;&lt;/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;protected function runStreamSelect()</span>
-</span><span class='line'><span class="x">{</span>
-</span><span class='line'><span class="x">    $read = $this-&amp;gt;readStreams ?: null;</span>
-</span><span class='line'><span class="x">    $write = $this-&amp;gt;writeStreams ?: null;</span>
-</span><span class='line'><span class="x">    $except = null;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">    if (!$read &amp;amp;&amp;amp; !$write) {</span>
+</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;    if (!$read &amp;amp;&amp;amp; !$write) {</span>
 </span><span class='line'><span class="x">        $this-&amp;gt;sleepOnPendingTimers();</span>
 </span><span class='line'>
 </span><span class='line'><span class="x">        return;</span>
@@ -251,17 +216,15 @@
 </span><span class='line'><span class="x">            }</span>
 </span><span class='line'><span class="x">        }</span>
 </span><span class='line'><span class="x">    }</span>
-</span><span class='line'><span class="x">}</span>
-</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;p&gt;?&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+</span><span class='line'><span class="x">} ?&amp;gt; </span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+</code></pre>
 
 <p><code>runStreamSelect</code>方法在<code>tick</code>方法中被调用，目的是在每个间隔中重复调用之前绑定的<code>$listener</code>方法，这个可以理解，因为本来<code>EventLoop</code>的目的就是实现事件的监听，监听的最简单方法就是通过轮询的方式来调用，假如某些方法不希望被重复调用或者希望在某次成功之后就不再调用，那么在定义<code>$listener</code>方法时，将返回值设置成false即可。至于这个间隔，则是通过<code>Timer</code>来实现的。</p>
 
 <p>在<code>runStreamSelect</code>中调用了一个有意思的方法<a href="http://php.net/manual/en/function.stream-select.php"><code>stream_select</code></a>，用timeout取代传统的<code>sleep</code>，并兼具监听socket端口的功能，一旦有新的连接或者改动，<code>stream_select</code>会立刻返回read或write中被修改的socket连接总数。这样，既能合理的释放cpu资源，又能及时对事件发起响应。比起传统的<code>while+sleep</code>，实在是高明很多。</p>
 
-<h3>Timer</h3>
+<h3 id="timer">Timer</h3>
 
 <p>说到<code>tick</code>就不得不提<code>Timer</code>，<code>react</code>中用一个<code>Timer</code>类来模拟步进操作。每隔一定的ticket会唤起一个事件，这样才能保证异步操作能正确的被调用，这个ticket的数量有讲究，设置的太小会让系统耗用大量资源，设置的太大又不能保证异步事件能及时的被调用。下面我们来看看<code>Timer</code>中的tick。</p>
 
@@ -275,7 +238,7 @@
 
 <p>总结一下，<code>react</code>的异步事件模型：</p>
 
-<p>核心的on-emit事件模型 --> EventLoop实现响应socket事件 --> Timer实现事件优先级排序 --> while循环来pending服务端的程序。</p>
+<p>核心的on-emit事件模型 –&gt; EventLoop实现响应socket事件 –&gt; Timer实现事件优先级排序 –&gt; while循环来pending服务端的程序。</p>
 
 <p><code>react</code>还提供了很多的示例文件，一个简单的http-server可以实现如下：</p>
 
@@ -296,45 +259,38 @@
 <span class='line-number'>15</span>
 <span class='line-number'>16</span>
 <span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php</span>
-</span><span class='line'><span class="x">require &lt;strong&gt;DIR&lt;/strong&gt;.&#39;/../vendor/autoload.php&#39;;</span>
-</span><span class='line'><span class="x">$i = 0;</span>
-</span><span class='line'><span class="x">$app = function ($request, $response) use (&amp;amp;$i) {&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;$i++;</span>
-</span><span class='line'><span class="x">$text = &quot;This is request number $i.\n&quot;;</span>
-</span><span class='line'><span class="x">$headers = array(&#39;Content-Type&#39; =&amp;gt; &#39;text/plain&#39;);</span>
-</span><span class='line'><span class="x">$response-&amp;gt;writeHead(200, $headers);</span>
-</span><span class='line'><span class="x">$response-&amp;gt;end($text);</span>
-</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;p&gt;};</span>
-</span><span class='line'><span class="x">$loop = React\EventLoop\Factory::create();</span>
-</span><span class='line'><span class="x">$socket = new React\Socket\Server($loop);</span>
-</span><span class='line'><span class="x">$http = new React\Http\Server($socket);</span>
-</span><span class='line'><span class="x">$http-&gt;on(&#39;request&#39;, $app);</span>
-</span><span class='line'><span class="x">$socket-&gt;listen(1337);</span>
-</span><span class='line'><span class="x">$loop-&gt;run();</span>
-</span><span class='line'><span class="x">?&gt;</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="k">require</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$app</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$response</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="o">&amp;</span><span class="nv">$i</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nv">$i</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$text</span> <span class="o">=</span> <span class="s2">&quot;This is request number </span><span class="si">$i</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">writeHead</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="nv">$headers</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">end</span><span class="p">(</span><span class="nv">$text</span><span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="nv">$loop</span> <span class="o">=</span> <span class="nx">React\EventLoop\Factory</span><span class="o">::</span><span class="na">create</span><span class="p">();</span>
+</span><span class='line'><span class="nv">$socket</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">React\Socket\Server</span><span class="p">(</span><span class="nv">$loop</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$http</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">React\Http\Server</span><span class="p">(</span><span class="nv">$socket</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$http</span><span class="o">-&gt;</span><span class="na">on</span><span class="p">(</span><span class="s1">&#39;request&#39;</span><span class="p">,</span> <span class="nv">$app</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$socket</span><span class="o">-&gt;</span><span class="na">listen</span><span class="p">(</span><span class="mi">1337</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$loop</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h2>后记</h2>
+<h2 id="section">后记</h2>
 
 <p><code>react</code>中用到了很多php5.3之后才出现的新特性(EventEmitter2甚至只支持5.4以上的php版本)，很多方法以前也没有接触过，可以说相比于国内对php的应用，老外对语言的研究更加透彻。想起国内这么普及的php应用，很多人只是略知皮毛，就喜欢大言不惭，甚至能人云亦云的挑出一堆语言的弊端。老外的钻研精神确实值得学习。</p>
 
 <p>记录一下几个可能有用但是不常用的类或方法：</p>
 
 <ul>
-<li><a href="http://php.net/manual/en/function.stream-socket-server.php"><code>stream_socket_server</code></a> 创建一个服务端套接字。</li>
-<li><a href="http://php.net/manual/en/function.stream-select.php"><code>stream_select</code></a> 监听读写socket状态的变化，带timeout时间</li>
-<li><a href="http://www.php.net/manual/en/splpriorityqueue.insert.php"><code>SplPriorityQueue</code></a> 创建一个带优先级的有序队列</li>
+  <li><a href="http://php.net/manual/en/function.stream-socket-server.php"><code>stream_socket_server</code></a> 创建一个服务端套接字。</li>
+  <li><a href="http://php.net/manual/en/function.stream-select.php"><code>stream_select</code></a> 监听读写socket状态的变化，带timeout时间</li>
+  <li><a href="http://www.php.net/manual/en/splpriorityqueue.insert.php"><code>SplPriorityQueue</code></a> 创建一个带优先级的有序队列</li>
 </ul>
 
-
-<h2>参考文档</h2>
+<h2 id="section-1">参考文档</h2>
 
 <p><a href="http://www.mwop.net/blog/253-Taming-SplPriorityQueue.html">Taming SplPriorityQueue</a></p>
 ]]></content>
@@ -345,7 +301,7 @@
     <link href="http://sailxjx.github.com/blog/blog/2013/03/04/php-de-namespace/"/>
     <updated>2013-03-04T11:38:00+08:00</updated>
     <id>http://sailxjx.github.com/blog/blog/2013/03/04/php-de-namespace</id>
-    <content type="html"><![CDATA[<p>php中命名空间的概念出现的比较晚(>=5.3)，这也造成了很多人写php程序的时候忽略了这个问题(包括我:)，不过，最近很多老外的开源项目中渐渐流行起在php中使用命名空间。于是我也跟风一把，看看究竟好在哪儿。</p>
+    <content type="html"><![CDATA[<p>php中命名空间的概念出现的比较晚(&gt;=5.3)，这也造成了很多人写php程序的时候忽略了这个问题(包括我:)，不过，最近很多老外的开源项目中渐渐流行起在php中使用命名空间。于是我也跟风一把，看看究竟好在哪儿。</p>
 
 <p>在php namespace语句出现之前，通行的做法是根据文件路径定义类名，某些特殊文件再加上后缀，比如存放controller的文件夹中有两个文件，分别存放在<code>controller/Base.php</code>和<code>controller/login/Base.php</code>，根据命名可以看出这是两个基类文件，文件名是一样的，它们的类名一般会写成<code>BaseController</code>和<code>Login_BaseController</code>(首字母大写也是一种约定)，这样就不存在类名冲突的问题了。这样做的一个缺点是类名会很长，用某些人的说法，就是不够优雅，于是命名空间就应运而生了。</p>
 
@@ -360,7 +316,7 @@
 </pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php</span>
 </span><span class='line'><span class="x">namespace my\name1;</span>
 </span><span class='line'><span class="x">class MyClass {} //定义类</span>
-</span><span class='line'><span class="x">function myfunction() {echo &quot;helloworld&quot;;} //定义方法</span>
+</span><span class='line'><span class="x">function myfunction() {echo “helloworld”;} //定义方法</span>
 </span><span class='line'><span class="x">const MYCONST = 1; //定义常量</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
@@ -373,7 +329,7 @@
 <span class='line-number'>4</span>
 </pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php</span>
 </span><span class='line'><span class="x">namespace my\name1;</span>
-</span><span class='line'><span class="x">include &#39;myname1.php&#39;;</span>
+</span><span class='line'><span class="x">include ‘myname1.php’;</span>
 </span><span class='line'><span class="x">print_r(new MyClass);</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 从输出结果可以看出实例名已经变成了<code>my\name1\MyClass Object</code>，命名空间会自动的加到类名前面。</p>
@@ -384,7 +340,7 @@
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 </pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">namespace my\name2; //不同的命名空间</span>
-</span><span class='line'><span class="x">include &#39;myname1.php&#39;;</span>
+</span><span class='line'><span class="x">include ‘myname1.php’;</span>
 </span><span class='line'><span class="x">use my\name1; //使用命名空间</span>
 </span><span class='line'><span class="x">print_r(\my\name1\MYCONST); //这里用调用常量举例</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
@@ -396,18 +352,17 @@
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 </pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">namespace my\name2;</span>
-</span><span class='line'><span class="x">include &#39;myname1.php&#39;;</span>
+</span><span class='line'><span class="x">include ‘myname1.php’;</span>
 </span><span class='line'><span class="x">use my\name1 as m1; //使用命名空间别名</span>
 </span><span class='line'><span class="x">m1\myfunction(); //调用方法举例</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 这就是命名空间的真正益处了，短啊~不过别名前就不能用<code>\</code>符号了，否则会把<code>m1</code>当做已存在的命名空间来处理。</p>
 
-<h3>P.S.</h3>
-
+<h3 id="ps">P.S.</h3>
 <ul>
-<li>php5.3之后还有一个全局常量<code>__NAMESPACE__</code>来表明当前文件所在的命名空间，至于用处？谁知道呢。</li>
-<li>在同一个文件中是可以使用多个namespace的。</li>
-<li>假如在命名空间中定义了与全局方法同名的方法，可以使用在前面加<code>\</code>符号的方式调用全局方法，例如在<code>fopen</code>中用<code>\fopen()</code>。而不使用命名空间的时候，重复定义是不允许的。遇到重定义常量也是一样。</li>
+  <li>php5.3之后还有一个全局常量<code>__NAMESPACE__</code>来表明当前文件所在的命名空间，至于用处？谁知道呢。</li>
+  <li>在同一个文件中是可以使用多个namespace的。</li>
+  <li>假如在命名空间中定义了与全局方法同名的方法，可以使用在前面加<code>\</code>符号的方式调用全局方法，例如在<code>fopen</code>中用<code>\fopen()</code>。而不使用命名空间的时候，重复定义是不允许的。遇到重定义常量也是一样。</li>
 </ul>
 
 ]]></content>
@@ -420,19 +375,17 @@
     <id>http://sailxjx.github.com/blog/blog/2013/01/13/php-yan-zheng-ma</id>
     <content type="html"><![CDATA[<p>gd是一个强大的php图像处理库，最近在做验证码加强的策略，才发现用php作图也能玩出很多花样来。</p>
 
-<h2>几个重要函数</h2>
-
+<h2 id="section">几个重要函数</h2>
 <ul>
-<li><a href="http://php.net/manual/en/function.imagecreatetruecolor.php">imagecreatetruecolor</a> 创建一张空的画布</li>
-<li><a href="http://cn2.php.net/manual/zh/function.imagecreatefrompng.php">imagecreatefrompng</a> 从文件创建一个图片句柄</li>
-<li><a href="http://cn2.php.net/manual/zh/function.imagecolorallocate.php">imagecolorallocate</a> 拾取一种颜色(rgb)</li>
-<li><a href="http://cn2.php.net/manual/zh/function.imagettftext.php">imagettftext</a> 向画布写入文字</li>
-<li><a href="http://cn2.php.net/manual/zh/function.imagecopy.php">imagecopy</a> 合并两张图片，可指定拷贝区域及大小</li>
-<li><a href="http://cn2.php.net/manual/zh/function.imagecolorat.php">imagecolorat</a> 从图片指定像素点拾取一种颜色</li>
-<li><a href="http://cn2.php.net/manual/zh/function.imagesetpixel.php">imagesetpixel</a> 画一个像素点</li>
-<li><a href="http://cn2.php.net/manual/zh/function.imagearc.php">imagearc</a> 画一个椭圆，截取部分可用来绘制曲线</li>
+  <li><a href="http://php.net/manual/en/function.imagecreatetruecolor.php">imagecreatetruecolor</a> 创建一张空的画布</li>
+  <li><a href="http://cn2.php.net/manual/zh/function.imagecreatefrompng.php">imagecreatefrompng</a> 从文件创建一个图片句柄</li>
+  <li><a href="http://cn2.php.net/manual/zh/function.imagecolorallocate.php">imagecolorallocate</a> 拾取一种颜色(rgb)</li>
+  <li><a href="http://cn2.php.net/manual/zh/function.imagettftext.php">imagettftext</a> 向画布写入文字</li>
+  <li><a href="http://cn2.php.net/manual/zh/function.imagecopy.php">imagecopy</a> 合并两张图片，可指定拷贝区域及大小</li>
+  <li><a href="http://cn2.php.net/manual/zh/function.imagecolorat.php">imagecolorat</a> 从图片指定像素点拾取一种颜色</li>
+  <li><a href="http://cn2.php.net/manual/zh/function.imagesetpixel.php">imagesetpixel</a> 画一个像素点</li>
+  <li><a href="http://cn2.php.net/manual/zh/function.imagearc.php">imagearc</a> 画一个椭圆，截取部分可用来绘制曲线</li>
 </ul>
-
 
 <p>php绘图用的最频繁的地方大概就是生成验证码了，我们最常见的验证码数字加英文的组合，生成这种验证码很简单，下面几行代码就可以搞定</p>
 
@@ -454,35 +407,31 @@
 <span class='line-number'>16</span>
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
 </pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php</span>
-</span><span class='line'><span class="x">public function genCode($n = 4) {&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;$dict = &#39;ABCDEFGHIJKLNMPQRSTUVWXYZ123456789&#39;;</span>
-</span><span class='line'><span class="x">$dictlen = strlen($dict);</span>
-</span><span class='line'><span class="x">$image = $this-&amp;gt;image;</span>
-</span><span class='line'><span class="x">$verify = &#39;&#39;;</span>
-</span><span class='line'><span class="x">$fontfile = $this-&amp;gt;sourcedir . $this-&amp;gt;fonts[0];</span>
-</span><span class='line'><span class="x">$colors = array(</span>
-</span><span class='line'><span class="x">    imagecolorallocate($image, 255, 0, 0) , //红</span>
-</span><span class='line'><span class="x">    imagecolorallocate($image, 0, 0, 255) , //蓝</span>
-</span><span class='line'><span class="x">    imagecolorallocate($image, 0, 0, 0) , //黑</span>
-</span><span class='line'><span class="x">);</span>
-</span><span class='line'><span class="x">for ($i = 0;$i &amp;lt; $n;$i++) {</span>
-</span><span class='line'><span class="x">    $verify.= $code = substr($dict, mt_rand(0, $dictlen - 1) , 1);</span>
-</span><span class='line'><span class="x">    imagettftext($image, 20, mt_rand(-15, 15) , ($i * 15) + 3, mt_rand(20, 25) , $colors[array_rand($colors) ], $fontfile, $code);</span>
+</span><span class='line'><span class="x">public function genCode($n = 4) {</span>
+</span><span class='line'><span class="x">    $dict = ‘ABCDEFGHIJKLNMPQRSTUVWXYZ123456789’;</span>
+</span><span class='line'><span class="x">    $dictlen = strlen($dict);</span>
+</span><span class='line'><span class="x">    $image = $this-&amp;gt;image;</span>
+</span><span class='line'><span class="x">    $verify = ‘’;</span>
+</span><span class='line'><span class="x">    $fontfile = $this-&amp;gt;sourcedir . $this-&amp;gt;fonts[0];</span>
+</span><span class='line'><span class="x">    $colors = array(</span>
+</span><span class='line'><span class="x">        imagecolorallocate($image, 255, 0, 0) , //红</span>
+</span><span class='line'><span class="x">        imagecolorallocate($image, 0, 0, 255) , //蓝</span>
+</span><span class='line'><span class="x">        imagecolorallocate($image, 0, 0, 0) , //黑</span>
+</span><span class='line'><span class="x">    );</span>
+</span><span class='line'><span class="x">    for ($i = 0;$i &amp;lt; $n;$i++) {</span>
+</span><span class='line'><span class="x">        $verify.= $code = substr($dict, mt_rand(0, $dictlen - 1) , 1);</span>
+</span><span class='line'><span class="x">        imagettftext($image, 20, mt_rand(-15, 15) , ($i * 15) + 3, mt_rand(20, 25) , $colors[array_rand($colors) ], $fontfile, $code);</span>
+</span><span class='line'><span class="x">    }</span>
+</span><span class='line'><span class="x">    return $this;</span>
 </span><span class='line'><span class="x">}</span>
-</span><span class='line'><span class="x">return $this;</span>
-</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;p&gt;}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>效果图：</p>
 
-<blockquote><p><img src="/u/image/verify-code-simple.png" title="&#34;verify-code-simple&#34;" alt="&#34;verify-code-simple&#34;"></p></blockquote>
+<blockquote>
+  <p><img src="/u/image/verify-code-simple.png" title="“verify-code-simple”" ></p>
+</blockquote>
 
 <p>其中合并了一张纹理背景并随机绘制出文字的颜色。下面我们再加点料，</p>
 
@@ -503,40 +452,30 @@
 <span class='line-number'>15</span>
 <span class='line-number'>16</span>
 <span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
 </pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php</span>
-</span><span class='line'><span class="x">public function addNoise($n = 50) {&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;$image = $this-&amp;gt;image;</span>
-</span><span class='line'><span class="x">$color = imagecolorallocate($image, 0, 0, 0);</span>
-</span><span class='line'><span class="x">for ($i = 0;$i &amp;lt; $n;$i++) { //噪声点</span>
-</span><span class='line'><span class="x">    imagesetpixel($image, mt_rand(0, $this-&amp;gt;width) , mt_rand(0, $this-&amp;gt;height) , $color);</span>
+</span><span class='line'><span class="x">public function addNoise($n = 50) {</span>
+</span><span class='line'><span class="x">    $image = $this-&amp;gt;image;</span>
+</span><span class='line'><span class="x">    $color = imagecolorallocate($image, 0, 0, 0);</span>
+</span><span class='line'><span class="x">    for ($i = 0;$i &amp;lt; $n;$i++) { //噪声点</span>
+</span><span class='line'><span class="x">        imagesetpixel($image, mt_rand(0, $this-&amp;gt;width) , mt_rand(0, $this-&amp;gt;height) , $color);</span>
+</span><span class='line'><span class="x">    }</span>
+</span><span class='line'><span class="x">    return $this;</span>
 </span><span class='line'><span class="x">}</span>
-</span><span class='line'><span class="x">return $this;</span>
-</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;p&gt;}</span>
-</span><span class='line'><span class="x">public function addLine($n = 1) {&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;$image = $this-&amp;gt;image;</span>
-</span><span class='line'><span class="x">$color = imagecolorallocate($image, 0, 0, 0);</span>
-</span><span class='line'><span class="x">for ($i = 0;$i &amp;lt; $n;$i++) {</span>
-</span><span class='line'><span class="x">    imagearc($image, rand(-10, $this-&amp;gt;width + 10) , rand(-10, 0) , rand($this-&amp;gt;width * 2 + 10, $this-&amp;gt;width * 2 + 40) , rand($this-&amp;gt;height, $this-&amp;gt;height + 20) , 0, 360, $color);</span>
+</span><span class='line'><span class="x">public function addLine($n = 1) {</span>
+</span><span class='line'><span class="x">    $image = $this-&amp;gt;image;</span>
+</span><span class='line'><span class="x">    $color = imagecolorallocate($image, 0, 0, 0);</span>
+</span><span class='line'><span class="x">    for ($i = 0;$i &amp;lt; $n;$i++) {</span>
+</span><span class='line'><span class="x">        imagearc($image, rand(-10, $this-&amp;gt;width + 10) , rand(-10, 0) , rand($this-&amp;gt;width * 2 + 10, $this-&amp;gt;width * 2 + 40) , rand($this-&amp;gt;height, $this-&amp;gt;height + 20) , 0, 360, $color);</span>
+</span><span class='line'><span class="x">    }</span>
+</span><span class='line'><span class="x">    return $this;</span>
 </span><span class='line'><span class="x">}</span>
-</span><span class='line'><span class="x">return $this;</span>
-</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;p&gt;}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>上面的方法往图像中加入了50个噪点和一条干扰曲线，于是验证码变成了这样：</p>
 
-<blockquote><p><img src="/u/image/verify-code-noise.png" title="&#34;verify-code-noise&#34;" alt="&#34;verify-code-noise&#34;"></p></blockquote>
+<blockquote>
+  <p><img src="/u/image/verify-code-noise.png" title="“verify-code-noise”" ></p>
+</blockquote>
 
 <p>下面来实现汉字和带公式的验证码
 <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -588,73 +527,63 @@
 <span class='line-number'>47</span>
 <span class='line-number'>48</span>
 <span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
 </pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php</span>
-</span><span class='line'><span class="x">public function genHanzi($n = 2) {&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;$dict = &quot;的一是在了不和有大这主中人上为们地个用工时要&quot;;</span>
-</span><span class='line'><span class="x">$dictlen = mb_strlen($dict, &#39;UTF-8&#39;);</span>
-</span><span class='line'><span class="x">$image = $this-&amp;gt;image;</span>
-</span><span class='line'><span class="x">$fontfile = $this-&amp;gt;sourcedir . $this-&amp;gt;fonts[array_rand($this-&amp;gt;fonts) ];</span>
-</span><span class='line'><span class="x">$color = imagecolorallocate($image, 0, 0, 0);</span>
-</span><span class='line'><span class="x">$verify = &#39;&#39;;</span>
-</span><span class='line'><span class="x">for ($i = 0;$i &amp;lt; $n;$i++) {</span>
-</span><span class='line'><span class="x">    $verify.= $word = mb_substr($dict, mt_rand(0, $dictlen - 1) , 1, &#39;UTF-8&#39;);</span>
-</span><span class='line'><span class="x">    imagettftext($image, rand(18, 22) , rand(-20, 20) , 5 + $i * 25, 25, $color, $fontfile, $word);</span>
-</span><span class='line'><span class="x">}</span>
-</span><span class='line'><span class="x">$this-&amp;gt;verify = $verify;</span>
-</span><span class='line'><span class="x">return $this;</span>
-</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;p&gt;}&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;p&gt;public function genFomula() {&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;$symbols = array(</span>
-</span><span class='line'><span class="x">    &#39;＋&#39; =&amp;gt; &#39;+&#39;,&#39;－&#39; =&amp;gt; &#39;-&#39;,&#39;×&#39; =&amp;gt; &#39;*&#39;,&#39;加&#39; =&amp;gt; &#39;+&#39;,&#39;减&#39; =&amp;gt; &#39;-&#39;,&#39;乘&#39; =&amp;gt; &#39;*&#39;</span>
-</span><span class='line'><span class="x">);</span>
-</span><span class='line'><span class="x">$numbers = array(</span>
-</span><span class='line'><span class="x">    &#39;0&#39; =&amp;gt; 0,&#39;1&#39; =&amp;gt; 1,&#39;2&#39; =&amp;gt; 2,&#39;3&#39; =&amp;gt; 3,&#39;4&#39; =&amp;gt; 4,&#39;5&#39; =&amp;gt; 5，&#39;叁&#39; =&amp;gt; 3,&#39;肆&#39; =&amp;gt; 4,&#39;伍&#39; =&amp;gt; 5,&#39;陆&#39; =&amp;gt; 6,&#39;柒&#39; =&amp;gt; 7,&#39;捌&#39; =&amp;gt; 8,&#39;玖&#39; =&amp;gt; 9,</span>
-</span><span class='line'><span class="x">);</span>
-</span><span class='line'><span class="x">$image = $this-&amp;gt;image;</span>
-</span><span class='line'><span class="x">$fontfile = $this-&amp;gt;sourcedir . $this-&amp;gt;fonts[array_rand($this-&amp;gt;fonts) ];</span>
-</span><span class='line'><span class="x">$numidx1 = array_rand($numbers);</span>
-</span><span class='line'><span class="x">$num1 = $numbers[$numidx1];</span>
-</span><span class='line'><span class="x">$symbol = array_rand($symbols);</span>
-</span><span class='line'><span class="x">$color = imagecolorallocate($image, 0, 0, 0);</span>
-</span><span class='line'><span class="x">while (1) {</span>
-</span><span class='line'><span class="x">    $numidx2 = array_rand($numbers);</span>
-</span><span class='line'><span class="x">    $num2 = $numbers[$numidx2];</span>
-</span><span class='line'><span class="x">    if ($symbols[$symbol] != &#39;-&#39; || $num2 &amp;lt;= $num1) { //减法结果不为负数</span>
-</span><span class='line'><span class="x">        break;</span>
+</span><span class='line'><span class="x">public function genHanzi($n = 2) {</span>
+</span><span class='line'><span class="x">    $dict = “的一是在了不和有大这主中人上为们地个用工时要”;</span>
+</span><span class='line'><span class="x">    $dictlen = mb_strlen($dict, ‘UTF-8’);</span>
+</span><span class='line'><span class="x">    $image = $this-&amp;gt;image;</span>
+</span><span class='line'><span class="x">    $fontfile = $this-&amp;gt;sourcedir . $this-&amp;gt;fonts[array_rand($this-&amp;gt;fonts) ];</span>
+</span><span class='line'><span class="x">    $color = imagecolorallocate($image, 0, 0, 0);</span>
+</span><span class='line'><span class="x">    $verify = ‘’;</span>
+</span><span class='line'><span class="x">    for ($i = 0;$i &amp;lt; $n;$i++) {</span>
+</span><span class='line'><span class="x">        $verify.= $word = mb_substr($dict, mt_rand(0, $dictlen - 1) , 1, ‘UTF-8’);</span>
+</span><span class='line'><span class="x">        imagettftext($image, rand(18, 22) , rand(-20, 20) , 5 + $i * 25, 25, $color, $fontfile, $word);</span>
 </span><span class='line'><span class="x">    }</span>
-</span><span class='line'><span class="x">}</span>
-</span><span class='line'><span class="x">eval(&quot;\$verify = &quot; . &quot;$num1&quot; . $symbols[$symbol] . &quot;$num2;&quot;);</span>
-</span><span class='line'><span class="x">$verify = intval($verify);</span>
-</span><span class='line'><span class="x">$codelist = array(</span>
-</span><span class='line'><span class="x">    $numidx1,</span>
-</span><span class='line'><span class="x">    $symbol,</span>
-</span><span class='line'><span class="x">    $numidx2,</span>
-</span><span class='line'><span class="x">    &#39;=&#39;</span>
-</span><span class='line'><span class="x">);</span>
-</span><span class='line'><span class="x">foreach ($codelist as $i =&amp;gt; $code) {</span>
-</span><span class='line'><span class="x">    imagettftext($image, mt_rand(14, 16) , mt_rand(-15, 15) , ($i * 18) + 3, mt_rand(20, 25) , $color, $fontfile, $code);</span>
-</span><span class='line'><span class="x">}</span>
-</span><span class='line'><span class="x">return $this;</span>
-</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'><span class="x">    $this-&amp;gt;verify = $verify;</span>
+</span><span class='line'><span class="x">    return $this;</span>
+</span><span class='line'><span class="x">}&lt;/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="x">&lt;p&gt;}</span>
+</span><span class='line'><span class="x">&lt;p&gt;public function genFomula() {</span>
+</span><span class='line'><span class="x">    $symbols = array(</span>
+</span><span class='line'><span class="x">        ‘＋’ =&amp;gt; ‘+’,’－’ =&amp;gt; ‘-‘,’×’ =&amp;gt; ‘&lt;em&gt;’,’加’ =&amp;gt; ‘+’,’减’ =&amp;gt; ‘-‘,’乘’ =&amp;gt; ‘&lt;/em&gt;’</span>
+</span><span class='line'><span class="x">    );</span>
+</span><span class='line'><span class="x">    $numbers = array(</span>
+</span><span class='line'><span class="x">        ‘0’ =&amp;gt; 0,’1’ =&amp;gt; 1,’2’ =&amp;gt; 2,’3’ =&amp;gt; 3,’4’ =&amp;gt; 4,’5’ =&amp;gt; 5，’叁’ =&amp;gt; 3,’肆’ =&amp;gt; 4,’伍’ =&amp;gt; 5,’陆’ =&amp;gt; 6,’柒’ =&amp;gt; 7,’捌’ =&amp;gt; 8,’玖’ =&amp;gt; 9,</span>
+</span><span class='line'><span class="x">    );</span>
+</span><span class='line'><span class="x">    $image = $this-&amp;gt;image;</span>
+</span><span class='line'><span class="x">    $fontfile = $this-&amp;gt;sourcedir . $this-&amp;gt;fonts[array_rand($this-&amp;gt;fonts) ];</span>
+</span><span class='line'><span class="x">    $numidx1 = array_rand($numbers);</span>
+</span><span class='line'><span class="x">    $num1 = $numbers[$numidx1];</span>
+</span><span class='line'><span class="x">    $symbol = array_rand($symbols);</span>
+</span><span class='line'><span class="x">    $color = imagecolorallocate($image, 0, 0, 0);</span>
+</span><span class='line'><span class="x">    while (1) {</span>
+</span><span class='line'><span class="x">        $numidx2 = array_rand($numbers);</span>
+</span><span class='line'><span class="x">        $num2 = $numbers[$numidx2];</span>
+</span><span class='line'><span class="x">        if ($symbols[$symbol] != ‘-‘ || $num2 &amp;lt;= $num1) { //减法结果不为负数</span>
+</span><span class='line'><span class="x">            break;</span>
+</span><span class='line'><span class="x">        }</span>
+</span><span class='line'><span class="x">    }</span>
+</span><span class='line'><span class="x">    eval(“$verify = “ . “$num1” . $symbols[$symbol] . “$num2;”);</span>
+</span><span class='line'><span class="x">    $verify = intval($verify);</span>
+</span><span class='line'><span class="x">    $codelist = array(</span>
+</span><span class='line'><span class="x">        $numidx1,</span>
+</span><span class='line'><span class="x">        $symbol,</span>
+</span><span class='line'><span class="x">        $numidx2,</span>
+</span><span class='line'><span class="x">        ‘=’</span>
+</span><span class='line'><span class="x">    );</span>
+</span><span class='line'><span class="x">    foreach ($codelist as $i =&amp;gt; $code) {</span>
+</span><span class='line'><span class="x">        imagettftext($image, mt_rand(14, 16) , mt_rand(-15, 15) , ($i * 18) + 3, mt_rand(20, 25) , $color, $fontfile, $code);</span>
+</span><span class='line'><span class="x">    }</span>
+</span><span class='line'><span class="x">    return $this;</span>
+</span><span class='line'><span class="x">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>生成汉字和上面的英文组合差不多，加个字典就可以，然后可以加入一下随机的字体变换，生成公式呢，其实也是预先定义好数字和符号的字典，靠随机组合来生成图片，然后吧计算结果记录下来就行了。</p>
 
-<blockquote><p><img src="/u/image/verify-hanzi.png" title="&#34;verify-hanzi&#34;" alt="&#34;verify-hanzi&#34;">
-<img src="/u/image/verify-fomula.png" title="&#34;verify-fomula&#34;" alt="&#34;verify-fomula&#34;"></p></blockquote>
+<blockquote>
+  <p><img src="/u/image/verify-hanzi.png" title="“verify-hanzi”" >
+<img src="/u/image/verify-fomula.png" title="“verify-fomula”" ></p>
+</blockquote>
 
 <p>很多验证码中还会对字体进行扭曲，这会让做的人和看的人都比较纠结。目前的方法大致是先生成一张正常的图，然后拾取图中每个像素点进行正弦变换位置后填入另一张相同大小的图，注意两张图的背景需要一致，否则边缘的图片就很不和谐咯。</p>
 
@@ -670,29 +599,25 @@
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">public function twist() {&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;$distImage = imagecreatetruecolor($this-&amp;gt;width, $this-&amp;gt;height);</span>
-</span><span class='line'><span class="x">imagecopy($distImage, $this-&amp;gt;backimg, 0, 0, 0, 0, $this-&amp;gt;width, $this-&amp;gt;height);</span>
-</span><span class='line'><span class="x">for ($x = 0;$x &amp;lt; $this-&amp;gt;width;$x++) {</span>
-</span><span class='line'><span class="x">    for ($y = 0;$y &amp;lt; $this-&amp;gt;height;$y++) {</span>
-</span><span class='line'><span class="x">        $rgb = imagecolorat($this-&amp;gt;image, $x, $y);</span>
-</span><span class='line'><span class="x">        imagesetpixel($distImage, (int)($x + sin($y / $this-&amp;gt;height * 2 * M_PI - M_PI * 0.1) * 4) , $y, $rgb);</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">public function twist() {</span>
+</span><span class='line'><span class="x">    $distImage = imagecreatetruecolor($this-&amp;gt;width, $this-&amp;gt;height);</span>
+</span><span class='line'><span class="x">    imagecopy($distImage, $this-&amp;gt;backimg, 0, 0, 0, 0, $this-&amp;gt;width, $this-&amp;gt;height);</span>
+</span><span class='line'><span class="x">    for ($x = 0;$x &amp;lt; $this-&amp;gt;width;$x++) {</span>
+</span><span class='line'><span class="x">        for ($y = 0;$y &amp;lt; $this-&amp;gt;height;$y++) {</span>
+</span><span class='line'><span class="x">            $rgb = imagecolorat($this-&amp;gt;image, $x, $y);</span>
+</span><span class='line'><span class="x">            imagesetpixel($distImage, (int)($x + sin($y / $this-&amp;gt;height * 2 * M_PI - M_PI * 0.1) * 4) , $y, $rgb);</span>
+</span><span class='line'><span class="x">        }</span>
 </span><span class='line'><span class="x">    }</span>
+</span><span class='line'><span class="x">    $this-&amp;gt;image = $distImage;</span>
+</span><span class='line'><span class="x">    return $this;</span>
 </span><span class='line'><span class="x">}</span>
-</span><span class='line'><span class="x">$this-&amp;gt;image = $distImage;</span>
-</span><span class='line'><span class="x">return $this;</span>
-</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;p&gt;}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>效果图：</p>
 
-<blockquote><p><img src="/u/image/verify-code-twist.png" title="&#34;verify-code-twist&#34;" alt="&#34;verify-code-twist&#34;"></p></blockquote>
+<blockquote>
+  <p><img src="/u/image/verify-code-twist.png" title="“verify-code-twist”" ></p>
+</blockquote>
 
 <p>最后再加入一个gif动态图的例子，主要原理是预先生成每一帧的gif图像，然后合并为一张图片，对gif进行编码的类库使用的是网上下载的GIFEncoder，代码不多，但是够用。<code>less is more</code>嘛。</p>
 
@@ -734,69 +659,61 @@
 <span class='line-number'>36</span>
 <span class='line-number'>37</span>
 <span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">public function genCodeAnimate($n = 4, $flags = 40) {&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;$dict = &#39;ABCDEFGHIJKLNMPQRSTUVWXYZ123456789&#39;;</span>
-</span><span class='line'><span class="x">$dictlen = strlen($dict);</span>
-</span><span class='line'><span class="x">$verify = &#39;&#39;;</span>
-</span><span class='line'><span class="x">$fontfile = $this-&amp;gt;sourcedir . $this-&amp;gt;fonts[0];</span>
-</span><span class='line'><span class="x">$colors = array(</span>
-</span><span class='line'><span class="x">    imagecolorallocate($this-&amp;gt;image, 255, 0, 0) , //红</span>
-</span><span class='line'><span class="x">    imagecolorallocate($this-&amp;gt;image, 0, 0, 255) , //蓝</span>
-</span><span class='line'><span class="x">    imagecolorallocate($this-&amp;gt;image, 0, 0, 0) , //黑</span>
-</span><span class='line'><span class="x">);</span>
-</span><span class='line'><span class="x">$fontColors = array();</span>
-</span><span class='line'><span class="x">$fontSizes = array();</span>
-</span><span class='line'><span class="x">$gifs = array();</span>
-</span><span class='line'><span class="x">for ($i = 0;$i &amp;lt; $n;$i++) {</span>
-</span><span class='line'><span class="x">    $verify.= substr($dict, mt_rand(0, $dictlen - 1) , 1);</span>
-</span><span class='line'><span class="x">    $fontColors[$i] = $colors[array_rand($colors) ];</span>
-</span><span class='line'><span class="x">    $fontSizes[$i] = rand(18, 22);</span>
-</span><span class='line'><span class="x">}</span>
-</span><span class='line'><span class="x">for ($f = 0;$f &amp;lt; $flags;$f++) {</span>
-</span><span class='line'><span class="x">    $image = $this-&amp;gt;imgClone($this-&amp;gt;image);</span>
-</span><span class='line'><span class="x">    $angle = - 15 + abs($f - $flags / 2) * 2; //角度</span>
-</span><span class='line'><span class="x">    $y = 20 + abs($f - $flags / 2) * 0.5;</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">public function genCodeAnimate($n = 4, $flags = 40) {</span>
+</span><span class='line'><span class="x">    $dict = ‘ABCDEFGHIJKLNMPQRSTUVWXYZ123456789’;</span>
+</span><span class='line'><span class="x">    $dictlen = strlen($dict);</span>
+</span><span class='line'><span class="x">    $verify = ‘’;</span>
+</span><span class='line'><span class="x">    $fontfile = $this-&amp;gt;sourcedir . $this-&amp;gt;fonts[0];</span>
+</span><span class='line'><span class="x">    $colors = array(</span>
+</span><span class='line'><span class="x">        imagecolorallocate($this-&amp;gt;image, 255, 0, 0) , //红</span>
+</span><span class='line'><span class="x">        imagecolorallocate($this-&amp;gt;image, 0, 0, 255) , //蓝</span>
+</span><span class='line'><span class="x">        imagecolorallocate($this-&amp;gt;image, 0, 0, 0) , //黑</span>
+</span><span class='line'><span class="x">    );</span>
+</span><span class='line'><span class="x">    $fontColors = array();</span>
+</span><span class='line'><span class="x">    $fontSizes = array();</span>
+</span><span class='line'><span class="x">    $gifs = array();</span>
 </span><span class='line'><span class="x">    for ($i = 0;$i &amp;lt; $n;$i++) {</span>
-</span><span class='line'><span class="x">        $code = substr($verify, $i, 1);</span>
-</span><span class='line'><span class="x">        imagettftext($image, $fontSizes[$i], $angle, ($i * 15) - 20 + abs($f - $flags / 2) * 5, $y, $fontColors[$i], $fontfile, $code);</span>
+</span><span class='line'><span class="x">        $verify.= substr($dict, mt_rand(0, $dictlen - 1) , 1);</span>
+</span><span class='line'><span class="x">        $fontColors[$i] = $colors[array_rand($colors) ];</span>
+</span><span class='line'><span class="x">        $fontSizes[$i] = rand(18, 22);</span>
 </span><span class='line'><span class="x">    }</span>
-</span><span class='line'><span class="x">    header(&quot;Content-type: image/gif&quot;);</span>
-</span><span class='line'><span class="x">    imagegif($image);</span>
-</span><span class='line'><span class="x">    imagedestroy($image);</span>
-</span><span class='line'><span class="x">    $gifs[] = ob_get_contents();</span>
-</span><span class='line'><span class="x">    ob_clean();</span>
+</span><span class='line'><span class="x">    for ($f = 0;$f &amp;lt; $flags;$f++) {</span>
+</span><span class='line'><span class="x">        $image = $this-&amp;gt;imgClone($this-&amp;gt;image);</span>
+</span><span class='line'><span class="x">        $angle = - 15 + abs($f - $flags / 2) * 2; //角度</span>
+</span><span class='line'><span class="x">        $y = 20 + abs($f - $flags / 2) * 0.5;</span>
+</span><span class='line'><span class="x">        for ($i = 0;$i &amp;lt; $n;$i++) {</span>
+</span><span class='line'><span class="x">            $code = substr($verify, $i, 1);</span>
+</span><span class='line'><span class="x">            imagettftext($image, $fontSizes[$i], $angle, ($i * 15) - 20 + abs($f - $flags / 2) * 5, $y, $fontColors[$i], $fontfile, $code);</span>
+</span><span class='line'><span class="x">        }</span>
+</span><span class='line'><span class="x">        header(“Content-type: image/gif”);</span>
+</span><span class='line'><span class="x">        imagegif($image);</span>
+</span><span class='line'><span class="x">        imagedestroy($image);</span>
+</span><span class='line'><span class="x">        $gifs[] = ob_get_contents();</span>
+</span><span class='line'><span class="x">        ob_clean();</span>
+</span><span class='line'><span class="x">    }</span>
+</span><span class='line'><span class="x">    ob_start();</span>
+</span><span class='line'><span class="x">    $gifEncoder = new GIFEncoder($gifs, 100, 0, 1, 0, 0, 1, ‘bin’);</span>
+</span><span class='line'><span class="x">    header(‘Content-type: image/gif’);</span>
+</span><span class='line'><span class="x">    echo $gifEncoder-&amp;gt;GetAnimation();</span>
+</span><span class='line'><span class="x">    return $verify;</span>
 </span><span class='line'><span class="x">}</span>
-</span><span class='line'><span class="x">ob_start();</span>
-</span><span class='line'><span class="x">$gifEncoder = new GIFEncoder($gifs, 100, 0, 1, 0, 0, 1, &#39;bin&#39;);</span>
-</span><span class='line'><span class="x">header(&#39;Content-type: image/gif&#39;);</span>
-</span><span class='line'><span class="x">echo $gifEncoder-&amp;gt;GetAnimation();</span>
-</span><span class='line'><span class="x">return $verify;</span>
-</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="x">&lt;p&gt;}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>效果图：</p>
 
-<blockquote><p><img src="/u/image/verify-code-animate.gif" title="&#34;verify-code-animate&#34;" alt="&#34;verify-code-animate&#34;"></p></blockquote>
+<blockquote>
+  <p><img src="/u/image/verify-code-animate.gif" title="“verify-code-animate”" ></p>
+</blockquote>
 
-<h2>备忘</h2>
-
+<h2 id="section-1">备忘</h2>
 <ul>
-<li><code>imagecreate</code>也是一个创建图像的方法，不过相对于<code>imagecreatetruecolor</code>，它会使用第一次由<code>imagecolorallocate</code>生成的颜色作为背景色，比较坑爹，不推荐。</li>
+  <li><code>imagecreate</code>也是一个创建图像的方法，不过相对于<code>imagecreatetruecolor</code>，它会使用第一次由<code>imagecolorallocate</code>生成的颜色作为背景色，比较坑爹，不推荐。</li>
 </ul>
 
-
-<h2>下载</h2>
-
+<h2 id="section-2">下载</h2>
 <ul>
-<li><a href="/u/patch/verify.zip">源码</a></li>
+  <li><a href="/u/patch/verify.zip">源码</a></li>
 </ul>
-
 ]]></content>
   </entry>
   
@@ -805,18 +722,15 @@
     <link href="http://sailxjx.github.com/blog/blog/2012/12/24/nginx-plus-php-fpm-pei-zhi-ji-lu/"/>
     <updated>2012-12-24T22:03:00+08:00</updated>
     <id>http://sailxjx.github.com/blog/blog/2012/12/24/nginx-plus-php-fpm-pei-zhi-ji-lu</id>
-    <content type="html"><![CDATA[<h3>安装nginx</h3>
-
+    <content type="html"><![CDATA[<h3 id="nginx">安装nginx</h3>
 <p>安装过程没什么好说的，不过tarball中没有包含init脚本，官网wiki中提供了<a href="http://wiki.nginx.org/Nginx-init-ubuntu">一个ubuntu的版本</a>，其实在所有linux发行版中都可用，下载下来放到/etc/init.d/nginx，大功告成。</p>
 
 <p>假如在启动过程中遇到<code>undefined function: log_daemon_msg</code>等等报错，那是缺少一些公用方法，下载或安装init-functions然后在头部引入即可，google到一个可用的<a href="http://www.linuxfromscratch.org/lfs/view/7.0/scripts/apds02.html">地址</a>，此外，假如使用的是ubuntu，在/lib/lsb/中有个文件。</p>
 
-<h3>安装php-fpm</h3>
-
+<h3 id="php-fpm">安装php-fpm</h3>
 <p>fpm已经包含在php的远吗中，编译php的时候加上<code>--enable-fpm</code>即可，fpm的init脚本包含在<code>sapi/fpm/init.d.php-fpm</code>，稍加修改即可使用，非常贴心滴。默认配置文件<code>sapi/fpm/php-fm.conf</code>，我把它复制在/etc目录中以供调用。</p>
 
-<h3>配置php-fpm</h3>
-
+<h3 id="php-fpm-1">配置php-fpm</h3>
 <p>fpm的配置文件已很多个pool块分割，global是全局配置，www是默认的pool，这里不做修改。
 <div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>php-fpm.conf  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -878,8 +792,7 @@
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 配置完成后，<code>/etc/init.d/php-fpm start</code>即可启动php-fpm，通过<code>netstat -anp</code>可以看到9000端口被php-fpm占用了。</p>
 
-<h3>配置nginx</h3>
-
+<h3 id="nginx-1">配置nginx</h3>
 <p>下面到了最艰苦卓绝的工作了，配置nginx。
 <div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>nginx </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -897,33 +810,21 @@
 <span class='line-number'>13</span>
 <span class='line-number'>14</span>
 <span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>user tristan;
 </span><span class='line'>worker_processes 2;
 </span><span class='line'>error_log  /var/log/nginx/error.log;
 </span><span class='line'>pid        /var/run/nginx.pid;
-</span><span class='line'>events {&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;pre>&lt;code>worker_connections  1024;
-</span><span class='line'>&lt;/code>&lt;/pre>
-</span><span class='line'>
-</span><span class='line'>&lt;p>}
-</span><span class='line'>http {&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;pre>&lt;code>include       mime.types;
-</span><span class='line'>default_type  application/octet-stream;
-</span><span class='line'>sendfile        on; 
-</span><span class='line'>keepalive_timeout  65; 
-</span><span class='line'>gzip on; 
-</span><span class='line'>include /usr/local/nginx/conf/sites-enabled/*;
-</span><span class='line'>&lt;/code>&lt;/pre>
-</span><span class='line'>
-</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div>
+</span><span class='line'>events {
+</span><span class='line'>    worker_connections  1024;
+</span><span class='line'>}
+</span><span class='line'>http {
+</span><span class='line'>    include       mime.types;
+</span><span class='line'>    default_type  application/octet-stream;
+</span><span class='line'>    sendfile        on; 
+</span><span class='line'>    keepalive_timeout  65; 
+</span><span class='line'>    gzip on; 
+</span><span class='line'>    include /usr/local/nginx/conf/sites-enabled/*;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div>
 主配置文件中基本没什么可写的，重点在对每个站点的配置上。</p>
 
 <p>对静态站点的配置是最简单的，比如下面的配置就部署了一个bootstrap的demo站点
@@ -937,21 +838,15 @@
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>server {&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;pre>&lt;code>listen *:80;
-</span><span class='line'>server_name boot.local.com;
-</span><span class='line'>access_log  /var/log/nginx/boot.log;
-</span><span class='line'>location / {
-</span><span class='line'>    root /home/tristan/coding/github/bootstrap/docs; #根目录
-</span><span class='line'>    index index.html; #添加默认索引文件
-</span><span class='line'>}   
-</span><span class='line'>&lt;/code>&lt;/pre>
-</span><span class='line'>
-</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {
+</span><span class='line'>    listen *:80;
+</span><span class='line'>    server_name boot.local.com;
+</span><span class='line'>    access_log  /var/log/nginx/boot.log;
+</span><span class='line'>    location / {
+</span><span class='line'>        root /home/tristan/coding/github/bootstrap/docs; #根目录
+</span><span class='line'>        index index.html; #添加默认索引文件
+</span><span class='line'>    } &lt;br />
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>动态站点稍微麻烦一点，通过fastcgi模式，使用php-fpm配置一个动态站点。
 <div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>fun </span></figcaption>
@@ -975,32 +870,26 @@
 <span class='line-number'>18</span>
 <span class='line-number'>19</span>
 <span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>server {&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;pre>&lt;code>listen *:80;
-</span><span class='line'>server_name fun.local.com;
-</span><span class='line'>access_log /var/log/nginx/fun.log;
-</span><span class='line'>location / { 
-</span><span class='line'>    index index.php;
-</span><span class='line'>    rewrite ^(.*)$ /index.php$1 last; #大部分站点都做成了单入口，将所有url rewrite到index文件
-</span><span class='line'>}   
-</span><span class='line'>location ~ ^/index.php {
-</span><span class='line'>    root /home/tristan/coding/webdata/fun;
-</span><span class='line'>    fastcgi_pass 127.0.0.1:9000;
-</span><span class='line'>    include fastcgi_params;
-</span><span class='line'>    if ($fastcgi_script_name ~ "^(.+?\.php)(/.+)$") {
-</span><span class='line'>        set $real_script_name $1; 
-</span><span class='line'>        set $path_info $2; 
-</span><span class='line'>    }   
-</span><span class='line'>    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-</span><span class='line'>    fastcgi_param PATH_INFO $path_info; 
-</span><span class='line'>}
-</span><span class='line'>&lt;/code>&lt;/pre>
-</span><span class='line'>
-</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {
+</span><span class='line'>    listen &lt;em>:80;
+</span><span class='line'>    server_name fun.local.com;
+</span><span class='line'>    access_log /var/log/nginx/fun.log;
+</span><span class='line'>    location / { 
+</span><span class='line'>        index index.php;
+</span><span class='line'>        rewrite ^(.&lt;/em>)$ /index.php$1 last; #大部分站点都做成了单入口，将所有url rewrite到index文件
+</span><span class='line'>    } &lt;br />
+</span><span class='line'>    location ~ ^/index.php {
+</span><span class='line'>        root /home/tristan/coding/webdata/fun;
+</span><span class='line'>        fastcgi_pass 127.0.0.1:9000;
+</span><span class='line'>        include fastcgi_params;
+</span><span class='line'>        if ($fastcgi_script_name ~ “^(.+?.php)(/.+)$”) {
+</span><span class='line'>            set $real_script_name $1; 
+</span><span class='line'>            set $path_info $2; 
+</span><span class='line'>        } &lt;br />
+</span><span class='line'>        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class='line'>        fastcgi_param PATH_INFO $path_info; 
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div>
 值得注意的是，有些框架使用pathinfo作为路由依据，默认情况下nginx并不会将pathinfo传递给php-fpm，所以上面需要通过正则匹配出准确的pathinfo，通过fastcgi_param传给fpm</p>
 
 <p>下面是一个使用minify的静态资源站点，其中既包含纯静态文件(css|js)，也包含由php压缩成的伪静态文件
@@ -1026,43 +915,35 @@
 <span class='line-number'>19</span>
 <span class='line-number'>20</span>
 <span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>server {&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;pre>&lt;code>listen *:80;
-</span><span class='line'>server_name static.local.com;
-</span><span class='line'>access_log /var/log/nginx/static.log;
-</span><span class='line'>root /home/tristan/coding/webdata/static;
-</span><span class='line'>location / { 
-</span><span class='line'>    autoindex on; 
-</span><span class='line'>    index index.php;
-</span><span class='line'>    rewrite ^/static/(.*)\.(js|css)$ /static/index.php?g=$1 last;
-</span><span class='line'>}   
-</span><span class='line'>location ~ index.php {
-</span><span class='line'>    fastcgi_pass 127.0.0.1:9000;
-</span><span class='line'>    include fastcgi_params;
-</span><span class='line'>    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-</span><span class='line'>}   
-</span><span class='line'>location ~ ^(?!\/static)(.*)\.(jpg|jpeg|gif|png|css|js|ico|xml)$ {
-</span><span class='line'>    access_log off; #关闭log
-</span><span class='line'>    log_not_found off;
-</span><span class='line'>    expires 30d; #纯静态文件设置缓存时间
-</span><span class='line'>}   
-</span><span class='line'>&lt;/code>&lt;/pre>
-</span><span class='line'>
-</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {
+</span><span class='line'>    listen &lt;em>:80;
+</span><span class='line'>    server_name static.local.com;
+</span><span class='line'>    access_log /var/log/nginx/static.log;
+</span><span class='line'>    root /home/tristan/coding/webdata/static;
+</span><span class='line'>    location / { 
+</span><span class='line'>        autoindex on; 
+</span><span class='line'>        index index.php;
+</span><span class='line'>        rewrite ^/static/(.&lt;/em>).(js|css)$ /static/index.php?g=$1 last;
+</span><span class='line'>    } &lt;br />
+</span><span class='line'>    location ~ index.php {
+</span><span class='line'>        fastcgi_pass 127.0.0.1:9000;
+</span><span class='line'>        include fastcgi_params;
+</span><span class='line'>        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class='line'>    } &lt;br />
+</span><span class='line'>    location ~ ^(?!\/static)(.*).(jpg|jpeg|gif|png|css|js|ico|xml)$ {
+</span><span class='line'>        access_log off; #关闭log
+</span><span class='line'>        log_not_found off;
+</span><span class='line'>        expires 30d; #纯静态文件设置缓存时间
+</span><span class='line'>    } &lt;br />
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h2>参考资料</h2>
-
+<h2 id="section">参考资料</h2>
 <ul>
-<li><a href="http://www.if-not-true-then-false.com/2011/nginx-and-php-fpm-configuration-and-optimizing-tips-and-tricks/">Nginx and PHP-FPM Configuration and Optimizing Tips and Tricks</a></li>
-<li><a href="http://stackoverflow.com/questions/8265941/empty-value-to-path-info-in-nginx-returns-junk-value">stackoverflow: Empty value to PATH_INFO in nginx returns junk value</a></li>
-<li><a href="http://wiki.nginx.org/HttpFastcgiModule">HttpFastcgiModule</a></li>
-<li><a href="http://wiki.nginx.org/HttpRewriteModule">HttpRewriteModule</a></li>
+  <li><a href="http://www.if-not-true-then-false.com/2011/nginx-and-php-fpm-configuration-and-optimizing-tips-and-tricks/">Nginx and PHP-FPM Configuration and Optimizing Tips and Tricks</a></li>
+  <li><a href="http://stackoverflow.com/questions/8265941/empty-value-to-path-info-in-nginx-returns-junk-value">stackoverflow: Empty value to PATH_INFO in nginx returns junk value</a></li>
+  <li><a href="http://wiki.nginx.org/HttpFastcgiModule">HttpFastcgiModule</a></li>
+  <li><a href="http://wiki.nginx.org/HttpRewriteModule">HttpRewriteModule</a></li>
 </ul>
-
 ]]></content>
   </entry>
   

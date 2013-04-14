@@ -90,22 +90,19 @@
 
 <p>由于这个问题折腾了我很久，特此记录一下，同时借用某同样遇到此问题的<a href="http://abitwiser.wordpress.com/2011/02/24/virtualbox-hates-sendfile/">blog标题</a>。</p>
 
-<h2>后记</h2>
-
+<h2 id="section">后记</h2>
 <p>1.<a href="https://forums.virtualbox.org/viewtopic.php?f=1&amp;t=24905">virtualbox论坛</a>2009年的时候就有人讨论过这个问题，那时候的版本还是3.0，现在都4.2了，问题仍然没有得到解决，唉~被oracle X过的软件果然不行啊~。</p>
 
 <p>2.在主机中修改文件，虚拟机中的inode不会变化，反过来也一样，不知道是不是因为vboxsf的问题，然而使用samba共享的文件系统中两边的inode是同时变化的。</p>
 
-<h2>参考资料</h2>
-
+<h2 id="section-1">参考资料</h2>
 <ul>
-<li><a href="http://abitwiser.wordpress.com/2011/02/24/virtualbox-hates-sendfile/">VirtualBox Hates Sendfile</a></li>
-<li><a href="http://serverfault.com/questions/269420/disable-caching-when-serving-static-files-with-nginx-for-development">serverfault</a></li>
-<li><a href="https://forums.virtualbox.org/viewtopic.php?f=1&amp;t=24905">virtualbox forum</a></li>
-<li><a href="http://wiki.nginx.org/HttpCoreModule#sendfile">nginx wiki</a></li>
-<li><a href="http://comments.gmane.org/gmane.linux.kernel.cifs/3517">mac中samba共享的问题</a></li>
+  <li><a href="http://abitwiser.wordpress.com/2011/02/24/virtualbox-hates-sendfile/">VirtualBox Hates Sendfile</a></li>
+  <li><a href="http://serverfault.com/questions/269420/disable-caching-when-serving-static-files-with-nginx-for-development">serverfault</a></li>
+  <li><a href="https://forums.virtualbox.org/viewtopic.php?f=1&amp;t=24905">virtualbox forum</a></li>
+  <li><a href="http://wiki.nginx.org/HttpCoreModule#sendfile">nginx wiki</a></li>
+  <li><a href="http://comments.gmane.org/gmane.linux.kernel.cifs/3517">mac中samba共享的问题</a></li>
 </ul>
-
 </div>
 
 

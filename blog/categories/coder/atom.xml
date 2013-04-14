@@ -4,7 +4,7 @@
   <title><![CDATA[Category: coder | CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/coder/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-04-13T09:40:36+08:00</updated>
+  <updated>2013-04-14T20:34:06+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -20,19 +20,19 @@
     <id>http://sailxjx.github.com/blog/blog/2013/03/08/cheng-xu-yuan-yu-zang-hua</id>
     <content type="html"><![CDATA[<p>俗话说林子大了什么鸟都有，在程序猿这个群体中，脏话和吹牛是两大显著特征。脏话的种类也是花样百出，下面就来归归类</p>
 
-<h3>第一类，加强语气型</h3>
+<h3 id="section">第一类，加强语气型</h3>
 
 <p>常见的有<code>damn</code>,<code>f**k</code>，<code>shit</code>等等，往往后面还跟着些动词与形容词，像<code>stupid</code>啦，<code>idiot</code>啦，没啥创意但是足够醒目。</p>
 
-<h3>第二类，表达不满型</h3>
+<h3 id="section-1">第二类，表达不满型</h3>
 
 <p>这一类就没有第一类那么无脑啦，至少人家不是词不达意嘛~如<code>what the f**k</code>，<code>a** hole</code>，<code>son of a b*tch</code>，<code>f**k off</code>，<code>beast</code>等等，常作用于老板和项目经理等不招人待见的群体。</p>
 
-<h3>第三类，口头禅</h3>
+<h3 id="section-2">第三类，口头禅</h3>
 
 <p>这一类人往往从第一类进化而来，某些词说习惯了就很难改过来啦，说着说着就喜欢夹一些动词进来，没办法，不然哪像个大老爷们嘛~</p>
 
-<h3>第四类，自嘲型</h3>
+<h3 id="section-3">第四类，自嘲型</h3>
 
 <p>这一类就得注意语境啦，说的好了人家会心一笑，说不好人家可真能拔刀相见。</p>
 

@@ -7,7 +7,8 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content="create unique 顾名思义，create unique与create在功能上是类似的，不过当新建的node或relationship已经存在时，create unique不会再生成一个新的node或relationship。 另一个区别是create &hellip;">
+	<meta name="description" content="create unique
+顾名思义，create unique与create在功能上是类似的，不过当新建的node或relationship已经存在时，create unique不会再生成一个新的node或relationship。 另一个区别是create &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -76,90 +77,83 @@
 	
 	<div id="content" class="inner"><article class="post">
 	<h1 class="title">Cypher Query Language 学习笔记(2)</h1>
-	<div class="entry-content"><h3>create unique</h3>
-
+	<div class="entry-content"><h3 id="create-unique">create unique</h3>
 <p>顾名思义，<code>create unique</code>与<code>create</code>在功能上是类似的，不过当新建的node或relationship已经存在时，<code>create unique</code>不会再生成一个新的node或relationship。</p>
 
 <p>另一个区别是<code>create unique</code>只能在一个<code>path</code>表达式中使用，例如下面的代码：</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> create unique bran-<span class="o">[</span>r:littlebrotherof<span class="o">]</span>-&gt;<span class="o">(</span>n<span class="o">{</span>name:<span class="s2">&quot;jon&quot;</span><span class="o">})</span> <span class="k">return </span>n;
-</span><span class='line'>+----------------------------+
-</span><span class='line'>| n                          |
-</span><span class='line'>+----------------------------+
-</span><span class='line'>| Node<span class="o">[</span>7<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}</span> |
-</span><span class='line'>+----------------------------+
-</span><span class='line'>1 row
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> create unique bran-<span class="o">[</span>r:littlebrotherof<span class="o">]</span>-&gt;<span class="o">(</span>n<span class="o">{</span>name:<span class="s2">&quot;jon&quot;</span><span class="o">})</span> <span class="k">return </span>n;
+</span><span class="line">+----------------------------+
+</span><span class="line">| n                          |
+</span><span class="line">+----------------------------+
+</span><span class="line">| Node<span class="o">[</span>7<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}</span> |
+</span><span class="line">+----------------------------+
+</span><span class="line">1 row
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
+<p>上面的代码中，path中name=”jon”的node已经存在，neo4j认为这是一个<code>unique node</code>，所以不会再新建一个node，稍加修改，将age属性调整一下，就可以新建一个不同的node。</p>
 
-<p>上面的代码中，path中name=&#8221;jon&#8221;的node已经存在，neo4j认为这是一个<code>unique node</code>，所以不会再新建一个node，稍加修改，将age属性调整一下，就可以新建一个不同的node。</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> create unique bran-<span class="o">[</span>r:littlebrotherof<span class="o">]</span>-&gt;<span class="o">(</span>n<span class="o">{</span>name:<span class="s2">&quot;jon&quot;</span>,age:18<span class="o">})</span> <span class="k">return </span>n;
-</span><span class='line'>+----------------------------+
-</span><span class='line'>| n                          |
-</span><span class='line'>+----------------------------+
-</span><span class='line'>| Node<span class="o">[</span>8<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:18<span class="o">}</span> |
-</span><span class='line'>+----------------------------+
-</span><span class='line'>1 row
-</span><span class='line'>Nodes created: 1
-</span><span class='line'>Relationships created: 1
-</span><span class='line'>Properties <span class="nb">set</span>: 2
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> create unique bran-<span class="o">[</span>r:littlebrotherof<span class="o">]</span>-&gt;<span class="o">(</span>n<span class="o">{</span>name:<span class="s2">&quot;jon&quot;</span>,age:18<span class="o">})</span> <span class="k">return </span>n;
+</span><span class="line">+----------------------------+
+</span><span class="line">| n                          |
+</span><span class="line">+----------------------------+
+</span><span class="line">| Node<span class="o">[</span>8<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:18<span class="o">}</span> |
+</span><span class="line">+----------------------------+
+</span><span class="line">1 row
+</span><span class="line">Nodes created: 1
+</span><span class="line">Relationships created: 1
+</span><span class="line">Properties <span class="nb">set</span>: 2
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>新建relationship的方式和上面差不多，举一反三即可。</p>
 
-<h3>foreach</h3>
-
+<h3 id="foreach">foreach</h3>
 <p>foreach针对的neo4j中的集合做遍历，可以做一些批量的修改操作。其语法块需要用括号围起来，像下面的代码，更新path p关联的所有node的uptime属性为100。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> bran-<span class="o">[]</span>-&gt;<span class="o">()</span> foreach <span class="o">(</span>n in nodes<span class="o">(</span>p<span class="o">)</span>: <span class="nb">set </span>n.uptime <span class="o">=</span> 100<span class="o">)</span>;
-</span><span class='line'>+-------------------+
-</span><span class='line'>| No data returned. |
-</span><span class='line'>+-------------------+
-</span><span class='line'>Properties <span class="nb">set</span>: 4
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> bran-<span class="o">[]</span>-&gt;<span class="o">()</span> foreach <span class="o">(</span>n in nodes<span class="o">(</span>p<span class="o">)</span>: <span class="nb">set </span>n.uptime <span class="o">=</span> 100<span class="o">)</span>;
+</span><span class="line">+-------------------+
+</span><span class="line">| No data returned. |
+</span><span class="line">+-------------------+
+</span><span class="line">Properties <span class="nb">set</span>: 4
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>至于什么是neo4j中的集合，比如<code>nodes()</code>方法得到的结果就是一个集合，用集合表达式表示的也是一个集合，但是<code>n = node(*)</code>中匹配出来的n并不是一个集合。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span>, <span class="nv">jon</span> <span class="o">=</span> node<span class="o">(</span>7<span class="o">)</span> foreach <span class="o">(</span>n in <span class="o">[</span>bran, jon<span class="o">]</span>: <span class="nb">set </span>n.uptime <span class="o">=</span> 101<span class="o">)</span>;
-</span><span class='line'>+-------------------+
-</span><span class='line'>| No data returned. |
-</span><span class='line'>+-------------------+
-</span><span class='line'>Properties <span class="nb">set</span>: 2
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span>, <span class="nv">jon</span> <span class="o">=</span> node<span class="o">(</span>7<span class="o">)</span> foreach <span class="o">(</span>n in <span class="o">[</span>bran, jon<span class="o">]</span>: <span class="nb">set </span>n.uptime <span class="o">=</span> 101<span class="o">)</span>;
+</span><span class="line">+-------------------+
+</span><span class="line">| No data returned. |
+</span><span class="line">+-------------------+
+</span><span class="line">Properties <span class="nb">set</span>: 2
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<h3>functions</h3>
-
+<h3 id="functions">functions</h3>
 <p><a href="http://docs.neo4j.org/chunked/milestone/query-function.html">官方手册</a>中罗列了所有的可用方法，非常详尽，需要慢慢研究了。</p>
 </div>
 

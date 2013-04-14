@@ -4,7 +4,7 @@
   <title><![CDATA[Category: gollum | CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/gollum/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-04-13T09:40:36+08:00</updated>
+  <updated>2013-04-14T20:34:06+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -21,15 +21,13 @@
     <content type="html"><![CDATA[<p>gollum是一个轻量级的wiki系统，使用git作为版本管理和跟踪工具，支持markdown，mediawiki，texttile等多种语法，由github开发并且已经投入到githubwiki的应用中。</p>
 
 <ul>
-<li><a href="#gollum_install">安装</a></li>
-<li><a href="#gollum_deploy">部署</a></li>
-<li><a href="#gollum_bug">已发现的bug</a></li>
-<li><a href="#gollum_refer">参考资料</a></li>
+  <li><a href="#gollum_install">安装</a></li>
+  <li><a href="#gollum_deploy">部署</a></li>
+  <li><a href="#gollum_bug">已发现的bug</a></li>
+  <li><a href="#gollum_refer">参考资料</a></li>
 </ul>
 
-
 <h2 id="gollum_install">安装</h2>
-
 
 <p>gollum与指环王中某个屌丝同名，不知道开发人员的命名灵感是不是来自那里，我们知道，程序员老是喜欢用一些稀奇古怪的东西来给自己的软件命名，像python（莽蛇），octopress（章鱼）等等，搞得好像人人都是动物保护主义者一样～</p>
 
@@ -55,10 +53,10 @@
 </span><span class='line'><span class="nv">$ </span>gollum
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<p><a href="/u/image/gollum-exec-info.png"><img class="right" src="/u/image/gollum-exec-info.png" width="450" height="70" title="&#34;gollum-exec-info&#34;" alt="&#34;gollum-exec-info&#34;"></a>
+<p><a href="/u/image/gollum-exec-info.png"><img class="right" src="/u/image/gollum-exec-info.png" width="450" height="70" title="“gollum-exec-info”" ></a>
 看到右图就说明gollum已经正确的运行了，gollum默认监听4567端口，并且提供了一个可交互的前端，这个时候用户可以通过浏览器打开<a href="http://localhost:4567">http://localhost:4567</a>来看一下gollum了</p>
 
-<p><a href="/u/image/gollum-frontend.png"><img class="right" src="/u/image/gollum-frontend.png" width="450" height="115" title="&#34;gollum-frontend&#34;" alt="&#34;gollum-frontend&#34;"></a></p>
+<p><a href="/u/image/gollum-frontend.png"><img class="right" src="/u/image/gollum-frontend.png" width="450" height="115" title="“gollum-frontend”" ></a></p>
 
 <p>界面实在是足够简洁，提供的几个button实现了wiki的基本功能增删改查，还能查看历史页面，而且还有一套开放的用户系统，name和email由git的使用者决定，头像则由gravatar生成。</p>
 
@@ -81,11 +79,7 @@
 
 <!--more-->
 
-
-
-
 <h2 id="gollum_deploy">部署</h2>
-
 
 <p>虽然gollum提供了一个命令行工具监听端口来提供web服务，但是没有daemon选项，也没有容错机制，何况想来也没有多少人会使用4567端口来访问webserver。那有没有办法将gollum托管给我们的web服务器呢，答案是肯定的，下面以apache为例。</p>
 
@@ -106,16 +100,10 @@
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;VirtualHost *&gt;&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;pre&gt;&lt;code&gt;ServerName www.gollum.local.com  <span class="c">#替换成自己的域名</span>
-</span><span class='line'>DocumentRoot <span class="k">${</span><span class="nv">frontpath</span><span class="k">}</span>public/ <span class="c">#替换成本地路径</span>
-</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;&lt;/VirtualHost&gt;
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&amp;lt;VirtualHost *&amp;gt;
+</span><span class='line'>    ServerName www.gollum.local.com  <span class="c">#替换成自己的域名</span>
+</span><span class='line'>    DocumentRoot <span class="k">${</span><span class="nv">frontpath</span><span class="k">}</span>public/ <span class="c">#替换成本地路径</span>
+</span><span class='line'>&amp;lt;/VirtualHost&amp;gt;
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>然后在${frontpath}(同上，真实路径)下新建一个文件config.ru，写入下面的内容</p>
@@ -137,17 +125,11 @@
 <span class='line-number'>14</span>
 <span class='line-number'>15</span>
 <span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;!/us</span><span class="n">r</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">env</span> <span class="n">ruby</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;require &#39;rubygems&#39;</span>
-</span><span class='line'><span class="sr">require &#39;gollum/</span><span class="n">frontend</span><span class="o">/</span><span class="n">app</span><span class="s1">&#39;</span>
-</span><span class='line'><span class="s1">system(&quot;which git&quot;) or raise &quot;Looks like I can&#39;</span><span class="n">t</span> <span class="n">find</span> <span class="n">the</span> <span class="n">git</span> <span class="no">CLI</span> <span class="k">in</span> <span class="n">your</span> <span class="n">path</span><span class="o">.</span><span class="p">\</span><span class="n">nYour</span> <span class="n">path</span> <span class="n">is</span><span class="p">:</span> <span class="c1">#{ENV[&#39;PATH&#39;]}&quot;</span>
-</span><span class='line'><span class="n">gollum_path</span> <span class="o">=</span> <span class="s1">&#39;/home/{user}/gowiki&#39;</span> <span class="c1">#这里的路径替换成实际想存放wiki文档的git目录</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#!/usr/local/bin/env ruby</span>
+</span><span class='line'><span class="nb">require</span> <span class="err">‘</span><span class="n">rubygems</span><span class="err">’</span>
+</span><span class='line'><span class="nb">require</span> <span class="err">‘</span><span class="n">gollum</span><span class="o">/</span><span class="n">frontend</span><span class="o">/</span><span class="n">app</span><span class="err">’</span>
+</span><span class='line'><span class="nb">system</span><span class="p">(</span><span class="err">“</span><span class="n">which</span> <span class="n">git</span><span class="err">”</span><span class="p">)</span> <span class="ow">or</span> <span class="k">raise</span> <span class="err">“</span><span class="no">Looks</span> <span class="n">like</span> <span class="n">I</span> <span class="n">can</span><span class="err">’</span><span class="n">t</span> <span class="n">find</span> <span class="n">the</span> <span class="n">git</span> <span class="no">CLI</span> <span class="k">in</span> <span class="n">your</span> <span class="n">path</span><span class="o">.</span><span class="p">\</span><span class="n">nYour</span> <span class="n">path</span> <span class="n">is</span><span class="p">:</span> <span class="c1">#{ENV[‘PATH’]}”</span>
+</span><span class='line'><span class="n">gollum_path</span> <span class="o">=</span> <span class="err">‘</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="p">{</span><span class="n">user</span><span class="p">}</span><span class="o">/</span><span class="n">gowiki</span><span class="err">’</span> <span class="c1">#这里的路径替换成实际想存放wiki文档的git目录</span>
 </span><span class='line'><span class="n">disable</span> <span class="ss">:run</span>
 </span><span class='line'><span class="n">configure</span> <span class="ss">:development</span><span class="p">,</span> <span class="ss">:staging</span><span class="p">,</span> <span class="ss">:production</span> <span class="k">do</span>
 </span><span class='line'> <span class="n">set</span> <span class="ss">:raise_errors</span><span class="p">,</span> <span class="kp">true</span>
@@ -167,15 +149,13 @@
 
 <h2 id="gollum_bug">已发现的bug</h2>
 
-
 <p>gollum绑定的grit库中存在一个关于编码的错误[<a href="https://github.com/github/gollum/issues/147">issue</a>],当提交的文本中包含unicode字符时会导致一个fetal error。在grit2.5.0中修复了这个错误，所以在bundle之前需要先将grit版本设置为2.5.0。gollum最近的两个版本中需要修改的地方还不太一样，晕了～。输入<code>gollum --version</code>看一下版本，假如是2.0.0(gem安装的版本)，则修改gollum.gemspec，若是2.1.0(目前的HEAD版本)，则修改Gemfile.lock。将其中的grit版本改为2.5.0即可。</p>
 
 <h2 id="gollum_refer">参考资料</h2>
 
-
 <ul>
-<li><a href="https://github.com/github/gollum/blob/master/README.md">README</a></li>
-<li><a href="https://github.com/tecnh/gollum/wiki/Gollum-and-Passenger">Gollum and Passenger</a></li>
+  <li><a href="https://github.com/github/gollum/blob/master/README.md">README</a></li>
+  <li><a href="https://github.com/tecnh/gollum/wiki/Gollum-and-Passenger">Gollum and Passenger</a></li>
 </ul>
 
 ]]></content>

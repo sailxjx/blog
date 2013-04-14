@@ -104,9 +104,11 @@
 
 <p>在Ben咕哝了一阵子之后，Maurice从他肩头看过去。控制台上显示着一条SQL语法错误，仿佛在嘲笑这位“数据库大师”：</p>
 
-<blockquote><p>select count() rowID</p></blockquote>
+<blockquote>
+  <p>select count() rowID</p>
+</blockquote>
 
-<p>虽然数据库的增长模式仍然是个迷，Maurice却开始认识到“数据库大师”的“专业模式”。不仅仅他语句有问题，他还选错了数据库：他选择了Sql Server的内建数据库。嗯，当然也叫大师（&#8217;master&#8217;）。</p>
+<p>虽然数据库的增长模式仍然是个迷，Maurice却开始认识到“数据库大师”的“专业模式”。不仅仅他语句有问题，他还选错了数据库：他选择了Sql Server的内建数据库。嗯，当然也叫大师（’master’）。</p>
 
 <p>原文链接：<a href="http://thedailywtf.com/Articles/The-Database-Master.aspx">The Database Master</a></p>
 
@@ -150,146 +152,139 @@
 <p>一个测试用例是下面这样：</p>
 
 <ul>
-<li>输入：[3,10,11,9,1,2,-1,10,7]</li>
-<li>输出：[-1, 10]</li>
+  <li>输入：[3,10,11,9,1,2,-1,10,7]</li>
+  <li>输出：[-1, 10]</li>
 </ul>
-
 
 <p>这个题目乍看上去相当的简单，我第一个想到的就是，既然要求最大差值，那可以先将每个值与的数之间的差值求出来，然后再进行一次排序，结果不就出来了嘛。这样需要用到两次循环，代码可以参考下面。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">stepIn</span><span class="p">(</span><span class="n">dataInput</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">dataLen</span> <span class="o">=</span> <span class="n">dataInput</span><span class="o">.</span><span class="n">length</span>
-</span><span class='line'>  <span class="n">diff</span> <span class="o">=</span> <span class="kp">nil</span>
-</span><span class='line'>  <span class="n">dataResule</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span class='line'>  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">dataLen</span><span class="o">-</span><span class="mi">1</span>
-</span><span class='line'>    <span class="k">for</span> <span class="n">n</span> <span class="k">in</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">dataLen</span>
-</span><span class='line'>      <span class="n">diff2</span> <span class="o">=</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">n</span><span class="o">]</span> <span class="o">-</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">i</span><span class="o">]</span>
-</span><span class='line'>      <span class="k">if</span> <span class="n">diff</span> <span class="o">==</span> <span class="kp">nil</span> <span class="ow">or</span> <span class="n">diff</span> <span class="o">&lt;</span> <span class="n">diff2</span>
-</span><span class='line'>        <span class="n">diff</span> <span class="o">=</span> <span class="n">diff2</span>
-</span><span class='line'>        <span class="n">dataResule</span><span class="o">[</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">i</span><span class="si">}</span><span class="s2">,</span><span class="si">#{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="n">diff</span>
-</span><span class='line'>      <span class="k">end</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>  <span class="n">rIdxs</span> <span class="o">=</span> <span class="n">dataResule</span><span class="o">.</span><span class="n">sort_by</span> <span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="o">-</span><span class="n">v</span><span class="p">}</span> <span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">].</span><span class="n">split</span> <span class="s1">&#39;,&#39;</span>
-</span><span class='line'>  <span class="k">return</span> <span class="o">[</span><span class="n">dataInput</span><span class="o">[</span><span class="n">rIdxs</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">to_i</span><span class="o">]</span><span class="p">,</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">rIdxs</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_i</span><span class="o">]]</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">stepIn</span><span class="p">(</span><span class="n">dataInput</span><span class="p">)</span>
+</span><span class="line">  <span class="n">dataLen</span> <span class="o">=</span> <span class="n">dataInput</span><span class="o">.</span><span class="n">length</span>
+</span><span class="line">  <span class="n">diff</span> <span class="o">=</span> <span class="kp">nil</span>
+</span><span class="line">  <span class="n">dataResule</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class="line">  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">dataLen</span><span class="o">-</span><span class="mi">1</span>
+</span><span class="line">    <span class="k">for</span> <span class="n">n</span> <span class="k">in</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">dataLen</span>
+</span><span class="line">      <span class="n">diff2</span> <span class="o">=</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">n</span><span class="o">]</span> <span class="o">-</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">i</span><span class="o">]</span>
+</span><span class="line">      <span class="k">if</span> <span class="n">diff</span> <span class="o">==</span> <span class="kp">nil</span> <span class="ow">or</span> <span class="n">diff</span> <span class="o">&lt;</span> <span class="n">diff2</span>
+</span><span class="line">        <span class="n">diff</span> <span class="o">=</span> <span class="n">diff2</span>
+</span><span class="line">        <span class="n">dataResule</span><span class="o">[</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">i</span><span class="si">}</span><span class="s2">,</span><span class="si">#{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="n">diff</span>
+</span><span class="line">      <span class="k">end</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">  <span class="n">rIdxs</span> <span class="o">=</span> <span class="n">dataResule</span><span class="o">.</span><span class="n">sort_by</span> <span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="o">-</span><span class="n">v</span><span class="p">}</span> <span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">].</span><span class="n">split</span> <span class="s1">&#39;,&#39;</span>
+</span><span class="line">  <span class="k">return</span> <span class="o">[</span><span class="n">dataInput</span><span class="o">[</span><span class="n">rIdxs</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">to_i</span><span class="o">]</span><span class="p">,</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">rIdxs</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_i</span><span class="o">]]</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>上面的代码已经经过了优化，在每次循环后，保留了之前计算的差值的结果，下面的循环中小于这个差值的索引值就被抛弃了，这样的一个好处是可以减少最后sort时花费的时间。假如保留所有两数之间的差值，假设使用冒泡排序，输入数组长度是m，排序算法复杂度是O(n<sup>2</sup>)，而这个n会达到(m+1)*m/2，所以总的算法复杂度就成了O(n<sup>4</sup>)。而在循环中预处理之后，最后参与排序的元素个数最大不会超过m，总的时间复杂度还是O(n<sup>2</sup>)。其实这只是针对最后的sort而言，而这个程序真正的耗时在上面的嵌套循环，这里的复杂度不管有没有优化，其实都是一样的O(n<sup>2</sup>)，下面sort的消费可以忽略不计。</p>
 
-<p>这是一种比较直观的解法了，事实证明，没有经过斟酌的想法都是不完善的（事实也证明，很多灵光一闪的想法都很很靠谱滴，不过在这里不适用<code>^_^</code>。经人启发，才知道有一种解法，只需要一次循环，时间复杂度是O(n)。</p>
+<p>这是一种比较直观的解法了，事实证明，没有经过斟酌的想法都是不完善的（事实也证明，很多灵光一闪的想法都很很靠谱滴，不过在这里不适用(^_^)。经人启发，才知道有一种解法，只需要一次循环，时间复杂度是O(n)。</p>
 
 <p>这个叫做动态规划的算法说的太笼统，网上的解释也实在是太理论，我们联系实际，就以上面的题目为例。</p>
 
 <p>动态规划的思想通常可以分成下面几部：</p>
 
 <ol>
-<li>给问题分阶段</li>
-<li>确定每个阶段的状态</li>
-<li>确定相邻阶段的之间的递推关系（也就是找出从前一个阶段转化到后一个阶段的条件）</li>
+  <li>给问题分阶段</li>
+  <li>确定每个阶段的状态</li>
+  <li>确定相邻阶段的之间的递推关系（也就是找出从前一个阶段转化到后一个阶段的条件）</li>
 </ol>
-
 
 <p>上面的例子很容易可以分出三个阶段</p>
 
 <ol>
-<li>开始阶段，将数组中开头的两个元素作为最大，最小值记录在结果数组中，[3,10]</li>
-<li>过程阶段，将后面的数与前面的数比较，比如将11与10比较，并将符合条件的值替换结果数组</li>
-<li>结束阶段，当游标抵达数组最后一个元素时，跳出循环。</li>
+  <li>开始阶段，将数组中开头的两个元素作为最大，最小值记录在结果数组中，[3,10]</li>
+  <li>过程阶段，将后面的数与前面的数比较，比如将11与10比较，并将符合条件的值替换结果数组</li>
+  <li>结束阶段，当游标抵达数组最后一个元素时，跳出循环。</li>
 </ol>
-
 
 <p>而这几个状态之间的转移条件在上面已有了说明，主要在第二个阶段，哪些条件能决定替换结果数组，这些条件称为决策</p>
 
 <ol>
-<li>游标所指的数大于结果数组中的最大值，比如后面有11，那么结果数组就变成[3,11]</li>
-<li>游标所指的数小于结果数组中的最小值，那么它就有可能在后面替换结果数组中的最小值，例如后面出现了1，这个时候不能立刻替换掉3，需要找个临时变量将1保存下来。</li>
-<li>游标所指的数与临时最小值之差大于结果数组中两数字之差。这个条件应该优先于决策2和决策1，一旦这个决策生效，将同时替换结果数组中的最大最小值，决策1和决策2在这个时候应该不生效。例如后面出现了12，那么结果数组就应该变成[1,12]。假如这个时候决策1优先生效，那么结果数组会变成[3,12]，而临时变量1将永远没有上位之日了。</li>
+  <li>游标所指的数大于结果数组中的最大值，比如后面有11，那么结果数组就变成[3,11]</li>
+  <li>游标所指的数小于结果数组中的最小值，那么它就有可能在后面替换结果数组中的最小值，例如后面出现了1，这个时候不能立刻替换掉3，需要找个临时变量将1保存下来。</li>
+  <li>游标所指的数与临时最小值之差大于结果数组中两数字之差。这个条件应该优先于决策2和决策1，一旦这个决策生效，将同时替换结果数组中的最大最小值，决策1和决策2在这个时候应该不生效。例如后面出现了12，那么结果数组就应该变成[1,12]。假如这个时候决策1优先生效，那么结果数组会变成[3,12]，而临时变量1将永远没有上位之日了。</li>
 </ol>
-
 
 <p>有了上面的阶段和决策之后，代码就很容易实现了</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">stepIn</span><span class="p">(</span><span class="n">list</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">min</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># minimal index</span>
-</span><span class='line'>  <span class="n">max</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># maximal index</span>
-</span><span class='line'>  <span class="n">differ</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># max differ</span>
-</span><span class='line'>  <span class="n">minTmp</span> <span class="o">=</span> <span class="kp">nil</span>  <span class="c1"># temp minimal index</span>
-</span><span class='line'>  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">length</span>
-</span><span class='line'>    <span class="k">if</span> <span class="n">minTmp</span> <span class="o">!=</span> <span class="kp">nil</span> <span class="ow">and</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">differ</span>  <span class="c1"># if current index minus temp minimal index is bigger than differ, replace it</span>
-</span><span class='line'>      <span class="n">differ</span> <span class="o">=</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span>  <span class="c1"># new differ</span>
-</span><span class='line'>      <span class="n">min</span> <span class="o">=</span> <span class="n">minTmp</span>  <span class="c1"># new minimal index</span>
-</span><span class='line'>      <span class="n">max</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># new maximal index</span>
-</span><span class='line'>    <span class="k">elsif</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">list</span><span class="o">[</span><span class="n">max</span><span class="o">]</span>  <span class="c1"># replace the maximal index</span>
-</span><span class='line'>      <span class="n">max</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># new maximal index</span>
-</span><span class='line'>      <span class="n">differ</span> <span class="o">=</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span>  <span class="c1"># new differ</span>
-</span><span class='line'>    <span class="k">elsif</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span> <span class="ow">and</span> <span class="p">(</span> <span class="n">minTmp</span> <span class="o">==</span> <span class="kp">nil</span> <span class="ow">or</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span> <span class="p">)</span>  <span class="c1"># replace the temp minimal index</span>
-</span><span class='line'>      <span class="n">minTmp</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># change temp minimal index</span>
-</span><span class='line'>    <span class="k">else</span>
-</span><span class='line'>      <span class="k">next</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>  <span class="k">return</span> <span class="o">[</span><span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span><span class="p">,</span> <span class="n">list</span><span class="o">[</span><span class="n">max</span><span class="o">]]</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">stepIn</span><span class="p">(</span><span class="n">list</span><span class="p">)</span>
+</span><span class="line">  <span class="n">min</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># minimal index</span>
+</span><span class="line">  <span class="n">max</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># maximal index</span>
+</span><span class="line">  <span class="n">differ</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># max differ</span>
+</span><span class="line">  <span class="n">minTmp</span> <span class="o">=</span> <span class="kp">nil</span>  <span class="c1"># temp minimal index</span>
+</span><span class="line">  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">length</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">minTmp</span> <span class="o">!=</span> <span class="kp">nil</span> <span class="ow">and</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">differ</span>  <span class="c1"># if current index minus temp minimal index is bigger than differ, replace it</span>
+</span><span class="line">      <span class="n">differ</span> <span class="o">=</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span>  <span class="c1"># new differ</span>
+</span><span class="line">      <span class="n">min</span> <span class="o">=</span> <span class="n">minTmp</span>  <span class="c1"># new minimal index</span>
+</span><span class="line">      <span class="n">max</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># new maximal index</span>
+</span><span class="line">    <span class="k">elsif</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">list</span><span class="o">[</span><span class="n">max</span><span class="o">]</span>  <span class="c1"># replace the maximal index</span>
+</span><span class="line">      <span class="n">max</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># new maximal index</span>
+</span><span class="line">      <span class="n">differ</span> <span class="o">=</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span>  <span class="c1"># new differ</span>
+</span><span class="line">    <span class="k">elsif</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span> <span class="ow">and</span> <span class="p">(</span> <span class="n">minTmp</span> <span class="o">==</span> <span class="kp">nil</span> <span class="ow">or</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span> <span class="p">)</span>  <span class="c1"># replace the temp minimal index</span>
+</span><span class="line">      <span class="n">minTmp</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># change temp minimal index</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="k">next</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">  <span class="k">return</span> <span class="o">[</span><span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span><span class="p">,</span> <span class="n">list</span><span class="o">[</span><span class="n">max</span><span class="o">]]</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>这种解法可能读起来需要稍微绕点弯，而且隐含问题，我在第一次写这段代码的时候就将决策3和决策1的顺序搞反了，但是几个测试脚本都顺利通过了，这就是一个“不明显的bug”，往往比“明显的bug”还要致命，因为根本无迹可查。</p>
 
 <p>不过，相对于性能的提高，牺牲一点可读性还是值得的。在上面的例子中不太明显，但是当我将输入数组的长度变成1000甚至5000时，两种算法的反差是相当惊人的。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>bash<span class="nv">$ </span>ruby benchmark.rb 1000
-</span><span class='line'>dysort: 0.000435
-</span><span class='line'>trsort: 0.13827
-</span><span class='line'>bash<span class="nv">$ </span>ruby benchmark.rb 5000
-</span><span class='line'>dysort: 0.002027
-</span><span class='line'>trsort: 3.28997
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">bash<span class="nv">$ </span>ruby benchmark.rb 1000
+</span><span class="line">dysort: 0.000435
+</span><span class="line">trsort: 0.13827
+</span><span class="line">bash<span class="nv">$ </span>ruby benchmark.rb 5000
+</span><span class="line">dysort: 0.002027
+</span><span class="line">trsort: 3.28997
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>上面是分别在1000和5000的数组长度下运行的结果，可以看出使用第二种算法的时间增长基本是线性的，而使用第一种算法的耗时则会指数级的增长。两种算法横向比较更是高下立分，本来想画图来表示，结果发现差距太大，使用第二种算法的时间柱在图上基本看不到了，于是作罢。</p>
 
@@ -417,7 +412,7 @@
 
 <p>原文链接: <a href="http://thedailywtf.com/Articles/Accounting-for-Development.aspx">Accounting for Development</a></p>
 
-<h1>后记</h1>
+<h1 id="section">后记</h1>
 
 <p>翻译真是个技术活。。。老外的俚语也很多啊，好多搞不懂啊！~慢慢来吧。</p>
 
@@ -454,62 +449,57 @@
     <article class="post">
 	<h1 class="title"><a href="/blog/blog/2013/03/12/css-transition-and-transform-and-animation/">Css Transition &amp; Transform &amp; Animation</a></h1>
 	<div class="entry-content">
-		<p><link rel="stylesheet" href="/blog/u/css/trans.css"></p>
+		<link rel="stylesheet" href="/blog/u/css/trans.css" />
 
 <p>小时候没花功夫学英语（悔之莫及啊~），以至于经常将css中的transition和transform搞混，再加上一个强大而复杂的animation，就更是一头雾水了，今天整理一下，做个笔记。</p>
 
 <ul>
-<li><code>transition</code> 将style的变化用动画的方式来过渡</li>
-<li><code>transform</code> style的一些高级变换，像拉伸，旋转，缩放之类</li>
-<li><code>animation</code> css自定义动画，功能强大，并且由于是浏览器内置，流畅度会比javascript动画高</li>
+  <li><code>transition</code> 将style的变化用动画的方式来过渡</li>
+  <li><code>transform</code> style的一些高级变换，像拉伸，旋转，缩放之类</li>
+  <li><code>animation</code> css自定义动画，功能强大，并且由于是浏览器内置，流畅度会比javascript动画高</li>
 </ul>
 
+<p>注意咯，以上css属性都不支持IE浏览器，其中，IE9以上支持<code>transform</code>，需要加’-ms-‘前缀。</p>
 
-<p>注意咯，以上css属性都不支持IE浏览器，其中，IE9以上支持<code>transform</code>，需要加&#8217;-ms-&#8216;前缀。</p>
-
-<h2>transition</h2>
-
+<h2 id="transition">transition</h2>
 <p>transition可以在同一dom元素的两种不同样式之间添加平滑的动画切换效果，下面是一个简单的例子，可以看出在没transition和有transition的情况下的区别。</p>
 
 <p>
-<div class="color-transition color-demo">color<br/>transition</div>
-<div class="color-notransition color-demo">color<br/>notransition</div>
+<div class="color-transition color-demo">color<br />transition</div>
+<div class="color-notransition color-demo">color<br />notransition</div>
 </p>
-
 
 <p>transition是一种比较好的用户体验，不会让用户对于style的切换感到突兀，要实现上面的效果，只需要在css中添加一行代码：</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nc">.color-transition</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span><span class="p">;</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span><span class="p">;</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span><span class="p">;</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="nc">.color-transition</span> <span class="p">{</span>
+</span><span class="line">    <span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span><span class="p">;</span>
+</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span><span class="p">;</span>
+</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span><span class="p">;</span>
+</span><span class="line">    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>你可能在心里暗暗骂我SB（嗯，对的，我也讨厌不会数数的淫），上面明明有四行代码，这个也没办法啦，谁让各个浏览器对于css3标准的支持都不一样，添加不同的prefix只是为了兼容一些较低版本的浏览器，在目前的主流中，一行transition就可以走遍天下。（当然，IE是没救了）。</p>
 
 <p>transition中支持的参数是比较容易理解的，第一个是css中的属性(默认的all可以决定所有style的切换都显示成动画)，第一个表示过渡时间，还有第三个参数表示切换的动画类型，有ease(类似正弦曲线的先慢后快再慢)，linear(匀速)等等，第四个参数表示渐变开始的延时。而且可以用逗号分割多个属性，不嫌麻烦的话可以将它们都写上，就像下面这样。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nc">.color-ratate-transition</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span> <span class="n">ease</span><span class="o">-</span><span class="n">in</span><span class="o">-</span><span class="n">out</span><span class="o">,</span> <span class="n">rotate</span> <span class="m">3s</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="nc">.color-ratate-transition</span> <span class="p">{</span>
+</span><span class="line">    <span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span> <span class="n">ease</span><span class="o">-</span><span class="n">in</span><span class="o">-</span><span class="n">out</span><span class="o">,</span> <span class="n">rotate</span> <span class="m">3s</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>上面既然已经用到了rotate，这是一个transform属性，下面就解释一下transform。</p>
 
-<h2>transform</h2>
+<h2 id="transform">transform</h2>
 
 <p>transform是对dom样式的一种变性，一般的样式中，我们可以定义宽高位置，甚至包括圆角。但是要实现旋转，缩放甚至一些3D效果，就需要用到transform了。下面还是先看一个例子：</p>
 
@@ -518,7 +508,6 @@
 <div class="transform-scale transform-demo">scale</div>
 </p>
 
-
 <p>rotate可以在很多场景中得到应用，一个比较取巧的方法是用来做输入框的提示箭头，像下面这样.</p>
 
 <p>
@@ -526,177 +515,166 @@
     <div class="input-tip">your messages</div>
 </p>
 
-
 <p>而scale的作用是在不调整宽高的情况下实现放大与缩小，灵活利用，也能实现一些有趣的功能，比如放大镜，异形字体等。</p>
 
 <p>transform的语法是非常简单的，它只有一个参数，但是形式的是很多变的，详细的列表可见于<a href="http://www.w3schools.com/cssref/css3_pr_transform.asp">w3school的页面</a>。</p>
 
-<h2>animation</h2>
+<h2 id="animation">animation</h2>
 
 <p>下面是重点要介绍的animation了。用css做动画是意见非常geek的事情，相比于js动画，css动画需要更少的代码以及更直观的语法。在做css动画之前，需要先了解keyframes属性，这是css3中新增的一个规则类，实现的方法类似于一些语言中的mixin，而在设计理念上又类似flash中的关键帧，在keyframes中需要定义几个关键帧中dom元素的样式，这几个关键帧可以用百分比来表示，也可以用from,to等一些词汇来表示起点和终点。下面的keyframes表示让一个元素从左向右移动，并加上一些旋转效果。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="k">@keyframes</span> <span class="nt">move</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nt">0</span><span class="o">%,</span> <span class="nt">100</span><span class="o">%</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">left</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nt">50</span><span class="o">%</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">left</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">180</span><span class="n">deg</span><span class="p">);</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">180</span><span class="n">deg</span><span class="p">);</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">180</span><span class="n">deg</span><span class="p">);</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">180</span><span class="n">deg</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="k">@keyframes</span> <span class="nt">move</span> <span class="p">{</span>
+</span><span class="line">  <span class="nt">0</span><span class="o">%,</span> <span class="nt">100</span><span class="o">%</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">left</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+</span><span class="line">    <span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="nt">50</span><span class="o">%</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">left</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
+</span><span class="line">    <span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">180</span><span class="n">deg</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">180</span><span class="n">deg</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">180</span><span class="n">deg</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">180</span><span class="n">deg</span><span class="p">);</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>keyframes是一个预定义的方法，将它与animation结合，就能实现有趣的css动画，例如上面名叫move的keyframes，放到下面的代码中，就可以看到完整的动画演示了。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nc">.animate-move</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">position</span><span class="o">:</span> <span class="k">relative</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">animation</span><span class="o">:</span> <span class="n">move</span> <span class="m">5s</span> <span class="n">infinite</span><span class="p">;</span>
-</span><span class='line'>  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">move</span> <span class="m">5s</span> <span class="n">infinite</span><span class="p">;</span>
-</span><span class='line'>  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">move</span> <span class="m">5s</span> <span class="n">infinite</span><span class="p">;</span>
-</span><span class='line'>  <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">move</span> <span class="m">5s</span> <span class="n">infinite</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="nc">.animate-move</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">position</span><span class="o">:</span> <span class="k">relative</span><span class="p">;</span>
+</span><span class="line">  <span class="n">animation</span><span class="o">:</span> <span class="n">move</span> <span class="m">5s</span> <span class="n">infinite</span><span class="p">;</span>
+</span><span class="line">  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">move</span> <span class="m">5s</span> <span class="n">infinite</span><span class="p">;</span>
+</span><span class="line">  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">move</span> <span class="m">5s</span> <span class="n">infinite</span><span class="p">;</span>
+</span><span class="line">  <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">move</span> <span class="m">5s</span> <span class="n">infinite</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>
-    <div class="animate-move animate-demo">animate<br/>move</div>
+    <div class="animate-move animate-demo">animate<br />move</div>
 </p>
-
 
 <p>上面的例子中包含了animation中的三个参数：keyframes方法名，一次动画持续时间，循环次数。其中无限循环用infinite表示。animation还包含不少有用的参数，比如延迟时间，动画效果等等，在<a href="http://www.w3schools.com/cssref/css3_pr_animation.asp">w3school手册</a>中有详细的记载。</p>
 
 <p>国内音乐网站<a href="http://jing.fm/">jing.fm</a>在交互方面一直很前卫，播放音乐时，专辑封面会像真的在cd中一样打转，模仿一种收听cd的感觉。这个效果就是用animation实现的，下面我们也可以山寨一个玩玩。</p>
 
-<h3>第一步，打磨圆角</h3>
+<h3 id="section">第一步，打磨圆角</h3>
 
 <p>首先需要的是将正方形的专辑封面变成cd的形状，也就是圆形啦。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nc">.album</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">width</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">height</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">150px</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="nc">.album</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">width</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
+</span><span class="line">  <span class="k">height</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
+</span><span class="line">  <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">150px</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>专辑封面我们选择300像素的正方形，然后使用150像素的圆角，可以正好变成一个正圆形。</p>
 
-<h3>第二步，keyframes</h3>
+<h3 id="keyframes">第二步，keyframes</h3>
 
 <p>下面就要定义我们的keyframes了，这个动画很简单，在开头设置成rotate(0)，结尾设置成rotate(360deg)。这样我们比较容易计算循环的时间。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="k">@keyframes</span> <span class="nt">dj</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nt">0</span><span class="o">%</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nt">100</span><span class="o">%</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">360</span><span class="n">deg</span><span class="p">);</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">360</span><span class="n">deg</span><span class="p">);</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">360</span><span class="n">deg</span><span class="p">);</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">360</span><span class="n">deg</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="k">@keyframes</span> <span class="nt">dj</span> <span class="p">{</span>
+</span><span class="line">  <span class="nt">0</span><span class="o">%</span> <span class="p">{</span>
+</span><span class="line">    <span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="nt">100</span><span class="o">%</span> <span class="p">{</span>
+</span><span class="line">    <span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">360</span><span class="n">deg</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">360</span><span class="n">deg</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">360</span><span class="n">deg</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">360</span><span class="n">deg</span><span class="p">);</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<h3>第三步，转起来</h3>
+<h3 id="section-1">第三步，转起来</h3>
 
 <p>将我们的dj keyframes加入animation，选择匀速(linear)，下面就看效果吧。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nc">.album</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">width</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">height</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">150px</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">animation</span><span class="o">:</span> <span class="n">dj</span> <span class="m">10s</span> <span class="n">infinite</span> <span class="n">linear</span><span class="p">;</span>
-</span><span class='line'>  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">dj</span> <span class="m">10s</span> <span class="n">infinite</span> <span class="n">linear</span><span class="p">;</span>
-</span><span class='line'>  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">dj</span> <span class="m">10s</span> <span class="n">infinite</span> <span class="n">linear</span><span class="p">;</span>
-</span><span class='line'>  <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">dj</span> <span class="m">10s</span> <span class="n">infinite</span> <span class="n">linear</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="nc">.album</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">width</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
+</span><span class="line">  <span class="k">height</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
+</span><span class="line">  <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">150px</span><span class="p">;</span>
+</span><span class="line">  <span class="n">animation</span><span class="o">:</span> <span class="n">dj</span> <span class="m">10s</span> <span class="n">infinite</span> <span class="n">linear</span><span class="p">;</span>
+</span><span class="line">  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">dj</span> <span class="m">10s</span> <span class="n">infinite</span> <span class="n">linear</span><span class="p">;</span>
+</span><span class="line">  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">dj</span> <span class="m">10s</span> <span class="n">infinite</span> <span class="n">linear</span><span class="p">;</span>
+</span><span class="line">  <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">dj</span> <span class="m">10s</span> <span class="n">infinite</span> <span class="n">linear</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>
-    <img src="/blog/u/image/album-milk.jpg" alt="album-milk" class="album">
+    <img src="/blog/u/image/album-milk.jpg" alt="album-milk" class="album" />
 </p>
 
+<embed src="http://www.xiami.com/widget/0_1771372335/singlePlayer.swf" type="application/x-shockwave-flash" width="257" height="33" wmode="transparent" />
+<p>&lt;/embed&gt;</p>
 
-<p><embed src="http://www.xiami.com/widget/0_1771372335/singlePlayer.swf" type="application/x-shockwave-flash" width="257" height="33" wmode="transparent"></embed></p>
-
-<h2>后记</h2>
+<h2 id="section-2">后记</h2>
 
 <p>上面的效果没有用到一行js。css真是将技术与艺术完美结合的产物，这些动画无疑需要激发人无限的创意，随着浏览器的支持度提高，在web上的应用也会越来越广，应用的明天会非常美好。</p>
 
-<h2>代码</h2>
+<h2 id="section-3">代码</h2>
 
 <p>在自己的项目中，我会使用scss来书写css，省却了很多重复的工作。这个页面的scss文件放到这里保存一下。</p>
 
@@ -737,19 +715,19 @@
 	<div class="entry-content">
 		<p>俗话说林子大了什么鸟都有，在程序猿这个群体中，脏话和吹牛是两大显著特征。脏话的种类也是花样百出，下面就来归归类</p>
 
-<h3>第一类，加强语气型</h3>
+<h3 id="section">第一类，加强语气型</h3>
 
 <p>常见的有<code>damn</code>,<code>f**k</code>，<code>shit</code>等等，往往后面还跟着些动词与形容词，像<code>stupid</code>啦，<code>idiot</code>啦，没啥创意但是足够醒目。</p>
 
-<h3>第二类，表达不满型</h3>
+<h3 id="section-1">第二类，表达不满型</h3>
 
 <p>这一类就没有第一类那么无脑啦，至少人家不是词不达意嘛~如<code>what the f**k</code>，<code>a** hole</code>，<code>son of a b*tch</code>，<code>f**k off</code>，<code>beast</code>等等，常作用于老板和项目经理等不招人待见的群体。</p>
 
-<h3>第三类，口头禅</h3>
+<h3 id="section-2">第三类，口头禅</h3>
 
 <p>这一类人往往从第一类进化而来，某些词说习惯了就很难改过来啦，说着说着就喜欢夹一些动词进来，没办法，不然哪像个大老爷们嘛~</p>
 
-<h3>第四类，自嘲型</h3>
+<h3 id="section-3">第四类，自嘲型</h3>
 
 <p>这一类就得注意语境啦，说的好了人家会心一笑，说不好人家可真能拔刀相见。</p>
 
@@ -798,222 +776,218 @@
 	<div class="entry-content">
 		<p>在基于事件的异步模型大行其道的今天，各语言都相继推出了自己的异步框架，nodejs原生的异步模型当然是其中的翘楚，然后python有Twisted，ruby有EventMachine(名字俗了点)。php也有一个不错的异步框架，<a href="https://github.com/reactphp/react">react</a>。下面我们从内而外的看看这个异步模型是怎么实现的。</p>
 
-<h3>événement</h3>
+<h3 id="vnement">événement</h3>
 
 <p>首先react的事件模型是建立在一个叫<a href="https://github.com/igorw/evenement">événement</a>的框架上，也是react作者所作，代码只有短短的74行，实现了<code>on</code>(事件监听),<code>emit</code>(触发事件)等方法。下面就单就这两个事件方法分析一下。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
-</span><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">on</span><span class="p">(</span><span class="nv">$event</span><span class="p">,</span> <span class="nv">$listener</span><span class="p">)</span>
-</span><span class='line'>    <span class="p">{</span>
-</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">is_callable</span><span class="p">(</span><span class="nv">$listener</span><span class="p">))</span> <span class="p">{</span>
-</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nx">\InvalidArgumentException</span><span class="p">(</span><span class="s1">&#39;The provided listener was not a valid callable.&#39;</span><span class="p">);</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listeners</span><span class="p">[</span><span class="nv">$event</span><span class="p">]))</span> <span class="p">{</span>
-</span><span class='line'>            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listeners</span><span class="p">[</span><span class="nv">$event</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listeners</span><span class="p">[</span><span class="nv">$event</span><span class="p">][]</span> <span class="o">=</span> <span class="nv">$listener</span><span class="p">;</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">emit</span><span class="p">(</span><span class="nv">$event</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$arguments</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span>
-</span><span class='line'>    <span class="p">{</span>
-</span><span class='line'>        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listeners</span><span class="p">(</span><span class="nv">$event</span><span class="p">)</span> <span class="k">as</span> <span class="nv">$listener</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>            <span class="nb">call_user_func_array</span><span class="p">(</span><span class="nv">$listener</span><span class="p">,</span> <span class="nv">$arguments</span><span class="p">);</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line"><span class="k">public</span> <span class="k">function</span> <span class="nf">on</span><span class="p">(</span><span class="nv">$event</span><span class="p">,</span> <span class="nv">$listener</span><span class="p">)</span>
+</span><span class="line">    <span class="p">{</span>
+</span><span class="line">        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">is_callable</span><span class="p">(</span><span class="nv">$listener</span><span class="p">))</span> <span class="p">{</span>
+</span><span class="line">            <span class="k">throw</span> <span class="k">new</span> <span class="nx">\InvalidArgumentException</span><span class="p">(</span><span class="s1">&#39;The provided listener was not a valid callable.&#39;</span><span class="p">);</span>
+</span><span class="line">        <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listeners</span><span class="p">[</span><span class="nv">$event</span><span class="p">]))</span> <span class="p">{</span>
+</span><span class="line">            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listeners</span><span class="p">[</span><span class="nv">$event</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class="line">        <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listeners</span><span class="p">[</span><span class="nv">$event</span><span class="p">][]</span> <span class="o">=</span> <span class="nv">$listener</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line"><span class="k">public</span> <span class="k">function</span> <span class="nf">emit</span><span class="p">(</span><span class="nv">$event</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$arguments</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span>
+</span><span class="line">    <span class="p">{</span>
+</span><span class="line">        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listeners</span><span class="p">(</span><span class="nv">$event</span><span class="p">)</span> <span class="k">as</span> <span class="nv">$listener</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">            <span class="nb">call_user_func_array</span><span class="p">(</span><span class="nv">$listener</span><span class="p">,</span> <span class="nv">$arguments</span><span class="p">);</span>
+</span><span class="line">        <span class="p">}</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>上面的<code>$event</code>其实就是一个事件标识，一般是一个字符串，<code>$listener</code>是一个回调方法。调用<code>on</code>时用数组listeners记录所有回调方法，调用<code>emit</code>时再按次序触发，由此还衍生了<code>once</code>(只触发一次就解除绑定的事件)，<code>removeListener</code>(移除事件)等方法。</p>
 
-<h3>EventLoop</h3>
+<h3 id="eventloop">EventLoop</h3>
 
 <p>更进一步，react事件模型的上一层是一个监听循环，叫做<code>EventLoop</code>，有了这个，就往消息队列或webserver的异步处理模型更近了一步。</p>
 
 <p>下面可以看一下<code>EventLoop</code>的接口文件<code>LoopInterface.php</code>：</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
-</span><span class='line'><span class="k">namespace</span> <span class="nx">React\EventLoop</span><span class="p">;</span>
-</span><span class='line'><span class="k">interface</span> <span class="nx">LoopInterface</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">addReadStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">,</span> <span class="nv">$listener</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">addWriteStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">,</span> <span class="nv">$listener</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">removeReadStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">removeWriteStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">removeStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">addTimer</span><span class="p">(</span><span class="nv">$interval</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">addPeriodicTimer</span><span class="p">(</span><span class="nv">$interval</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">cancelTimer</span><span class="p">(</span><span class="nv">$signature</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">tick</span><span class="p">();</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">run</span><span class="p">();</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">stop</span><span class="p">();</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line"><span class="k">namespace</span> <span class="nx">React\EventLoop</span><span class="p">;</span>
+</span><span class="line"><span class="k">interface</span> <span class="nx">LoopInterface</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">addReadStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">,</span> <span class="nv">$listener</span><span class="p">);</span>
+</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">addWriteStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">,</span> <span class="nv">$listener</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">removeReadStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">removeWriteStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">removeStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">addTimer</span><span class="p">(</span><span class="nv">$interval</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
+</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">addPeriodicTimer</span><span class="p">(</span><span class="nv">$interval</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
+</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">cancelTimer</span><span class="p">(</span><span class="nv">$signature</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">tick</span><span class="p">();</span>
+</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">run</span><span class="p">();</span>
+</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">stop</span><span class="p">();</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p><code>react</code>支持php的社区库<code>libevent</code>提供的事件支持，同时有个<code>LibEventLoop.php</code>用来实现<code>LoopInterface</code>接口，但是<code>react</code>也有自己的实现方案<code>StreamSelectLoop</code>，与<code>LibEventLoop</code>不兼容，这点可以在<code>EventLoop\LibEventLoop\Factory</code>中看到。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
-</span><span class='line'>    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">create</span><span class="p">()</span>
-</span><span class='line'>    <span class="p">{</span>
-</span><span class='line'>        <span class="c1">// @codeCoverageIgnoreStart</span>
-</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nb">function_exists</span><span class="p">(</span><span class="s1">&#39;event_base_new&#39;</span><span class="p">))</span> <span class="p">{</span> <span class="c1">//使用libevent</span>
-</span><span class='line'>            <span class="k">return</span> <span class="k">new</span> <span class="nx">LibEventLoop</span><span class="p">();</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>        <span class="k">return</span> <span class="k">new</span> <span class="nx">StreamSelectLoop</span><span class="p">();</span> <span class="c1">//不使用libevent</span>
-</span><span class='line'>        <span class="c1">// @codeCoverageIgnoreEnd</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line">    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">create</span><span class="p">()</span>
+</span><span class="line">    <span class="p">{</span>
+</span><span class="line">        <span class="c1">// @codeCoverageIgnoreStart</span>
+</span><span class="line">        <span class="k">if</span> <span class="p">(</span><span class="nb">function_exists</span><span class="p">(</span><span class="s1">&#39;event_base_new&#39;</span><span class="p">))</span> <span class="p">{</span> <span class="c1">//使用libevent</span>
+</span><span class="line">            <span class="k">return</span> <span class="k">new</span> <span class="nx">LibEventLoop</span><span class="p">();</span>
+</span><span class="line">        <span class="p">}</span>
+</span><span class="line">        <span class="k">return</span> <span class="k">new</span> <span class="nx">StreamSelectLoop</span><span class="p">();</span> <span class="c1">//不使用libevent</span>
+</span><span class="line">        <span class="c1">// @codeCoverageIgnoreEnd</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>我们主要来看看<code>StreamSelectLoop</code>的实现。<code>LoopInterface</code>中几个重要的方法<code>addReadStream</code>, <code>addWriteStream</code>, <code>addTimer</code>, <code>tick</code>都可以在<code>StreamSelectLoop</code>找到踪影。下面先说一下<code>addReadStream</code>中的两个参数：</p>
 
-<p><em><code>$stream</code>是一个由<code>stream_socket_server</code>方法生成的socket句柄，支持tcp或文件socket等方式。
-</em><code>$listener</code>其实就是一个callback方法，在这个方法中就需要实现具体的应用逻辑了。</p>
+<p>*<code>$stream</code>是一个由<code>stream_socket_server</code>方法生成的socket句柄，支持tcp或文件socket等方式。
+*<code>$listener</code>其实就是一个callback方法，在这个方法中就需要实现具体的应用逻辑了。</p>
 
 <p><code>addWriteStream</code>与<code>addReadStream</code>方法差不多，这两个方法其实啥都没做，只是注册一下两个方法，以供后面调用。真正起作用的方法是<code>tick</code>和<code>runStreamSelect</code>。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
-</span><span class='line'>    <span class="k">protected</span> <span class="k">function</span> <span class="nf">runStreamSelect</span><span class="p">()</span>
-</span><span class='line'>    <span class="p">{</span>
-</span><span class='line'>        <span class="nv">$read</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">readStreams</span> <span class="o">?:</span> <span class="k">null</span><span class="p">;</span>
-</span><span class='line'>        <span class="nv">$write</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">writeStreams</span> <span class="o">?:</span> <span class="k">null</span><span class="p">;</span>
-</span><span class='line'>        <span class="nv">$except</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$read</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nv">$write</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sleepOnPendingTimers</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'>            <span class="k">return</span><span class="p">;</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nb">stream_select</span><span class="p">(</span><span class="nv">$read</span><span class="p">,</span> <span class="nv">$write</span><span class="p">,</span> <span class="nv">$except</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getNextEventTimeInMicroSeconds</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nv">$read</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>                <span class="k">foreach</span> <span class="p">(</span><span class="nv">$read</span> <span class="k">as</span> <span class="nv">$stream</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>                    <span class="nv">$listener</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">readListeners</span><span class="p">[(</span><span class="nx">int</span><span class="p">)</span> <span class="nv">$stream</span><span class="p">];</span>
-</span><span class='line'>                    <span class="k">if</span> <span class="p">(</span><span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$listener</span><span class="p">,</span> <span class="nv">$stream</span><span class="p">,</span> <span class="nv">$this</span><span class="p">)</span> <span class="o">===</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>                        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">removeReadStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
-</span><span class='line'>                    <span class="p">}</span>
-</span><span class='line'>                <span class="p">}</span>
-</span><span class='line'>            <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nv">$write</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>                <span class="k">foreach</span> <span class="p">(</span><span class="nv">$write</span> <span class="k">as</span> <span class="nv">$stream</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">writeListeners</span><span class="p">[(</span><span class="nx">int</span><span class="p">)</span> <span class="nv">$stream</span><span class="p">]))</span> <span class="p">{</span>
-</span><span class='line'>                        <span class="k">continue</span><span class="p">;</span>
-</span><span class='line'>                    <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>                    <span class="nv">$listener</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">writeListeners</span><span class="p">[(</span><span class="nx">int</span><span class="p">)</span> <span class="nv">$stream</span><span class="p">];</span>
-</span><span class='line'>                    <span class="k">if</span> <span class="p">(</span><span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$listener</span><span class="p">,</span> <span class="nv">$stream</span><span class="p">,</span> <span class="nv">$this</span><span class="p">)</span> <span class="o">===</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>                        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">removeWriteStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
-</span><span class='line'>                    <span class="p">}</span>
-</span><span class='line'>                <span class="p">}</span>
-</span><span class='line'>            <span class="p">}</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line">    <span class="k">protected</span> <span class="k">function</span> <span class="nf">runStreamSelect</span><span class="p">()</span>
+</span><span class="line">    <span class="p">{</span>
+</span><span class="line">        <span class="nv">$read</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">readStreams</span> <span class="o">?:</span> <span class="k">null</span><span class="p">;</span>
+</span><span class="line">        <span class="nv">$write</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">writeStreams</span> <span class="o">?:</span> <span class="k">null</span><span class="p">;</span>
+</span><span class="line">        <span class="nv">$except</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$read</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nv">$write</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sleepOnPendingTimers</span><span class="p">();</span>
+</span><span class="line">
+</span><span class="line">            <span class="k">return</span><span class="p">;</span>
+</span><span class="line">        <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">if</span> <span class="p">(</span><span class="nb">stream_select</span><span class="p">(</span><span class="nv">$read</span><span class="p">,</span> <span class="nv">$write</span><span class="p">,</span> <span class="nv">$except</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getNextEventTimeInMicroSeconds</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">            <span class="k">if</span> <span class="p">(</span><span class="nv">$read</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">                <span class="k">foreach</span> <span class="p">(</span><span class="nv">$read</span> <span class="k">as</span> <span class="nv">$stream</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">                    <span class="nv">$listener</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">readListeners</span><span class="p">[(</span><span class="nx">int</span><span class="p">)</span> <span class="nv">$stream</span><span class="p">];</span>
+</span><span class="line">                    <span class="k">if</span> <span class="p">(</span><span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$listener</span><span class="p">,</span> <span class="nv">$stream</span><span class="p">,</span> <span class="nv">$this</span><span class="p">)</span> <span class="o">===</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">                        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">removeReadStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class="line">                    <span class="p">}</span>
+</span><span class="line">                <span class="p">}</span>
+</span><span class="line">            <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">            <span class="k">if</span> <span class="p">(</span><span class="nv">$write</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">                <span class="k">foreach</span> <span class="p">(</span><span class="nv">$write</span> <span class="k">as</span> <span class="nv">$stream</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">writeListeners</span><span class="p">[(</span><span class="nx">int</span><span class="p">)</span> <span class="nv">$stream</span><span class="p">]))</span> <span class="p">{</span>
+</span><span class="line">                        <span class="k">continue</span><span class="p">;</span>
+</span><span class="line">                    <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">                    <span class="nv">$listener</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">writeListeners</span><span class="p">[(</span><span class="nx">int</span><span class="p">)</span> <span class="nv">$stream</span><span class="p">];</span>
+</span><span class="line">                    <span class="k">if</span> <span class="p">(</span><span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$listener</span><span class="p">,</span> <span class="nv">$stream</span><span class="p">,</span> <span class="nv">$this</span><span class="p">)</span> <span class="o">===</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">                        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">removeWriteStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class="line">                    <span class="p">}</span>
+</span><span class="line">                <span class="p">}</span>
+</span><span class="line">            <span class="p">}</span>
+</span><span class="line">        <span class="p">}</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p><code>runStreamSelect</code>方法在<code>tick</code>方法中被调用，目的是在每个间隔中重复调用之前绑定的<code>$listener</code>方法，这个可以理解，因为本来<code>EventLoop</code>的目的就是实现事件的监听，监听的最简单方法就是通过轮询的方式来调用，假如某些方法不希望被重复调用或者希望在某次成功之后就不再调用，那么在定义<code>$listener</code>方法时，将返回值设置成false即可。至于这个间隔，则是通过<code>Timer</code>来实现的。</p>
 
 <p>在<code>runStreamSelect</code>中调用了一个有意思的方法<a href="http://php.net/manual/en/function.stream-select.php"><code>stream_select</code></a>，用timeout取代传统的<code>sleep</code>，并兼具监听socket端口的功能，一旦有新的连接或者改动，<code>stream_select</code>会立刻返回read或write中被修改的socket连接总数。这样，既能合理的释放cpu资源，又能及时对事件发起响应。比起传统的<code>while+sleep</code>，实在是高明很多。</p>
 
-<h3>Timer</h3>
+<h3 id="timer">Timer</h3>
 
 <p>说到<code>tick</code>就不得不提<code>Timer</code>，<code>react</code>中用一个<code>Timer</code>类来模拟步进操作。每隔一定的ticket会唤起一个事件，这样才能保证异步操作能正确的被调用，这个ticket的数量有讲究，设置的太小会让系统耗用大量资源，设置的太大又不能保证异步事件能及时的被调用。下面我们来看看<code>Timer</code>中的tick。</p>
 
@@ -1027,61 +1001,59 @@
 
 <p>总结一下，<code>react</code>的异步事件模型：</p>
 
-<p>核心的on-emit事件模型 &#8211;> EventLoop实现响应socket事件 &#8211;> Timer实现事件优先级排序 &#8211;> while循环来pending服务端的程序。</p>
+<p>核心的on-emit事件模型 –&gt; EventLoop实现响应socket事件 –&gt; Timer实现事件优先级排序 –&gt; while循环来pending服务端的程序。</p>
 
 <p><code>react</code>还提供了很多的示例文件，一个简单的http-server可以实现如下：</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
-</span><span class='line'><span class="k">require</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$app</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$response</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="o">&amp;</span><span class="nv">$i</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nv">$i</span><span class="o">++</span><span class="p">;</span>
-</span><span class='line'>    <span class="nv">$text</span> <span class="o">=</span> <span class="s2">&quot;This is request number </span><span class="si">$i</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class='line'>    <span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">);</span>
-</span><span class='line'>    <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">writeHead</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="nv">$headers</span><span class="p">);</span>
-</span><span class='line'>    <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">end</span><span class="p">(</span><span class="nv">$text</span><span class="p">);</span>
-</span><span class='line'><span class="p">};</span>
-</span><span class='line'><span class="nv">$loop</span> <span class="o">=</span> <span class="nx">React\EventLoop\Factory</span><span class="o">::</span><span class="na">create</span><span class="p">();</span>
-</span><span class='line'><span class="nv">$socket</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">React\Socket\Server</span><span class="p">(</span><span class="nv">$loop</span><span class="p">);</span>
-</span><span class='line'><span class="nv">$http</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">React\Http\Server</span><span class="p">(</span><span class="nv">$socket</span><span class="p">);</span>
-</span><span class='line'><span class="nv">$http</span><span class="o">-&gt;</span><span class="na">on</span><span class="p">(</span><span class="s1">&#39;request&#39;</span><span class="p">,</span> <span class="nv">$app</span><span class="p">);</span>
-</span><span class='line'><span class="nv">$socket</span><span class="o">-&gt;</span><span class="na">listen</span><span class="p">(</span><span class="mi">1337</span><span class="p">);</span>
-</span><span class='line'><span class="nv">$loop</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
-</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line"><span class="k">require</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">;</span>
+</span><span class="line"><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class="line"><span class="nv">$app</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$response</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="o">&amp;</span><span class="nv">$i</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="nv">$i</span><span class="o">++</span><span class="p">;</span>
+</span><span class="line">    <span class="nv">$text</span> <span class="o">=</span> <span class="s2">&quot;This is request number </span><span class="si">$i</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class="line">    <span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">);</span>
+</span><span class="line">    <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">writeHead</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="nv">$headers</span><span class="p">);</span>
+</span><span class="line">    <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">end</span><span class="p">(</span><span class="nv">$text</span><span class="p">);</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="nv">$loop</span> <span class="o">=</span> <span class="nx">React\EventLoop\Factory</span><span class="o">::</span><span class="na">create</span><span class="p">();</span>
+</span><span class="line"><span class="nv">$socket</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">React\Socket\Server</span><span class="p">(</span><span class="nv">$loop</span><span class="p">);</span>
+</span><span class="line"><span class="nv">$http</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">React\Http\Server</span><span class="p">(</span><span class="nv">$socket</span><span class="p">);</span>
+</span><span class="line"><span class="nv">$http</span><span class="o">-&gt;</span><span class="na">on</span><span class="p">(</span><span class="s1">&#39;request&#39;</span><span class="p">,</span> <span class="nv">$app</span><span class="p">);</span>
+</span><span class="line"><span class="nv">$socket</span><span class="o">-&gt;</span><span class="na">listen</span><span class="p">(</span><span class="mi">1337</span><span class="p">);</span>
+</span><span class="line"><span class="nv">$loop</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<h2>后记</h2>
+<h2 id="section">后记</h2>
 
 <p><code>react</code>中用到了很多php5.3之后才出现的新特性(EventEmitter2甚至只支持5.4以上的php版本)，很多方法以前也没有接触过，可以说相比于国内对php的应用，老外对语言的研究更加透彻。想起国内这么普及的php应用，很多人只是略知皮毛，就喜欢大言不惭，甚至能人云亦云的挑出一堆语言的弊端。老外的钻研精神确实值得学习。</p>
 
 <p>记录一下几个可能有用但是不常用的类或方法：</p>
 
 <ul>
-<li><a href="http://php.net/manual/en/function.stream-socket-server.php"><code>stream_socket_server</code></a> 创建一个服务端套接字。</li>
-<li><a href="http://php.net/manual/en/function.stream-select.php"><code>stream_select</code></a> 监听读写socket状态的变化，带timeout时间</li>
-<li><a href="http://www.php.net/manual/en/splpriorityqueue.insert.php"><code>SplPriorityQueue</code></a> 创建一个带优先级的有序队列</li>
+  <li><a href="http://php.net/manual/en/function.stream-socket-server.php"><code>stream_socket_server</code></a> 创建一个服务端套接字。</li>
+  <li><a href="http://php.net/manual/en/function.stream-select.php"><code>stream_select</code></a> 监听读写socket状态的变化，带timeout时间</li>
+  <li><a href="http://www.php.net/manual/en/splpriorityqueue.insert.php"><code>SplPriorityQueue</code></a> 创建一个带优先级的有序队列</li>
 </ul>
 
-
-<h2>参考文档</h2>
+<h2 id="section-1">参考文档</h2>
 
 <p><a href="http://www.mwop.net/blog/253-Taming-SplPriorityQueue.html">Taming SplPriorityQueue</a></p>
 
@@ -1118,79 +1090,74 @@
     <article class="post">
 	<h1 class="title"><a href="/blog/blog/2013/03/04/php-de-namespace/">Php的命名空间</a></h1>
 	<div class="entry-content">
-		<p>php中命名空间的概念出现的比较晚(>=5.3)，这也造成了很多人写php程序的时候忽略了这个问题(包括我:)，不过，最近很多老外的开源项目中渐渐流行起在php中使用命名空间。于是我也跟风一把，看看究竟好在哪儿。</p>
+		<p>php中命名空间的概念出现的比较晚(&gt;=5.3)，这也造成了很多人写php程序的时候忽略了这个问题(包括我:)，不过，最近很多老外的开源项目中渐渐流行起在php中使用命名空间。于是我也跟风一把，看看究竟好在哪儿。</p>
 
 <p>在php namespace语句出现之前，通行的做法是根据文件路径定义类名，某些特殊文件再加上后缀，比如存放controller的文件夹中有两个文件，分别存放在<code>controller/Base.php</code>和<code>controller/login/Base.php</code>，根据命名可以看出这是两个基类文件，文件名是一样的，它们的类名一般会写成<code>BaseController</code>和<code>Login_BaseController</code>(首字母大写也是一种约定)，这样就不存在类名冲突的问题了。这样做的一个缺点是类名会很长，用某些人的说法，就是不够优雅，于是命名空间就应运而生了。</p>
 
 <p>命名空间的使用在别的语言中的使用历史不算短，其中微软系的c#由盛。在php中基本是照搬这种思想，下面先举个简单的栗子：</p>
 
-<figure class='code'><figcaption><span>myname1.php  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
-</span><span class='line'><span class="k">namespace</span> <span class="nx">my\name1</span><span class="p">;</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">MyClass</span> <span class="p">{}</span> <span class="c1">//定义类</span>
-</span><span class='line'><span class="k">function</span> <span class="nf">myfunction</span><span class="p">()</span> <span class="p">{</span><span class="k">echo</span> <span class="s2">&quot;helloworld&quot;</span><span class="p">;}</span> <span class="c1">//定义方法</span>
-</span><span class='line'><span class="k">const</span> <span class="no">MYCONST</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">//定义常量</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myname1.php  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line"><span class="k">namespace</span> <span class="nx">my\name1</span><span class="p">;</span>
+</span><span class="line"><span class="k">class</span> <span class="nc">MyClass</span> <span class="p">{}</span> <span class="c1">//定义类</span>
+</span><span class="line"><span class="k">function</span> <span class="nf">myfunction</span><span class="p">()</span> <span class="p">{</span><span class="k">echo</span> <span class="s2">&quot;helloworld&quot;</span><span class="p">;}</span> <span class="c1">//定义方法</span>
+</span><span class="line"><span class="k">const</span> <span class="no">MYCONST</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">//定义常量</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>假如我们有另一个php文件myname2.php，需要include myname1.php。用下面几种方式是可以的。</p>
 
 <p>一. 在同一namespace下</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
-</span><span class='line'><span class="k">namespace</span> <span class="nx">my\name1</span><span class="p">;</span>
-</span><span class='line'><span class="k">include</span> <span class="s1">&#39;myname1.php&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="nb">print_r</span><span class="p">(</span><span class="k">new</span> <span class="nx">MyClass</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line"><span class="k">namespace</span> <span class="nx">my\name1</span><span class="p">;</span>
+</span><span class="line"><span class="k">include</span> <span class="s1">&#39;myname1.php&#39;</span><span class="p">;</span>
+</span><span class="line"><span class="nb">print_r</span><span class="p">(</span><span class="k">new</span> <span class="nx">MyClass</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>从输出结果可以看出实例名已经变成了<code>my\name1\MyClass Object</code>，命名空间会自动的加到类名前面。</p>
 
 <p>二. 在不同namespace下用<code>use</code></p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">namespace my\name2; //不同的命名空间</span>
-</span><span class='line'><span class="x">include &#39;myname1.php&#39;;</span>
-</span><span class='line'><span class="x">use my\name1; //使用命名空间</span>
-</span><span class='line'><span class="x">print_r(\my\name1\MYCONST); //这里用调用常量举例</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="x">namespace my\name2; //不同的命名空间</span>
+</span><span class="line"><span class="x">include &#39;myname1.php&#39;;</span>
+</span><span class="line"><span class="x">use my\name1; //使用命名空间</span>
+</span><span class="line"><span class="x">print_r(\my\name1\MYCONST); //这里用调用常量举例</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>需要注意的是，在使用namespace前需要以<code>\</code>开头，否则会自动加到当前的namespace后面，变成<code>my\name2\my\name1\MYCONST</code>，也就得不到正确的结果了。这个有点类似url或*nux系统中用<code>/</code>来表示PATH的根目录。</p>
 
 <p>三. 在不同namespace下用<code>use .. as ..</code></p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">namespace my\name2;</span>
-</span><span class='line'><span class="x">include &#39;myname1.php&#39;;</span>
-</span><span class='line'><span class="x">use my\name1 as m1; //使用命名空间别名</span>
-</span><span class='line'><span class="x">m1\myfunction(); //调用方法举例</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="x">namespace my\name2;</span>
+</span><span class="line"><span class="x">include &#39;myname1.php&#39;;</span>
+</span><span class="line"><span class="x">use my\name1 as m1; //使用命名空间别名</span>
+</span><span class="line"><span class="x">m1\myfunction(); //调用方法举例</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>这就是命名空间的真正益处了，短啊~不过别名前就不能用<code>\</code>符号了，否则会把<code>m1</code>当做已存在的命名空间来处理。</p>
 
-<h3>P.S.</h3>
-
+<h3 id="ps">P.S.</h3>
 <ul>
-<li>php5.3之后还有一个全局常量<code>__NAMESPACE__</code>来表明当前文件所在的命名空间，至于用处？谁知道呢。</li>
-<li>在同一个文件中是可以使用多个namespace的。</li>
-<li>假如在命名空间中定义了与全局方法同名的方法，可以使用在前面加<code>\</code>符号的方式调用全局方法，例如在<code>fopen</code>中用<code>\fopen()</code>。而不使用命名空间的时候，重复定义是不允许的。遇到重定义常量也是一样。</li>
+  <li>php5.3之后还有一个全局常量<code>__NAMESPACE__</code>来表明当前文件所在的命名空间，至于用处？谁知道呢。</li>
+  <li>在同一个文件中是可以使用多个namespace的。</li>
+  <li>假如在命名空间中定义了与全局方法同名的方法，可以使用在前面加<code>\</code>符号的方式调用全局方法，例如在<code>fopen</code>中用<code>\fopen()</code>。而不使用命名空间的时候，重复定义是不允许的。遇到重定义常量也是一样。</li>
 </ul>
 
 
@@ -1241,22 +1208,19 @@
 
 <p>由于这个问题折腾了我很久，特此记录一下，同时借用某同样遇到此问题的<a href="http://abitwiser.wordpress.com/2011/02/24/virtualbox-hates-sendfile/">blog标题</a>。</p>
 
-<h2>后记</h2>
-
+<h2 id="section">后记</h2>
 <p>1.<a href="https://forums.virtualbox.org/viewtopic.php?f=1&amp;t=24905">virtualbox论坛</a>2009年的时候就有人讨论过这个问题，那时候的版本还是3.0，现在都4.2了，问题仍然没有得到解决，唉~被oracle X过的软件果然不行啊~。</p>
 
 <p>2.在主机中修改文件，虚拟机中的inode不会变化，反过来也一样，不知道是不是因为vboxsf的问题，然而使用samba共享的文件系统中两边的inode是同时变化的。</p>
 
-<h2>参考资料</h2>
-
+<h2 id="section-1">参考资料</h2>
 <ul>
-<li><a href="http://abitwiser.wordpress.com/2011/02/24/virtualbox-hates-sendfile/">VirtualBox Hates Sendfile</a></li>
-<li><a href="http://serverfault.com/questions/269420/disable-caching-when-serving-static-files-with-nginx-for-development">serverfault</a></li>
-<li><a href="https://forums.virtualbox.org/viewtopic.php?f=1&amp;t=24905">virtualbox forum</a></li>
-<li><a href="http://wiki.nginx.org/HttpCoreModule#sendfile">nginx wiki</a></li>
-<li><a href="http://comments.gmane.org/gmane.linux.kernel.cifs/3517">mac中samba共享的问题</a></li>
+  <li><a href="http://abitwiser.wordpress.com/2011/02/24/virtualbox-hates-sendfile/">VirtualBox Hates Sendfile</a></li>
+  <li><a href="http://serverfault.com/questions/269420/disable-caching-when-serving-static-files-with-nginx-for-development">serverfault</a></li>
+  <li><a href="https://forums.virtualbox.org/viewtopic.php?f=1&amp;t=24905">virtualbox forum</a></li>
+  <li><a href="http://wiki.nginx.org/HttpCoreModule#sendfile">nginx wiki</a></li>
+  <li><a href="http://comments.gmane.org/gmane.linux.kernel.cifs/3517">mac中samba共享的问题</a></li>
 </ul>
-
 
 		
 		
@@ -1291,90 +1255,83 @@
     <article class="post">
 	<h1 class="title"><a href="/blog/blog/2013/02/06/cypher-query-language-xue-xi-bi-ji-2/">Cypher Query Language 学习笔记(2)</a></h1>
 	<div class="entry-content">
-		<h3>create unique</h3>
-
+		<h3 id="create-unique">create unique</h3>
 <p>顾名思义，<code>create unique</code>与<code>create</code>在功能上是类似的，不过当新建的node或relationship已经存在时，<code>create unique</code>不会再生成一个新的node或relationship。</p>
 
 <p>另一个区别是<code>create unique</code>只能在一个<code>path</code>表达式中使用，例如下面的代码：</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> create unique bran-<span class="o">[</span>r:littlebrotherof<span class="o">]</span>-&gt;<span class="o">(</span>n<span class="o">{</span>name:<span class="s2">&quot;jon&quot;</span><span class="o">})</span> <span class="k">return </span>n;
-</span><span class='line'>+----------------------------+
-</span><span class='line'>| n                          |
-</span><span class='line'>+----------------------------+
-</span><span class='line'>| Node<span class="o">[</span>7<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}</span> |
-</span><span class='line'>+----------------------------+
-</span><span class='line'>1 row
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> create unique bran-<span class="o">[</span>r:littlebrotherof<span class="o">]</span>-&gt;<span class="o">(</span>n<span class="o">{</span>name:<span class="s2">&quot;jon&quot;</span><span class="o">})</span> <span class="k">return </span>n;
+</span><span class="line">+----------------------------+
+</span><span class="line">| n                          |
+</span><span class="line">+----------------------------+
+</span><span class="line">| Node<span class="o">[</span>7<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}</span> |
+</span><span class="line">+----------------------------+
+</span><span class="line">1 row
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
+<p>上面的代码中，path中name=”jon”的node已经存在，neo4j认为这是一个<code>unique node</code>，所以不会再新建一个node，稍加修改，将age属性调整一下，就可以新建一个不同的node。</p>
 
-<p>上面的代码中，path中name=&#8221;jon&#8221;的node已经存在，neo4j认为这是一个<code>unique node</code>，所以不会再新建一个node，稍加修改，将age属性调整一下，就可以新建一个不同的node。</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> create unique bran-<span class="o">[</span>r:littlebrotherof<span class="o">]</span>-&gt;<span class="o">(</span>n<span class="o">{</span>name:<span class="s2">&quot;jon&quot;</span>,age:18<span class="o">})</span> <span class="k">return </span>n;
-</span><span class='line'>+----------------------------+
-</span><span class='line'>| n                          |
-</span><span class='line'>+----------------------------+
-</span><span class='line'>| Node<span class="o">[</span>8<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:18<span class="o">}</span> |
-</span><span class='line'>+----------------------------+
-</span><span class='line'>1 row
-</span><span class='line'>Nodes created: 1
-</span><span class='line'>Relationships created: 1
-</span><span class='line'>Properties <span class="nb">set</span>: 2
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> create unique bran-<span class="o">[</span>r:littlebrotherof<span class="o">]</span>-&gt;<span class="o">(</span>n<span class="o">{</span>name:<span class="s2">&quot;jon&quot;</span>,age:18<span class="o">})</span> <span class="k">return </span>n;
+</span><span class="line">+----------------------------+
+</span><span class="line">| n                          |
+</span><span class="line">+----------------------------+
+</span><span class="line">| Node<span class="o">[</span>8<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:18<span class="o">}</span> |
+</span><span class="line">+----------------------------+
+</span><span class="line">1 row
+</span><span class="line">Nodes created: 1
+</span><span class="line">Relationships created: 1
+</span><span class="line">Properties <span class="nb">set</span>: 2
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>新建relationship的方式和上面差不多，举一反三即可。</p>
 
-<h3>foreach</h3>
-
+<h3 id="foreach">foreach</h3>
 <p>foreach针对的neo4j中的集合做遍历，可以做一些批量的修改操作。其语法块需要用括号围起来，像下面的代码，更新path p关联的所有node的uptime属性为100。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> bran-<span class="o">[]</span>-&gt;<span class="o">()</span> foreach <span class="o">(</span>n in nodes<span class="o">(</span>p<span class="o">)</span>: <span class="nb">set </span>n.uptime <span class="o">=</span> 100<span class="o">)</span>;
-</span><span class='line'>+-------------------+
-</span><span class='line'>| No data returned. |
-</span><span class='line'>+-------------------+
-</span><span class='line'>Properties <span class="nb">set</span>: 4
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> bran-<span class="o">[]</span>-&gt;<span class="o">()</span> foreach <span class="o">(</span>n in nodes<span class="o">(</span>p<span class="o">)</span>: <span class="nb">set </span>n.uptime <span class="o">=</span> 100<span class="o">)</span>;
+</span><span class="line">+-------------------+
+</span><span class="line">| No data returned. |
+</span><span class="line">+-------------------+
+</span><span class="line">Properties <span class="nb">set</span>: 4
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>至于什么是neo4j中的集合，比如<code>nodes()</code>方法得到的结果就是一个集合，用集合表达式表示的也是一个集合，但是<code>n = node(*)</code>中匹配出来的n并不是一个集合。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span>, <span class="nv">jon</span> <span class="o">=</span> node<span class="o">(</span>7<span class="o">)</span> foreach <span class="o">(</span>n in <span class="o">[</span>bran, jon<span class="o">]</span>: <span class="nb">set </span>n.uptime <span class="o">=</span> 101<span class="o">)</span>;
-</span><span class='line'>+-------------------+
-</span><span class='line'>| No data returned. |
-</span><span class='line'>+-------------------+
-</span><span class='line'>Properties <span class="nb">set</span>: 2
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span>, <span class="nv">jon</span> <span class="o">=</span> node<span class="o">(</span>7<span class="o">)</span> foreach <span class="o">(</span>n in <span class="o">[</span>bran, jon<span class="o">]</span>: <span class="nb">set </span>n.uptime <span class="o">=</span> 101<span class="o">)</span>;
+</span><span class="line">+-------------------+
+</span><span class="line">| No data returned. |
+</span><span class="line">+-------------------+
+</span><span class="line">Properties <span class="nb">set</span>: 2
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<h3>functions</h3>
-
+<h3 id="functions">functions</h3>
 <p><a href="http://docs.neo4j.org/chunked/milestone/query-function.html">官方手册</a>中罗列了所有的可用方法，非常详尽，需要慢慢研究了。</p>
 
 		

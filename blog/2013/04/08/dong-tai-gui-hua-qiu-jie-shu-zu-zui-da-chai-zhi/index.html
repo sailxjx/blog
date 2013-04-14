@@ -83,146 +83,139 @@
 <p>一个测试用例是下面这样：</p>
 
 <ul>
-<li>输入：[3,10,11,9,1,2,-1,10,7]</li>
-<li>输出：[-1, 10]</li>
+  <li>输入：[3,10,11,9,1,2,-1,10,7]</li>
+  <li>输出：[-1, 10]</li>
 </ul>
-
 
 <p>这个题目乍看上去相当的简单，我第一个想到的就是，既然要求最大差值，那可以先将每个值与的数之间的差值求出来，然后再进行一次排序，结果不就出来了嘛。这样需要用到两次循环，代码可以参考下面。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">stepIn</span><span class="p">(</span><span class="n">dataInput</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">dataLen</span> <span class="o">=</span> <span class="n">dataInput</span><span class="o">.</span><span class="n">length</span>
-</span><span class='line'>  <span class="n">diff</span> <span class="o">=</span> <span class="kp">nil</span>
-</span><span class='line'>  <span class="n">dataResule</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span class='line'>  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">dataLen</span><span class="o">-</span><span class="mi">1</span>
-</span><span class='line'>    <span class="k">for</span> <span class="n">n</span> <span class="k">in</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">dataLen</span>
-</span><span class='line'>      <span class="n">diff2</span> <span class="o">=</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">n</span><span class="o">]</span> <span class="o">-</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">i</span><span class="o">]</span>
-</span><span class='line'>      <span class="k">if</span> <span class="n">diff</span> <span class="o">==</span> <span class="kp">nil</span> <span class="ow">or</span> <span class="n">diff</span> <span class="o">&lt;</span> <span class="n">diff2</span>
-</span><span class='line'>        <span class="n">diff</span> <span class="o">=</span> <span class="n">diff2</span>
-</span><span class='line'>        <span class="n">dataResule</span><span class="o">[</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">i</span><span class="si">}</span><span class="s2">,</span><span class="si">#{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="n">diff</span>
-</span><span class='line'>      <span class="k">end</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>  <span class="n">rIdxs</span> <span class="o">=</span> <span class="n">dataResule</span><span class="o">.</span><span class="n">sort_by</span> <span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="o">-</span><span class="n">v</span><span class="p">}</span> <span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">].</span><span class="n">split</span> <span class="s1">&#39;,&#39;</span>
-</span><span class='line'>  <span class="k">return</span> <span class="o">[</span><span class="n">dataInput</span><span class="o">[</span><span class="n">rIdxs</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">to_i</span><span class="o">]</span><span class="p">,</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">rIdxs</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_i</span><span class="o">]]</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">stepIn</span><span class="p">(</span><span class="n">dataInput</span><span class="p">)</span>
+</span><span class="line">  <span class="n">dataLen</span> <span class="o">=</span> <span class="n">dataInput</span><span class="o">.</span><span class="n">length</span>
+</span><span class="line">  <span class="n">diff</span> <span class="o">=</span> <span class="kp">nil</span>
+</span><span class="line">  <span class="n">dataResule</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class="line">  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">dataLen</span><span class="o">-</span><span class="mi">1</span>
+</span><span class="line">    <span class="k">for</span> <span class="n">n</span> <span class="k">in</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">dataLen</span>
+</span><span class="line">      <span class="n">diff2</span> <span class="o">=</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">n</span><span class="o">]</span> <span class="o">-</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">i</span><span class="o">]</span>
+</span><span class="line">      <span class="k">if</span> <span class="n">diff</span> <span class="o">==</span> <span class="kp">nil</span> <span class="ow">or</span> <span class="n">diff</span> <span class="o">&lt;</span> <span class="n">diff2</span>
+</span><span class="line">        <span class="n">diff</span> <span class="o">=</span> <span class="n">diff2</span>
+</span><span class="line">        <span class="n">dataResule</span><span class="o">[</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">i</span><span class="si">}</span><span class="s2">,</span><span class="si">#{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="n">diff</span>
+</span><span class="line">      <span class="k">end</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">  <span class="n">rIdxs</span> <span class="o">=</span> <span class="n">dataResule</span><span class="o">.</span><span class="n">sort_by</span> <span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="o">-</span><span class="n">v</span><span class="p">}</span> <span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">].</span><span class="n">split</span> <span class="s1">&#39;,&#39;</span>
+</span><span class="line">  <span class="k">return</span> <span class="o">[</span><span class="n">dataInput</span><span class="o">[</span><span class="n">rIdxs</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">to_i</span><span class="o">]</span><span class="p">,</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">rIdxs</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_i</span><span class="o">]]</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>上面的代码已经经过了优化，在每次循环后，保留了之前计算的差值的结果，下面的循环中小于这个差值的索引值就被抛弃了，这样的一个好处是可以减少最后sort时花费的时间。假如保留所有两数之间的差值，假设使用冒泡排序，输入数组长度是m，排序算法复杂度是O(n<sup>2</sup>)，而这个n会达到(m+1)*m/2，所以总的算法复杂度就成了O(n<sup>4</sup>)。而在循环中预处理之后，最后参与排序的元素个数最大不会超过m，总的时间复杂度还是O(n<sup>2</sup>)。其实这只是针对最后的sort而言，而这个程序真正的耗时在上面的嵌套循环，这里的复杂度不管有没有优化，其实都是一样的O(n<sup>2</sup>)，下面sort的消费可以忽略不计。</p>
 
-<p>这是一种比较直观的解法了，事实证明，没有经过斟酌的想法都是不完善的（事实也证明，很多灵光一闪的想法都很很靠谱滴，不过在这里不适用<code>^_^</code>。经人启发，才知道有一种解法，只需要一次循环，时间复杂度是O(n)。</p>
+<p>这是一种比较直观的解法了，事实证明，没有经过斟酌的想法都是不完善的（事实也证明，很多灵光一闪的想法都很很靠谱滴，不过在这里不适用(^_^)。经人启发，才知道有一种解法，只需要一次循环，时间复杂度是O(n)。</p>
 
 <p>这个叫做动态规划的算法说的太笼统，网上的解释也实在是太理论，我们联系实际，就以上面的题目为例。</p>
 
 <p>动态规划的思想通常可以分成下面几部：</p>
 
 <ol>
-<li>给问题分阶段</li>
-<li>确定每个阶段的状态</li>
-<li>确定相邻阶段的之间的递推关系（也就是找出从前一个阶段转化到后一个阶段的条件）</li>
+  <li>给问题分阶段</li>
+  <li>确定每个阶段的状态</li>
+  <li>确定相邻阶段的之间的递推关系（也就是找出从前一个阶段转化到后一个阶段的条件）</li>
 </ol>
-
 
 <p>上面的例子很容易可以分出三个阶段</p>
 
 <ol>
-<li>开始阶段，将数组中开头的两个元素作为最大，最小值记录在结果数组中，[3,10]</li>
-<li>过程阶段，将后面的数与前面的数比较，比如将11与10比较，并将符合条件的值替换结果数组</li>
-<li>结束阶段，当游标抵达数组最后一个元素时，跳出循环。</li>
+  <li>开始阶段，将数组中开头的两个元素作为最大，最小值记录在结果数组中，[3,10]</li>
+  <li>过程阶段，将后面的数与前面的数比较，比如将11与10比较，并将符合条件的值替换结果数组</li>
+  <li>结束阶段，当游标抵达数组最后一个元素时，跳出循环。</li>
 </ol>
-
 
 <p>而这几个状态之间的转移条件在上面已有了说明，主要在第二个阶段，哪些条件能决定替换结果数组，这些条件称为决策</p>
 
 <ol>
-<li>游标所指的数大于结果数组中的最大值，比如后面有11，那么结果数组就变成[3,11]</li>
-<li>游标所指的数小于结果数组中的最小值，那么它就有可能在后面替换结果数组中的最小值，例如后面出现了1，这个时候不能立刻替换掉3，需要找个临时变量将1保存下来。</li>
-<li>游标所指的数与临时最小值之差大于结果数组中两数字之差。这个条件应该优先于决策2和决策1，一旦这个决策生效，将同时替换结果数组中的最大最小值，决策1和决策2在这个时候应该不生效。例如后面出现了12，那么结果数组就应该变成[1,12]。假如这个时候决策1优先生效，那么结果数组会变成[3,12]，而临时变量1将永远没有上位之日了。</li>
+  <li>游标所指的数大于结果数组中的最大值，比如后面有11，那么结果数组就变成[3,11]</li>
+  <li>游标所指的数小于结果数组中的最小值，那么它就有可能在后面替换结果数组中的最小值，例如后面出现了1，这个时候不能立刻替换掉3，需要找个临时变量将1保存下来。</li>
+  <li>游标所指的数与临时最小值之差大于结果数组中两数字之差。这个条件应该优先于决策2和决策1，一旦这个决策生效，将同时替换结果数组中的最大最小值，决策1和决策2在这个时候应该不生效。例如后面出现了12，那么结果数组就应该变成[1,12]。假如这个时候决策1优先生效，那么结果数组会变成[3,12]，而临时变量1将永远没有上位之日了。</li>
 </ol>
-
 
 <p>有了上面的阶段和决策之后，代码就很容易实现了</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">stepIn</span><span class="p">(</span><span class="n">list</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">min</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># minimal index</span>
-</span><span class='line'>  <span class="n">max</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># maximal index</span>
-</span><span class='line'>  <span class="n">differ</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># max differ</span>
-</span><span class='line'>  <span class="n">minTmp</span> <span class="o">=</span> <span class="kp">nil</span>  <span class="c1"># temp minimal index</span>
-</span><span class='line'>  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">length</span>
-</span><span class='line'>    <span class="k">if</span> <span class="n">minTmp</span> <span class="o">!=</span> <span class="kp">nil</span> <span class="ow">and</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">differ</span>  <span class="c1"># if current index minus temp minimal index is bigger than differ, replace it</span>
-</span><span class='line'>      <span class="n">differ</span> <span class="o">=</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span>  <span class="c1"># new differ</span>
-</span><span class='line'>      <span class="n">min</span> <span class="o">=</span> <span class="n">minTmp</span>  <span class="c1"># new minimal index</span>
-</span><span class='line'>      <span class="n">max</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># new maximal index</span>
-</span><span class='line'>    <span class="k">elsif</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">list</span><span class="o">[</span><span class="n">max</span><span class="o">]</span>  <span class="c1"># replace the maximal index</span>
-</span><span class='line'>      <span class="n">max</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># new maximal index</span>
-</span><span class='line'>      <span class="n">differ</span> <span class="o">=</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span>  <span class="c1"># new differ</span>
-</span><span class='line'>    <span class="k">elsif</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span> <span class="ow">and</span> <span class="p">(</span> <span class="n">minTmp</span> <span class="o">==</span> <span class="kp">nil</span> <span class="ow">or</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span> <span class="p">)</span>  <span class="c1"># replace the temp minimal index</span>
-</span><span class='line'>      <span class="n">minTmp</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># change temp minimal index</span>
-</span><span class='line'>    <span class="k">else</span>
-</span><span class='line'>      <span class="k">next</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>  <span class="k">return</span> <span class="o">[</span><span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span><span class="p">,</span> <span class="n">list</span><span class="o">[</span><span class="n">max</span><span class="o">]]</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">stepIn</span><span class="p">(</span><span class="n">list</span><span class="p">)</span>
+</span><span class="line">  <span class="n">min</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># minimal index</span>
+</span><span class="line">  <span class="n">max</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># maximal index</span>
+</span><span class="line">  <span class="n">differ</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># max differ</span>
+</span><span class="line">  <span class="n">minTmp</span> <span class="o">=</span> <span class="kp">nil</span>  <span class="c1"># temp minimal index</span>
+</span><span class="line">  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">length</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">minTmp</span> <span class="o">!=</span> <span class="kp">nil</span> <span class="ow">and</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">differ</span>  <span class="c1"># if current index minus temp minimal index is bigger than differ, replace it</span>
+</span><span class="line">      <span class="n">differ</span> <span class="o">=</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span>  <span class="c1"># new differ</span>
+</span><span class="line">      <span class="n">min</span> <span class="o">=</span> <span class="n">minTmp</span>  <span class="c1"># new minimal index</span>
+</span><span class="line">      <span class="n">max</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># new maximal index</span>
+</span><span class="line">    <span class="k">elsif</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">list</span><span class="o">[</span><span class="n">max</span><span class="o">]</span>  <span class="c1"># replace the maximal index</span>
+</span><span class="line">      <span class="n">max</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># new maximal index</span>
+</span><span class="line">      <span class="n">differ</span> <span class="o">=</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span>  <span class="c1"># new differ</span>
+</span><span class="line">    <span class="k">elsif</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span> <span class="ow">and</span> <span class="p">(</span> <span class="n">minTmp</span> <span class="o">==</span> <span class="kp">nil</span> <span class="ow">or</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span> <span class="p">)</span>  <span class="c1"># replace the temp minimal index</span>
+</span><span class="line">      <span class="n">minTmp</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># change temp minimal index</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="k">next</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">  <span class="k">return</span> <span class="o">[</span><span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span><span class="p">,</span> <span class="n">list</span><span class="o">[</span><span class="n">max</span><span class="o">]]</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>这种解法可能读起来需要稍微绕点弯，而且隐含问题，我在第一次写这段代码的时候就将决策3和决策1的顺序搞反了，但是几个测试脚本都顺利通过了，这就是一个“不明显的bug”，往往比“明显的bug”还要致命，因为根本无迹可查。</p>
 
 <p>不过，相对于性能的提高，牺牲一点可读性还是值得的。在上面的例子中不太明显，但是当我将输入数组的长度变成1000甚至5000时，两种算法的反差是相当惊人的。</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>bash<span class="nv">$ </span>ruby benchmark.rb 1000
-</span><span class='line'>dysort: 0.000435
-</span><span class='line'>trsort: 0.13827
-</span><span class='line'>bash<span class="nv">$ </span>ruby benchmark.rb 5000
-</span><span class='line'>dysort: 0.002027
-</span><span class='line'>trsort: 3.28997
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">bash<span class="nv">$ </span>ruby benchmark.rb 1000
+</span><span class="line">dysort: 0.000435
+</span><span class="line">trsort: 0.13827
+</span><span class="line">bash<span class="nv">$ </span>ruby benchmark.rb 5000
+</span><span class="line">dysort: 0.002027
+</span><span class="line">trsort: 3.28997
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>上面是分别在1000和5000的数组长度下运行的结果，可以看出使用第二种算法的时间增长基本是线性的，而使用第一种算法的耗时则会指数级的增长。两种算法横向比较更是高下立分，本来想画图来表示，结果发现差距太大，使用第二种算法的时间柱在图上基本看不到了，于是作罢。</p>
 </div>

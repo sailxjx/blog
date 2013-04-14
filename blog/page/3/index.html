@@ -7,7 +7,7 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content=" 从virtualbox开始 2012.12.11 ">
+	<meta name="description" content=" ~~从virtualbox开始~~ 2012.12.11 ">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -80,7 +80,7 @@
     <article class="post">
 	<h1 class="title"><a href="/blog/blog/2012/12/11/vagrant-bi-ji/">Vagrant 笔记</a></h1>
 	<div class="entry-content">
-		<h2><del>从virtualbox开始</del></h2>
+		<h2 id="virtualbox">~~从virtualbox开始~~</h2>
 
 		
 		
@@ -119,215 +119,209 @@
 
 <p>自动部署脚本如下，基本由文档转成，可以省掉很多事情(但是遇到问题要学会google哦)，假如使用的是ubuntu，官方以前也提供了一个一键安装脚本，后来不知怎么又去掉了，估计是计划赶不上变化吧</p>
 
-<figure class='code'><figcaption><span>gitlabhq自动化部署脚本  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/bash</span>
-</span><span class='line'><span class="c"># add user git</span>
-</span><span class='line'>sudo adduser --system --shell /bin/bash --gecos <span class="s1">&#39;git version control&#39;</span> --group --disabled-password --home /home/git git
-</span><span class='line'><span class="c"># add user gitlab</span>
-</span><span class='line'>sudo adduser --disabled-login --gecos <span class="s1">&#39;gitlab system&#39;</span> gitlab
-</span><span class='line'><span class="c"># move user gitlab to group git</span>
-</span><span class='line'>sudo usermod -a -G git gitlab
-</span><span class='line'>sudo usermod -a -G gitlab git
-</span><span class='line'><span class="c"># generate key</span>
-</span><span class='line'>sudo -H -u gitlab ssh-keygen -q -N <span class="s1">&#39;&#39;</span> -t rsa -f /home/gitlab/.ssh/id_rsa
-</span><span class='line'><span class="c"># clone gitlab&#39;s fork to the gitolite source code</span>
-</span><span class='line'><span class="nb">cd</span> /home/git
-</span><span class='line'>sudo -H -u git git clone -b gl-v304 https://github.com/gitlabhq/gitolite.git /home/git/gitolite
-</span><span class='line'><span class="c"># setup</span>
-</span><span class='line'><span class="nb">cd</span> /home/git
-</span><span class='line'>sudo -u git -H mkdir bin
-</span><span class='line'>sudo -u git sh -c <span class="s1">&#39;echo -e &quot;PATH=\$PATH:/home/git/bin\nexport PATH&quot; &gt;&gt; /home/git/.profile&#39;</span>
-</span><span class='line'>sudo -u git sh -c <span class="s1">&#39;gitolite/install -ln /home/git/bin&#39;</span>
-</span><span class='line'>sudo cp /home/gitlab/.ssh/id_rsa.pub /home/git/gitlab.pub
-</span><span class='line'>sudo chmod 0444 /home/git/gitlab.pub
-</span><span class='line'>sudo -u git -H sh -c <span class="s2">&quot;PATH=/home/git/bin:$PATH; gitolite setup -pk /home/git/gitlab.pub&quot;</span>
-</span><span class='line'><span class="c"># permissions</span>
-</span><span class='line'>sudo chmod -R g+rwX /home/git/repositories/
-</span><span class='line'>sudo chown -R git:git /home/git/repositories/
-</span><span class='line'>sudo -u gitlab -H git clone git@localhost:gitolite-admin.git /tmp/gitolite-admin
-</span><span class='line'>
-</span><span class='line'><span class="k">if</span> <span class="o">[[</span> <span class="nv">$?</span> !<span class="o">=</span> 0 <span class="o">]]</span>;<span class="k">then</span>
-</span><span class='line'><span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;error: gitolite is not installed correct, or the ssh key is not right&quot;</span>
-</span><span class='line'>    <span class="nb">exit </span>1
-</span><span class='line'><span class="k">fi</span>
-</span><span class='line'>
-</span><span class='line'>sudo rm -rf /tmp/gitolite-admin
-</span><span class='line'><span class="c"># clone gitlab source and install prerequisites</span>
-</span><span class='line'>sudo gem install charlock_holmes
-</span><span class='line'>sudo pip install pygments
-</span><span class='line'><span class="nb">cd</span> /home/gitlab
-</span><span class='line'>sudo -H -u gitlab git clone git://github.com/51fanli/gitlabhq.git gitlab
-</span><span class='line'><span class="nb">cd </span>gitlab
-</span><span class='line'>sudo -u gitlab cp config/gitlab.yml.example config/gitlab.yml
-</span><span class='line'><span class="c"># mysql databases init</span>
-</span><span class='line'><span class="nb">echo</span> <span class="s2">&quot;connect to mysql&quot;</span>
-</span><span class='line'>mysql -h127.0.0.1 -uroot -p
-</span><span class='line'><span class="c"># CREATE DATABASE IF NOT EXISTS `gitlabhq_production` DEFAULT CHARACTER SET `utf8` COLLATE `utf8_unicode_ci`;</span>
-</span><span class='line'><span class="c"># CREATE USER &#39;gitlab&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;123456&#39;;</span>
-</span><span class='line'><span class="c"># GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON `gitlabhq_production`.* TO &#39;gitlab&#39;@&#39;localhost&#39;;</span>
-</span><span class='line'>sudo -u gitlab cp config/database.yml.example config/database.yml
-</span><span class='line'>sudo -u gitlab -H bundle install --without development <span class="nb">test </span>sqlite postgres --deployment
-</span><span class='line'>sudo -u gitlab -H git config --global user.email <span class="s2">&quot;gitlab@localhost&quot;</span>
-</span><span class='line'>sudo -u gitlab -H git config --global user.name <span class="s2">&quot;Gitlab&quot;</span>
-</span><span class='line'>sudo -u gitlab cp config/resque.yml.example config/resque.yml
-</span><span class='line'>sudo -u gitlab cp config/unicorn.rb.example config/unicorn.rb
-</span><span class='line'><span class="c"># init tables</span>
-</span><span class='line'>sudo -u gitlab bundle <span class="nb">exec </span>rake gitlab:app:setup <span class="nv">RAILS_ENV</span><span class="o">=</span>production
-</span><span class='line'>sudo cp ./lib/hooks/post-receive /home/git/.gitolite/hooks/common/post-receive
-</span><span class='line'>sudo chown git:git /home/git/.gitolite/hooks/common/post-receive
-</span><span class='line'><span class="c"># check status</span>
-</span><span class='line'>sudo -u gitlab bundle <span class="nb">exec </span>rake gitlab:app:status <span class="nv">RAILS_ENV</span><span class="o">=</span>production
-</span><span class='line'>sudo wget https://raw.github.com/gitlabhq/gitlab-recipes/master/init.d/gitlab -P /etc/init.d/
-</span><span class='line'>sudo chmod +x /etc/init.d/gitlab
-</span><span class='line'>sudo update-rc.d gitlab defaults 21
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>gitlabhq自动化部署脚本  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+<span class="line-number">51</span>
+<span class="line-number">52</span>
+<span class="line-number">53</span>
+<span class="line-number">54</span>
+<span class="line-number">55</span>
+<span class="line-number">56</span>
+<span class="line-number">57</span>
+<span class="line-number">58</span>
+<span class="line-number">59</span>
+<span class="line-number">60</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c">#!/bin/bash</span>
+</span><span class="line"><span class="c"># add user git</span>
+</span><span class="line">sudo adduser --system --shell /bin/bash --gecos <span class="s1">&#39;git version control&#39;</span> --group --disabled-password --home /home/git git
+</span><span class="line"><span class="c"># add user gitlab</span>
+</span><span class="line">sudo adduser --disabled-login --gecos <span class="s1">&#39;gitlab system&#39;</span> gitlab
+</span><span class="line"><span class="c"># move user gitlab to group git</span>
+</span><span class="line">sudo usermod -a -G git gitlab
+</span><span class="line">sudo usermod -a -G gitlab git
+</span><span class="line"><span class="c"># generate key</span>
+</span><span class="line">sudo -H -u gitlab ssh-keygen -q -N <span class="s1">&#39;&#39;</span> -t rsa -f /home/gitlab/.ssh/id_rsa
+</span><span class="line"><span class="c"># clone gitlab&#39;s fork to the gitolite source code</span>
+</span><span class="line"><span class="nb">cd</span> /home/git
+</span><span class="line">sudo -H -u git git clone -b gl-v304 https://github.com/gitlabhq/gitolite.git /home/git/gitolite
+</span><span class="line"><span class="c"># setup</span>
+</span><span class="line"><span class="nb">cd</span> /home/git
+</span><span class="line">sudo -u git -H mkdir bin
+</span><span class="line">sudo -u git sh -c <span class="s1">&#39;echo -e &quot;PATH=\$PATH:/home/git/bin\nexport PATH&quot; &gt;&gt; /home/git/.profile&#39;</span>
+</span><span class="line">sudo -u git sh -c <span class="s1">&#39;gitolite/install -ln /home/git/bin&#39;</span>
+</span><span class="line">sudo cp /home/gitlab/.ssh/id_rsa.pub /home/git/gitlab.pub
+</span><span class="line">sudo chmod 0444 /home/git/gitlab.pub
+</span><span class="line">sudo -u git -H sh -c <span class="s2">&quot;PATH=/home/git/bin:$PATH; gitolite setup -pk /home/git/gitlab.pub&quot;</span>
+</span><span class="line"><span class="c"># permissions</span>
+</span><span class="line">sudo chmod -R g+rwX /home/git/repositories/
+</span><span class="line">sudo chown -R git:git /home/git/repositories/
+</span><span class="line">sudo -u gitlab -H git clone git@localhost:gitolite-admin.git /tmp/gitolite-admin
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="o">[[</span> <span class="nv">$?</span> !<span class="o">=</span> 0 <span class="o">]]</span>;<span class="k">then</span>
+</span><span class="line"><span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;error: gitolite is not installed correct, or the ssh key is not right&quot;</span>
+</span><span class="line">    <span class="nb">exit </span>1
+</span><span class="line"><span class="k">fi</span>
+</span><span class="line">
+</span><span class="line">sudo rm -rf /tmp/gitolite-admin
+</span><span class="line"><span class="c"># clone gitlab source and install prerequisites</span>
+</span><span class="line">sudo gem install charlock_holmes
+</span><span class="line">sudo pip install pygments
+</span><span class="line"><span class="nb">cd</span> /home/gitlab
+</span><span class="line">sudo -H -u gitlab git clone git://github.com/51fanli/gitlabhq.git gitlab
+</span><span class="line"><span class="nb">cd </span>gitlab
+</span><span class="line">sudo -u gitlab cp config/gitlab.yml.example config/gitlab.yml
+</span><span class="line"><span class="c"># mysql databases init</span>
+</span><span class="line"><span class="nb">echo</span> <span class="s2">&quot;connect to mysql&quot;</span>
+</span><span class="line">mysql -h127.0.0.1 -uroot -p
+</span><span class="line"><span class="c"># CREATE DATABASE IF NOT EXISTS `gitlabhq_production` DEFAULT CHARACTER SET `utf8` COLLATE `utf8_unicode_ci`;</span>
+</span><span class="line"><span class="c"># CREATE USER &#39;gitlab&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;123456&#39;;</span>
+</span><span class="line"><span class="c"># GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON `gitlabhq_production`.* TO &#39;gitlab&#39;@&#39;localhost&#39;;</span>
+</span><span class="line">sudo -u gitlab cp config/database.yml.example config/database.yml
+</span><span class="line">sudo -u gitlab -H bundle install --without development <span class="nb">test </span>sqlite postgres --deployment
+</span><span class="line">sudo -u gitlab -H git config --global user.email <span class="s2">&quot;gitlab@localhost&quot;</span>
+</span><span class="line">sudo -u gitlab -H git config --global user.name <span class="s2">&quot;Gitlab&quot;</span>
+</span><span class="line">sudo -u gitlab cp config/resque.yml.example config/resque.yml
+</span><span class="line">sudo -u gitlab cp config/unicorn.rb.example config/unicorn.rb
+</span><span class="line"><span class="c"># init tables</span>
+</span><span class="line">sudo -u gitlab bundle <span class="nb">exec </span>rake gitlab:app:setup <span class="nv">RAILS_ENV</span><span class="o">=</span>production
+</span><span class="line">sudo cp ./lib/hooks/post-receive /home/git/.gitolite/hooks/common/post-receive
+</span><span class="line">sudo chown git:git /home/git/.gitolite/hooks/common/post-receive
+</span><span class="line"><span class="c"># check status</span>
+</span><span class="line">sudo -u gitlab bundle <span class="nb">exec </span>rake gitlab:app:status <span class="nv">RAILS_ENV</span><span class="o">=</span>production
+</span><span class="line">sudo wget https://raw.github.com/gitlabhq/gitlab-recipes/master/init.d/gitlab -P /etc/init.d/
+</span><span class="line">sudo chmod +x /etc/init.d/gitlab
+</span><span class="line">sudo update-rc.d gitlab defaults 21
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>gitlabhq3.0后改用unicorn(紧跟github步伐)作为默认的启动server,要将它与nginx或apache一起使用请参考<a href="https://wiki.archlinux.org/index.php/Gitlab#Web_server_configuration">archwiki的gitlab手册</a>,下面是apache中的vhost配置(需要预先编译proxy模块)</p>
 
-<figure class='code'><figcaption><span>apache vhost配置  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;VirtualHost *:80&gt;
-</span><span class='line'>  ServerName gitlab.myserver.com
-</span><span class='line'>  ServerAlias www.gitlab.myserver.com
-</span><span class='line'>  DocumentRoot /home/gitlab/gitlab/public
-</span><span class='line'>  ErrorLog /var/log/httpd/gitlab_error_log
-</span><span class='line'>  CustomLog /var/log/httpd/gitlab_access_log combined
-</span><span class='line'>
-</span><span class='line'>  &lt;Proxy balancer://unicornservers&gt;
-</span><span class='line'>      BalancerMember http://127.0.0.1:8080
-</span><span class='line'>  &lt;/Proxy&gt;
-</span><span class='line'>
-</span><span class='line'>  &lt;Directory /home/gitlab/gitlab/public&gt;
-</span><span class='line'>    AllowOverride All
-</span><span class='line'>    Options -MultiViews
-</span><span class='line'>  &lt;/Directory&gt;
-</span><span class='line'>
-</span><span class='line'>  RewriteEngine on
-</span><span class='line'>  RewriteCond %<span class="o">{</span>DOCUMENT_ROOT<span class="o">}</span>/%<span class="o">{</span>REQUEST_FILENAME<span class="o">}</span> !-f
-</span><span class='line'>  RewriteRule ^/<span class="o">(</span>.*<span class="o">)</span><span class="nv">$ </span>balancer://unicornservers%<span class="o">{</span>REQUEST_URI<span class="o">}</span> <span class="o">[</span>P,QSA,L<span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>  ProxyPass /uploads !
-</span><span class='line'>  ProxyPass / balancer://unicornservers/
-</span><span class='line'>  ProxyPassReverse / balancer://unicornservers/
-</span><span class='line'>  ProxyPreserveHost on
-</span><span class='line'>
-</span><span class='line'>   &lt;Proxy *&gt;
-</span><span class='line'>      Order deny,allow
-</span><span class='line'>      Allow from all
-</span><span class='line'>   &lt;/Proxy&gt;
-</span><span class='line'>&lt;/VirtualHost&gt;
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>apache vhost配置  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">&lt;VirtualHost *:80&gt;
+</span><span class="line">  ServerName gitlab.myserver.com
+</span><span class="line">  ServerAlias www.gitlab.myserver.com
+</span><span class="line">  DocumentRoot /home/gitlab/gitlab/public
+</span><span class="line">  ErrorLog /var/log/httpd/gitlab_error_log
+</span><span class="line">  CustomLog /var/log/httpd/gitlab_access_log combined
+</span><span class="line">
+</span><span class="line">  &lt;Proxy balancer://unicornservers&gt;
+</span><span class="line">      BalancerMember http://127.0.0.1:8080
+</span><span class="line">  &lt;/Proxy&gt;
+</span><span class="line">
+</span><span class="line">  &lt;Directory /home/gitlab/gitlab/public&gt;
+</span><span class="line">    AllowOverride All
+</span><span class="line">    Options -MultiViews
+</span><span class="line">  &lt;/Directory&gt;
+</span><span class="line">
+</span><span class="line">  RewriteEngine on
+</span><span class="line">  RewriteCond %<span class="o">{</span>DOCUMENT_ROOT<span class="o">}</span>/%<span class="o">{</span>REQUEST_FILENAME<span class="o">}</span> !-f
+</span><span class="line">  RewriteRule ^/<span class="o">(</span>.*<span class="o">)</span><span class="nv">$ </span>balancer://unicornservers%<span class="o">{</span>REQUEST_URI<span class="o">}</span> <span class="o">[</span>P,QSA,L<span class="o">]</span>
+</span><span class="line">
+</span><span class="line">  ProxyPass /uploads !
+</span><span class="line">  ProxyPass / balancer://unicornservers/
+</span><span class="line">  ProxyPassReverse / balancer://unicornservers/
+</span><span class="line">  ProxyPreserveHost on
+</span><span class="line">
+</span><span class="line">   &lt;Proxy *&gt;
+</span><span class="line">      Order deny,allow
+</span><span class="line">      Allow from all
+</span><span class="line">   &lt;/Proxy&gt;
+</span><span class="line">&lt;/VirtualHost&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>unicorn的配置文件在config/unicorn.rb，修改其中的 <code>listen="127.0.0.1:8080"</code>，然后重启apache，通过 <code>service gitlab start</code> 重启unicorn，访问一下gitlab.myserver.com吧，看到登录页面就说明大功告成啦。</p>
 
-<h2>Q&amp;A</h2>
-
-<h3>Q: 在装完gitolite后尝试<code>git clone git@localhost:gitolite-admin.git /tmp/gitolite-admin</code>遇到&#8217;remote hang-up unexpected&#8217;(貌似是这么写，意会。。。)</h3>
-
-<p>A: 我在centos6.2上遇到过这个问题，其他发行版上不知道有没有这个问题，修改</p>
+<h2 id="qa">Q&amp;A</h2>
+<p>### Q: 在装完gitolite后尝试<code>git clone git@localhost:gitolite-admin.git /tmp/gitolite-admin</code>遇到’remote hang-up unexpected’(貌似是这么写，意会。。。)
+A: 我在centos6.2上遇到过这个问题，其他发行版上不知道有没有这个问题，修改</p>
 
 <p><code>sudo chmod 400 /home/git/.ssh/authorized_keys</code></p>
 
 <p>可以修复这个问题。貌似是centos的安全策略造成ssh私钥不生效</p>
 
-<h2>参考资料</h2>
-
+<h2 id="section">参考资料</h2>
 <ul>
-<li><a href="https://github.com/gitlabhq/gitlabhq/blob/master/doc/install/installation.md">gitlab安装手册官方版</a></li>
-<li><a href="https://wiki.archlinux.org/index.php/Gitlab">gitlab手册archwiki版</a></li>
+  <li><a href="https://github.com/gitlabhq/gitlabhq/blob/master/doc/install/installation.md">gitlab安装手册官方版</a></li>
+  <li><a href="https://wiki.archlinux.org/index.php/Gitlab">gitlab手册archwiki版</a></li>
 </ul>
-
 
 		
 		
@@ -401,189 +395,180 @@
 
 <p>还是从安装mysql开始，下载tarball安装，</p>
 
-<figure class='code'><figcaption><span>安装mysql  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>groupadd mysql
-</span><span class='line'>useradd -g mysql mysql
-</span><span class='line'>cmake . -DCMAKE_INSTALL_PREFIX<span class="o">=</span>/usr/local/mysql5.5.27/  -DMYSQL_DATADIR<span class="o">=</span>/data/mysql  -DWITH_INNOBASE_STORAGE_ENGINE<span class="o">=</span>1  -DMYSQL_TCP_PORT<span class="o">=</span>3306  -DMYSQL_UNIX_ADDR<span class="o">=</span>/var/run/mysql/mysql.sock -DWITH_DEBUG<span class="o">=</span>0
-</span><span class='line'>make <span class="o">&amp;&amp;</span> make install
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>安装mysql  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">groupadd mysql
+</span><span class="line">useradd -g mysql mysql
+</span><span class="line">cmake . -DCMAKE_INSTALL_PREFIX<span class="o">=</span>/usr/local/mysql5.5.27/  -DMYSQL_DATADIR<span class="o">=</span>/data/mysql  -DWITH_INNOBASE_STORAGE_ENGINE<span class="o">=</span>1  -DMYSQL_TCP_PORT<span class="o">=</span>3306  -DMYSQL_UNIX_ADDR<span class="o">=</span>/var/run/mysql/mysql.sock -DWITH_DEBUG<span class="o">=</span>0
+</span><span class="line">make <span class="o">&amp;&amp;</span> make install
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>然后配置my.cnf，从support-files里面拷贝一个my-medium.cnf到/etc/my.cnf，里面mysqld配置段的内容基本是这个样子</p>
 
-<figure class='code'><figcaption><span>my&#46;cnf配置 </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>[mysqld]
-</span><span class='line'>port            = 3306
-</span><span class='line'>socket          = /var/run/mysql/mysql.sock
-</span><span class='line'>skip-external-locking
-</span><span class='line'>key_buffer_size = 16M 
-</span><span class='line'>max_allowed_packet = 1M
-</span><span class='line'>table_open_cache = 64
-</span><span class='line'>sort_buffer_size = 512K
-</span><span class='line'>net_buffer_length = 8K
-</span><span class='line'>read_buffer_size = 256K
-</span><span class='line'>read_rnd_buffer_size = 512K
-</span><span class='line'>myisam_sort_buffer_size = 8M</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>my&#46;cnf配置 </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">[mysqld]
+</span><span class="line">port            = 3306
+</span><span class="line">socket          = /var/run/mysql/mysql.sock
+</span><span class="line">skip-external-locking
+</span><span class="line">key_buffer_size = 16M 
+</span><span class="line">max_allowed_packet = 1M
+</span><span class="line">table_open_cache = 64
+</span><span class="line">sort_buffer_size = 512K
+</span><span class="line">net_buffer_length = 8K
+</span><span class="line">read_buffer_size = 256K
+</span><span class="line">read_rnd_buffer_size = 512K
+</span><span class="line">myisam_sort_buffer_size = 8M</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>默认mysqld只启动一个实例，既然我们的目的是启动多个mysqld实例，需要使用mysqld_multi。它是一个perl脚本，在使用之前，需要给my.cnf加一些料。</p>
 
-<figure class='code'><figcaption><span>my&#46;cnf配置[增加mysqld_mutli] </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'># mysqld_multi会读取这个配置短的内容
-</span><span class='line'>[mysqld_multi] 
-</span><span class='line'>mysqld = /usr/local/mysql/bin/mysqld
-</span><span class='line'>mysqladmin = /usr/local/mysql/bin/mysqladmin
-</span><span class='line'>
-</span><span class='line'># 第一个mysqld实例
-</span><span class='line'>[mysqld1]
-</span><span class='line'>port = 3306
-</span><span class='line'>socket = /var/run/mysql/mysql1.sock
-</span><span class='line'>datadir = /data/mysql1
-</span><span class='line'>general-log-file = /var/log/mysql/error.log
-</span><span class='line'>skip-external-locking
-</span><span class='line'>key_buffer_size = 16M 
-</span><span class='line'>max_allowed_packet = 1M
-</span><span class='line'>table_open_cache = 64
-</span><span class='line'>sort_buffer_size = 512K
-</span><span class='line'>net_buffer_length = 8K
-</span><span class='line'>read_buffer_size = 256K
-</span><span class='line'>read_rnd_buffer_size = 512K
-</span><span class='line'>myisam_sort_buffer_size = 8M
-</span><span class='line'>log-bin=mysql-bin
-</span><span class='line'>binlog_format=mixed
-</span><span class='line'>server-id       = 1 
-</span><span class='line'>user = mysql
-</span><span class='line'>
-</span><span class='line'># 第二个mysqld实例
-</span><span class='line'>[mysqld2]
-</span><span class='line'>port = 3307
-</span><span class='line'>socket = /var/run/mysql/mysql2.sock
-</span><span class='line'>datadir = /data/mysql2
-</span><span class='line'>general-log-file = /var/log/mysql/error.log
-</span><span class='line'>skip-external-locking
-</span><span class='line'>key_buffer_size = 16M 
-</span><span class='line'>max_allowed_packet = 1M
-</span><span class='line'>table_open_cache = 64
-</span><span class='line'>sort_buffer_size = 512K
-</span><span class='line'>net_buffer_length = 8K
-</span><span class='line'>read_buffer_size = 256K
-</span><span class='line'>read_rnd_buffer_size = 512K
-</span><span class='line'>myisam_sort_buffer_size = 8M
-</span><span class='line'>log-bin=mysql-bin
-</span><span class='line'>binlog_format=mixed
-</span><span class='line'>server-id       = 1 
-</span><span class='line'>user = mysql</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>my&#46;cnf配置[增加mysqld_mutli] </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+</pre></td><td class="code"><pre><code class=""><span class="line"># mysqld_multi会读取这个配置短的内容
+</span><span class="line">[mysqld_multi] 
+</span><span class="line">mysqld = /usr/local/mysql/bin/mysqld
+</span><span class="line">mysqladmin = /usr/local/mysql/bin/mysqladmin
+</span><span class="line">
+</span><span class="line"># 第一个mysqld实例
+</span><span class="line">[mysqld1]
+</span><span class="line">port = 3306
+</span><span class="line">socket = /var/run/mysql/mysql1.sock
+</span><span class="line">datadir = /data/mysql1
+</span><span class="line">general-log-file = /var/log/mysql/error.log
+</span><span class="line">skip-external-locking
+</span><span class="line">key_buffer_size = 16M 
+</span><span class="line">max_allowed_packet = 1M
+</span><span class="line">table_open_cache = 64
+</span><span class="line">sort_buffer_size = 512K
+</span><span class="line">net_buffer_length = 8K
+</span><span class="line">read_buffer_size = 256K
+</span><span class="line">read_rnd_buffer_size = 512K
+</span><span class="line">myisam_sort_buffer_size = 8M
+</span><span class="line">log-bin=mysql-bin
+</span><span class="line">binlog_format=mixed
+</span><span class="line">server-id       = 1 
+</span><span class="line">user = mysql
+</span><span class="line">
+</span><span class="line"># 第二个mysqld实例
+</span><span class="line">[mysqld2]
+</span><span class="line">port = 3307
+</span><span class="line">socket = /var/run/mysql/mysql2.sock
+</span><span class="line">datadir = /data/mysql2
+</span><span class="line">general-log-file = /var/log/mysql/error.log
+</span><span class="line">skip-external-locking
+</span><span class="line">key_buffer_size = 16M 
+</span><span class="line">max_allowed_packet = 1M
+</span><span class="line">table_open_cache = 64
+</span><span class="line">sort_buffer_size = 512K
+</span><span class="line">net_buffer_length = 8K
+</span><span class="line">read_buffer_size = 256K
+</span><span class="line">read_rnd_buffer_size = 512K
+</span><span class="line">myisam_sort_buffer_size = 8M
+</span><span class="line">log-bin=mysql-bin
+</span><span class="line">binlog_format=mixed
+</span><span class="line">server-id       = 1 
+</span><span class="line">user = mysql</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>然后依配置创建mysql运行时文件夹并用mysql_install_db脚本初始化系统库</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mkdir -p /data/mysql1 /data/mysql2 /var/log/mysql /var/run/mysql
-</span><span class='line'>chgrp mysql /data/mysql* /var/log/mysql /var/run/mysql
-</span><span class='line'>chown mysql /data/mysql* /var/log/mysql /var/run/mysql
-</span><span class='line'>mysql_install_db --datadir<span class="o">=</span>/data/mysql1 --user<span class="o">=</span>mysql
-</span><span class='line'>mysql_install_db --datadir<span class="o">=</span>/data/mysql2 --user<span class="o">=</span>mysql
-</span><span class='line'>mysqld_multi start 1-2
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">mkdir -p /data/mysql1 /data/mysql2 /var/log/mysql /var/run/mysql
+</span><span class="line">chgrp mysql /data/mysql* /var/log/mysql /var/run/mysql
+</span><span class="line">chown mysql /data/mysql* /var/log/mysql /var/run/mysql
+</span><span class="line">mysql_install_db --datadir<span class="o">=</span>/data/mysql1 --user<span class="o">=</span>mysql
+</span><span class="line">mysql_install_db --datadir<span class="o">=</span>/data/mysql2 --user<span class="o">=</span>mysql
+</span><span class="line">mysqld_multi start 1-2
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>最后一条命令其实已经将我们配置好的mysqld1和mysqld2启动了，这时候在进程表中应该能看到两个mysqld进程，试着用-P参数指定端口能分别访问在/data/mysql1和/data/mysql2下面的两个库，两者互不影响，正好能满足测试的要求。当然需要配置更多的实例也是可以的。</p>
 
 <h2 id="mysql_extra">额外收获</h2>
 
-
 <p>这次配置过程中还遇到一些额外的问题，记下来备忘。</p>
 
 <ul>
-<li>假如使用的是ubuntu(我目前的版本还是11.10)，默认会安装apparmor，这个软件是一个诡异的存在，它就像一个暗恋者，一直默默限制软件的访问权限，然后又不被系统待见，以至于我根本不知道它的存在。其实它是一个白名单，在/etc/apparmor.d/中指定了/usr/sbin/mysqld对各文件的访问权限，当我想将mysql的数据文件夹迁移到别的位置时，一直报这个错误</li>
+  <li>假如使用的是ubuntu(我目前的版本还是11.10)，默认会安装apparmor，这个软件是一个诡异的存在，它就像一个暗恋者，一直默默限制软件的访问权限，然后又不被系统待见，以至于我根本不知道它的存在。其实它是一个白名单，在/etc/apparmor.d/中指定了/usr/sbin/mysqld对各文件的访问权限，当我想将mysql的数据文件夹迁移到别的位置时，一直报这个错误</li>
 </ul>
-
 
 <p><code>Can't create test file /data/mysql1/littleboy.lower-test</code></p>
 
 <p>而令人费解的就是mysql对这些文件夹是有读写权限的，其实只需要编辑/etc/apparmor.d/usr.sbin.mysqld文件，依样画葫芦地为文件夹加上rw权限就可以了</p>
 
 <ul>
-<li>给mysql设置远程访问权限，只需要下面这条sql</li>
+  <li>给mysql设置远程访问权限，只需要下面这条sql</li>
 </ul>
 
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="k">INSERT</span> <span class="n">mysql</span><span class="p">.</span><span class="k">user</span> <span class="p">(</span> <span class="o">`</span><span class="k">Host</span><span class="o">`</span><span class="p">,</span> <span class="o">`</span><span class="k">User</span><span class="o">`</span><span class="p">,</span> <span class="o">`</span><span class="n">Password</span><span class="o">`</span> <span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span> <span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">(</span><span class="s1">&#39;123456&#39;</span><span class="p">)</span> <span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">INSERT</span> <span class="n">mysql</span><span class="p">.</span><span class="k">user</span> <span class="p">(</span> <span class="o">`</span><span class="k">Host</span><span class="o">`</span><span class="p">,</span> <span class="o">`</span><span class="k">User</span><span class="o">`</span><span class="p">,</span> <span class="o">`</span><span class="n">Password</span><span class="o">`</span> <span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span> <span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">(</span><span class="s1">&#39;123456&#39;</span><span class="p">)</span> <span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其中最关键的就是那个&#8217;%&#8217;，表示通过任意host均可以访问到本机的mysql</p>
+<p>其中最关键的就是那个’%’，表示通过任意host均可以访问到本机的mysql</p>
 
 <ul>
-<li>给mysql设置密码。</li>
+  <li>给mysql设置密码。</li>
 </ul>
-
 
 <p><code>mysqladmin -u root -h 127.0.0.1 password 123456</code></p>
 
@@ -591,29 +576,25 @@
 
 <p>修改过密码以后，mysqld_multi可能就不能通过默认配置来结束mysqld进程了，这时候需要在配置里加上用户名和密码</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>[mysqld_multi]
-</span><span class='line'>mysqld = /usr/local/mysql/bin/mysqld
-</span><span class='line'>mysqladmin = /usr/local/mysql/bin/mysqladmin
-</span><span class='line'>user = root
-</span><span class='line'>password = 123456</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">[mysqld_multi]
+</span><span class="line">mysqld = /usr/local/mysql/bin/mysqld
+</span><span class="line">mysqladmin = /usr/local/mysql/bin/mysqladmin
+</span><span class="line">user = root
+</span><span class="line">password = 123456</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>当然这样可能会有一些安全隐患，因为my.cnf是可见的。假如是多人使用，可以将password这行去掉，每次操作mysqld_multi的时候，在后面加上<code>--password=123456</code>参数就行了</p>
 
 <h2 id="mysql_refer">参考资料</h2>
-
-
 <ul>
-<li><a href="http://www.neocanable.com/error-for-mysql-multi-and-mysql-install-db/">解决apparmor引起的报错1</a></li>
-<li><a href="http://ubuntuforums.org/showthread.php?t=1861136">解决apparmor引起的报错2</a></li>
-<li><a href="http://blog.csdn.net/magicbreaker/article/details/2392764">MySQL设置密码的三种方法</a></li>
+  <li><a href="http://www.neocanable.com/error-for-mysql-multi-and-mysql-install-db/">解决apparmor引起的报错1</a></li>
+  <li><a href="http://ubuntuforums.org/showthread.php?t=1861136">解决apparmor引起的报错2</a></li>
+  <li><a href="http://blog.csdn.net/magicbreaker/article/details/2392764">MySQL设置密码的三种方法</a></li>
 </ul>
-
 
 		
 		
@@ -681,29 +662,23 @@
 	<div class="entry-content">
 		<p>这是项目中遇到的一个问题，mysql的用户表做了分表，主键可以通过取模来读取分表信息，但是往往在注册的时候需要检测邮箱的唯一性，这个email就无法定位到分表了，之前的做法是用另一张表emailtoid对邮箱和id做了一个映射，现在想将该表迁移到redis上。就想测试一下redis对hashes类型的处理性能了。</p>
 
-<h3>方案一(multi)：</h3>
-
+<h3 id="multi">方案一(multi)：</h3>
 <p>只使用一个key，所有的email都是这个key的field，id是value</p>
 
-<h3>方案二(hashed key)：</h3>
-
+<h3 id="hashed-key">方案二(hashed key)：</h3>
 <p>使用多个key，取email的md5值前两位作为key，email值仍为field，id是value，这些都不变</p>
 
-<h3>附加测试(single)：</h3>
-
+<h3 id="single">附加测试(single)：</h3>
 <p>给redis设置一个hashes，只有一个field和value，反复读写，用于比较redis在hashes长度变化时性能的升降幅度</p>
 
 <iframe id="highchart" src="/blog/u/html/redis-hashes-test-chart.html" style="width: 100%; height: 280px;"></iframe>
-
-
 <p>测试对redis进行1000000次读写，使用本地loop，没有网络延迟，没有事务，结果基本没有多大意外。总结成三点：</p>
 
 <ol>
-<li>redis的读写速度基本持平</li>
-<li>hashes长度增加对于redis的读写速度影响很小（官网也注明了hget和hset的时间复杂度均为O(1)）</li>
-<li>储存在多个key中因为需要预先对field的值进行hash，整体的效率不如单个key</li>
+  <li>redis的读写速度基本持平</li>
+  <li>hashes长度增加对于redis的读写速度影响很小（官网也注明了hget和hset的时间复杂度均为O(1)）</li>
+  <li>储存在多个key中因为需要预先对field的值进行hash，整体的效率不如单个key</li>
 </ol>
-
 
 <p>测试结果见图。</p>
 
@@ -747,64 +722,59 @@
 		<p>gollum是一个轻量级的wiki系统，使用git作为版本管理和跟踪工具，支持markdown，mediawiki，texttile等多种语法，由github开发并且已经投入到githubwiki的应用中。</p>
 
 <ul>
-<li><a href="#gollum_install">安装</a></li>
-<li><a href="#gollum_deploy">部署</a></li>
-<li><a href="#gollum_bug">已发现的bug</a></li>
-<li><a href="#gollum_refer">参考资料</a></li>
+  <li><a href="#gollum_install">安装</a></li>
+  <li><a href="#gollum_deploy">部署</a></li>
+  <li><a href="#gollum_bug">已发现的bug</a></li>
+  <li><a href="#gollum_refer">参考资料</a></li>
 </ul>
 
-
 <h2 id="gollum_install">安装</h2>
-
 
 <p>gollum与指环王中某个屌丝同名，不知道开发人员的命名灵感是不是来自那里，我们知道，程序员老是喜欢用一些稀奇古怪的东西来给自己的软件命名，像python（莽蛇），octopress（章鱼）等等，搞得好像人人都是动物保护主义者一样～</p>
 
 <p>根据<a href="https://github.com/github/gollum">github主页</a>的说明，gollum的安装非常简单，一条命令解决</p>
 
-<figure class='code'><figcaption><span>安装gollum  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="o">[</span>sudo<span class="o">]</span> gem install gollum
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>安装gollum  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span><span class="o">[</span>sudo<span class="o">]</span> gem install gollum
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>假如你喜欢追新，觉得这样安装的版本太老，想直接上HEAD的话，clone一个镜像使用<code>bundle install</code>安装好依赖之后，其bin文件夹下面的gollum就直接可以执行了，绝对绿色环保无污染。</p>
 
 <p>现在就来体验一下gollum带来的不同与其他wiki的小清新感觉吧，在主目录下使用以下命令</p>
 
-<figure class='code'><figcaption><span>执行gollum  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>mkdir gowiki
-</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>gowiki
-</span><span class='line'><span class="nv">$ </span>git init
-</span><span class='line'><span class="nv">$ </span>gollum
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>执行gollum  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mkdir gowiki
+</span><span class="line"><span class="nv">$ </span><span class="nb">cd </span>gowiki
+</span><span class="line"><span class="nv">$ </span>git init
+</span><span class="line"><span class="nv">$ </span>gollum
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<p><a href="/blog/u/image/gollum-exec-info.png"><img class="right" src="/blog/u/image/gollum-exec-info.png" width="450" height="70" title="&#34;gollum-exec-info&#34;" alt="&#34;gollum-exec-info&#34;"></a>
+<p><a href="/blog/u/image/gollum-exec-info.png"><img class="right" src="/blog/u/image/gollum-exec-info.png" width="450" height="70" title="&#34;gollum-exec-info&#34;" alt="&#34;gollum-exec-info&#34;" /></a>
 看到右图就说明gollum已经正确的运行了，gollum默认监听4567端口，并且提供了一个可交互的前端，这个时候用户可以通过浏览器打开<a href="http://localhost:4567">http://localhost:4567</a>来看一下gollum了</p>
 
-<p><a href="/blog/u/image/gollum-frontend.png"><img class="right" src="/blog/u/image/gollum-frontend.png" width="450" height="115" title="&#34;gollum-frontend&#34;" alt="&#34;gollum-frontend&#34;"></a></p>
+<p><a href="/blog/u/image/gollum-frontend.png"><img class="right" src="/blog/u/image/gollum-frontend.png" width="450" height="115" title="&#34;gollum-frontend&#34;" alt="&#34;gollum-frontend&#34;" /></a></p>
 
 <p>界面实在是足够简洁，提供的几个button实现了wiki的基本功能增删改查，还能查看历史页面，而且还有一套开放的用户系统，name和email由git的使用者决定，头像则由gravatar生成。</p>
 
 <p>除了通过页面编辑wiki以外，gollum还支持直接由git提交版本来更新页面。由于我们gollum默认读取master分支，而我们正checkout在master上，不方便其他人的编辑，所以我们暂时新建一个demo分支来避免冲突。</p>
 
-<figure class='code'><figcaption><span>用git来写wiki  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch demo
-</span><span class='line'><span class="nv">$ </span>git checkout demo
-</span><span class='line'><span class="nv">$ </span>mkdir ../gowiki2 <span class="o">&amp;&amp;</span> <span class="nb">cd</span> ../gowiki2
-</span><span class='line'><span class="nv">$ </span>git init <span class="o">&amp;&amp;</span> git remote add origin ../gowiki
-</span><span class='line'><span class="nv">$ </span>git pull
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>用git来写wiki  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>git branch demo
+</span><span class="line"><span class="nv">$ </span>git checkout demo
+</span><span class="line"><span class="nv">$ </span>mkdir ../gowiki2 <span class="o">&amp;&amp;</span> <span class="nb">cd</span> ../gowiki2
+</span><span class="line"><span class="nv">$ </span>git init <span class="o">&amp;&amp;</span> git remote add origin ../gowiki
+</span><span class="line"><span class="nv">$ </span>git pull
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>现在gowiki2中应该有了之前编辑过的几个页面，修改以后push到origin的master，就可以在wiki中看到刚刚的更新了。</p>
 
@@ -848,18 +818,18 @@
 
 <p>比较了一圈linux下的客户端，evolution用的时间最长，但是对html样式的支持不是太好，某些表格粘贴进去排版就乱了。正好ubuntu11.10以后就默认安装了thunderbird，试用以后感觉也不错，写篇备忘，主要是记录不同协议下的配置。</p>
 
-<p><a href="/blog/u/image/thunderbird-main-furry.png"><img class="right" src="/blog/u/image/thunderbird-main-furry.png" width="200" height="161" title="&#34;thunderbird-main-furry&#34;" alt="&#34;thunderbird-main-furry&#34;"></a>
-thunderbird诞生于mozilla的开源项目，有个叫firefox的高帅富兄弟，所以从菜单到细节处处都力争向高帅富靠拢，于是我们就看到了这个长得酷似浏览器的email客户端&#8211;多标签切换，附加组件。。。不幸的是，最近<a href="http://tech.sina.com.cn/s/2012-07-07/10247360817.shtml">mozilla宣布不再为thunderbird开发新功能</a>，看来以后还是得靠自己撸啊。</p>
+<p><a href="/blog/u/image/thunderbird-main-furry.png"><img class="right" src="/blog/u/image/thunderbird-main-furry.png" width="200" height="161" title="&#34;thunderbird-main-furry&#34;" alt="&#34;thunderbird-main-furry&#34;" /></a>
+thunderbird诞生于mozilla的开源项目，有个叫firefox的高帅富兄弟，所以从菜单到细节处处都力争向高帅富靠拢，于是我们就看到了这个长得酷似浏览器的email客户端–多标签切换，附加组件。。。不幸的是，最近<a href="http://tech.sina.com.cn/s/2012-07-07/10247360817.shtml">mozilla宣布不再为thunderbird开发新功能</a>，看来以后还是得靠自己撸啊。</p>
 
 <p>添加账户很简单，编辑-账户设置-添加账户，输入用户名邮箱密码以后会自动在mozilla在线数据库中寻找适合的配置，像gmail,hotmail.163之流的基本都不需要额外的配置，直接确认就行。这里主要介绍一下exchange服务的配置。</p>
 
-<p>默认情况下没有安装exchange的支持，在工具-附加组件里搜索exchange安装一个&#8221;Provider for Microsoft Exchange&#8221;的插件，再回到账户配置中选择手动配置，就有相应exchange的接收协议选项了，然后手动填写域名用户名密码，确定以后就可以开始接收邮件了。</p>
+<p>默认情况下没有安装exchange的支持，在工具-附加组件里搜索exchange安装一个”Provider for Microsoft Exchange”的插件，再回到账户配置中选择手动配置，就有相应exchange的接收协议选项了，然后手动填写域名用户名密码，确定以后就可以开始接收邮件了。</p>
 
 <p>接收邮件，对，我只提到收邮件。这个插件只提供了exchange同步接收的功能，配置SMTP服务器时遇到了问题，无论尝试哪种验证方式，连接远程服务器时都会报错，网上搜罗了一下相关的帖子也没有找到有效的解决方案。但exchange服务确是可以通过https/ssl访问的，无奈只能采用曲线救国的方式，就是下面要介绍的<a href="http://davmail.sourceforge.net/">davmail</a>。</p>
 
 <p>根据官网上的介绍，davmail是一个通用的POP/IMAP/SMTP/Caldav/Carddav/LDAP交换接口，允许用户用任何客户端链接到exchange服务器。其他的鸟文就不做解释了，这不是重点，重点是，这玩意儿管用。ubuntu用户下可以在sourceforge下载deb包安装，<a href="http://sourceforge.net/projects/davmail/files/latest/download?source=files">下载地址</a>。</p>
 
-<p><a href="/blog/u/image/davmail-ui.png"><img class="right" src="/blog/u/image/davmail-ui.png" width="350" height="206" title="&#34;davmail-ui&#34;" alt="&#34;davmail-ui&#34;"></a>
+<p><a href="/blog/u/image/davmail-ui.png"><img class="right" src="/blog/u/image/davmail-ui.png" width="350" height="206" title="&#34;davmail-ui&#34;" alt="&#34;davmail-ui&#34;" /></a>
 安装完成后，davmail提供了一个简陋的UI界面，不过对于配置来说已经足够了，在owaurl一栏填入域中使用的exchange owa地址，类似https://exchange.domain.com/owa的，不确定是否可用可以在浏览器里面直接访问一下试试。下面的协议端口都用默认的，save一下就ok。</p>
 
 <p>现在回到thunderbird，修改账户设置-发送SMTP服务器-添加或编辑，服务器名称填localhost，端口1025，选择密码验证，填写用户名，保存，现在试一试，应该可以正常的收发邮件了。</p>
@@ -904,93 +874,84 @@ thunderbird诞生于mozilla的开源项目，有个叫firefox的高帅富兄弟�
 <p>写一些备忘，免得以后忘了。。。</p>
 
 <ul>
-<li><a href="#gitpage">gitpage</a></li>
-<li><a href="#octopress">octopress</a></li>
-<li><a href="#scss">scss</a></li>
-<li><a href="#markdown">markdown</a></li>
+  <li><a href="#gitpage">gitpage</a></li>
+  <li><a href="#octopress">octopress</a></li>
+  <li><a href="#scss">scss</a></li>
+  <li><a href="#markdown">markdown</a></li>
 </ul>
-
 
 <h2 id="gitpage">gitpage</h2>
 
-
 <p>github给用户提供了一个非常cool的方式来搭建自己的主页，简单几步，就能完成网站的部署。</p>
 
-<h4>1.建立分支</h4>
+<h4 id="section">1.建立分支</h4>
 
 <p>github给每个用户提供了一个形似{user}.github.com的二级域名，只要首先在自己的帐号下建立名为{user}.github.com的分支，就可以通过git来维护自己的主页啦。</p>
 
-<h4>2.clone和commit</h4>
+<h4 id="clonecommit">2.clone和commit</h4>
 
 <p>分支建立好之后，将{user}.github.com分支clone到本地，以方便编辑。</p>
 
-<figure class='code'><figcaption><span>本地gitpage  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git clone git@github.com:<span class="o">{</span>user<span class="o">}</span>/<span class="o">{</span>user<span class="o">}</span>.github.com <span class="o">{</span>your <span class="nb">local </span>dir<span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>本地gitpage  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>git clone git@github.com:<span class="o">{</span>user<span class="o">}</span>/<span class="o">{</span>user<span class="o">}</span>.github.com <span class="o">{</span>your <span class="nb">local </span>dir<span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>然后就是建立自己的index啦，gitpage使用纯静态的方式来管理页面，可以通过本地程序预先将这些静态页面生成好再丢给github嘛。</p>
 
-<figure class='code'><figcaption><span>编辑提交首页  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;hello git-page&quot;</span> &gt; index.html
-</span><span class='line'><span class="nv">$ </span>git add .
-</span><span class='line'><span class="nv">$ </span>git commit -am <span class="s1">&#39;init&#39;</span>
-</span><span class='line'><span class="nv">$ </span>git push origin master
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>编辑提交首页  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;hello git-page&quot;</span> &gt; index.html
+</span><span class="line"><span class="nv">$ </span>git add .
+</span><span class="line"><span class="nv">$ </span>git commit -am <span class="s1">&#39;init&#39;</span>
+</span><span class="line"><span class="nv">$ </span>git push origin master
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>提交以后可以在github的通知中心和邮箱中收到页面建立的通知。第一次提交可能需要10多分钟才能看到效果，以后的提交基本都是立即生效的。</p>
 
 <p>现在访问<a href="http://sailxjx.github.com">{user}.github.com</a>看一下效果吧。</p>
 
-<h4>3.建立项目页面</h4>
+<h4 id="section-1">3.建立项目页面</h4>
 
 <p>除了首页，github还为用户的每一个项目提供了一个展示的平台，只需要在需要展示的项目下建立一个名为gh-pages的分支并push到github，剩余的操作就和首页如出一辙了。</p>
 
-<figure class='code'><figcaption><span>项目主页  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> <span class="o">{</span>project<span class="o">}</span>
-</span><span class='line'><span class="nv">$ </span>git branch gh-pages
-</span><span class='line'><span class="nv">$ </span>git checkout gh-pages
-</span><span class='line'><span class="nv">$ </span>git push origin gh-pages
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>项目主页  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span><span class="nb">cd</span> <span class="o">{</span>project<span class="o">}</span>
+</span><span class="line"><span class="nv">$ </span>git branch gh-pages
+</span><span class="line"><span class="nv">$ </span>git checkout gh-pages
+</span><span class="line"><span class="nv">$ </span>git push origin gh-pages
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>提交以后会在github产生一个类似{user}.github.com/{project}的域名，访问的其实是<a href="https://github.com/sailxjx/blog/tree/gh-pages">gh-pages</a>分支下的index文件，这个<a href="http://sailxjx.github.com/blog">blog</a>就是托管给gitpage的项目页面的。</p>
 
-<h4>4.使用gitpage模板</h4>
+<h4 id="gitpage">4.使用gitpage模板</h4>
 
 <p>github提供了一种最快捷的方式来建立pages</p>
 
 <ul>
-<li>进入你的<a href="https://github.com/{user}/{project}/admin">项目管理页</a></li>
-<li>点击右下角的<a href="https://github.com/{user}/{project}/generated_pages/new">Automatic Page Generator</a></li>
-<li>编辑内容并选择自己喜欢的模板</li>
-<li>done</li>
+  <li>进入你的<a href="https://github.com/{user}/{project}/admin">项目管理页</a></li>
+  <li>点击右下角的<a href="https://github.com/{user}/{project}/generated_pages/new">Automatic Page Generator</a></li>
+  <li>编辑内容并选择自己喜欢的模板</li>
+  <li>done</li>
 </ul>
-
 
 <p>然后就可以将gitpage clone到本地进行编辑并提交了</p>
 
-<figure class='code'><figcaption><span>编辑项目主页  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> <span class="o">{</span>project<span class="o">}</span>
-</span><span class='line'><span class="nv">$ </span>git fetch origin
-</span><span class='line'><span class="nv">$ </span>git checkout gh-pages
-</span></code></pre></td></tr></table></div></figure>
-
-
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>编辑项目主页  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span><span class="nb">cd</span> <span class="o">{</span>project<span class="o">}</span>
+</span><span class="line"><span class="nv">$ </span>git fetch origin
+</span><span class="line"><span class="nv">$ </span>git checkout gh-pages
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 
 		
