@@ -4,7 +4,7 @@
   <title><![CDATA[Category: algorithm | CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/algorithm/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-04-14T20:34:06+08:00</updated>
+  <updated>2013-04-15T23:09:34+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,93 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[蛋疼的刷屏算法问题]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/04/15/dan-teng-de-shua-ping-suan-fa-wen-ti/"/>
+    <updated>2013-04-15T11:15:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/04/15/dan-teng-de-shua-ping-suan-fa-wen-ti</id>
+    <content type="html"><![CDATA[<p>最近在v2ex的看到一道有趣而蛋疼的<a href="http://www.v2ex.com/t/65703">求助帖</a>，搜了一下，原题刊登在神人matrix67的<a href="http://www.matrix67.com/blog/archives/4092">博客</a>上。先看看题目：</p>
+
+<p>你有一个特殊的键盘，只有四个键：</p>
+
+<ul>
+  <li><code>a</code>, 输入字符a</li>
+  <li><code>ctrl+a</code>, 全选</li>
+  <li><code>ctrl+c</code>, 复制</li>
+  <li><code>ctrl+v</code>, 粘贴</li>
+</ul>
+
+<p>还需要说明一下的是，上面的<code>ctrl+x</code>都只算一个按键，而且全选之后的第一次复制粘贴，是不会增加字符长度的，（也就是只覆盖了已有字符，这个在现实生活中应该有体会）。</p>
+
+<p>这是一个不着边际的题目，乍看非常简单，但是细想一下脑子就打结了。牛逼的matrix67大神，用两个公式，三下五除二就搞定了这个问题：</p>
+
+<ul>
+  <li>f(n) = f(n-1) + 1</li>
+  <li>f(n) = f(n/k) + k + 2</li>
+</ul>
+
+<p>然后在以上两种情况下取最小值，再用递推法，递推的层数就是所走的步数了。</p>
+
+<p>具体的计算情况在博客里有介绍，这里不再赘述，我感兴趣的是上面这两个公式，是否能涵盖所有情况，已经怎么推导出这两个公式，这才是真正神奇的地方，而且matrix67也没有给出详细的推导过程。</p>
+
+<h2 id="section">倒推法</h2>
+
+<p>要推导出递推公式，顺着题目的意思思考是不行的（事实上，我认为所有最大值n不确定的问题，都需要逆向思维，否则很容易就陷入无底深渊了）。我们可以看到问题结束的几种情况：</p>
+
+<ul>
+  <li>最后一个按键是<code>a</code>，则这种情况最简单，f(n) = f(n) + 1。</li>
+  <li>最后一个按键是<code>cv</code>，则这种情况下，最后第二个按键只能是<code>cc</code>或者<code>cv</code>，最后第三个按键只能是<code>ca</code>，<code>cc</code>或<code>cv</code>，整个按键流程可以归纳为<code>x-&gt;ca-&gt;cc-&gt;cv...cv-&gt;y</code>，其中<code>x</code>是在全选前的字符数，<code>y</code>表示总字符数，那么设按键<code>cv</code>的次数为<code>k</code>，全选复制阶段的按键次数就是<code>k+2</code>，而且值得一提的是，这个<code>k</code>必须大于或等于2，否则复制就是多余的。然后<code>y</code>是由<code>x</code>复制<code>k</code>次而来，所以就不难推导出公式f(n) = f(n/k) + k + 2，其中<code>k</code>为大于等于2的<code>n</code>的约数。</li>
+</ul>
+
+<p>由此，两个公式都被推导出来了，但这就结束了吗？是否所有的情况都涵盖到了？根据计算结果可以得出f(n)并非单调函数，也就是说f(n-2)有可能小于f(n-1)，那么会不会有f(n-2)到f(n)比f(n-1)到f(n)快的情况呢，这个还需要证明一下：</p>
+
+<p><code>
+f(n) = f(n-1) + 1 &lt;=&gt; f(n-2) + 2
+</code></p>
+
+<p>f(n-2)到f(n-1)最快的路径应该就是<code>f(n-2) + 1</code>了吧，所以不可能是这种情况，那么还剩下一种情况：</p>
+
+<p><code>
+f(n) = f(n-2) + k + 2 &lt;=&gt; f(n-1) + 1  # n = (n-2) * k
+</code></p>
+
+<p>那么这里又回到了之前预设的第二种情况，其本身就是需要参与递归的比较的，所以这种情况也是已涵盖了的。</p>
+
+<p>这样看了是我多虑了，下面要做的就是将这个递归程序写出来。</p>
+
+<h2 id="section-1">实现</h2>
+
+<p>从程序的角度看，其实算法中还有一些值得优化的地方：</p>
+
+<ul>
+  <li>1到100之间(这个范围甚至可以再扩大些)的素数的最小步数可以事先计算出来作为常数数组保存，这些数字是递归的终点，预处理可以让递归的最后一步变成O(1)，而不是O(n)</li>
+  <li>上面提到的，k是从2到n，但事实上范围可以更小。在<code>f(n) = f(n/k) + k +2</code>中，随着n的增加，步数的增加并不是线性的，步数的增速的是逐渐放缓的，但是<code>k</code>对于步数的增长变化却是线性的。对公式求导，<code>f(n/k)' &lt; 1</code>而<code>k' = 1</code>，所以我们有理由相信，<code>k</code>的范围只需要从2到√n（包含）就可以了。</li>
+</ul>
+
+<p>实际上，第二点对于代码的效率优化是显而易见的，差不多是省了50%的时间。而第一点对于效率的提升是相当惊人的，以n=200为例，有素数索引和没有素数索引的情况下执行时间如下：</p>
+
+<ul>
+  <li>4.05s user 0.06s system 99% cpu 4.129 total  # no index</li>
+  <li>0.05s user 0.01s system 92% cpu 0.067 total  # have index</li>
+</ul>
+
+<p>提升了整整60倍，而且随着n的提高，这个差距会更加明显，100以内的索引可以涵盖n等于0到10000的情况，当n大于10000时，提升这个素数索引即可，代码中提供了很方便的实现索引生成的方法。</p>
+
+<h2 id="section-2">代码</h2>
+
+<p>我做了一个ruby版本的demo，放在<a href="https://gist.github.com/sailxjx/5388648">gist</a>上。</p>
+
+<h2 id="section-3">扩展</h2>
+
+<p>这个命题其实还可以扩展，比方说还是这四个键，但是<code>ctrl+a</code>, <code>ctrl+c</code>, <code>ctrl+v</code>均算作两次按键，那么情况又复杂了，因为不光增加了按键的不确定性，而且复制时候增加了一种情况，在不松开<code>ctrl</code>的情况下，可以多次按<code>v</code>来实现复制。这个扩展命题只有等将来有时间再思考了。</p>
+
+<h2 id="section-4">来源及参考资料</h2>
+<ul>
+  <li><a href="http://www.matrix67.com/blog/archives/4092">matrix67的蛋疼问题</a></li>
+</ul>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[动态规划求解数组最大差值]]></title>

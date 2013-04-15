@@ -7,8 +7,8 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content="上次失败的vagrant尝试之后，很久没有再去捣鼓这玩意儿，最近又想试一试，居然一举成功了，特别记录一下。 打包
-上手第一件事就是制作自己的box，网上已经有了许多现成的各linux版本box 首先用virtualbox安装好自己的linux，版本任选，我这里用的是ubuntu server &hellip;">
+	<meta name="description" content="create unique
+顾名思义，create unique与create在功能上是类似的，不过当新建的node或relationship已经存在时，create unique不会再生成一个新的node或relationship。 另一个区别是create &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -76,6 +76,118 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/02/06/cypher-query-language-xue-xi-bi-ji-2/">Cypher Query Language 学习笔记(2)</a></h1>
+	<div class="entry-content">
+		<h3 id="create-unique">create unique</h3>
+<p>顾名思义，<code>create unique</code>与<code>create</code>在功能上是类似的，不过当新建的node或relationship已经存在时，<code>create unique</code>不会再生成一个新的node或relationship。</p>
+
+<p>另一个区别是<code>create unique</code>只能在一个<code>path</code>表达式中使用，例如下面的代码：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> create unique bran-<span class="o">[</span>r:littlebrotherof<span class="o">]</span>-&gt;<span class="o">(</span>n<span class="o">{</span>name:<span class="s2">&quot;jon&quot;</span><span class="o">})</span> <span class="k">return </span>n;
+</span><span class="line">+----------------------------+
+</span><span class="line">| n                          |
+</span><span class="line">+----------------------------+
+</span><span class="line">| Node<span class="o">[</span>7<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}</span> |
+</span><span class="line">+----------------------------+
+</span><span class="line">1 row
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>上面的代码中，path中name=”jon”的node已经存在，neo4j认为这是一个<code>unique node</code>，所以不会再新建一个node，稍加修改，将age属性调整一下，就可以新建一个不同的node。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> create unique bran-<span class="o">[</span>r:littlebrotherof<span class="o">]</span>-&gt;<span class="o">(</span>n<span class="o">{</span>name:<span class="s2">&quot;jon&quot;</span>,age:18<span class="o">})</span> <span class="k">return </span>n;
+</span><span class="line">+----------------------------+
+</span><span class="line">| n                          |
+</span><span class="line">+----------------------------+
+</span><span class="line">| Node<span class="o">[</span>8<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:18<span class="o">}</span> |
+</span><span class="line">+----------------------------+
+</span><span class="line">1 row
+</span><span class="line">Nodes created: 1
+</span><span class="line">Relationships created: 1
+</span><span class="line">Properties <span class="nb">set</span>: 2
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>新建relationship的方式和上面差不多，举一反三即可。</p>
+
+<h3 id="foreach">foreach</h3>
+<p>foreach针对的neo4j中的集合做遍历，可以做一些批量的修改操作。其语法块需要用括号围起来，像下面的代码，更新path p关联的所有node的uptime属性为100。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> bran-<span class="o">[]</span>-&gt;<span class="o">()</span> foreach <span class="o">(</span>n in nodes<span class="o">(</span>p<span class="o">)</span>: <span class="nb">set </span>n.uptime <span class="o">=</span> 100<span class="o">)</span>;
+</span><span class="line">+-------------------+
+</span><span class="line">| No data returned. |
+</span><span class="line">+-------------------+
+</span><span class="line">Properties <span class="nb">set</span>: 4
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>至于什么是neo4j中的集合，比如<code>nodes()</code>方法得到的结果就是一个集合，用集合表达式表示的也是一个集合，但是<code>n = node(*)</code>中匹配出来的n并不是一个集合。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span>, <span class="nv">jon</span> <span class="o">=</span> node<span class="o">(</span>7<span class="o">)</span> foreach <span class="o">(</span>n in <span class="o">[</span>bran, jon<span class="o">]</span>: <span class="nb">set </span>n.uptime <span class="o">=</span> 101<span class="o">)</span>;
+</span><span class="line">+-------------------+
+</span><span class="line">| No data returned. |
+</span><span class="line">+-------------------+
+</span><span class="line">Properties <span class="nb">set</span>: 2
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="functions">functions</h3>
+<p><a href="http://docs.neo4j.org/chunked/milestone/query-function.html">官方手册</a>中罗列了所有的可用方法，非常详尽，需要慢慢研究了。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-06T14:32:00+08:00" pubdate data-updated="true">2013.02.06</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/cypher/'>cypher</a>, <a class='category' href='/blog/blog/categories/learn/'>learn</a>, <a class='category' href='/blog/blog/categories/neo4j/'>neo4j</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -164,6 +276,9 @@
 </ul>
 
 <p>总而言之，搞定ssh，一切就很顺利鸟。</p>
+
+<h2 id="section-2">资源</h2>
+<p><a href="http://www.vagrantbox.es/">A list of base boxes for Vagrant - Vagrantbox.es</a></p>
 
 		
 		
@@ -1886,143 +2001,6 @@ url=http%3A%2F%2Fwww.google.com</p>
 
 
 	<a class='category' href='/blog/blog/categories/nginx/'>nginx</a>, <a class='category' href='/blog/blog/categories/php/'>php</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/12/19/linux-deng-lu-yong-hu-guan-li/">Linux 登录用户管理</a></h1>
-	<div class="entry-content">
-		<p>最近换了mac后，需要在公司和家中多地登录，两地的ip又没有设置成一样的，结果每次切换ip就发现ssh到虚拟机的终端没响应了，再连上之后，之前登录的用户就永远活在虚拟机心中啦~当然这也没什么，但是作为有一点点洁癖的我来说，不清除这几个用户总是一件不太舒服的事情，于是就去网上找找命令，结果发现找到的资料还挺齐全，学到不少，记录下来，以免下次忘了。</p>
-
-<h3 id="who">who</h3>
-
-<blockquote>
-  <p>root     tty1         2012-12-19 17:51</p>
-</blockquote>
-
-<blockquote>
-  <p>tristan  pts/0        2012-12-19 17:57 (macshare)</p>
-</blockquote>
-
-<blockquote>
-  <p>tristan  pts/1        2012-12-19 18:00 (macshare)</p>
-</blockquote>
-
-<p>这个命令不用说，大多数人都知道，查看当前登录用户，登录时间，终端号(tty)和远程登录终端号(pts)</p>
-
-<h3 id="whoami">whoami</h3>
-
-<p>这个命令有点意思，顾名思义，告诉<code>我是谁</code>，曾经有位buddy获得了root权限，但是当使用<code>cd ~</code>的时候仍然回到了先前用户的主目录，这个时候<code>whoami</code>告诉他确实已经是root用户了，仔细想想，原来他是用<code>sudo -s</code>切到了root，所有环境变量沿用了老用户的。说明这个短小的命令还是挺实用啦。</p>
-
-<h3 id="w-user">w [user]</h3>
-
-<blockquote>
-  <p>18:43:48 up  9:39,  3 users,  load average: 0.06, 0.06, 0.06</p>
-</blockquote>
-
-<blockquote>
-  <p>USER     TTY       LOGIN@   IDLE   JCPU   PCPU WHAT</p>
-</blockquote>
-
-<blockquote>
-  <p>root     tty1      17:51   47:01   0.43s  0.40s -zsh</p>
-</blockquote>
-
-<blockquote>
-  <p>tristan  pts/0     17:57   30:20   0.44s  0.44s -zsh</p>
-</blockquote>
-
-<blockquote>
-  <p>tristan  pts/1     18:00    0.00s  0.18s  0.00s w</p>
-</blockquote>
-
-<p>更短的命令，却比who更强大。</p>
-
-<p>第一行数值分别表示当前时间，系统运行时间，登录用户数，(1分钟，5分钟，15分钟)内的系统负载</p>
-
-<p>第二行开始就是一个用户相关的表格了，每列的意思分别为：</p>
-
-<ul>
-  <li>USER：显示登陆用户帐号名。</li>
-  <li>TTY：用户登录的终端号。</li>
-  <li>FROM：显示用户在何处登陆系统。</li>
-  <li>LOGIN@：是LOGIN AT的意思，表示登陆进入系统的时间。</li>
-  <li>IDLE：用户空闲时间，从用户上一次任务结束后，开始记时。</li>
-  <li>JCPU：一终端代号来区分，表示在某段时间内，所有与该终端相关的进程任务所耗费的CPU时间。</li>
-  <li>PCPU：指WHAT域的任务执行后耗费的CPU时间。</li>
-  <li>WHAT：表示当前执行的任务。</li>
-</ul>
-
-<h3 id="last-user">last [user]</h3>
-
-<blockquote>
-  <p>tristan   ttys003                   Wed Dec 19 22:57   still logged in</p>
-</blockquote>
-
-<blockquote>
-  <p>tristan   ttys001                   Wed Dec 19 22:47   still logged in</p>
-</blockquote>
-
-<blockquote>
-  <p>tristan   ttys003                   Wed Dec 19 22:38 - 22:39  (00:01)</p>
-</blockquote>
-
-<p>这个命令显示用户的登录记录，后面可以跟用户名来只显示该用户的登录历史。一般还会搭配管道用<code>last | head</code>来显示最后登录历史或<code>last | grep still</code>来获取仍然登录中的用户</p>
-
-<h3 id="ps--ef--grep-pts0">ps -ef | grep [pts/0]</h3>
-
-<blockquote>
-  <p>tristan   1042  1041  0 19:01 pts/0    00:00:00 -zsh</p>
-</blockquote>
-
-<blockquote>
-  <p>tristan   1916  1042  0 19:03 pts/0    00:00:00 ps -ef</p>
-</blockquote>
-
-<p>这个命令就是起初写这篇文章的用意啦，根据终端号(可以通过who命令查到)获取目标用户登录相关的pid，比如上面这个1042，然后使用<code>kill -9 1042</code>剔除这个用户，注意<code>kill</code>需要加上<code>-9</code>，默认的TERM信号是杀不了这个进程的。</p>
-
-<h3 id="pkill--u-user">pkill -u [user]</h3>
-
-<p>网上还有一种更简便的方法，根据用户名kill掉这个用户相关的所有进程，包括已这个用户身份运行的所有daemon进程，很黄很暴力，伤敌一千自损八百，不推荐。</p>
-
-<h2 id="section">参考资料</h2>
-
-<ul>
-  <li>
-    <p><a href="http://blog.csdn.net/linfengfeiye/article/details/4781507">Linux查看和剔除当前登录用户</a></p>
-  </li>
-  <li>
-    <p><a href="http://linux.about.com/library/cmd/blcmdl1_w.htm">Linux / Unix Command: w</a></p>
-  </li>
-</ul>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-12-19T22:35:00+08:00" pubdate data-updated="true">2012.12.19</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/linux/'>linux</a>
 
 
 </div>
