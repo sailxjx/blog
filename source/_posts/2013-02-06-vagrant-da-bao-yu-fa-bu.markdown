@@ -64,3 +64,6 @@ Host default
 * `vagrant suspend` 休眠
 
 总而言之，搞定ssh，一切就很顺利鸟。
+
+##资源
+[A list of base boxes for Vagrant - Vagrantbox.es](http://www.vagrantbox.es/)
