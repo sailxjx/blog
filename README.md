@@ -1,1 +1,1 @@
-## novolander blog, powered by [octopress](http://octopress.org/)
+## CodeBean, powered by [octopress](http://octopress.org/)
