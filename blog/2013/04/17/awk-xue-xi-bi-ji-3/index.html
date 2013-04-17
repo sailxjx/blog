@@ -1,0 +1,227 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>awk 学习笔记(3) - CodeBean</title>
+	<meta name="author" content="tristan">
+
+	
+	<meta name="description" content="最近线上服务出了一点问题，然后搞了一堆的log来分析。log的格式很乱，需要整理一下，虽然几个月前特意看了一下awk，但是过了这么久，也忘得差不多了，正好靠这次机会练练手，把失去的记忆找回来。 log中的每条数据都被分成了多行，而且都存在一个文件中，现在文件已经有8G的大小。 &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="CodeBean" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">CodeBean</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/102588932744890343699?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h1 class="title">Awk 学习笔记(3)</h1>
+	<div class="entry-content"><p>最近线上服务出了一点问题，然后搞了一堆的log来分析。log的格式很乱，需要整理一下，虽然几个月前特意看了一下awk，但是过了这么久，也忘得差不多了，正好靠这次机会练练手，把失去的记忆找回来。</p>
+
+<p>log中的每条数据都被分成了多行，而且都存在一个文件中，现在文件已经有8G的大小。现在要做的就是将这些多行的数据合并成每条一行，只取有用的部分。</p>
+
+<p>目标明确之后，就是编码啦。</p>
+
+<p>先以日期开头的行为单条数据的起点，这个日期就通过正则来匹配出来，然后再通过substr来截取。在使用substr的时候貌似awk不支持负数输入，没办法，截取末尾字符的时候只能先计算整行的长度再减去要截取的长度了。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="awk"><span class="line"><span class="k">if</span> <span class="p">(</span><span class="o">$</span><span class="mi">0</span> <span class="o">~</span> <span class="sr">/^2013.*[0-9]&#39;$/</span><span class="p">)</span> <span class="p">{</span>  <span class="c1"># id line</span>
+</span><span class="line">        <span class="nx">len</span> <span class="o">=</span> <span class="kr">length</span><span class="p">(</span><span class="o">$</span><span class="mi">0</span><span class="p">)</span>
+</span><span class="line">        <span class="nx">date</span> <span class="o">=</span> <span class="kr">substr</span><span class="p">(</span><span class="o">$</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</span><span class="line">        <span class="nx">line</span> <span class="o">=</span> <span class="kr">substr</span><span class="p">(</span><span class="o">$</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">19</span><span class="p">)</span> <span class="kr">substr</span><span class="p">(</span><span class="o">$</span><span class="mi">0</span><span class="p">,</span> <span class="nx">len</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>awk中的字符串连接也比较搞，不需要<code>+,.</code>等等符号，直接接上就好了，中间可以加上” “来分隔。</p>
+
+<p>下面就是将每行的匹配数据加到line变量后面，最后，一起print出来，这里重定向到文件也是一个不错的选择</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="awk"><span class="line"><span class="k">if</span> <span class="p">(</span><span class="o">$</span><span class="mi">0</span> <span class="o">~</span> <span class="sr">/\[template\]/</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="nx">line</span> <span class="o">=</span> <span class="nx">line</span><span class="s2">&quot; &quot;</span><span class="o">$</span><span class="mi">3</span>
+</span><span class="line">        <span class="kr">print</span> <span class="nx">line</span> <span class="o">&gt;&gt;</span> <span class="s2">&quot;desc.log.&quot;</span><span class="nx">date</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>下面还有一个需求就是根据统计类似数据再排排序，awk的数组可以实现统计关键词出现的次数，不过它数组的排序功能是在是太弱了，所以还需要结合sort命令。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>awk <span class="s1">&#39;{a[$4] += 1}END{for (k in a) print a[k], k}&#39;</span> <span class="nv">$i</span> | sort -rn &gt; <span class="s2">&quot;emailsort_${i}&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>大功告成。</p>
+
+<p>下面整理一下笔记，总结一下用到的东西</p>
+
+<ul>
+  <li>正则表达式： 根据gawk的官方文档，原版貌似不支持所谓的<code>interval expression</code>，也就是一些<code>\w</code>,<code>\d</code>之类的东西，实际也确实如此，gawk对它进行了扩展，加上<code>--re-interval</code>之后就行了。</li>
+  <li>substr： 截取字符串</li>
+  <li><code>&gt;,&gt;&gt;</code>： 重定向，跟shell一样，不过后面的文件名需要加上双引号</li>
+  <li>数组： 数组的遍历使用<code>for(k in a) print k</code>的方式，排序有asort方法，不过这样排序之后key就全部丢掉了，我还是倾向于选择通过管道让<code>sort</code>来干这事。</li>
+</ul>
+
+<h2 id="link-to">Link to</h2>
+<ul>
+  <li><a href="/blog/blog/2013/01/16/awk-xue-xi-bi-ji-1/">awk学习笔记1</a></li>
+  <li><a href="/blog/blog/2013/01/21/awk-xue-xi-bi-ji-2/">awk学习笔记2</a></li>
+</ul>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-17T16:11:00+08:00" pubdate data-updated="true">2013.04.17</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/awk/'>awk</a>, <a class='category' href='/blog/blog/categories/note/'>note</a>
+
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2013
+
+    tristan
+
+</footer>
+	<script src="/blog/javascripts/slash.js"></script>
+<script src="/blog/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sailxjx.github.com/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3/';
+        var disqus_url = 'http://sailxjx.github.com/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33186961-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+
+</body>
+</html>

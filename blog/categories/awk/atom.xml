@@ -4,7 +4,7 @@
   <title><![CDATA[Category: awk | CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/awk/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-04-16T14:05:23+08:00</updated>
+  <updated>2013-04-17T17:23:47+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,70 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[awk 学习笔记(3)]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3/"/>
+    <updated>2013-04-17T16:11:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3</id>
+    <content type="html"><![CDATA[<p>最近线上服务出了一点问题，然后搞了一堆的log来分析。log的格式很乱，需要整理一下，虽然几个月前特意看了一下awk，但是过了这么久，也忘得差不多了，正好靠这次机会练练手，把失去的记忆找回来。</p>
+
+<p>log中的每条数据都被分成了多行，而且都存在一个文件中，现在文件已经有8G的大小。现在要做的就是将这些多行的数据合并成每条一行，只取有用的部分。</p>
+
+<p>目标明确之后，就是编码啦。</p>
+
+<p>先以日期开头的行为单条数据的起点，这个日期就通过正则来匹配出来，然后再通过substr来截取。在使用substr的时候貌似awk不支持负数输入，没办法，截取末尾字符的时候只能先计算整行的长度再减去要截取的长度了。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="k">if</span> <span class="p">(</span><span class="o">$</span><span class="mi">0</span> <span class="o">~</span> <span class="sr">/^2013.*[0-9]’$/</span><span class="p">)</span> <span class="p">{</span>  <span class="c1"># id line</span>
+</span><span class='line'>        <span class="nx">len</span> <span class="o">=</span> <span class="kr">length</span><span class="p">(</span><span class="o">$</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>        <span class="nx">date</span> <span class="o">=</span> <span class="kr">substr</span><span class="p">(</span><span class="o">$</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</span><span class='line'>        <span class="nx">line</span> <span class="o">=</span> <span class="kr">substr</span><span class="p">(</span><span class="o">$</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">19</span><span class="p">)</span> <span class="kr">substr</span><span class="p">(</span><span class="o">$</span><span class="mi">0</span><span class="p">,</span> <span class="nx">len</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>awk中的字符串连接也比较搞，不需要<code>+,.</code>等等符号，直接接上就好了，中间可以加上” “来分隔。</p>
+
+<p>下面就是将每行的匹配数据加到line变量后面，最后，一起print出来，这里重定向到文件也是一个不错的选择</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="k">if</span> <span class="p">(</span><span class="o">$</span><span class="mi">0</span> <span class="o">~</span> <span class="sr">/[template]/</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">line</span> <span class="o">=</span> <span class="nx">line</span><span class="err">”</span> <span class="err">“</span><span class="o">$</span><span class="mi">3</span>
+</span><span class='line'>        <span class="kr">print</span> <span class="nx">line</span><span class="err"> »</span> <span class="err">“</span><span class="nx">desc</span><span class="p">.</span><span class="kr">log</span><span class="p">.</span><span class="err">”</span><span class="nx">date</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>下面还有一个需求就是根据统计类似数据再排排序，awk的数组可以实现统计关键词出现的次数，不过它数组的排序功能是在是太弱了，所以还需要结合sort命令。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk ‘<span class="o">{</span>a<span class="o">[</span><span class="nv">$4</span><span class="o">]</span> +<span class="o">=</span> 1<span class="o">}</span>END<span class="o">{</span><span class="k">for</span> <span class="o">(</span>k in a<span class="o">)</span> print a<span class="o">[</span>k<span class="o">]</span>, k<span class="o">}</span>’ <span class="nv">$i</span> | sort -rn &amp;gt; “emailsort_<span class="k">${</span><span class="nv">i</span><span class="k">}</span>”
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>大功告成。</p>
+
+<p>下面整理一下笔记，总结一下用到的东西</p>
+
+<ul>
+  <li>正则表达式： 根据gawk的官方文档，原版貌似不支持所谓的<code>interval expression</code>，也就是一些<code>\w</code>,<code>\d</code>之类的东西，实际也确实如此，gawk对它进行了扩展，加上<code>--re-interval</code>之后就行了。</li>
+  <li>substr： 截取字符串</li>
+  <li><code>&gt;,&gt;&gt;</code>： 重定向，跟shell一样，不过后面的文件名需要加上双引号</li>
+  <li>数组： 数组的遍历使用<code>for(k in a) print k</code>的方式，排序有asort方法，不过这样排序之后key就全部丢掉了，我还是倾向于选择通过管道让<code>sort</code>来干这事。</li>
+</ul>
+
+<h2 id="link-to">Link to</h2>
+<ul>
+  <li><a href="/blog/2013/01/16/awk-xue-xi-bi-ji-1/">awk学习笔记1</a></li>
+  <li><a href="/blog/2013/01/21/awk-xue-xi-bi-ji-2/">awk学习笔记2</a></li>
+</ul>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[awk 学习笔记(2)]]></title>
