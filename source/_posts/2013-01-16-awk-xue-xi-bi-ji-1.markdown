@@ -3,7 +3,7 @@ layout: post
 title: "awk 学习笔记(1)"
 date: 2013-01-16 21:46
 comments: true
-categories: [awk, learn]
+categories: [awk, note]
 ---
 
 ##第一个awk程序

@@ -3,7 +3,7 @@ layout: post
 title: "awk 学习笔记(2)"
 date: 2013-01-21 17:42
 comments: true
-categories: [awk, learn]
+categories: [awk, note]
 ---
 
 ##常用的选项

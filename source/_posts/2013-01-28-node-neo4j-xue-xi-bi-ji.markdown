@@ -3,7 +3,7 @@ layout: post
 title: "node-neo4j 学习笔记"
 date: 2013-01-28 11:49
 comments: true
-categories: [nodejs, neo4j, learn]
+categories: [nodejs, neo4j, note]
 ---
 
 ##[node-neo4j](https://github.com/thingdom/node-neo4j)

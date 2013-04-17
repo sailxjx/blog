@@ -3,7 +3,7 @@ layout: post
 title: "Cypher Query Language 学习笔记(1)"
 date: 2013-02-01 11:30
 comments: true
-categories: [neo4j, learn, cypher]
+categories: [neo4j, note, cypher]
 ---
 
 紧接前文[初试图形数据库 neo4j](http://sailxjx.github.com/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j/)初窥了这种语言的特性，几天使用下来，初期不适应的便秘感慢慢退去，渐入佳境，竟然觉得有些妙不可言鸟。就如同nodejs基于事件的特点和函数式语法对传统编程方法的改变，学习`Cypher`同样需要改改传统`Sql`的思路，下面记录一下最近的新发现。
