@@ -4,7 +4,7 @@
   <title><![CDATA[Category: translation | CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/translation/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-04-17T17:23:47+08:00</updated>
+  <updated>2013-04-18T14:58:37+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,41 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[[TDWTF] 苏格兰早餐]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/04/18/tdwtf-su-ge-lan-zao-can/"/>
+    <updated>2013-04-18T11:32:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/04/18/tdwtf-su-ge-lan-zao-can</id>
+    <content type="html"><![CDATA[<p>这几天Robert感觉自己简直像英国国王一样。他为一个开发加密软硬件的英国公司工作，并不时在欧洲各地的客户端间飞来飞去。一天，一个叫Willie的苏格兰客户打电话过来，气急败坏的说他的加密服务器挂掉了。“啊~我已经尽了一切奴力！但祂还是泡不起来！”Robert安抚了一下Willie，然后按部就班得问一些问题。（它安装上了吗？开关开了没有？是不是加密组件没有正确的连接上？还是你的服务器被一只巨大的海怪给吃了？）但是毫无结果。</p>
+
+<p>Robert只能跟Willie说：只有上机服务能解决这个问题了，但是我这周没有时间。“我今天在法国处理另一个客户的问题。”</p>
+
+<p>“这可不行，哥们！我需要在这周末我去亚伯丁看足球之前让它能工作起来！”当Robert跟Willie说周末的紧急服务会产生高昂的费用时，Willie毫不犹豫的答应了。</p>
+
+<p>Robert周六搭上了红眼的航班，Willie付了一大笔钱让他乘头等舱。Robert一边享用着热腾腾的坚果和毛巾，一边思考是什么搞坏了Willie的加密系统。它没有记录任何错误日志，而且最近一直工作正常。证据的缺乏让Robert的思绪一团糟。这绝不可能是一个简单的问题。</p>
+
+<p>下飞机之后，Robert在一家四星级酒店签了到，但是没有时间睡觉了。他匆匆吃了宾馆的“大餐”，吃起来像是肉馅羊肚，而不是他一开始以为的鸡蛋配面包。</p>
+
+<p>Robert将他的出租车停在一座没有窗户的浅褐色仓库前。要不是Willie跑出来迎接他，他差点要怀疑自己是不是找到了正确的地方，离开这个地方。“怎么这么就！你是不是掉海里面去了！近来！”Willie带着他穿过一个昏暗的走廊，到一个巨大的仓库中。这个回荡着回音的房间空空荡荡，只有一个吊钟，服务器，还有加密机。“我已经拂过钱了，所以你最好快点给我解决问题！”Willie嚷道。</p>
+
+<p>Robert扫了一边硬件，注意到连接这安全机器的电线松了。他将螺丝拧紧，打开开关，然后加密机就像一个苏格兰球霸吃了红牌一样起死回生了。“额，这就是你的问题。。。”Robert说，看都不看Willie。</p>
+
+<p>“天呐，太棒了。哥们！你搞定他了！”Willie给了Robert一个粗暴的熊抱。Robert告别了Willie回英国。在回去的航班上，他给Willie准备了这次旅途和修复问题的发票。当他看到短短五分钟的事就赚到了几千镑，忍不住偷着乐起来。我好，他好，大家好才是真的好嘛~</p>
+
+<p><a href="http://thedailywtf.com/Articles/The-Scottish-Breakfast.aspx?utm_source=feedly">原文连接</a></p>
+
+<h2 id="section">后记</h2>
+
+<p>这篇文章中居然碰到了一个有这浓重口音的苏格兰人？。这让我想到了前几天听到的一个笑话：</p>
+
+<blockquote>
+  <p>一个同事和一个印度人闲聊，当人家问他：“where is your balance?”，他一下子愣住了。这句话是什么意思？是问他有没有能不能找到生活的平衡点吗？他答道：“Sorry I don’t known.”那印度人很惊讶：“You don’t known your balance!”。后来那同事问了别人，人家告诉他，这是在问你“你的父母在那里”。</p>
+</blockquote>
+
+<p>讲方言真的很有喜感。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 数据库大师]]></title>
