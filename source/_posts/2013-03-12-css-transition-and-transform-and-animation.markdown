@@ -19,10 +19,10 @@ categories: [css, web]
 ## transition
 transition可以在同一dom元素的两种不同样式之间添加平滑的动画切换效果，下面是一个简单的例子，可以看出在没transition和有transition的情况下的区别。
 
-<p>
+<div>
 <div class="color-transition color-demo">color<br/>transition</div>
 <div class="color-notransition color-demo">color<br/>notransition</div>
-</p>
+</div>
 
 transition是一种比较好的用户体验，不会让用户对于style的切换感到突兀，要实现上面的效果，只需要在css中添加一行代码：
 
@@ -51,17 +51,17 @@ transition中支持的参数是比较容易理解的，第一个是css中的属�
 
 transform是对dom样式的一种变性，一般的样式中，我们可以定义宽高位置，甚至包括圆角。但是要实现旋转，缩放甚至一些3D效果，就需要用到transform了。下面还是先看一个例子：
 
-<p>
+<div>
 <div class="transform-rotate transform-demo">rotate</div>
 <div class="transform-scale transform-demo">scale</div>
-</p>
+</div>
 
 rotate可以在很多场景中得到应用，一个比较取巧的方法是用来做输入框的提示箭头，像下面这样.
 
-<p>
+<div>
     <div class="rotate-arrow"></div>
     <div class="input-tip">your messages</div>
-</p>
+</div>
 
 而scale的作用是在不调整宽高的情况下实现放大与缩小，灵活利用，也能实现一些有趣的功能，比如放大镜，异形字体等。
 
@@ -103,9 +103,9 @@ keyframes是一个预定义的方法，将它与animation结合，就能实现�
 }
 {% endcodeblock %}
 
-<p>
+<div>
     <div class="animate-move animate-demo">animate<br/>move</div>
-</p>
+</div>
 
 上面的例子中包含了animation中的三个参数：keyframes方法名，一次动画持续时间，循环次数。其中无限循环用infinite表示。animation还包含不少有用的参数，比如延迟时间，动画效果等等，在[w3school手册](http://www.w3schools.com/cssref/css3_pr_animation.asp)中有详细的记载。
 
@@ -167,7 +167,7 @@ keyframes是一个预定义的方法，将它与animation结合，就能实现�
     <img src="/u/image/album-milk.jpg" alt="album-milk" class="album">
 </p>
 
-<embed src="http://www.xiami.com/widget/0_1771372335/singlePlayer.swf" type="application/x-shockwave-flash" width="257" height="33" wmode="transparent"></embed>
+<embed src="http://www.xiami.com/widget/0_1771372335/singlePlayer.swf" type="application/x-shockwave-flash" width="257" height="33" wmode="transparent" />
 
 ## 后记
 
