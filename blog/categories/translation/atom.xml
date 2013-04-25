@@ -4,7 +4,7 @@
   <title><![CDATA[Category: translation | CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/translation/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-04-18T14:58:37+08:00</updated>
+  <updated>2013-04-25T15:06:05+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,64 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[[TDWTF] 耐心测试]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi/"/>
+    <updated>2013-04-25T12:09:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi</id>
+    <content type="html"><![CDATA[<p>在Eric的公司，发布流程中代码从来就没有经过正规的测试。不是说没有这些流程，当然得有。毕竟哪有公司会不经过测试就将代码发布给用户。但是“严格测试”和“健壮度检验”跟他们的公司从来不沾边。甚至连“成功的演示”和“满足用户”这些原则都没有，但这又是另一回事了。</p>
+
+<p>其中一个原因是公司认为为了测试付出大量金钱没什么好处。难道开发人员不应该保证代码不出问题？这有什么难的？</p>
+
+<p>虽然如此，公司里仍有一些谨慎的人认为需要在发布新的应用之前做一些测试。所以他们指派了一些测试人员。然而，这些测试人员仅仅是一些半吊子。除了测试外他们还干一些别的事情。比如 Mark，就是一个客户支持人员-特别一线客户支持。一个任何人都轻视或者想摆脱的家伙。</p>
+
+<p>Mark 接到一个任务是测试 Eric 写的新应用。所以当 Eric 收到一个由 Mark 提交到跟踪系统的新 bug 时，并不感到奇怪。由于距离交付日期只剩下一个礼拜，Eric 赶快读了一遍描述。</p>
+
+<blockquote>
+  <p>概要：粘贴不起作用<br />
+描述：我在记事本中选择了一些文本。然后到软件中去粘贴这些文本，但是不起作用。而且我发现粘贴菜单是灰的。</p>
+</blockquote>
+
+<p>Eric 有一点迷惑，也仅有“一点儿”。这已经不是他第一次忘了在剪贴板中有内容时开启粘贴功能了。他启动软件，然后照着 Mark 的步骤做。但是没用，他不能重现这个问题。他粗略的过了一遍代码发现粘贴功能是被启用了。所以他给 bug 加了个注释然后重新指派给 Mark。</p>
+
+<blockquote>
+  <p>我尝试重现你说的问题，但是没有效果。你还做了些别的操作吗？</p>
+</blockquote>
+
+<p>两天以后，这个问题被加了条注释，重新指派给 Eric</p>
+
+<blockquote>
+  <p>我可能忘了一个步骤，当我复制文本之后，我把软件关了。这对你有帮助吗？</p>
+</blockquote>
+
+<p>这消息可能有用，Eric 想。然后他回过头去 debug。他尝试关闭记事本，关闭并重启他的软件。他关闭 Visual Studio。他甚至想关闭当地的核电站。但是粘贴功能始终可用。即使他一行行的看代码也没找出问题在哪里。不得已，他在 bug 后加了另一条注释并重新指派给 Mark</p>
+
+<blockquote>
+  <p>我尝试了各种关闭的组合，仍然不能重现这个问题。你再想想还有别的操作忘了提吗？</p>
+</blockquote>
+
+<p>这次只用了两个小时就收到了回复</p>
+
+<blockquote>
+  <p>恐怕我忘了提一件事，在我关闭你的软件之后，我重启了我的电脑。希望这能对你有所帮助。:)</p>
+</blockquote>
+
+<p>Eric 愣住了。脑中呈现中一堆难以名状的复杂感情。他对这个公司没有合格和测试人员而感到愤怒，对于 Mark 而言，只是一个重要的 bug 被修复了。风平浪静之后，是剩下疲倦。Mark 慢吞吞的将 bug 的状态改为“关闭-设计如此”。</p>
+
+<p><a href="http://thedailywtf.com/Articles/Testing-Patience.aspx">原文链接</a></p>
+
+<h2 id="section">后记</h2>
+
+<p>这篇文章有些句子不太好翻译，例如最后一段的</p>
+
+<blockquote>
+  <p>Rage at the company for not having competent testers. Pity for Mark because…well… Relief that a significant bug had been put to rest.</p>
+</blockquote>
+
+<p>只能靠上下文来猜个大概。心理描写这种虚幻的东西还是不太好直译啊。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 苏格兰早餐]]></title>

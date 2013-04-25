@@ -1,0 +1,221 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>[TDWTF] 耐心测试 - CodeBean</title>
+	<meta name="author" content="tristan">
+
+	
+	<meta name="description" content="在Eric的公司，发布流程中代码从来就没有经过正规的测试。不是说没有这些流程，当然得有。毕竟哪有公司会不经过测试就将代码发布给用户。但是“严格测试”和“健壮度检验”跟他们的公司从来不沾边。甚至连“成功的演示”和“满足用户”这些原则都没有，但这又是另一回事了。 &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="CodeBean" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">CodeBean</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/102588932744890343699?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h1 class="title">[TDWTF] 耐心测试</h1>
+	<div class="entry-content"><p>在Eric的公司，发布流程中代码从来就没有经过正规的测试。不是说没有这些流程，当然得有。毕竟哪有公司会不经过测试就将代码发布给用户。但是“严格测试”和“健壮度检验”跟他们的公司从来不沾边。甚至连“成功的演示”和“满足用户”这些原则都没有，但这又是另一回事了。</p>
+
+<p>其中一个原因是公司认为为了测试付出大量金钱没什么好处。难道开发人员不应该保证代码不出问题？这有什么难的？</p>
+
+<p>虽然如此，公司里仍有一些谨慎的人认为需要在发布新的应用之前做一些测试。所以他们指派了一些测试人员。然而，这些测试人员仅仅是一些半吊子。除了测试外他们还干一些别的事情。比如 Mark，就是一个客户支持人员-特别一线客户支持。一个任何人都轻视或者想摆脱的家伙。</p>
+
+<p>Mark 接到一个任务是测试 Eric 写的新应用。所以当 Eric 收到一个由 Mark 提交到跟踪系统的新 bug 时，并不感到奇怪。由于距离交付日期只剩下一个礼拜，Eric 赶快读了一遍描述。</p>
+
+<blockquote>
+  <p>概要：粘贴不起作用<br />
+描述：我在记事本中选择了一些文本。然后到软件中去粘贴这些文本，但是不起作用。而且我发现粘贴菜单是灰的。</p>
+</blockquote>
+
+<p>Eric 有一点迷惑，也仅有“一点儿”。这已经不是他第一次忘了在剪贴板中有内容时开启粘贴功能了。他启动软件，然后照着 Mark 的步骤做。但是没用，他不能重现这个问题。他粗略的过了一遍代码发现粘贴功能是被启用了。所以他给 bug 加了个注释然后重新指派给 Mark。</p>
+
+<blockquote>
+  <p>我尝试重现你说的问题，但是没有效果。你还做了些别的操作吗？</p>
+</blockquote>
+
+<p>两天以后，这个问题被加了条注释，重新指派给 Eric</p>
+
+<blockquote>
+  <p>我可能忘了一个步骤，当我复制文本之后，我把软件关了。这对你有帮助吗？</p>
+</blockquote>
+
+<p>这消息可能有用，Eric 想。然后他回过头去 debug。他尝试关闭记事本，关闭并重启他的软件。他关闭 Visual Studio。他甚至想关闭当地的核电站。但是粘贴功能始终可用。即使他一行行的看代码也没找出问题在哪里。不得已，他在 bug 后加了另一条注释并重新指派给 Mark</p>
+
+<blockquote>
+  <p>我尝试了各种关闭的组合，仍然不能重现这个问题。你再想想还有别的操作忘了提吗？</p>
+</blockquote>
+
+<p>这次只用了两个小时就收到了回复</p>
+
+<blockquote>
+  <p>恐怕我忘了提一件事，在我关闭你的软件之后，我重启了我的电脑。希望这能对你有所帮助。:)</p>
+</blockquote>
+
+<p>Eric 愣住了。脑中呈现中一堆难以名状的复杂感情。他对这个公司没有合格和测试人员而感到愤怒，对于 Mark 而言，只是一个重要的 bug 被修复了。风平浪静之后，是剩下疲倦。Mark 慢吞吞的将 bug 的状态改为“关闭-设计如此”。</p>
+
+<p><a href="http://thedailywtf.com/Articles/Testing-Patience.aspx">原文链接</a></p>
+
+<h2 id="section">后记</h2>
+
+<p>这篇文章有些句子不太好翻译，例如最后一段的</p>
+
+<blockquote>
+  <p>Rage at the company for not having competent testers. Pity for Mark because…well… Relief that a significant bug had been put to rest.</p>
+</blockquote>
+
+<p>只能靠上下文来猜个大概。心理描写这种虚幻的东西还是不太好直译啊。</p>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-25T12:09:00+08:00" pubdate data-updated="true">2013.04.25</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/joke/'>joke</a>, <a class='category' href='/blog/blog/categories/translation/'>translation</a>
+
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2013
+
+    tristan
+
+</footer>
+	<script src="/blog/javascripts/slash.js"></script>
+<script src="/blog/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sailxjx.github.com/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi/';
+        var disqus_url = 'http://sailxjx.github.com/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33186961-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+
+</body>
+</html>
