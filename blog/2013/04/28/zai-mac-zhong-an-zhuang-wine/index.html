@@ -1,0 +1,185 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>在 mac 中安装 wine - CodeBean</title>
+	<meta name="author" content="tristan">
+
+	
+	<meta name="description" content="公司用奇葩的imo，由于没有mac版本，只能用web版。最近imo web版升级之后老是不稳定，又不想装一个笨重的windows虚拟机，于是曲线救国，找找mac上的wine该怎么用。 在mac上安装wine需要备齐三样神器： xquartz，在mac上提供对x11的支持，由于mountain &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="CodeBean" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">CodeBean</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/102588932744890343699?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h1 class="title">在 Mac 中安装 Wine</h1>
+	<div class="entry-content"><p>公司用奇葩的imo，由于没有mac版本，只能用web版。最近imo web版升级之后老是不稳定，又不想装一个笨重的windows虚拟机，于是曲线救国，找找mac上的<a href="http://www.winehq.org/">wine</a>该怎么用。</p>
+
+<p>在mac上安装wine需要备齐三样神器：</p>
+
+<ul>
+  <li><a href="http://xquartz.macosforge.org/landing/">xquartz</a>，在mac上提供对x11的支持，由于mountain lion之后不在预装x11，所以这个需要手动下载。</li>
+  <li><a href="http://winebottler.kronenberg.org/">winebottler</a>，这个包里两个软件，wine和winebottler，winebottler算是一个wine的管理器，里面预设了一些各种wine应用下需要的类库模板。</li>
+</ul>
+
+<p>安装顺序是xquartz-&gt;winebottler-&gt;wine，后面两个从包中直接拖到Application中就行了。安装完后需要先启动xquartz，然后启动wine之后在上面的panel中会有一个酒杯的图标，里面可以打开资源管理器等等，第一次打开时会在用户目录里生成一个Wine Files文件夹，这个就是winebottler中所谓的prefix，里面模拟了一套windows下面的环境。可以通过在winebottler中安装不同的prefix来切换不同应用环境。不过每个prefix都是一个完整的windows环境，非常占空间，没有必要的话，用默认的就行。然后增加类库可以点击wine图标，选择wine trick来安装，还是比较方便的。</p>
+
+<p>youtube上有个<a href="http://www.youtube.com/watch?v=m0BBkISOcEA">视频</a>介绍了如何在mac上安装wine，按照上面说的一步步来，基本不会出错。</p>
+
+<p>但是wine的种种缺点还是很明显的，一个是字体界面都很丑，在mac下更甚，即使想各种办法优化也无济于事。第二个就是很多库都没有，这是最致命的，imo最后还是没有安装成功，按照错误提示装了.net和vcrun2008等等之后还是不能正常启动，也是预料之中的事。wine还是只能算是一个玩具，给喜欢折腾的geek玩玩而已，真要用来跑wow之类的应用，那肯定是闲的蛋疼了。</p>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-28T12:39:00+08:00" pubdate data-updated="true">2013.04.28</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/mac/'>mac</a>, <a class='category' href='/blog/blog/categories/osx/'>osx</a>, <a class='category' href='/blog/blog/categories/software/'>software</a>, <a class='category' href='/blog/blog/categories/wine/'>wine</a>
+
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2013
+
+    tristan
+
+</footer>
+	<script src="/blog/javascripts/slash.js"></script>
+<script src="/blog/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sailxjx.github.com/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine/';
+        var disqus_url = 'http://sailxjx.github.com/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33186961-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+
+</body>
+</html>
