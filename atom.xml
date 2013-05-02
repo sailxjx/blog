@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-04-28T13:40:56+08:00</updated>
+  <updated>2013-05-02T18:03:15+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,156 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[执行 javascript 方法的几种方式]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/05/02/zhi-xing-javascript-fang-fa-de-ji-chong-fang-shi/"/>
+    <updated>2013-05-02T12:41:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/05/02/zhi-xing-javascript-fang-fa-de-ji-chong-fang-shi</id>
+    <content type="html"><![CDATA[<p>javascript语法灵活，同一个功能有五六种实现方式并不罕见，然后再加上有些反人类的原型继承和异步特性，就更让人一头雾水了。我经常搞不清楚<code>call</code>,<code>apply</code>之间的区别，今天就记录一下，以免再忘了。</p>
+
+<p>在javascript中，方法可以通过以下几种方式执行：</p>
+
+<ul>
+  <li>func()，这是最直接最常见的调用方式，也符合一般人的思维逻辑，但是在某些情况下有一些不足，下面会解释。</li>
+  <li>(function(arg){})(window)，匿名方法调用，在构造命名空间时比较有用，后面的括号中的参数与匿名方法中的入参一一对应。</li>
+  <li>func.bind(sth)()，<a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/bind">mozilla手册</a>中提到<code>bind</code>是在<a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">ECMA-262 5th Edition</a>中新增的一个特性，这里单独列出来作为一种调用方式是因为它弥补了直接调用中不能绑定作用域的缺陷。</li>
+  <li>func.call()，这是第二种调用方式，每个方法的原型中都定义了call方法，用来执行当前方法。</li>
+  <li>func.apply()，call的双胞胎兄弟。</li>
+</ul>
+
+<h2 id="func">func()</h2>
+<p>这是最常见的调用方式，在任何语言中随处可见。func(x, y)可以传入不同的参数。在某些语言，例如php，java中，这种调用足以解决一切问题。但是javascript是一门函数式语言，闭包的概念和一个奇怪的关键词<code>this</code>决定了这种调用方式的不足。<code>this</code>应该可以解释为当前代码段的作用域，会随着代码执行到不同的片段而改变，但是某些情况下我们不希望这个<code>this</code>被改变，例如绑定在某些dom上的事件，我们肯定不希望他们被调用的时候<code>this</code>被转移到了<code>window</code>对象上，但有时候确实如此，再比如下面的代码。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span><span class="p">{};</span>
+</span><span class="line"><span class="kd">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="nx">a</span><span class="p">.</span><span class="nx">onclick</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">    <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+</span><span class="line">    <span class="nx">func</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="nx">a</span><span class="p">.</span><span class="nx">onclick</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>可以把a想象成页面中的一个链接，由于我们只是想将定义好的方法绑定到onclick事件上，而不是立刻调用它，而且这个方法拥有一个参数，所以我们需要用一个匿名方法将他包起来传递给a的onclick事件。这样就有了一个问题，func中的this变成了全局对象window，显然我们并不希望如此。这个时候，使用func()这种直接调用的方式就不行了，于是我们需要将func外的this绑定到func方法上。于是就有了<code>bind</code>,<code>call</code>,<code>apply</code>方法。</p>
+
+<h2 id="bind">bind</h2>
+
+<p><code>bind</code>的目的非常简单，返回一个绑定了this对象的相同方法。上面的代码修改一行就可以实现绑定this在a对象上目的。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span><span class="p">{};</span>
+</span><span class="line"><span class="kd">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="nx">a</span><span class="p">.</span><span class="nx">onclick</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">    <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+</span><span class="line">    <span class="nx">func</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">)(</span><span class="nx">x</span><span class="p">);</span>  <span class="c1">// bind here</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="nx">a</span><span class="p">.</span><span class="nx">onclick</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这样，onclick事件的this就不会像无头苍蝇一样到处乱跑啦。</p>
+
+<h2 id="call--apply">call &amp; apply</h2>
+
+<p><code>call</code>和<code>apply</code>要放在一起讲，因为他们实在太像了。他们都支持多参数，而且第一个参数都是即将绑定的this对象，第二个参数则是他们的区别所在，<code>call</code>使用独立的参数作为调用方法的入参，<code>apply</code>使用一个数组作为入参。有的时候我们并不是不想改变this对象，而是想人为的将他绑定到别的对象上，这个时候<code>call</code>和<code>apply</code>是很好用的。（并不是说不能用<code>bind</code>，不过貌似<code>bind</code>出现的比较晚，可能浏览器兼容性不好）。举个栗子：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">a</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">func</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">              <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class="line">          <span class="p">},</span>
+</span><span class="line">    <span class="nx">x</span><span class="o">:</span> <span class="mi">0</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="nx">b</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">a</span><span class="o">:</span> <span class="nx">a</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">x</span><span class="o">:</span> <span class="mi">20</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+</span><span class="line">    <span class="nx">b</span><span class="p">.</span><span class="nx">a</span><span class="p">.</span><span class="nx">func</span><span class="p">();</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>上面的a和b对象中都有x，我们希望func能针对性的修改对应的x，但是直接调用只可能修改func作用域中的x，也就是a.x。修改一下代码，就可以实现修改b.x目的</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">a</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">func</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">              <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class="line">          <span class="p">},</span>
+</span><span class="line">    <span class="nx">x</span><span class="o">:</span> <span class="mi">0</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="nx">b</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">a</span><span class="o">:</span> <span class="nx">a</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">x</span><span class="o">:</span> <span class="mi">20</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+</span><span class="line">    <span class="nx">b</span><span class="p">.</span><span class="nx">a</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">b</span><span class="p">);</span>  <span class="c1">// bind this to b</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这个栗子举得不好，有点牵强附会，而且这是一种很容易让人迷惑的代码风格，有适用的场景，但不是处处都可用。</p>
+
+<h1 id="section">参考资料</h1>
+<ul>
+  <li><a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference">mozilla</a></li>
+  <li><a href="http://fitzgeraldnick.com/weblog/26/">Nick Fitzgerald’s Weblog</a></li>
+  <li><a href="http://dailyjs.com/2012/06/25/this-binding/">DailyJs</a></li>
+  <li><a href="http://stackoverflow.com/questions/1986896/what-is-the-difference-between-call-and-apply">stackoverflow</a></li>
+</ul>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[在 mac 中安装 wine]]></title>
@@ -167,7 +317,7 @@
 </span><span class="line"><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>下面还有一个需求就是根据统计类似数据再排排序，awk的数组可以实现统计关键词出现的次数，不过它数组的排序功能是在是太弱了，所以还需要结合sort命令。</p>
+<p>下面还有一个需求就是根据统计类似数据再排排序，awk的数组可以实现统计关键词出现的次数，不过它数组的排序功能实在是太弱了，所以还需要结合sort命令。</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 </pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>awk <span class="s1">&#39;{a[$4] += 1}END{for (k in a) print a[k], k}&#39;</span> <span class="nv">$i</span> | sort -rn &gt; <span class="s2">&quot;emailsort_${i}&quot;</span>
@@ -1823,251 +1973,6 @@ url=http%3A%2F%2Fwww.google.com</p>
 <h3 id="query">万能的query</h3>
 <p>db对象上有一个万能的<code>query</code>方法，就是直接通过<code>Cypher</code>语句得到查询结果啦，这个弥补了作者很多没有实现的方法。</p>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[初试图形数据库 neo4j]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j/"/>
-    <updated>2013-01-23T11:25:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j</id>
-    <content type="html"><![CDATA[<h2 id="section">安装</h2>
-
-<p>作为一个java软件，就得充分发挥它<code>Write Once, Run Anywhere</code>的精神。直接下载tarball，解压后运行即可。官方还很贴心的提供了一个init脚本(./bin/neo4j)，链接到init.d下就可以开搞啦。</p>
-
-<p>默认的服务实例在localhost:7474，其余配置还是值得好好研究一番的。</p>
-
-<h2 id="neo4j-shell">neo4j shell</h2>
-<p>neo4j提供了一种叫做<code>Cypher Query Language</code>的查询方言，可以看做是图形数据库的sql，neo4j还提供了一个<code>neo4j-shell</code>用于做查询交互，在命令行下可以使用<code>./bin/neo4j-shell</code>来开启，web中也有一个tab叫做<code>power-tool console</code>可以使用neo4j-shell。</p>
-
-<h3 id="section-1">增删改节点</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="c"># 创建节点</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>CREATE <span class="nv">n</span> <span class="o">=</span> <span class="o">{</span> name : <span class="s1">&#39;Andres&#39;</span>, title : <span class="s1">&#39;Developer&#39;</span> <span class="o">}</span> RETURN n;
-</span><span class="line">+-------------------------------------------+
-</span><span class="line">| n                                         |
-</span><span class="line">+-------------------------------------------+
-</span><span class="line">| Node<span class="o">[</span>37<span class="o">]{</span>name:<span class="s2">&quot;Andres&quot;</span>,title:<span class="s2">&quot;Developer&quot;</span><span class="o">}</span> |
-</span><span class="line">+-------------------------------------------+
-</span><span class="line">1 row
-</span><span class="line">Nodes created: 1
-</span><span class="line">Properties <span class="nb">set</span>: 2
-</span><span class="line">8 ms
-</span><span class="line"><span class="c"># 修改节点</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">n</span> <span class="o">=</span> node<span class="o">(</span>37<span class="o">)</span> SET n.surname <span class="o">=</span> <span class="s1">&#39;Taylor&#39;</span> RETURN n;
-</span><span class="line">+------------------------------------------------------------+
-</span><span class="line">| n                                                          |
-</span><span class="line">+------------------------------------------------------------+
-</span><span class="line">| Node<span class="o">[</span>37<span class="o">]{</span>name:<span class="s2">&quot;Andres&quot;</span>,title:<span class="s2">&quot;Developer&quot;</span>,surname:<span class="s2">&quot;Taylor&quot;</span><span class="o">}</span> |
-</span><span class="line">+------------------------------------------------------------+
-</span><span class="line">1 row
-</span><span class="line">Properties <span class="nb">set</span>: 1
-</span><span class="line">15 ms
-</span><span class="line"><span class="c"># 删除节点</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">n</span> <span class="o">=</span> node<span class="o">(</span>37<span class="o">)</span> DELETE n;
-</span><span class="line">+-------------------+
-</span><span class="line">| No data returned. |
-</span><span class="line">+-------------------+
-</span><span class="line">Nodes deleted: 1
-</span><span class="line">4 ms
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section-2">创建关系</h3>
-<p>图形数据库最重要的一个概念就是关系(relationship)，各个节点直接通过双向或单向的关系连接在一起，这样才能从一个节点查找到其他的节点，这种设计在某些场景下会让查询变得更加高效而灵活，例如社交网络中的好友关系，人立方中查找任意两人之间的亲友，假如使用传统的关系数据库，查找朋友的朋友就会变得非常的困难，其耗时也是指数型的增长，而使用图形数据库，则可以保持线性的效率。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-<span class="line-number">29</span>
-<span class="line-number">30</span>
-<span class="line-number">31</span>
-<span class="line-number">32</span>
-<span class="line-number">33</span>
-<span class="line-number">34</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="c"># 创建两个节点的关系</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">a</span> <span class="o">=</span> node<span class="o">(</span>34<span class="o">)</span>, <span class="nv">b</span> <span class="o">=</span> node<span class="o">(</span>36<span class="o">)</span> CREATE a-<span class="o">[</span>r:knowns<span class="o">]</span>-&gt;b RETURN r;
-</span><span class="line">+---------------+
-</span><span class="line">| r             |
-</span><span class="line">+---------------+
-</span><span class="line">| :knowns<span class="o">[</span>0<span class="o">]</span> <span class="o">{}</span> |
-</span><span class="line">+---------------+
-</span><span class="line">1 row
-</span><span class="line">Relationships created: 1
-</span><span class="line">20 ms
-</span><span class="line"><span class="c"># 查找关系</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">r</span> <span class="o">=</span> rel<span class="o">(</span>0<span class="o">)</span> <span class="k">return </span>r;
-</span><span class="line">+-----------------------------------+
-</span><span class="line">| r                                 |
-</span><span class="line">+-----------------------------------+
-</span><span class="line">| :isdogof<span class="o">[</span>0<span class="o">]</span> <span class="o">{</span>ctime:1359365331933<span class="o">}</span> |
-</span><span class="line">+-----------------------------------+
-</span><span class="line">1 row
-</span><span class="line">1 ms
-</span><span class="line"><span class="c"># 删除某节点和它的所有关系</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">n</span> <span class="o">=</span> node<span class="o">(</span>34<span class="o">)</span> MATCH n-<span class="o">[</span>r<span class="o">]</span>-<span class="o">()</span> DELETE n, r;
-</span><span class="line">+-------------------+
-</span><span class="line">| No data returned. |
-</span><span class="line">+-------------------+
-</span><span class="line">Nodes deleted: 1
-</span><span class="line">Relationships deleted: 3
-</span><span class="line">3 ms
-</span><span class="line"><span class="c"># 查找节点的关系</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">a</span> <span class="o">=</span> node<span class="o">(</span>2<span class="o">)</span> match a&lt;-<span class="o">[</span>r:isfamilyof<span class="o">]</span>-&gt;b RETURN a,r,b;
-</span><span class="line">+----------------------------------------------------------------------------------------+
-</span><span class="line">| a                           | r                          | b                           |
-</span><span class="line">+----------------------------------------------------------------------------------------+
-</span><span class="line">| Node<span class="o">[</span>2<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span> | :isfamilyof<span class="o">[</span>2<span class="o">]</span> <span class="o">{</span>ctime:200<span class="o">}</span> | Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;snow&quot;</span>,age:17<span class="o">}</span> |
-</span><span class="line">+----------------------------------------------------------------------------------------+
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>有意思的是注意其中<code>CREATE a-[r:knowns]-&gt;b</code>中的箭头走向表示这种关系的指向，我们可以通过<code>CREATE a&lt;-[r:knowns]-b</code>来创建一个b到a的关系，但是当我想用<code>CREATE a&lt;-[r:knowns]-&gt;b</code>来创建一个双向关系时却没有成功，仍然只创建了从a到b的关系。而在查找某个节点的关系时，双向箭头确是起作用的，应该算做一个bug。</p>
-
-<h3 id="section-3">删除所有节点和关系</h3>
-<p><code>Cypher</code>中可以使用通配符<code>*</code>来找出所有的节点或者关系，那么假如我们需要删除所有节点，语句如下</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="c"># 如果节点上还有对应的关系，该节点是无法删除的，所以需要先删除所有关系</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">r</span> <span class="o">=</span> rel<span class="o">(</span>*<span class="o">)</span> delete r;
-</span><span class="line">+--------------------------------------------+
-</span><span class="line">| No data returned, and nothing was changed. |
-</span><span class="line">+--------------------------------------------+
-</span><span class="line">0 ms
-</span><span class="line"><span class="c"># 删除节点</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">n</span> <span class="o">=</span> node<span class="o">(</span>*<span class="o">)</span> delete n;
-</span><span class="line">+-------------------+
-</span><span class="line">| No data returned. |
-</span><span class="line">+-------------------+
-</span><span class="line">Nodes deleted: 2
-</span><span class="line">4 ms
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>删除所有节点后，在web端显示的节点数和关系数可能会对不上真实的数据，这些数量官方叫做”Primitive count”，其实在<code>neo4j-shell</code>下可以用下面的命令得到，按字面意思应该表示一个估算值，并不准确。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>0<span class="o">)</span><span class="nv">$ </span>dbinfo -g <span class="s2">&quot;Primitive count&quot;</span>
-</span><span class="line"><span class="o">{</span>
-</span><span class="line">  <span class="s2">&quot;NumberOfNodeIdsInUse&quot;</span>: 1,
-</span><span class="line">  <span class="s2">&quot;NumberOfPropertyIdsInUse&quot;</span>: 0,
-</span><span class="line">  <span class="s2">&quot;NumberOfRelationshipIdsInUse&quot;</span>: 0,
-</span><span class="line">  <span class="s2">&quot;NumberOfRelationshipTypeIdsInUse&quot;</span>: 0
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>在自己看来，<code>Cypher Query Language</code>的增删改语句还是比较直观的，但是一旦牵涉到关系就有点没节操了，一句查询中一半的操作符，真是让人看花眼，相较之下还是sql发展的比较成熟，也更易为人所接受了。<a href="http://docs.neo4j.org/chunked/milestone/cypher-query-lang.html">更多的操作符和更多的语法</a></p>
-
-<p>不过，各种neo4j的客户端都将晦涩的<code>Cypher</code>语言封装起来，提供了可读性更高的接口方法，下面就找个客户端来试用一下。</p>
-
-<h2 id="nodejs-bundle">nodejs bundle</h2>
-<p>官网上给出了java和python版本的实例，我等屌丝玩点轻量级的，这里找了一个<a href="https://github.com/thingdom/node-neo4j">nodejs的客户端</a>，初窥图形数据库的魅力。</p>
-
-<h3 id="section-4">创建及修改节点</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">neo4j = </span><span class="nx">require</span> <span class="s">&#39;neo4j&#39;</span>     <span class="c1">#使用coffee-script，那就尽量写的更coffee一点儿吧</span>
-</span><span class="line"><span class="nv">db = </span><span class="k">new</span> <span class="nx">neo4j</span><span class="p">.</span><span class="nx">GraphDatabase</span><span class="p">(</span><span class="s">&#39;http://localhost:7474&#39;</span><span class="p">)</span> <span class="c1">#连接默认的REST端口</span>
-</span><span class="line"><span class="nx">node</span><span class="p">.</span><span class="nx">createNode</span> <span class="p">{</span>             <span class="c1">#初始化一个节点</span>
-</span><span class="line">    <span class="nv">username: </span><span class="s">&#39;bran&#39;</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line"><span class="nx">node</span><span class="p">.</span><span class="nx">save</span> <span class="nf">(err, node)-&gt;</span>       <span class="c1">#需要save才能真正的保存这个节点到数据库</span>
-</span><span class="line">    <span class="nv">node.data = </span><span class="p">{</span>           <span class="c1">#可以通过直接修改node的data属性来修改node值</span>
-</span><span class="line">        <span class="nv">username: </span><span class="s">&#39;bran&#39;</span>
-</span><span class="line">        <span class="nv">nickname: </span><span class="s">&#39;bird man&#39;</span>
-</span><span class="line">        <span class="nv">email: </span><span class="s">&#39;bran@gmail.com&#39;</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line">    <span class="nx">node</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>             <span class="c1">#不要忘了再次保存</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h2 id="section-5">备份数据库</h2>
-<p>之前造出了那么多的脏数据，有点洁癖的人都想要把数据清理一下吧。网上找了找，发现只有’enterprise’版才有export的功能，这不是明摆着鄙视我等屌丝么。在<a href="http://www.mail-archive.com/user@lists.neo4j.org/msg08932.html">这里</a>(翻墙可入)有兄台说了一个很暴力的办法，直接删除<code>data/graph.db</code>文件夹，我试了一下，确实可行，重启后世界干干净净，只剩下了0号node，果断再用<code>start n = node(0) delete n;</code>删除之。这大概也是nosql的好处，数据就是文件，取消了维护索引，关系等等的麻烦，随去随用，冷备份和迁移的时候也简单，直接copy文件夹即可。</p>
-
-<h2 id="section-6">参考文档</h2>
-<ul>
-  <li><a href="http://docs.neo4j.org/chunked/milestone/">v1.9手册</a></li>
-  <li><a href="http://docs.neo4j.org.cn/">v1.8中文开发文档</a></li>
-  <li><a href="http://coffeedoc.info/github/thingdom/node-neo4j/master/">node-neo4j文档</a></li>
-</ul>
 ]]></content>
   </entry>
   

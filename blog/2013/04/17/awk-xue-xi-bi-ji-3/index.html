@@ -110,7 +110,7 @@
 </span><span class="line"><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>下面还有一个需求就是根据统计类似数据再排排序，awk的数组可以实现统计关键词出现的次数，不过它数组的排序功能是在是太弱了，所以还需要结合sort命令。</p>
+<p>下面还有一个需求就是根据统计类似数据再排排序，awk的数组可以实现统计关键词出现的次数，不过它数组的排序功能实在是太弱了，所以还需要结合sort命令。</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 </pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>awk <span class="s1">&#39;{a[$4] += 1}END{for (k in a) print a[k], k}&#39;</span> <span class="nv">$i</span> | sort -rn &gt; <span class="s2">&quot;emailsort_${i}&quot;</span>

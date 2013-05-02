@@ -4,7 +4,7 @@
   <title><![CDATA[Category: awk | CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/awk/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-04-28T13:40:56+08:00</updated>
+  <updated>2013-05-02T18:03:15+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -52,7 +52,7 @@
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<p>下面还有一个需求就是根据统计类似数据再排排序，awk的数组可以实现统计关键词出现的次数，不过它数组的排序功能是在是太弱了，所以还需要结合sort命令。</p>
+<p>下面还有一个需求就是根据统计类似数据再排排序，awk的数组可以实现统计关键词出现的次数，不过它数组的排序功能实在是太弱了，所以还需要结合sort命令。</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>awk ‘<span class="o">{</span>a<span class="o">[</span><span class="nv">$4</span><span class="o">]</span> +<span class="o">=</span> 1<span class="o">}</span>END<span class="o">{</span><span class="k">for</span> <span class="o">(</span>k in a<span class="o">)</span> print a<span class="o">[</span>k<span class="o">]</span>, k<span class="o">}</span>’ <span class="nv">$i</span> | sort -rn &amp;gt; “emailsort_<span class="k">${</span><span class="nv">i</span><span class="k">}</span>”
