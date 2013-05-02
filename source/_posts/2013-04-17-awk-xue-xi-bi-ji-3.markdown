@@ -33,7 +33,7 @@ if ($0 ~ /\[template\]/) {
 }
 {% endcodeblock %}
 
-下面还有一个需求就是根据统计类似数据再排排序，awk的数组可以实现统计关键词出现的次数，不过它数组的排序功能是在是太弱了，所以还需要结合sort命令。
+下面还有一个需求就是根据统计类似数据再排排序，awk的数组可以实现统计关键词出现的次数，不过它数组的排序功能实在是太弱了，所以还需要结合sort命令。
 
 {% codeblock lang:bash %}
 $ awk '{a[$4] += 1}END{for (k in a) print a[k], k}' $i | sort -rn > "emailsort_${i}"
