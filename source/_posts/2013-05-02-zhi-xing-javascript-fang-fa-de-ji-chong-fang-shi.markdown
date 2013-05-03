@@ -99,4 +99,4 @@ console.log(b.x);
 * [mozilla](https://developer.mozilla.org/en-US/docs/JavaScript/Reference)
 * [Nick Fitzgerald's Weblog](http://fitzgeraldnick.com/weblog/26/)
 * [DailyJs](http://dailyjs.com/2012/06/25/this-binding/)
-* [stackoverflow](http://stackoverflow.com/questions/1986896/what-is-the-difference-between-call-and-apply)
+* [what-is-the-difference-between-call-and-apply](http://stackoverflow.com/questions/1986896/what-is-the-difference-between-call-and-apply)
