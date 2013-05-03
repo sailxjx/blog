@@ -1,0 +1,293 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>追求更快: jQuery.ready 如何实现 - CodeBean</title>
+	<meta name="author" content="tristan">
+
+	
+	<meta name="description" content="jQuery从1.0版本就提供了一个叫做ready的方法，最常见的调用场景是$(document).ready(handler)，表示当dom树下载完成后触发事件，也可以简写成$(handler)。 以前一直以为这个方法和javascript自己提供的window.onload事件是一回事， &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="CodeBean" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">CodeBean</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/102588932744890343699?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h1 class="title">追求更快: jQuery.ready 如何实现</h1>
+	<div class="entry-content"><p>jQuery从1.0版本就提供了一个叫做<code>ready</code>的方法，最常见的调用场景是<code>$(document).ready(handler)</code>，表示当dom树下载完成后触发事件，也可以简写成<code>$(handler)</code>。</p>
+
+<p>以前一直以为这个方法和javascript自己提供的<code>window.onload</code>事件是一回事，直到最近在做一个chrome小插件时搜索了一下，才发现这俩区别还是挺大的。</p>
+
+<h2 id="windowonload">window.onload</h2>
+
+<p><code>window.onload</code>是javascript自身提供的一个方法，表示当dom树中所有元素，包括img，js，css等等资源文件都加载完毕时触发的事件。最直观的就是在浏览器加载过程中标签栏上会有一个转动的loading图标，当这个图标消失或停止转动，就是onload时间触发的时候。这个方法还有另一种绑定的方式<code>window.addEventListener('load', handler)</code>。</p>
+
+<p>这样就可以理解，假如页面中某个图片的加载时间特别长，那么<code>window.onload</code>是不可能触发的，但是大多数时候，我们想要的只是等dom结构完整加载之后，就可以绑定一些js事件了，假如我们把js代码都写在<code>window.onload</code>中，显然会有很长一段时间用户的操作得不到响应。</p>
+
+<p>所以<code>jquery</code>提供了<code>ready</code>方法。</p>
+
+<h2 id="documentreadyhandler">$(document).ready(handler)</h2>
+
+<p>根据<a href="http://api.jquery.com/ready/">官方文档</a>，<code>ready</code>方法与<code>&lt;body onload=""&gt;</code>属性不兼容，不过后者现在也不是很常见了。下面一段代码放到浏览器中跑一下可以实验<code>ready</code>与<code>window.onload</code>谁先触发。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
+</span><span class="line"><span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class="line">    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;window onload&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class="line">    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;document ready&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="p">});</span>
+</span><span class="line"><span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这个方法又是如何实现的呢？其实是利用了javascript中的<code>DOMContentLoaded</code>事件，至于这个事件为什么没有得到广泛的利用，可能是出于兼容性的考虑，至少在IE9以下，这个事件没有得到支持，所以jquery中使用了IE事件模型中的<code>onreadystatechange</code>来取代此方法。通过查找jquery源代码可以看到下面几行：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>jquery-1.9.1.js  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="c1">// Catch cases where $(document).ready() is called after the browser event has already occurred.</span>
+</span><span class="line"><span class="c1">// we once tried to use readyState &quot;interactive&quot; here, but it caused issues like the one</span>
+</span><span class="line"><span class="c1">// discovered by ChrisS here: http://bugs.jquery.com/ticket/12282#comment:15</span>
+</span><span class="line"><span class="k">if</span> <span class="p">(</span> <span class="nb">document</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">===</span> <span class="s2">&quot;complete&quot;</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="c1">// Handle it asynchronously to allow scripts the opportunity to delay ready</span>
+</span><span class="line">    <span class="nx">setTimeout</span><span class="p">(</span> <span class="nx">jQuery</span><span class="p">.</span><span class="nx">ready</span> <span class="p">);</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// Standards-based browsers support DOMContentLoaded</span>
+</span><span class="line"><span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span> <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="c1">// Use the handy event callback</span>
+</span><span class="line">    <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span> <span class="s2">&quot;DOMContentLoaded&quot;</span><span class="p">,</span> <span class="nx">completed</span><span class="p">,</span> <span class="kc">false</span> <span class="p">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1">// A fallback to window.onload, that will always work</span>
+</span><span class="line">    <span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span> <span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="nx">completed</span><span class="p">,</span> <span class="kc">false</span> <span class="p">);</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// If IE event model is used</span>
+</span><span class="line"><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class="line">    <span class="c1">// Ensure firing before onload, maybe late but safe also for iframes</span>
+</span><span class="line">    <span class="nb">document</span><span class="p">.</span><span class="nx">attachEvent</span><span class="p">(</span> <span class="s2">&quot;onreadystatechange&quot;</span><span class="p">,</span> <span class="nx">completed</span> <span class="p">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1">// A fallback to window.onload, that will always work</span>
+</span><span class="line">    <span class="nb">window</span><span class="p">.</span><span class="nx">attachEvent</span><span class="p">(</span> <span class="s2">&quot;onload&quot;</span><span class="p">,</span> <span class="nx">completed</span> <span class="p">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1">// If IE and not a frame</span>
+</span><span class="line">    <span class="c1">// continually check to see if the document is ready</span>
+</span><span class="line">    <span class="kd">var</span> <span class="nx">top</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class="line"><span class="p">......</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这是jquery中<code>ready</code>方法实现的一个片段，可以通过检测<code>document.readyState == "complete"</code>来判断<code>DOMContentLoaded</code>事件是否触发。</p>
+
+<h2 id="chrome">在chrome扩展中</h2>
+
+<p>在chrome扩展的content_scripts中，使用<code>DOMContentLoaded</code>有时候并不能得到想要的结果，这是content_scripts往往在页面加载后再插入页面，就不能响应这个事件了。解决办法是在manifest.json中加入<code>"run_at":"document_start"</code>一行：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="json"><span class="line">  <span class="s2">&quot;content_scripts&quot;</span><span class="err">:</span> <span class="p">[</span>
+</span><span class="line">    <span class="p">{</span>
+</span><span class="line">      <span class="nt">&quot;matches&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://*/*&quot;</span><span class="p">],</span>
+</span><span class="line">      <span class="nt">&quot;js&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ghost.js&quot;</span><span class="p">],</span>
+</span><span class="line">      <span class="nt">&quot;run_at&quot;</span><span class="p">:</span> <span class="s2">&quot;document_start&quot;</span>  <span class="err">//</span> <span class="err">add</span> <span class="err">run_at</span> <span class="err">document_start</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">  <span class="p">]</span><span class="err">,</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h1 id="section">参考资料</h1>
+<ul>
+  <li><a href="http://api.jquery.com/ready/">api.jquery.ready</a></li>
+  <li><a href="http://stackoverflow.com/questions/5959194/how-does-jquerys-document-ready-function-work">how-does-jquerys-document-ready-function-work</a></li>
+  <li><a href="http://stackoverflow.com/questions/5082094/register-domcontentloaded-in-google-chrome">register-domcontentloaded-in-google-chrome</a></li>
+  <li><a href="https://developer.mozilla.org/en-US/docs/DOM/Mozilla_event_reference/DOMContentLoaded">DOMContentLoaded</a></li>
+</ul>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-03T13:30:00+08:00" pubdate data-updated="true">2013.05.03</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/blog/categories/jquery/'>jquery</a>
+
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2013
+
+    tristan
+
+</footer>
+	<script src="/blog/javascripts/slash.js"></script>
+<script src="/blog/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sailxjx.github.com/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian/';
+        var disqus_url = 'http://sailxjx.github.com/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33186961-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+
+</body>
+</html>

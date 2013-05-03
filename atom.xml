@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-05-02T18:03:15+08:00</updated>
+  <updated>2013-05-03T16:56:06+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,136 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[追求更快: jQuery.ready 如何实现]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian/"/>
+    <updated>2013-05-03T13:30:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian</id>
+    <content type="html"><![CDATA[<p>jQuery从1.0版本就提供了一个叫做<code>ready</code>的方法，最常见的调用场景是<code>$(document).ready(handler)</code>，表示当dom树下载完成后触发事件，也可以简写成<code>$(handler)</code>。</p>
+
+<p>以前一直以为这个方法和javascript自己提供的<code>window.onload</code>事件是一回事，直到最近在做一个chrome小插件时搜索了一下，才发现这俩区别还是挺大的。</p>
+
+<h2 id="windowonload">window.onload</h2>
+
+<p><code>window.onload</code>是javascript自身提供的一个方法，表示当dom树中所有元素，包括img，js，css等等资源文件都加载完毕时触发的事件。最直观的就是在浏览器加载过程中标签栏上会有一个转动的loading图标，当这个图标消失或停止转动，就是onload时间触发的时候。这个方法还有另一种绑定的方式<code>window.addEventListener('load', handler)</code>。</p>
+
+<p>这样就可以理解，假如页面中某个图片的加载时间特别长，那么<code>window.onload</code>是不可能触发的，但是大多数时候，我们想要的只是等dom结构完整加载之后，就可以绑定一些js事件了，假如我们把js代码都写在<code>window.onload</code>中，显然会有很长一段时间用户的操作得不到响应。</p>
+
+<p>所以<code>jquery</code>提供了<code>ready</code>方法。</p>
+
+<h2 id="documentreadyhandler">$(document).ready(handler)</h2>
+
+<p>根据<a href="http://api.jquery.com/ready/">官方文档</a>，<code>ready</code>方法与<code>&lt;body onload=""&gt;</code>属性不兼容，不过后者现在也不是很常见了。下面一段代码放到浏览器中跑一下可以实验<code>ready</code>与<code>window.onload</code>谁先触发。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
+</span><span class="line"><span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class="line">    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;window onload&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class="line">    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;document ready&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="p">});</span>
+</span><span class="line"><span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这个方法又是如何实现的呢？其实是利用了javascript中的<code>DOMContentLoaded</code>事件，至于这个事件为什么没有得到广泛的利用，可能是出于兼容性的考虑，至少在IE9以下，这个事件没有得到支持，所以jquery中使用了IE事件模型中的<code>onreadystatechange</code>来取代此方法。通过查找jquery源代码可以看到下面几行：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>jquery-1.9.1.js  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="c1">// Catch cases where $(document).ready() is called after the browser event has already occurred.</span>
+</span><span class="line"><span class="c1">// we once tried to use readyState &quot;interactive&quot; here, but it caused issues like the one</span>
+</span><span class="line"><span class="c1">// discovered by ChrisS here: http://bugs.jquery.com/ticket/12282#comment:15</span>
+</span><span class="line"><span class="k">if</span> <span class="p">(</span> <span class="nb">document</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">===</span> <span class="s2">&quot;complete&quot;</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="c1">// Handle it asynchronously to allow scripts the opportunity to delay ready</span>
+</span><span class="line">    <span class="nx">setTimeout</span><span class="p">(</span> <span class="nx">jQuery</span><span class="p">.</span><span class="nx">ready</span> <span class="p">);</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// Standards-based browsers support DOMContentLoaded</span>
+</span><span class="line"><span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span> <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="c1">// Use the handy event callback</span>
+</span><span class="line">    <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span> <span class="s2">&quot;DOMContentLoaded&quot;</span><span class="p">,</span> <span class="nx">completed</span><span class="p">,</span> <span class="kc">false</span> <span class="p">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1">// A fallback to window.onload, that will always work</span>
+</span><span class="line">    <span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span> <span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="nx">completed</span><span class="p">,</span> <span class="kc">false</span> <span class="p">);</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// If IE event model is used</span>
+</span><span class="line"><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class="line">    <span class="c1">// Ensure firing before onload, maybe late but safe also for iframes</span>
+</span><span class="line">    <span class="nb">document</span><span class="p">.</span><span class="nx">attachEvent</span><span class="p">(</span> <span class="s2">&quot;onreadystatechange&quot;</span><span class="p">,</span> <span class="nx">completed</span> <span class="p">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1">// A fallback to window.onload, that will always work</span>
+</span><span class="line">    <span class="nb">window</span><span class="p">.</span><span class="nx">attachEvent</span><span class="p">(</span> <span class="s2">&quot;onload&quot;</span><span class="p">,</span> <span class="nx">completed</span> <span class="p">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1">// If IE and not a frame</span>
+</span><span class="line">    <span class="c1">// continually check to see if the document is ready</span>
+</span><span class="line">    <span class="kd">var</span> <span class="nx">top</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class="line"><span class="p">......</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这是jquery中<code>ready</code>方法实现的一个片段，可以通过检测<code>document.readyState == "complete"</code>来判断<code>DOMContentLoaded</code>事件是否触发。</p>
+
+<h2 id="chrome">在chrome扩展中</h2>
+
+<p>在chrome扩展的content_scripts中，使用<code>DOMContentLoaded</code>有时候并不能得到想要的结果，这是content_scripts往往在页面加载后再插入页面，就不能响应这个事件了。解决办法是在manifest.json中加入<code>"run_at":"document_start"</code>一行：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="json"><span class="line">  <span class="s2">&quot;content_scripts&quot;</span><span class="err">:</span> <span class="p">[</span>
+</span><span class="line">    <span class="p">{</span>
+</span><span class="line">      <span class="nt">&quot;matches&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://*/*&quot;</span><span class="p">],</span>
+</span><span class="line">      <span class="nt">&quot;js&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ghost.js&quot;</span><span class="p">],</span>
+</span><span class="line">      <span class="nt">&quot;run_at&quot;</span><span class="p">:</span> <span class="s2">&quot;document_start&quot;</span>  <span class="err">//</span> <span class="err">add</span> <span class="err">run_at</span> <span class="err">document_start</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">  <span class="p">]</span><span class="err">,</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h1 id="section">参考资料</h1>
+<ul>
+  <li><a href="http://api.jquery.com/ready/">api.jquery.ready</a></li>
+  <li><a href="http://stackoverflow.com/questions/5959194/how-does-jquerys-document-ready-function-work">how-does-jquerys-document-ready-function-work</a></li>
+  <li><a href="http://stackoverflow.com/questions/5082094/register-domcontentloaded-in-google-chrome">register-domcontentloaded-in-google-chrome</a></li>
+  <li><a href="https://developer.mozilla.org/en-US/docs/DOM/Mozilla_event_reference/DOMContentLoaded">DOMContentLoaded</a></li>
+</ul>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[执行 javascript 方法的几种方式]]></title>
@@ -158,7 +288,7 @@
   <li><a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference">mozilla</a></li>
   <li><a href="http://fitzgeraldnick.com/weblog/26/">Nick Fitzgerald’s Weblog</a></li>
   <li><a href="http://dailyjs.com/2012/06/25/this-binding/">DailyJs</a></li>
-  <li><a href="http://stackoverflow.com/questions/1986896/what-is-the-difference-between-call-and-apply">stackoverflow</a></li>
+  <li><a href="http://stackoverflow.com/questions/1986896/what-is-the-difference-between-call-and-apply">what-is-the-difference-between-call-and-apply</a></li>
 </ul>
 ]]></content>
   </entry>
@@ -1861,118 +1991,6 @@ url=http%3A%2F%2Fwww.google.com</p>
   <li><a href="http://coolshell.cn/articles/4787.html">HTTP幂等性概念和应用 by </a></li>
   <li><a href="http://hc.apache.org/httpclient-3.x/apidocs/org/apache/commons/httpclient/HttpMethod.html">Interface HttpMethod</a></li>
 </ul>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[node-neo4j 学习笔记]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji/"/>
-    <updated>2013-01-28T11:49:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji</id>
-    <content type="html"><![CDATA[<h2 id="node-neo4jhttpsgithubcomthingdomnode-neo4j"><a href="https://github.com/thingdom/node-neo4j">node-neo4j</a></h2>
-
-<h3 id="section">查找节点</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">neo4j = </span><span class="nx">require</span> <span class="s">&#39;neo4j&#39;</span>
-</span><span class="line"><span class="nv">db = </span><span class="k">new</span> <span class="nx">neo4j</span><span class="p">.</span><span class="nx">GraphDatabase</span><span class="p">(</span><span class="s">&#39;http://localhost:7474&#39;</span><span class="p">)</span>
-</span><span class="line"><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">(err, node)-&gt;</span>
-</span><span class="line">    <span class="k">if</span> <span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span>
-</span><span class="line">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">err</span>
-</span><span class="line">    <span class="k">else</span>
-</span><span class="line">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">node</span><span class="p">.</span><span class="nx">data</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>查找节点的api设计的很有dom的风格，与大多数nodejs方法一样，node-neo4j提供的api都是异步的，回调函数中第一个参数都是错误流，第二个因方法而异，<code>getNodeById</code>中的第二个参数node是一个完整的json对象，在这个对象上可以使用node-neo4j针对node的所有方法，要取得或修改node中的成员则可以通过<code>node.data</code>获取。</p>
-
-<h3 id="section-1">创建关系</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="c1"># 创建节点</span>
-</span><span class="line"><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">(err, n1)-&gt;</span>
-</span><span class="line">    <span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">2</span><span class="p">,</span> <span class="nf">(err, n2)-&gt;</span>
-</span><span class="line">       <span class="c1">#当前节点                 目标节点 关系类型 关系结构</span>
-</span><span class="line">        <span class="nx">n2</span><span class="p">.</span><span class="nx">createRelationshipTo</span> <span class="nx">n1</span><span class="p">,</span> <span class="s">&#39;isdogof&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nv">ctime: </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()},</span> <span class="nf">(err, r)-&gt;</span>
-</span><span class="line">            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">r</span>
-</span><span class="line">
-</span><span class="line"><span class="c1"># 查找节点</span>
-</span><span class="line"><span class="nx">db</span><span class="p">.</span><span class="nx">getRelationshipById</span> <span class="mi">0</span><span class="p">,</span> <span class="nf">(err, rel)-&gt;</span>
-</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>目前通过<code>node-neo4j</code>创建关系只能在node上做文章，通过<code>createRelationshipFrom</code>和<code>createRelationshipTo</code>来创建点对点的关系。客户端的作者很坑爹的在Graphdatabase._coffee中声明了一个<code>createRelationship</code>方法，但是没有实现，调用这个方法是不会有任何效果的。</p>
-
-<h3 id="section-2">查询关系</h3>
-<p><code>node-neo4j</code>中声明了四种方式来获取关于某个节点的关系，分别是
-* node.getRelationships 获取与节点相关的所有关系
-* node.outgoing         获取以该节点为起点的关系
-* node.incoming         获取以该节点为终点的关系
-* node.all              同getRelationships
-这些方法最终都调用<code>_getRelationships</code>，虽然我们也能直接调用这个方法，不过既然人家已声明其为私有，那还是直接调用上面的方法比较好。下面举例：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">2</span><span class="p">,</span> <span class="nf">(err, nBran)-&gt;</span>
-</span><span class="line">    <span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="nf">(err, nSnow)-&gt;</span>
-</span><span class="line">        <span class="nx">nSnow</span><span class="p">.</span><span class="nx">incoming</span> <span class="s">&#39;islittlebrotherof&#39;</span><span class="p">,</span> <span class="nf">(err, rel)-&gt;</span>
-</span><span class="line">            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">data</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>假如关系类型(type)不存在或者没有关联到这个节点的关系，getRelationships返回rel为一个空数组。否则返回节点在这个类型的所有关系数组，<code>rel[0].data</code>则是获取关系的属性。</p>
-
-<h3 id="section-3">根据关系种类查询</h3>
-<p>neo4j的关系中还有个比较重要的概念是种类(type)，在<code>Cypher</code>中可以通过<code>type()</code>方法来获取某个关系的种类</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">r</span> <span class="o">=</span> rel<span class="o">(</span>*<span class="o">)</span> <span class="k">return </span><span class="nb">type</span><span class="o">(</span>r<span class="o">)</span>;
-</span><span class="line">+---------------------+
-</span><span class="line">| <span class="nb">type</span><span class="o">(</span>r<span class="o">)</span>             |
-</span><span class="line">+---------------------+
-</span><span class="line">| <span class="s2">&quot;islittlebrotherof&quot;</span> |
-</span><span class="line">+---------------------+
-</span><span class="line">1 row
-</span><span class="line">0 ms
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>在<code>node-neo4j</code>中，<code>getRelationships</code>可以获取某节点某个种类的关系，</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">13</span><span class="p">,</span> <span class="nf">(err, bran)-&gt;</span>
-</span><span class="line">    <span class="nx">bran</span><span class="p">.</span><span class="nx">getRelationships</span> <span class="s">&#39;islittlebrotherof&#39;</span><span class="p">,</span> <span class="nf">(err, rel)-&gt;</span>
-</span><span class="line">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">data</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>callback中返回的是一个关系对象数组。</p>
-
-<h3 id="query">万能的query</h3>
-<p>db对象上有一个万能的<code>query</code>方法，就是直接通过<code>Cypher</code>语句得到查询结果啦，这个弥补了作者很多没有实现的方法。</p>
-
 ]]></content>
   </entry>
   
