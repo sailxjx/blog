@@ -1,0 +1,364 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>细数 php 中的那些坑 - CodeBean</title>
+	<meta name="author" content="tristan">
+
+	
+	<meta name="description" content="Wow，有逮到一个黑PHP的，作为“宇宙中最好的编程语言”，被黑只会加速它的改进，所以偶尔黑一下也无妨嘛~正所谓世界上只有两种语言，一种是被人黑的，另一种是没人用的。 进入正题，下面开始罗列一些PHP需要防备的坑，以免一不小心掉了进去。(只包含在5.3中仍然存在的，5.4中已修复的会做一下说明 &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="CodeBean" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">CodeBean</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/102588932744890343699?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h1 class="title">细数 Php 中的那些坑</h1>
+	<div class="entry-content"><p>Wow，有逮到一个黑PHP的，作为“宇宙中最好的编程语言”，被黑只会加速它的改进，所以偶尔黑一下也无妨嘛~正所谓世界上只有两种语言，一种是被人黑的，另一种是没人用的。</p>
+
+<p>进入正题，下面开始罗列一些PHP需要防备的坑，以免一不小心掉了进去。(只包含在5.3中仍然存在的，5.4中已修复的会做一下说明)。</p>
+
+<h2 id="section">变量类型</h2>
+<p>说PHP入门门槛低，其中一个原因是我们不需要关心变量的类型，PHP为我们做了自动的转化。但事实上是这样吗？下面就是一个隐蔽的bug。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line"><span class="nb">var_dump</span><span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">==</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span><span class="line"><span class="x">==&gt; true</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>很神奇吧，php在这里自动将字符串作为整数0来比较了。由此引发了一系列问题：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line"><span class="nv">$a</span> <span class="o">=</span> <span class="s2">&quot;1234567&quot;</span><span class="p">;</span>
+</span><span class="line"><span class="nb">var_dump</span><span class="p">(</span><span class="nv">$a</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">]);</span>
+</span><span class="line"><span class="o">==&gt;</span> <span class="mi">1</span>  <span class="c1">//坑爹的等同于$a[0], php5.4会给出一个非法索引warning，但是仍然返回1，php5.3则连warning都没有。</span>
+</span><span class="line"><span class="nb">var_dump</span><span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$a</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">]));</span>
+</span><span class="line"><span class="o">==&gt;</span> <span class="k">true</span>  <span class="c1">//这是一个完全错误的结果，在php5.4中得到修复</span>
+</span><span class="line"><span class="nb">var_dump</span><span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;xxx&#39;</span><span class="p">)));</span>
+</span><span class="line"><span class="o">==&gt;</span> <span class="k">true</span>  <span class="c1">//这也是一个令人费解的bug，暂且还是理解为php将&#39;xxx&#39;转化成0了吧</span>
+</span><span class="line"><span class="nb">var_dump</span><span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="k">false</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;xxx&#39;</span><span class="p">)));</span>
+</span><span class="line"><span class="o">==&gt;</span> <span class="k">false</span>  <span class="c1">//与之相对的，这个结果确是符合预料的。问题是，在php中0==false呀。</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>所以当一个表达式中同时包含0和字符串的时候就要特别留意了，以免被奇葩的bug坑了。</p>
+
+<h2 id="section-1">比较符号</h2>
+
+<h3 id="section-2">等号<code>==</code>与不等<code>!=</code></h3>
+
+<p>严格的来说，PHP中的<code>==</code>符号完全没有作用，因为<code>'string' == true</code>，而且<code>'string' == 0</code>，<strong>但是</strong>，<code>true != 0</code>。</p>
+
+<p>然后是<code>123 == "123foo"</code>，但是当你用引号将123包起来以明确说明这是一个字符串时，<code>'123' != "123foo"</code>，但是在现实中，谁会用常量比较呢，这个123换成了一个变量，而根据php的哲学，谁会在意这个变量是什么类型。</p>
+
+<p>在使用其他进制的时候这种混淆尤其明显，像下面的例子:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line"><span class="s2">&quot;133&quot;</span> <span class="o">==</span> <span class="s2">&quot;0133&quot;</span><span class="p">;</span>
+</span><span class="line"><span class="mi">133</span> <span class="o">==</span> <span class="s2">&quot;0133&quot;</span><span class="p">;</span>
+</span><span class="line"><span class="mi">133</span> <span class="o">==</span> <span class="mo">0133</span><span class="p">;</span>    <span class="c1">//因为0133是一个八进制数，转成十进制是91</span>
+</span><span class="line"><span class="s2">&quot;0133&quot;</span> <span class="o">!=</span> <span class="mi">91</span><span class="p">;</span>   <span class="c1">//字符串中的数字始终是十进制的，这个也可以理解</span>
+</span><span class="line"><span class="s2">&quot;0x10&quot;</span> <span class="o">==</span> <span class="mi">16</span><span class="p">;</span>   <span class="c1">//但是!，在十六进制中上面的说法又不成立了</span>
+</span><span class="line"><span class="s2">&quot;1e3&quot;</span> <span class="o">==</span> <span class="mi">1000</span><span class="p">;</span>  <span class="c1">//科学计数表示也一样</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section-3">大于<code>&gt;</code>小于<code>&lt;</code></h3>
+
+<p>被搞糊涂的话，下面还有：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line"><span class="k">null</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">//这个可以理解</span>
+</span><span class="line"><span class="k">null</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>  <span class="c1">//但是你会想到这个吗？难道zend认为0&lt;-1？</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>使用<code>==</code>时，参照javascript中的做法，我们可以使用<code>===</code>让比较更规范一些，但是<code>&gt;</code>,<code>&lt;</code>这些怎么办？只能尽量避免。</p>
+
+<h2 id="section-4">三元运算符</h2>
+
+<p>很多语言都提供了三元运算符<code>?:</code>，因为它足够简洁，也够geek。但是php中的表现与其他语言中又不同：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line"><span class="nv">$arg</span> <span class="o">=</span> <span class="s1">&#39;T&#39;</span><span class="p">;</span>
+</span><span class="line"><span class="nv">$vehicle</span> <span class="o">=</span> <span class="p">(</span> <span class="p">(</span> <span class="nv">$arg</span> <span class="o">==</span> <span class="s1">&#39;B&#39;</span> <span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;bus&#39;</span> <span class="o">:</span>
+</span><span class="line">             <span class="p">(</span> <span class="nv">$arg</span> <span class="o">==</span> <span class="s1">&#39;A&#39;</span> <span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;airplane&#39;</span> <span class="o">:</span>
+</span><span class="line">             <span class="p">(</span> <span class="nv">$arg</span> <span class="o">==</span> <span class="s1">&#39;T&#39;</span> <span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;train&#39;</span> <span class="o">:</span>
+</span><span class="line">             <span class="p">(</span> <span class="nv">$arg</span> <span class="o">==</span> <span class="s1">&#39;C&#39;</span> <span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;car&#39;</span> <span class="o">:</span>
+</span><span class="line">             <span class="p">(</span> <span class="nv">$arg</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span> <span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;horse&#39;</span> <span class="o">:</span>
+</span><span class="line">             <span class="s1">&#39;feet&#39;</span> <span class="p">);</span>
+</span><span class="line"><span class="k">echo</span> <span class="nv">$vehicle</span><span class="p">;</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>猜猜结果是什么？’horse’，而我们预料中的（在其他语言中）应该是’train’。这种做法被称为”left associative”(左结合)，也即上面的表达式在php看来等同于<code>$vehicle = (condition) ? 'horse' : 'feet'</code>，所以你永远不可能得到中间的结果，这有违人的第一感觉，也与其他语言正好相反。</p>
+
+<h2 id="empty">empty</h2>
+
+<p>empty是我在php中非常喜欢的一个方法，这里我说错了，其实它是一个语言结构，而不是一个方法，但是它的使用方式又像一个方法。于是，empty()中包含运算式的话是会报错的，这也造成了它的局限性。</p>
+
+<h2 id="section-5">数组</h2>
+
+<p>php中的数组应该是一个’数组’,’hash表’,’集合’的结合体，这在使用上有它的方便之处，但是也造成了一些不易理解的地方，尤其体现在一些array相关的方法上。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line"><span class="k">array</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="k">array</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="s2">&quot;foo&quot;</span><span class="p">);</span>  <span class="c1">//这个时候，array就是数组</span>
+</span><span class="line"><span class="k">array</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="k">array</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;foo&quot;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">);</span>  <span class="c1">//这个时候，array又变成了无序hash表</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>好吧，其实php中的array就是一个hash表，无论什么情况下。<code>array('bar', 'foo')</code>就是<code>array('0'=&gt;'bar', '1'=&gt;'foo')</code>，这样对理解array的一些奇怪表现应该会有帮助，但是下面的方法，有推翻了上面的论述，我将它算做一个bug：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line"><span class="nv">$first</span>  <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span> <span class="o">=&gt;</span> <span class="mi">123</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span> <span class="o">=&gt;</span> <span class="mi">456</span><span class="p">);</span>
+</span><span class="line"><span class="nv">$second</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span> <span class="o">=&gt;</span> <span class="mi">456</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span> <span class="o">=&gt;</span> <span class="mi">123</span><span class="p">);</span>
+</span><span class="line"><span class="nb">var_dump</span><span class="p">(</span><span class="nb">array_diff</span><span class="p">(</span><span class="nv">$first</span><span class="p">,</span> <span class="nv">$second</span><span class="p">));</span>
+</span><span class="line"><span class="o">==&gt;</span> <span class="k">array</span><span class="p">()</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>看到了吧，如果array是个hash表的话，$first和$second显然是不一样的。但是diff的结果却认为这是两个一样的数组。所以在愉快的使用array时，别忘了停下来，测试一下这些隐含的bug。</p>
+
+<h2 id="section-6"><code>++</code>与<code>--</code></h2>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line"><span class="nv">$a</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+</span><span class="line"><span class="nv">$a</span> <span class="o">++</span><span class="p">;</span>  <span class="c1">// $a == 1, 可以理解</span>
+</span><span class="line"><span class="nv">$a</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+</span><span class="line"><span class="nv">$a</span> <span class="o">--</span><span class="p">;</span>  <span class="c1">// $a == null, 凌乱了</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>解决这种<code>++</code>和<code>--</code>中的不一致的办法就是根本不用它们，用<code>+=</code>和<code>-=</code>代替。</p>
+
+<h2 id="section-7">命名习惯</h2>
+
+<p>下面这些就与bug无关了，而是php中过于随意的命名规则和变量顺序，像<code>htmlentities</code>和<code>html_entity_decode</code>，你能想象这两个方法是一张纸的两面吗？</p>
+
+<p>其实方法的命名不规范问题也不大，但是变量顺序混乱就要人命了，比如array中的一大堆方法，看起来都以array打头，相当清晰。但是你能料到<code>array_filter($input, $callback)</code>和<code>array_map($callback, $input)</code>两个方法的回调方法位置正好相反吗？我就经常记错<code>strpos</code>中哪个参数才是该被搜索的字符串。</p>
+
+<p>还有一个要命的地方就是很多参数的引用传递不明，比如上面的<code>array_filter</code>是对源对象的一个拷贝，但是<code>array_walk</code>却是一个引用。这些在<a href="http://www.php.net/">php.net</a>上有“粗略”的说明，我想谁也不希望一边翻文档一边写代码吧。</p>
+
+<h2 id="section-8">错误控制</h2>
+
+<p>关于php的错误控制其实是一个关于“配置优于约定”还是“约定优于配置”的讨论，而显然php选择了前者。在php中，有一个全局的配置文件“php.ini”，里面关于错误控制的两个选项<code>error_reporting</code>和<code>display_errors</code>分别代表错误等级和是否显示错误。</p>
+
+<p>这没有问题，问题是这些配置在运行时是可以修改的。有些框架或有些人为了掩盖无处不在的<code>notice</code>，将<code>error_reporting</code>等级调高，或者索性将<code>display_errors</code>设置为<code>off</code>，这会让其他开发者困惑，让错误无迹可寻。</p>
+
+<p>这也不是什么问题，最大的问题是php中还有<code>set_error_handler</code>和<code>set_exception_handler</code>，看字面意思，这两个都是用来控制错误的。但是在php中，<code>error</code>和<code>exception</code>却是不一样的。于是你要么在框架里写上两套一样的<code>handler</code>方法，要么就索性都不写，由php去决定这些错误该以什么形式表现。最糟糕的是只写一个或者写两套不一样的<code>handler</code>，这回让人困惑为什么有些错误以一种形式表现，而一些错误又以别的方式出现，而且要找到这些<code>handler</code>也不是一件容易的事，他们可能出现在任何一个文件的任何一个角落，除非你用<code>debug_backtrace</code>将堆栈信息都打印出来。</p>
+
+<h2 id="section-9">后记</h2>
+
+<p>以上大部分内容和例子来自<a href="http://me.veekun.com/blog/2012/04/09/php-a-fractal-of-bad-design/">PHP: a fractal of bad design</a>，一个狂热的python教徒。我不是python教徒，甚至连爱好者都说不上，所以写这篇文章只是为了记录php中存在的bug，以防一不小心被坑了。只有有了这些意识，才能在这门语言中更好的发挥，物尽其用。</p>
+
+<h1 id="section-10">相关链接</h1>
+<p><a href="http://me.veekun.com/blog/2012/04/09/php-a-fractal-of-bad-design/">PHP: a fractal of bad design</a></p>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-10T15:59:00+08:00" pubdate data-updated="true">2013.05.10</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/php/'>php</a>
+
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2013
+
+    tristan
+
+</footer>
+	<script src="/blog/javascripts/slash.js"></script>
+<script src="/blog/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sailxjx.github.com/blog/blog/2013/05/10/xi-shu-php-zhong-de-na-xie-keng/';
+        var disqus_url = 'http://sailxjx.github.com/blog/blog/2013/05/10/xi-shu-php-zhong-de-na-xie-keng/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33186961-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+
+</body>
+</html>
