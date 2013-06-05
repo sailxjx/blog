@@ -3,7 +3,7 @@ layout: post
 title: "[nginx] if is evil"
 date: 2013-05-15 17:36
 comments: true
-categories: [nginx]
+categories: [nginx, translation]
 ---
 
 最近用nginx配置中使用if遇到一些问题，碰巧想起以前在wiki中看到的这个页面，虽然我的问题可能和wiki中提到的不同，但是if还是能避免就避免吧
