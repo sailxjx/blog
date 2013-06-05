@@ -7,7 +7,8 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content=" ~~从virtualbox开始~~ 2012.12.11 ">
+	<meta name="description" content="安装nginx
+安装过程没什么好说的，不过tarball中没有包含init脚本，官网wiki中提供了一个ubuntu的版本，其实在所有linux发行版中都可用，下载下来放到/etc/init.d/nginx，大功告成。 假如在启动过程中遇到undefined function: &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -75,6 +76,414 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2012/12/24/nginx-plus-php-fpm-pei-zhi-ji-lu/">Nginx+php-fpm 配置记录</a></h1>
+	<div class="entry-content">
+		<h3 id="nginx">安装nginx</h3>
+<p>安装过程没什么好说的，不过tarball中没有包含init脚本，官网wiki中提供了<a href="http://wiki.nginx.org/Nginx-init-ubuntu">一个ubuntu的版本</a>，其实在所有linux发行版中都可用，下载下来放到/etc/init.d/nginx，大功告成。</p>
+
+<p>假如在启动过程中遇到<code>undefined function: log_daemon_msg</code>等等报错，那是缺少一些公用方法，下载或安装init-functions然后在头部引入即可，google到一个可用的<a href="http://www.linuxfromscratch.org/lfs/view/7.0/scripts/apds02.html">地址</a>，此外，假如使用的是ubuntu，在/lib/lsb/中有个文件。</p>
+
+<h3 id="php-fpm">安装php-fpm</h3>
+<p>fpm已经包含在php的远吗中，编译php的时候加上<code>--enable-fpm</code>即可，fpm的init脚本包含在<code>sapi/fpm/init.d.php-fpm</code>，稍加修改即可使用，非常贴心滴。默认配置文件<code>sapi/fpm/php-fm.conf</code>，我把它复制在/etc目录中以供调用。</p>
+
+<h3 id="php-fpm-1">配置php-fpm</h3>
+<p>fpm的配置文件已很多个pool块分割，global是全局配置，www是默认的pool，这里不做修改。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>php-fpm.conf  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+</pre></td><td class="code"><pre><code class="ini"><span class="line"><span class="k">[global]</span>
+</span><span class="line"><span class="na">user</span> <span class="o">=</span> <span class="s">tristan</span>
+</span><span class="line"><span class="na">group</span> <span class="o">=</span> <span class="s">tristan</span>
+</span><span class="line"><span class="na">pid</span> <span class="o">=</span> <span class="s">/var/run/php-fpm.pid</span>
+</span><span class="line"><span class="na">error_log</span> <span class="o">=</span> <span class="s">/var/log/php/fpm.err.log</span>
+</span><span class="line"><span class="c">; 下面三个值表示当一分钟内假如有10个子进程收到SIGSEGV或SIGBUS信号而退出的话，php-fpm会自动重启，应该是一种自我保护的机制</span>
+</span><span class="line"><span class="err">emergency_restart_threshold</span> <span class="err">10</span>
+</span><span class="line"><span class="err">emergency_restart_interval</span> <span class="err">1m</span>
+</span><span class="line"><span class="err">process_control_timeout</span> <span class="err">10s</span>
+</span><span class="line"><span class="c">; 超过十秒的慢请求会被记录到fpm.slow.$pool.log中并在errlog中产生一条notice记录</span>
+</span><span class="line"><span class="na">request_slowlog_timeout</span> <span class="o">=</span> <span class="s">10s</span>
+</span><span class="line"><span class="na">slowlog</span> <span class="o">=</span> <span class="s">/var/log/php/fpm.slow.$pool.log</span>
+</span><span class="line"><span class="c">; 允许任意客户端链接</span>
+</span><span class="line"><span class="na">listen.allowed_clients</span> <span class="o">=</span> <span class="s">any</span>
+</span><span class="line"><span class="c">; 可以包含一些分散的config文件</span>
+</span><span class="line"><span class="na">include</span><span class="o">=</span><span class="s">/etc/php-fpm.d/*.conf</span>
+</span><span class="line"><span class="c">; 下面是www pool的配置</span>
+</span><span class="line"><span class="k">[www]</span>
+</span><span class="line"><span class="c">; 设置子进程相关</span>
+</span><span class="line"><span class="na">pm</span> <span class="o">=</span> <span class="s">dynamic</span>
+</span><span class="line"><span class="na">pm.max_children</span> <span class="o">=</span> <span class="s">5</span>
+</span><span class="line"><span class="na">pm.start_servers</span> <span class="o">=</span> <span class="s">3</span>
+</span><span class="line"><span class="na">pm.min_spare_servers</span> <span class="o">=</span> <span class="s">2</span>
+</span><span class="line"><span class="na">pm.max_spare_servers</span> <span class="o">=</span> <span class="s">4</span>
+</span><span class="line"><span class="na">pm.max_requests</span> <span class="o">=</span> <span class="s">200</span>
+</span><span class="line"><span class="c">; 下面还可以用env设置一些环境变量</span>
+</span><span class="line"><span class="na">env[PATH]</span> <span class="o">=</span> <span class="s">/usr/local/bin:/usr/bin:/bin</span>
+</span><span class="line"><span class="na">env[TMP]</span> <span class="o">=</span> <span class="s">/tmp</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>配置完成后，<code>/etc/init.d/php-fpm start</code>即可启动php-fpm，通过<code>netstat -anp</code>可以看到9000端口被php-fpm占用了。</p>
+
+<h3 id="nginx-1">配置nginx</h3>
+<p>下面到了最艰苦卓绝的工作了，配置nginx。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>nginx </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">user tristan;
+</span><span class="line">worker_processes 2;
+</span><span class="line">error_log  /var/log/nginx/error.log;
+</span><span class="line">pid        /var/run/nginx.pid;
+</span><span class="line">events {
+</span><span class="line">    worker_connections  1024;
+</span><span class="line">}
+</span><span class="line">http {
+</span><span class="line">    include       mime.types;
+</span><span class="line">    default_type  application/octet-stream;
+</span><span class="line">    sendfile        on; 
+</span><span class="line">    keepalive_timeout  65; 
+</span><span class="line">    gzip on; 
+</span><span class="line">    include /usr/local/nginx/conf/sites-enabled/*;
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>主配置文件中基本没什么可写的，重点在对每个站点的配置上。</p>
+
+<p>对静态站点的配置是最简单的，比如下面的配置就部署了一个bootstrap的demo站点</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>boot </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">server {
+</span><span class="line">    listen *:80;
+</span><span class="line">    server_name boot.local.com;
+</span><span class="line">    access_log  /var/log/nginx/boot.log;
+</span><span class="line">    location / {
+</span><span class="line">        root /home/tristan/coding/github/bootstrap/docs; #根目录
+</span><span class="line">        index index.html; #添加默认索引文件
+</span><span class="line">    }   
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>动态站点稍微麻烦一点，通过fastcgi模式，使用php-fpm配置一个动态站点。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>fun </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">server {
+</span><span class="line">    listen *:80;
+</span><span class="line">    server_name fun.local.com;
+</span><span class="line">    access_log /var/log/nginx/fun.log;
+</span><span class="line">    location / { 
+</span><span class="line">        index index.php;
+</span><span class="line">        rewrite ^(.*)$ /index.php$1 last; #大部分站点都做成了单入口，将所有url rewrite到index文件
+</span><span class="line">    }   
+</span><span class="line">    location ~ ^/index.php {
+</span><span class="line">        root /home/tristan/coding/webdata/fun;
+</span><span class="line">        fastcgi_pass 127.0.0.1:9000;
+</span><span class="line">        include fastcgi_params;
+</span><span class="line">        if ($fastcgi_script_name ~ "^(.+?\.php)(/.+)$") {
+</span><span class="line">            set $real_script_name $1; 
+</span><span class="line">            set $path_info $2; 
+</span><span class="line">        }   
+</span><span class="line">        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class="line">        fastcgi_param PATH_INFO $path_info; 
+</span><span class="line">    }
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>值得注意的是，有些框架使用pathinfo作为路由依据，默认情况下nginx并不会将pathinfo传递给php-fpm，所以上面需要通过正则匹配出准确的pathinfo，通过fastcgi_param传给fpm</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>下面是一个使用minify的静态资源站点，其中既包含纯静态文件(css</td>
+      <td>js)，也包含由php压缩成的伪静态文件</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>static </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">server {
+</span><span class="line">    listen *:80;
+</span><span class="line">    server_name static.local.com;
+</span><span class="line">    access_log /var/log/nginx/static.log;
+</span><span class="line">    root /home/tristan/coding/webdata/static;
+</span><span class="line">    location / { 
+</span><span class="line">        autoindex on; 
+</span><span class="line">        index index.php;
+</span><span class="line">        rewrite ^/static/(.*)\.(js|css)$ /static/index.php?g=$1 last;
+</span><span class="line">    }   
+</span><span class="line">    location ~ index.php {
+</span><span class="line">        fastcgi_pass 127.0.0.1:9000;
+</span><span class="line">        include fastcgi_params;
+</span><span class="line">        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class="line">    }   
+</span><span class="line">    location ~ ^(?!\/static)(.*)\.(jpg|jpeg|gif|png|css|js|ico|xml)$ {
+</span><span class="line">        access_log off; #关闭log
+</span><span class="line">        log_not_found off;
+</span><span class="line">        expires 30d; #纯静态文件设置缓存时间
+</span><span class="line">    }   
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="section">参考资料</h2>
+<ul>
+  <li><a href="http://www.if-not-true-then-false.com/2011/nginx-and-php-fpm-configuration-and-optimizing-tips-and-tricks/">Nginx and PHP-FPM Configuration and Optimizing Tips and Tricks</a></li>
+  <li><a href="http://stackoverflow.com/questions/8265941/empty-value-to-path-info-in-nginx-returns-junk-value">stackoverflow: Empty value to PATH_INFO in nginx returns junk value</a></li>
+  <li><a href="http://wiki.nginx.org/HttpFastcgiModule">HttpFastcgiModule</a></li>
+  <li><a href="http://wiki.nginx.org/HttpRewriteModule">HttpRewriteModule</a></li>
+</ul>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-24T22:03:00+08:00" pubdate data-updated="true">2012.12.24</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/nginx/'>nginx</a>, <a class='category' href='/blog/blog/categories/php/'>php</a>
+
+
+</div>
+	
+</div></article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2012/12/19/linux-deng-lu-yong-hu-guan-li/">Linux 登录用户管理</a></h1>
+	<div class="entry-content">
+		<p>最近换了mac后，需要在公司和家中多地登录，两地的ip又没有设置成一样的，结果每次切换ip就发现ssh到虚拟机的终端没响应了，再连上之后，之前登录的用户就永远活在虚拟机心中啦~当然这也没什么，但是作为有一点点洁癖的我来说，不清除这几个用户总是一件不太舒服的事情，于是就去网上找找命令，结果发现找到的资料还挺齐全，学到不少，记录下来，以免下次忘了。</p>
+
+<h3 id="who">who</h3>
+
+<blockquote>
+  <p>root     tty1         2012-12-19 17:51</p>
+</blockquote>
+
+<blockquote>
+  <p>tristan  pts/0        2012-12-19 17:57 (macshare)</p>
+</blockquote>
+
+<blockquote>
+  <p>tristan  pts/1        2012-12-19 18:00 (macshare)</p>
+</blockquote>
+
+<p>这个命令不用说，大多数人都知道，查看当前登录用户，登录时间，终端号(tty)和远程登录终端号(pts)</p>
+
+<h3 id="whoami">whoami</h3>
+
+<p>这个命令有点意思，顾名思义，告诉<code>我是谁</code>，曾经有位buddy获得了root权限，但是当使用<code>cd ~</code>的时候仍然回到了先前用户的主目录，这个时候<code>whoami</code>告诉他确实已经是root用户了，仔细想想，原来他是用<code>sudo -s</code>切到了root，所有环境变量沿用了老用户的。说明这个短小的命令还是挺实用啦。</p>
+
+<h3 id="w-user">w [user]</h3>
+
+<blockquote>
+  <p>18:43:48 up  9:39,  3 users,  load average: 0.06, 0.06, 0.06</p>
+</blockquote>
+
+<blockquote>
+  <p>USER     TTY       LOGIN@   IDLE   JCPU   PCPU WHAT</p>
+</blockquote>
+
+<blockquote>
+  <p>root     tty1      17:51   47:01   0.43s  0.40s -zsh</p>
+</blockquote>
+
+<blockquote>
+  <p>tristan  pts/0     17:57   30:20   0.44s  0.44s -zsh</p>
+</blockquote>
+
+<blockquote>
+  <p>tristan  pts/1     18:00    0.00s  0.18s  0.00s w</p>
+</blockquote>
+
+<p>更短的命令，却比who更强大。</p>
+
+<p>第一行数值分别表示当前时间，系统运行时间，登录用户数，(1分钟，5分钟，15分钟)内的系统负载</p>
+
+<p>第二行开始就是一个用户相关的表格了，每列的意思分别为：</p>
+
+<ul>
+  <li>USER：显示登陆用户帐号名。</li>
+  <li>TTY：用户登录的终端号。</li>
+  <li>FROM：显示用户在何处登陆系统。</li>
+  <li>LOGIN@：是LOGIN AT的意思，表示登陆进入系统的时间。</li>
+  <li>IDLE：用户空闲时间，从用户上一次任务结束后，开始记时。</li>
+  <li>JCPU：一终端代号来区分，表示在某段时间内，所有与该终端相关的进程任务所耗费的CPU时间。</li>
+  <li>PCPU：指WHAT域的任务执行后耗费的CPU时间。</li>
+  <li>WHAT：表示当前执行的任务。</li>
+</ul>
+
+<h3 id="last-user">last [user]</h3>
+
+<blockquote>
+  <p>tristan   ttys003                   Wed Dec 19 22:57   still logged in</p>
+</blockquote>
+
+<blockquote>
+  <p>tristan   ttys001                   Wed Dec 19 22:47   still logged in</p>
+</blockquote>
+
+<blockquote>
+  <p>tristan   ttys003                   Wed Dec 19 22:38 - 22:39  (00:01)</p>
+</blockquote>
+
+<p>这个命令显示用户的登录记录，后面可以跟用户名来只显示该用户的登录历史。一般还会搭配管道用<code>last | head</code>来显示最后登录历史或<code>last | grep still</code>来获取仍然登录中的用户</p>
+
+<h3 id="ps--ef--grep-pts0">ps -ef | grep [pts/0]</h3>
+
+<blockquote>
+  <p>tristan   1042  1041  0 19:01 pts/0    00:00:00 -zsh</p>
+</blockquote>
+
+<blockquote>
+  <p>tristan   1916  1042  0 19:03 pts/0    00:00:00 ps -ef</p>
+</blockquote>
+
+<p>这个命令就是起初写这篇文章的用意啦，根据终端号(可以通过who命令查到)获取目标用户登录相关的pid，比如上面这个1042，然后使用<code>kill -9 1042</code>剔除这个用户，注意<code>kill</code>需要加上<code>-9</code>，默认的TERM信号是杀不了这个进程的。</p>
+
+<h3 id="pkill--u-user">pkill -u [user]</h3>
+
+<p>网上还有一种更简便的方法，根据用户名kill掉这个用户相关的所有进程，包括已这个用户身份运行的所有daemon进程，很黄很暴力，伤敌一千自损八百，不推荐。</p>
+
+<h2 id="section">参考资料</h2>
+
+<ul>
+  <li>
+    <p><a href="http://blog.csdn.net/linfengfeiye/article/details/4781507">Linux查看和剔除当前登录用户</a></p>
+  </li>
+  <li>
+    <p><a href="http://linux.about.com/library/cmd/blcmdl1_w.htm">Linux / Unix Command: w</a></p>
+  </li>
+</ul>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-19T22:35:00+08:00" pubdate data-updated="true">2012.12.19</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/linux/'>linux</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -865,128 +1274,12 @@ thunderbird诞生于mozilla的开源项目，有个叫firefox的高帅富兄弟�
 	
 </div></article>
 
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/06/20/gitpage-and-octopress/">Gitpage and Octopress</a></h1>
-	<div class="entry-content">
-		<p>花了一天时间（上班时不务正业。。。），总算把gitpage主页和这个blog搭起来了</p>
-
-<p>写一些备忘，免得以后忘了。。。</p>
-
-<ul>
-  <li><a href="#gitpage">gitpage</a></li>
-  <li><a href="#octopress">octopress</a></li>
-  <li><a href="#scss">scss</a></li>
-  <li><a href="#markdown">markdown</a></li>
-</ul>
-
-<h2 id="gitpage">gitpage</h2>
-
-<p>github给用户提供了一个非常cool的方式来搭建自己的主页，简单几步，就能完成网站的部署。</p>
-
-<h4 id="section">1.建立分支</h4>
-
-<p>github给每个用户提供了一个形似{user}.github.com的二级域名，只要首先在自己的帐号下建立名为{user}.github.com的分支，就可以通过git来维护自己的主页啦。</p>
-
-<h4 id="clonecommit">2.clone和commit</h4>
-
-<p>分支建立好之后，将{user}.github.com分支clone到本地，以方便编辑。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>本地gitpage  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>git clone git@github.com:<span class="o">{</span>user<span class="o">}</span>/<span class="o">{</span>user<span class="o">}</span>.github.com <span class="o">{</span>your <span class="nb">local </span>dir<span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>然后就是建立自己的index啦，gitpage使用纯静态的方式来管理页面，可以通过本地程序预先将这些静态页面生成好再丢给github嘛。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>编辑提交首页  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;hello git-page&quot;</span> &gt; index.html
-</span><span class="line"><span class="nv">$ </span>git add .
-</span><span class="line"><span class="nv">$ </span>git commit -am <span class="s1">&#39;init&#39;</span>
-</span><span class="line"><span class="nv">$ </span>git push origin master
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>提交以后可以在github的通知中心和邮箱中收到页面建立的通知。第一次提交可能需要10多分钟才能看到效果，以后的提交基本都是立即生效的。</p>
-
-<p>现在访问<a href="http://sailxjx.github.com">{user}.github.com</a>看一下效果吧。</p>
-
-<h4 id="section-1">3.建立项目页面</h4>
-
-<p>除了首页，github还为用户的每一个项目提供了一个展示的平台，只需要在需要展示的项目下建立一个名为gh-pages的分支并push到github，剩余的操作就和首页如出一辙了。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>项目主页  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span><span class="nb">cd</span> <span class="o">{</span>project<span class="o">}</span>
-</span><span class="line"><span class="nv">$ </span>git branch gh-pages
-</span><span class="line"><span class="nv">$ </span>git checkout gh-pages
-</span><span class="line"><span class="nv">$ </span>git push origin gh-pages
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>提交以后会在github产生一个类似{user}.github.com/{project}的域名，访问的其实是<a href="https://github.com/sailxjx/blog/tree/gh-pages">gh-pages</a>分支下的index文件，这个<a href="http://sailxjx.github.com/blog">blog</a>就是托管给gitpage的项目页面的。</p>
-
-<h4 id="gitpage">4.使用gitpage模板</h4>
-
-<p>github提供了一种最快捷的方式来建立pages</p>
-
-<ul>
-  <li>进入你的<a href="https://github.com/{user}/{project}/admin">项目管理页</a></li>
-  <li>点击右下角的<a href="https://github.com/{user}/{project}/generated_pages/new">Automatic Page Generator</a></li>
-  <li>编辑内容并选择自己喜欢的模板</li>
-  <li>done</li>
-</ul>
-
-<p>然后就可以将gitpage clone到本地进行编辑并提交了</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>编辑项目主页  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span><span class="nb">cd</span> <span class="o">{</span>project<span class="o">}</span>
-</span><span class="line"><span class="nv">$ </span>git fetch origin
-</span><span class="line"><span class="nv">$ </span>git checkout gh-pages
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-
-		
-		<a href="/blog/blog/2012/06/20/gitpage-and-octopress/" class="more-link">Read on &rarr;</a>
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-20T20:45:00+08:00" pubdate data-updated="true">2012.06.20</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/gitpage/'>gitpage</a>, <a class='category' href='/blog/blog/categories/markdown/'>markdown</a>, <a class='category' href='/blog/blog/categories/octopress/'>octopress</a>, <a class='category' href='/blog/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/blog/categories/scss/'>scss</a>
-
-
-</div>
-	
-</div></article>
-
 <nav id="pagenavi">
     
         <a href="/blog/blog/page/3/" class="prev">Prev</a>
     
+    
+        <a href="/blog/blog/page/5/" class="next">Next</a>
     
     <div class="center"><a href="/blog/blog/archives">Blog Archives</a></div>
 </nav></div>

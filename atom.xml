@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-05-16T16:13:33+08:00</updated>
+  <updated>2013-06-05T16:51:10+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,163 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[mysql 中的 date datetime 和 timestamp]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp/"/>
+    <updated>2013-06-05T11:02:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp</id>
+    <content type="html"><![CDATA[<p>mysql中用于表示时间的三种类型date, datetime, timestamp (如果算上int的话，四种) 比较容易混淆，下面就比较一下这三种类型的异同</p>
+
+<h1 id="section">相同点</h1>
+
+<ul>
+  <li>都可以用于表示时间</li>
+  <li>都呈字符串显示</li>
+</ul>
+
+<h1 id="section-1">不同点</h1>
+
+<ul>
+  <li>顾名思义，date只表示’YYYY-MM-DD’形式的日期，datetime表示’YYYY-MM-DD HH:mm:ss’形式的日期加时间，timestamp与datetime显示形式一样。</li>
+  <li>date和datetime可表示的时间范围为’1000-01-01’到’9999-12-31’，timestamp由于受32位int型的限制，能表示’1970-01-01 00:00:01’到’2038-01-19 03:14:07’的UTC时间。</li>
+  <li>mysql在存储timestamp类型时会将时间转为UTC时间，然后读取的时候再恢复成当前时区。
+假如你存储了一个timestamp类型的值之后，修改了mysql的时区，当你再读取这个值时就会得到一个错误的时间。而这种情况在date和datetime中不会发生。</li>
+  <li>timestamp类型提供了自动更新的功能，你只需要将它的默认值设置为CURRENT_TIMESTAMP。</li>
+  <li>除了date是保留到天，datetime和timestamp都保留到秒，而忽略毫秒。</li>
+</ul>
+
+<h1 id="section-2">时间格式</h1>
+
+<p>mysql提供了一种比较宽松的时间字符串格式用于增删改查。参考<a href="http://wwp.greenwichmeantime.com/info/iso.htm">iso时间格式</a>，一般习惯于写成’2013-06-05 16:34:18’。但是你也可以简写成’13-6-5’，但是这样容易造成混淆，比如mysql也会把’13:6:5’也当做年月日处理，而当’13:16:5’这种形式，则被mysql认为是不正确的格式，会给出一个警告，然后存入数据库的值是’0000-00-00 00:00:00’。</p>
+
+<p>手册中还特意提到了一种情况，就是当年的值是0~69时，mysql认为是2000~2069，而70~99时则认为是1970~1999。我感觉是一种画蛇添足了。</p>
+
+<p>总之，以不变应万变，使用’YYYY-MM-DD HH:mm:ss’格式总是不会错的。</p>
+
+<p>原文链接：<a href="http://dev.mysql.com/doc/refman/5.1/en/datetime.html">datetime</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[javascript 中使用 callback 控制流程]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng/"/>
+    <updated>2013-06-05T10:49:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng</id>
+    <content type="html"><![CDATA[<p>javascript中随处可见的callback对于流程控制来说是一场灾难，缺点显而易见：</p>
+
+<ul>
+  <li>没有显式的<code>return</code>，容易产生多余流程，以及由此引发的bug。</li>
+  <li>造成代码无限嵌套，难以阅读。</li>
+</ul>
+
+<p>下面就来说说怎么<del>解决</del>避免上述的问题。</p>
+
+<p>第一个问题是一个习惯问题，在使用callback的时候往往会让人忘了使用<code>return</code>，这种情况在使用coffee-script的时候尤甚（虽然它在编译成javascript时会自行收集最后的数据作为返回值，但是这个返回值并不一定代表你的初衷）。看看下面的例子。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">a = </span><span class="nf">(err, callback)-&gt;</span>
+</span><span class="line">  <span class="nx">callback</span><span class="p">()</span> <span class="k">if</span> <span class="nx">err</span><span class="o">?</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;you will see me&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">b = </span><span class="o">-&gt;</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;I am a callback&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">a</span><span class="p">(</span><span class="s">&#39;error&#39;</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>在这种所谓”error first”的代码风格中，显然我们不希望出错时方法<code>a</code>中的后续代码仍然被执行，但是又不希望用<code>throw</code>来让整个进程挂掉（要死也得优雅的死嘛~），那么上面的代码就会产生bug。</p>
+
+<p>一种解决方案就是老老实实的写<code>if...else...</code>，但是我更倾向于下面的做法：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">a = </span><span class="nf">(err, callback)-&gt;</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">callback</span><span class="p">()</span> <span class="k">if</span> <span class="nx">err</span><span class="o">?</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;you will not see me&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">b = </span><span class="o">-&gt;</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;I am a callback&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">a</span><span class="p">(</span><span class="s">&#39;error&#39;</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>javascript异步方法中的返回值大多没什么用处，所以这里用<code>return</code>充当一个流程控制的角色，比<code>if...else...</code>更少的代码，但是更加清晰。</p>
+
+<p>第二个问题是娘胎里带来的，很难根除。</p>
+
+<p>一种不错的方法是使用一些流程控制模块来将代码显得更加有条理，比如<a href="https://github.com/caolan/async">async</a>就是一个不错的模块，提供了一系列的接口，包括迭代，循环，和一些条件语句，甚至还包含了一个队列系统。下面的例子可以表名两种写法的优劣</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="c1">#normal</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">first = </span><span class="nf">(callback)-&gt;</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;I am the first function&#39;</span>
+</span><span class="line">  <span class="nx">callback</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">second = </span><span class="nf">(callback)-&gt;</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;I am the second function&#39;</span>
+</span><span class="line">  <span class="nx">callback</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">third = </span><span class="nf">()-&gt;</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;I am the third function&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">first</span> <span class="o">-&gt;</span>
+</span><span class="line">  <span class="nx">second</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="nx">third</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># use async</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">async = </span><span class="nx">require</span><span class="p">(</span><span class="s">&#39;async&#39;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">async</span><span class="p">.</span><span class="nx">waterfall</span> <span class="p">[</span>
+</span><span class="line">  <span class="nx">first</span><span class="p">,</span>
+</span><span class="line">  <span class="nx">second</span><span class="p">,</span>
+</span><span class="line">  <span class="nx">third</span>
+</span><span class="line"><span class="p">],</span> <span class="nf">(err)-&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>作为睿智的你，会选择哪一种呢。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[nginx] if is evil]]></title>
@@ -2028,127 +2185,6 @@
   <li>假如在命名空间中定义了与全局方法同名的方法，可以使用在前面加<code>\</code>符号的方式调用全局方法，例如在<code>fopen</code>中用<code>\fopen()</code>。而不使用命名空间的时候，重复定义是不允许的。遇到重定义常量也是一样。</li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[virtualbox hates sendfile]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/02/18/virtualbox-hates-sendfile/"/>
-    <updated>2013-02-18T16:39:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/02/18/virtualbox-hates-sendfile</id>
-    <content type="html"><![CDATA[<p>事情的起因是这个样子滴~</p>
-
-<p>代码文件都放在mac中，运行环境在virtualbox中，通过mount主机的文件夹来工作，相信很多同学都搭建过这样的环境，一切相安无事，直到某一天。。。</p>
-
-<p>修改过的静态文件不生效了！</p>
-
-<p>本来以为是nginx中缓存设置的问题，使尽各种解数，包括把expires设置为off，header中加Expire为0，给文件加时间戳，依然如此。果断google之，原来是virtualbox使用的特殊文件系统造成的。</p>
-
-<p>apache和nginx中都有个默认开启的选项sendfile，表示通过内核文件指针来读取或复制文件，在vboxsf(virtualbox共享文件所使用的文件系统)中，sendfile会造成文件无法更新。于是我们无论怎么刷新，都只能看到第一次访问得到的文件了。</p>
-
-<p>解决办法也很简单，将nginx.conf中设置<code>sendfile off</code>就可以了。</p>
-
-<p>由于这个问题折腾了我很久，特此记录一下，同时借用某同样遇到此问题的<a href="http://abitwiser.wordpress.com/2011/02/24/virtualbox-hates-sendfile/">blog标题</a>。</p>
-
-<h2 id="section">后记</h2>
-<p>1.<a href="https://forums.virtualbox.org/viewtopic.php?f=1&amp;t=24905">virtualbox论坛</a>2009年的时候就有人讨论过这个问题，那时候的版本还是3.0，现在都4.2了，问题仍然没有得到解决，唉~被oracle X过的软件果然不行啊~。</p>
-
-<p>2.在主机中修改文件，虚拟机中的inode不会变化，反过来也一样，不知道是不是因为vboxsf的问题，然而使用samba共享的文件系统中两边的inode是同时变化的。</p>
-
-<h2 id="section-1">参考资料</h2>
-<ul>
-  <li><a href="http://abitwiser.wordpress.com/2011/02/24/virtualbox-hates-sendfile/">VirtualBox Hates Sendfile</a></li>
-  <li><a href="http://serverfault.com/questions/269420/disable-caching-when-serving-static-files-with-nginx-for-development">serverfault</a></li>
-  <li><a href="https://forums.virtualbox.org/viewtopic.php?f=1&amp;t=24905">virtualbox forum</a></li>
-  <li><a href="http://wiki.nginx.org/HttpCoreModule#sendfile">nginx wiki</a></li>
-  <li><a href="http://comments.gmane.org/gmane.linux.kernel.cifs/3517">mac中samba共享的问题</a></li>
-</ul>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Cypher Query Language 学习笔记(2)]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/02/06/cypher-query-language-xue-xi-bi-ji-2/"/>
-    <updated>2013-02-06T14:32:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/02/06/cypher-query-language-xue-xi-bi-ji-2</id>
-    <content type="html"><![CDATA[<h3 id="create-unique">create unique</h3>
-<p>顾名思义，<code>create unique</code>与<code>create</code>在功能上是类似的，不过当新建的node或relationship已经存在时，<code>create unique</code>不会再生成一个新的node或relationship。</p>
-
-<p>另一个区别是<code>create unique</code>只能在一个<code>path</code>表达式中使用，例如下面的代码：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> create unique bran-<span class="o">[</span>r:littlebrotherof<span class="o">]</span>-&gt;<span class="o">(</span>n<span class="o">{</span>name:<span class="s2">&quot;jon&quot;</span><span class="o">})</span> <span class="k">return </span>n;
-</span><span class="line">+----------------------------+
-</span><span class="line">| n                          |
-</span><span class="line">+----------------------------+
-</span><span class="line">| Node<span class="o">[</span>7<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}</span> |
-</span><span class="line">+----------------------------+
-</span><span class="line">1 row
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>上面的代码中，path中name=”jon”的node已经存在，neo4j认为这是一个<code>unique node</code>，所以不会再新建一个node，稍加修改，将age属性调整一下，就可以新建一个不同的node。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> create unique bran-<span class="o">[</span>r:littlebrotherof<span class="o">]</span>-&gt;<span class="o">(</span>n<span class="o">{</span>name:<span class="s2">&quot;jon&quot;</span>,age:18<span class="o">})</span> <span class="k">return </span>n;
-</span><span class="line">+----------------------------+
-</span><span class="line">| n                          |
-</span><span class="line">+----------------------------+
-</span><span class="line">| Node<span class="o">[</span>8<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:18<span class="o">}</span> |
-</span><span class="line">+----------------------------+
-</span><span class="line">1 row
-</span><span class="line">Nodes created: 1
-</span><span class="line">Relationships created: 1
-</span><span class="line">Properties <span class="nb">set</span>: 2
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>新建relationship的方式和上面差不多，举一反三即可。</p>
-
-<h3 id="foreach">foreach</h3>
-<p>foreach针对的neo4j中的集合做遍历，可以做一些批量的修改操作。其语法块需要用括号围起来，像下面的代码，更新path p关联的所有node的uptime属性为100。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> bran-<span class="o">[]</span>-&gt;<span class="o">()</span> foreach <span class="o">(</span>n in nodes<span class="o">(</span>p<span class="o">)</span>: <span class="nb">set </span>n.uptime <span class="o">=</span> 100<span class="o">)</span>;
-</span><span class="line">+-------------------+
-</span><span class="line">| No data returned. |
-</span><span class="line">+-------------------+
-</span><span class="line">Properties <span class="nb">set</span>: 4
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>至于什么是neo4j中的集合，比如<code>nodes()</code>方法得到的结果就是一个集合，用集合表达式表示的也是一个集合，但是<code>n = node(*)</code>中匹配出来的n并不是一个集合。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>6<span class="o">)</span>, <span class="nv">jon</span> <span class="o">=</span> node<span class="o">(</span>7<span class="o">)</span> foreach <span class="o">(</span>n in <span class="o">[</span>bran, jon<span class="o">]</span>: <span class="nb">set </span>n.uptime <span class="o">=</span> 101<span class="o">)</span>;
-</span><span class="line">+-------------------+
-</span><span class="line">| No data returned. |
-</span><span class="line">+-------------------+
-</span><span class="line">Properties <span class="nb">set</span>: 2
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="functions">functions</h3>
-<p><a href="http://docs.neo4j.org/chunked/milestone/query-function.html">官方手册</a>中罗列了所有的可用方法，非常详尽，需要慢慢研究了。</p>
 ]]></content>
   </entry>
   
