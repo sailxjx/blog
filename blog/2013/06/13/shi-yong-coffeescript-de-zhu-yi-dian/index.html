@@ -1,0 +1,300 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>使用 coffeescript 的注意点 - CodeBean</title>
+	<meta name="author" content="tristan">
+
+	
+	<meta name="description" content="coffeescript是javascript的一个方言，随着javascript在前后端的流行，它在github的排名也扶摇直上，最近终于挤掉高帅富Objective-C跻身前十，可喜可贺。 虽然coffeescript号称”It’s just javascript”，但是相比较而言， &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="CodeBean" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">CodeBean</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/102588932744890343699?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:sailxjx.github.com/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h1 class="title">使用 Coffeescript 的注意点</h1>
+	<div class="entry-content"><p><a href="https://github.com/jashkenas/coffee-script">coffeescript</a>是javascript的一个方言，随着javascript在前后端的流行，它在<a href="https://github.com/languages">github</a>的排名也扶摇直上，最近终于挤掉高帅富<a href="https://github.com/languages/Objective-C">Objective-C</a>跻身前十，可喜可贺。</p>
+
+<p>虽然coffeescript号称”It’s just javascript”，但是相比较而言，仍然是添加了很多有趣的特性，大部分特性都是去粗取精，去伪存真，让js玩家喜闻乐见，让旁观路人不明觉厉，但是也随之带来了一些容易忽视的问题，不得不提一下，以免以后碰到后不知所措。</p>
+
+<h1 id="section">重载的符号</h1>
+
+<p>coffeescript重载了javascript中的一些符号和语法结构，最常用的就是<code>==</code>和<code>in</code>。</p>
+
+<h2 id="section-1"><code>==</code></h2>
+<p>在js中最为人诟病的就是<code>==</code>符号表意不明，所以很多严谨的js开发者就强迫自己在比较时尽可能的使用<code>===</code>，coffeescript在这一点上做的更绝，你不能使用<code>===</code>，因为它将所有的<code>==</code>都转化成了<code>===</code>。这样对于一些经常需要在两种语言之间切换的码农来说，就是一种考验了。</p>
+
+<h2 id="in"><code>in</code></h2>
+<p>在js中，遍历一个数组或hash对象可以使用<code>for(var i in arr)</code>的语言结构，这个时候遍历得到的<code>i</code>其实是数组的下标或者hash的key。coffeescript对<code>in</code>做了重载，使其更符合自然语义，遍历出的是数组的值和hash的value。同时引入<code>of</code>操作符，可以用它来代替原生的<code>in</code>，遍历出数组的下标，如<code>for i of arr</code>。</p>
+
+<h1 id="class">class</h1>
+
+<p>原生的js中是没有class的概念的，但是有经验的码农会用prototype模型来将方法打包成class，以实现代码的重复利用。coffeescript中提供了class关键词，让类的实现和继承更加简单，但是也由此引发一些问题。假如说上面的问题只是人所共知的新特性的话，下面这些就是需要在编码时注意绕行的坑了。</p>
+
+<h2 id="section-2">变量名与类名</h2>
+
+<p>coffeescript对于类型和变量名并没有强制性的格式要求，这在其他语言中也不会出现问题，因为可以通过类型检查来区分两者，但是在coffeescript中，其实类和变量都是通过<code>var</code>关键词生成的变量，而在coffeescript语法中又禁用了<code>var</code>（这样就无法人为的指定变量的作用域，虽然coffeescript会比较智能的分配的作用域）。这在一般情况下也没有问题，直到碰到了下面的代码：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="k">class</span> <span class="nx">demo</span>
+</span><span class="line">  <span class="nv">foo1: </span><span class="o">-&gt;</span>
+</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">demo</span>
+</span><span class="line">    <span class="k">return</span> <span class="nx">@</span>
+</span><span class="line">  <span class="nv">foo2: </span><span class="o">-&gt;</span>
+</span><span class="line">    <span class="nv">demo = </span><span class="p">[]</span>
+</span><span class="line">    <span class="k">return</span> <span class="nx">@</span>
+</span><span class="line">
+</span><span class="line"><span class="k">new</span> <span class="nx">demo</span><span class="p">().</span><span class="nx">foo1</span><span class="p">().</span><span class="nx">foo2</span><span class="p">().</span><span class="nx">foo1</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="o">==&gt;</span> <span class="p">[</span><span class="nb">Function</span><span class="o">:</span> <span class="nx">demo</span><span class="p">]</span>
+</span><span class="line"><span class="o">==&gt;</span> <span class="p">[]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>同样的两次调用foo1方法，得到的结果却是不同的，这是因为foo2中的变量与类名冲突了，而且他们处于同一个作用域，这样foo2方法就变成了一个隐藏的地雷，踩到就爆炸。避免这种情况的一种做法是在命名上做区分，比如类命名必须以大字母开头，变量必须以小写字母开头，这样就不会造成这两者的混淆。</p>
+
+<h2 id="section-3">类成员变量</h2>
+
+<p>使用类的一个好处就是可以初始化一些变量，让这个类的所有方法共享，而又不会影响外层作用域。但是需要注意的是，javascript中对于数组和对象是引用传递，在coffeescript类中使用这两种类型作为成员变量时，就会产生一些不曾期待的后果。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="k">class</span> <span class="nx">Demo</span>
+</span><span class="line">  <span class="nv">member: </span><span class="p">[]</span>
+</span><span class="line">  <span class="nv">setMember: </span><span class="nf">(str) -&gt;</span>
+</span><span class="line">    <span class="nx">@member</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">a = </span><span class="k">new</span> <span class="nx">Demo</span>
+</span><span class="line"><span class="nx">a</span><span class="p">.</span><span class="nx">setMember</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">)</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">a</span><span class="p">.</span><span class="nx">member</span>  <span class="c1"># [&#39;a&#39;]</span>
+</span><span class="line"><span class="nv">b = </span><span class="k">new</span> <span class="nx">Demo</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">b</span><span class="p">.</span><span class="nx">member</span>  <span class="c1"># [&#39;a&#39;]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>当我们使用<code>new</code>关键词的时候，希望得到的是一个干干净净的对象，可是在初始化b的时候我们发现他的成员变量member已经变成了<code>['a']</code>，这是我们不希望看到的。究其原因就是member是一个数组。解决办法是将这些变量的初始化放在coffeescript的构造方法<code>constructor</code>中。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="k">class</span> <span class="nx">Demo</span>
+</span><span class="line">  <span class="nv">constructor: </span><span class="o">-&gt;</span>
+</span><span class="line">    <span class="vi">@member = </span><span class="p">[]</span>
+</span><span class="line">  <span class="nv">setMember: </span><span class="nf">(str) -&gt;</span>
+</span><span class="line">    <span class="nx">@member</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">a = </span><span class="k">new</span> <span class="nx">Demo</span>
+</span><span class="line"><span class="nx">a</span><span class="p">.</span><span class="nx">setMember</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">)</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">a</span><span class="p">.</span><span class="nx">member</span>  <span class="c1"># [&#39;a&#39;]</span>
+</span><span class="line"><span class="nv">b = </span><span class="k">new</span> <span class="nx">Demo</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">b</span><span class="p">.</span><span class="nx">member</span>  <span class="c1"># []</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>至于为什么这两种写法会产生不一样的效果，可以将coffeescript编译成js来分析。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line">    <span class="p">(</span><span class="nx">use</span> <span class="nx">constructor</span><span class="p">)</span>                                             <span class="o">|</span>    <span class="p">(</span><span class="nx">not</span> <span class="nx">use</span> <span class="nx">constructor</span><span class="p">)</span>
+</span><span class="line">    <span class="mi">5</span>   <span class="nx">Demo</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>                                      <span class="o">|</span>    <span class="mi">5</span>   <span class="nx">Demo</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">    <span class="mi">6</span>     <span class="kd">function</span> <span class="nx">Demo</span><span class="p">()</span> <span class="p">{</span>                                       <span class="o">|</span>    <span class="mi">6</span>     <span class="kd">function</span> <span class="nx">Demo</span><span class="p">()</span> <span class="p">{}</span>
+</span><span class="line">    <span class="mi">7</span>       <span class="k">this</span><span class="p">.</span><span class="nx">member</span> <span class="o">=</span> <span class="p">[];</span>                                     <span class="o">|</span>    <span class="mi">7</span>
+</span><span class="line">    <span class="mi">8</span>     <span class="p">}</span>                                                       <span class="o">|</span>    <span class="mi">8</span>     <span class="nx">Demo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">member</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class="line">    <span class="mi">9</span>                                                             <span class="o">|</span>    <span class="mi">9</span>
+</span><span class="line">   <span class="mi">10</span>     <span class="nx">Demo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setMember</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>              <span class="o">|</span>   <span class="mi">10</span>     <span class="nx">Demo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setMember</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">   <span class="mi">11</span>       <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">member</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">str</span><span class="p">);</span>                         <span class="o">|</span>   <span class="mi">11</span>       <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">member</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">str</span><span class="p">);</span>
+</span><span class="line">   <span class="mi">12</span>     <span class="p">};</span>                                                      <span class="o">|</span>   <span class="mi">12</span>     <span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>上面是vimdiff对比出的两种不同写法，第一种是使用构造方法<code>constructor</code>的，可以看到member作为Demo方法的私有变量，在没有用<code>new</code>实例化的时候，这个<code>member</code>是不存在的，所以每一次实例化我们都能得到一个全新未开箱的<code>member</code>。但是第二种写法则不同，在没有实例化Demo类的时候，<code>member</code>对象就已经存在，所有无论你实例化Demo多少次，调用的都是同一个<code>member</code>，也就造成了在多个Demo实例中共用一个<code>member</code>的结果。</p>
+
+<h1 id="section-4">后记</h1>
+
+<p>假如让我在javascript和coffeescript两种语言之间选择，我仍然倾向于coffeescript，抛开上面的问题不说，它给人编码的时候带来的愉悦是无法衡量的。So just try it!</p>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-13T14:48:00+08:00" pubdate data-updated="true">2013.06.13</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/coffeescript/'>coffeescript</a>, <a class='category' href='/blog/blog/categories/nodejs/'>nodejs</a>
+
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2013
+
+    tristan
+
+</footer>
+	<script src="/blog/javascripts/slash.js"></script>
+<script src="/blog/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sailxjx.github.com/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian/';
+        var disqus_url = 'http://sailxjx.github.com/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33186961-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+
+</body>
+</html>
