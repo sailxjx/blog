@@ -4,7 +4,7 @@
   <title><![CDATA[Category: linux | CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/blog/categories/linux/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-06-13T16:16:32+08:00</updated>
+  <updated>2013-06-19T15:04:28+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,106 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[start-stop-daemon]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/06/19/start-stop-daemon/"/>
+    <updated>2013-06-19T13:44:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/06/19/start-stop-daemon</id>
+    <content type="html"><![CDATA[<p>很多软件不提供init脚本，或者提供的脚本不合胃口，难免要自己动手丰衣足食。下面就推荐一个用来启动守护进程的神器。</p>
+
+<p><code>start-stop-daemon</code>是<a href="http://www.gentoo.org/proj/en/base/openrc/">OpenRC</a>计划的一部分，这个程序最先出现在Debian系的Linux发行版中，这里有个比较古老的<a href="http://man.he.net/man8/start-stop-daemon">手册</a>页面，更详细更直观的办法当然是通过<code>man start-stop-daemon</code>来查看手册了。我使用的是”start-stop-daemon (OpenRC) 0.10 (Funtoo Linux)”版本，大部分功能是差不多的。</p>
+
+<p><code>start-stop-daemon</code>最基本的两个功能就是<code>--start</code>和<code>--stop</code>，简写为<code>-S</code>和<code>-K</code>，然后再加上一个<code>-s|--signal</code>来给进程发送信号，功德圆满。</p>
+
+<p>至于其中比较常用的一些参数，我列出来参考一下，以免忘了：</p>
+
+<ul>
+  <li><code>-x, --exec daemon</code>，daemon就是真正要执行的进程脚本，比方说启动nginx，那么就是<code>start-stop-daemon -x nginx</code>。</li>
+  <li><code>-p, --pidfile pidfile</code>，指定pid文件，至于pid文件的用途就多了，stop,status都少不了它。</li>
+  <li><code>-n, --name</code>，如果没有指定pid文件，那么就要通过指定name来停止进程了。</li>
+  <li><code>-u, --user user[:group]</code>，指定脚本用哪个用户或用户组执行，init脚本是必须使用<code>root</code>权限来执行的，但是它fork出来的子进程我们一般会选择一个权限较低的用户。</li>
+  <li><code>-b, --background</code>，强制脚本在后台执行。</li>
+  <li><code>-m, --make-pidfile</code>，这个一般和<code>-b</code>配合，用于生成pid文件</li>
+  <li><code>-d, --chdir path</code>，切换进程的主目录，这个在构建守护进程的时候是很常用的。</li>
+  <li><code>-r, --chroot path</code>，在某些安全性要求较高的情况下，我们就需要用到<code>chroot</code>将进程工作环境与物理环境完全隔离开来。</li>
+  <li><code>-1, --stdout logfile</code>，将标准输出记录到log文件，与之相对应的就是<code>-2, --stderr</code>标准错误流。</li>
+  <li><code>-w, --wait milliseconds</code>，进程启动后，有这个参数会等待几毫秒来检测进程是否仍然存活。</li>
+</ul>
+
+<p>参数说完，下面就是一些需要注意的地方了。</p>
+
+<h2 id="b"><code>-b</code>与守护进程</h2>
+
+<p><code>-b</code>是一个很常用的参数，我们使用<code>start-stop-daemon</code>的目的就是为了实现守护进程。但是有些程序自身也实现了守护进程的功能，比方说mongodb中有一个fork选项就是将自己在后台执行，这个时候假如搭配的<code>-b</code>参数，是得不到正确的pid的，因为<code>start-stop-daemon</code>只能得到最初启动的父进程pid，而父进程在fork完之后就自动退出了，那么<code>start-stop-daemon</code>就永远找不到正确的pid来结束进程了。所以使用<code>-b</code>的时候，一定要保证程序是在前台运行的。</p>
+
+<h2 id="section">其他参数</h2>
+
+<p><code>-x daemon</code>后面跟的执行脚本必须只能是一个文件名，有些程序运行时还需要指定一些参数，比如<code>nginx -c file</code>来指定nginx的配置文件，使用<code>start-stop-daemon -x "nginx -c file"</code>是会报错的，这些程序内的参数以另一种方式加载，<code>start-stop-daemon -x daemon -- $ARGV</code>，这里的双横线<code>--</code>后面跟的所有参数就会被带到程序中了，比如<code>start-stop-daemon -x nginx -c /etc/nginx.conf</code>。</p>
+
+<p>下面是mongodb的一个init脚本，用<code>start-stop-daemon</code>是非常简单的。（貌似源代码中没有提供init脚本，只能自己动手了）。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/sbin/runscript</span>
+</span><span class='line'><span class="c"># Distributed under the terms of the GNU General Public License v2&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;MONGO_HOME<span class="o">=</span>/usr/local/mongo
+</span><span class='line'><span class="nv">MONGO_USER</span><span class="o">=</span>mongo
+</span><span class='line'><span class="nv">MONGO_PID_FILE</span><span class="o">=</span>/var/run/mongo/mongo.pid&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;depend<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    need net
+</span><span class='line'><span class="o">}</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;start<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    ebegin “Starting Mongodb”
+</span><span class='line'>    start-stop-daemon –start       <span class="se">\ </span>&lt;br /&gt;
+</span><span class='line'>        –chdir  “<span class="k">${</span><span class="nv">MONGO_HOME</span><span class="k">}</span>”    <span class="se">\ </span>&lt;br /&gt;
+</span><span class='line'>        –user “<span class="k">${</span><span class="nv">MONGO_USER</span><span class="k">}</span>”      <span class="se">\ </span>&lt;br /&gt;
+</span><span class='line'>        -m -p “<span class="k">${</span><span class="nv">MONGO_PID_FILE</span><span class="k">}</span>”   <span class="se">\ </span>&lt;br /&gt;
+</span><span class='line'>        -b –exec “<span class="k">${</span><span class="nv">MONGO_HOME</span><span class="k">}</span>/bin/mongod” – –config<span class="o">=</span>/etc/mongodb.conf
+</span><span class='line'>    eend <span class="nv">$?</span>
+</span><span class='line'><span class="o">}</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;stop<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    ebegin “Stopping Mongodb”
+</span><span class='line'>    start-stop-daemon –stop        <span class="se">\ </span>&lt;br /&gt;
+</span><span class='line'>        –chdir “<span class="k">${</span><span class="nv">MONGO_HOME</span><span class="k">}</span>”     <span class="se">\ </span>&lt;br /&gt;
+</span><span class='line'>        –user “<span class="k">${</span><span class="nv">MONGO_USER</span><span class="k">}</span>”      <span class="se">\ </span>&lt;br /&gt;
+</span><span class='line'>        -p “<span class="k">${</span><span class="nv">MONGO_PID_FILE</span><span class="k">}</span>”      <span class="se">\ </span>&lt;br /&gt;
+</span><span class='line'>    eend <span class="nv">$?</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[virtualbox hates sendfile]]></title>
@@ -264,37 +364,6 @@
   <li><a href="http://ubuntuforums.org/showthread.php?t=1861136">解决apparmor引起的报错2</a></li>
   <li><a href="http://blog.csdn.net/magicbreaker/article/details/2392764">MySQL设置密码的三种方法</a></li>
 </ul>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[thunderbird and davmail]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2012/06/28/thunderbird-and-davmail/"/>
-    <updated>2012-06-28T12:23:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2012/06/28/thunderbird-and-davmail</id>
-    <content type="html"><![CDATA[<p>邮件客户端之间的竞争在当今的软件貌似一直处在一个打酱油的位置（就像opera看浏览器之争），毕竟，web端的邮件体验是越做越完美了，传统的客户端不减减肥的话很难再在用户那边分到一杯羹。</p>
-
-<p>不过，在办公领域客户端还是能占有一席之地的，毕竟云端容量有限，而且实时性也是个问题。公司使用内网的ms exchange，那么gmail之类的web端就不考虑了，况且几千封邮件的索引查找还是靠客户端比较靠谱。</p>
-
-<p>比较了一圈linux下的客户端，evolution用的时间最长，但是对html样式的支持不是太好，某些表格粘贴进去排版就乱了。正好ubuntu11.10以后就默认安装了thunderbird，试用以后感觉也不错，写篇备忘，主要是记录不同协议下的配置。</p>
-
-<p><a href="/u/image/thunderbird-main-furry.png"><img class="right" src="/u/image/thunderbird-main-furry.png" width="200" height="161" title="“thunderbird-main-furry”" ></a>
-thunderbird诞生于mozilla的开源项目，有个叫firefox的高帅富兄弟，所以从菜单到细节处处都力争向高帅富靠拢，于是我们就看到了这个长得酷似浏览器的email客户端–多标签切换，附加组件。。。不幸的是，最近<a href="http://tech.sina.com.cn/s/2012-07-07/10247360817.shtml">mozilla宣布不再为thunderbird开发新功能</a>，看来以后还是得靠自己撸啊。</p>
-
-<p>添加账户很简单，编辑-账户设置-添加账户，输入用户名邮箱密码以后会自动在mozilla在线数据库中寻找适合的配置，像gmail,hotmail.163之流的基本都不需要额外的配置，直接确认就行。这里主要介绍一下exchange服务的配置。</p>
-
-<p>默认情况下没有安装exchange的支持，在工具-附加组件里搜索exchange安装一个”Provider for Microsoft Exchange”的插件，再回到账户配置中选择手动配置，就有相应exchange的接收协议选项了，然后手动填写域名用户名密码，确定以后就可以开始接收邮件了。</p>
-
-<p>接收邮件，对，我只提到收邮件。这个插件只提供了exchange同步接收的功能，配置SMTP服务器时遇到了问题，无论尝试哪种验证方式，连接远程服务器时都会报错，网上搜罗了一下相关的帖子也没有找到有效的解决方案。但exchange服务确是可以通过https/ssl访问的，无奈只能采用曲线救国的方式，就是下面要介绍的<a href="http://davmail.sourceforge.net/">davmail</a>。</p>
-
-<p>根据官网上的介绍，davmail是一个通用的POP/IMAP/SMTP/Caldav/Carddav/LDAP交换接口，允许用户用任何客户端链接到exchange服务器。其他的鸟文就不做解释了，这不是重点，重点是，这玩意儿管用。ubuntu用户下可以在sourceforge下载deb包安装，<a href="http://sourceforge.net/projects/davmail/files/latest/download?source=files">下载地址</a>。</p>
-
-<p><a href="/u/image/davmail-ui.png"><img class="right" src="/u/image/davmail-ui.png" width="350" height="206" title="“davmail-ui”" ></a>
-安装完成后，davmail提供了一个简陋的UI界面，不过对于配置来说已经足够了，在owaurl一栏填入域中使用的exchange owa地址，类似https://exchange.domain.com/owa的，不确定是否可用可以在浏览器里面直接访问一下试试。下面的协议端口都用默认的，save一下就ok。</p>
-
-<p>现在回到thunderbird，修改账户设置-发送SMTP服务器-添加或编辑，服务器名称填localhost，端口1025，选择密码验证，填写用户名，保存，现在试一试，应该可以正常的收发邮件了。</p>
-
-<p>davmail其实是在本地搭建了一个邮件收发服务器，用户与远程服务器的通信都通过davmail的代理，简化了不同平台的配置。当然软件的功能远远不止这些，这里只是为了解决thunderbird与exchange连接的问题。假如thunderbird插件能直接支持exchange的收发，那就更好了。</p>
 ]]></content>
   </entry>
   

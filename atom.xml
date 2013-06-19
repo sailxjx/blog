@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://sailxjx.github.com/blog/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-06-13T16:16:32+08:00</updated>
+  <updated>2013-06-19T15:04:28+08:00</updated>
   <id>http://sailxjx.github.com/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,106 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[start-stop-daemon]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/06/19/start-stop-daemon/"/>
+    <updated>2013-06-19T13:44:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/06/19/start-stop-daemon</id>
+    <content type="html"><![CDATA[<p>很多软件不提供init脚本，或者提供的脚本不合胃口，难免要自己动手丰衣足食。下面就推荐一个用来启动守护进程的神器。</p>
+
+<p><code>start-stop-daemon</code>是<a href="http://www.gentoo.org/proj/en/base/openrc/">OpenRC</a>计划的一部分，这个程序最先出现在Debian系的Linux发行版中，这里有个比较古老的<a href="http://man.he.net/man8/start-stop-daemon">手册</a>页面，更详细更直观的办法当然是通过<code>man start-stop-daemon</code>来查看手册了。我使用的是”start-stop-daemon (OpenRC) 0.10 (Funtoo Linux)”版本，大部分功能是差不多的。</p>
+
+<p><code>start-stop-daemon</code>最基本的两个功能就是<code>--start</code>和<code>--stop</code>，简写为<code>-S</code>和<code>-K</code>，然后再加上一个<code>-s|--signal</code>来给进程发送信号，功德圆满。</p>
+
+<p>至于其中比较常用的一些参数，我列出来参考一下，以免忘了：</p>
+
+<ul>
+  <li><code>-x, --exec daemon</code>，daemon就是真正要执行的进程脚本，比方说启动nginx，那么就是<code>start-stop-daemon -x nginx</code>。</li>
+  <li><code>-p, --pidfile pidfile</code>，指定pid文件，至于pid文件的用途就多了，stop,status都少不了它。</li>
+  <li><code>-n, --name</code>，如果没有指定pid文件，那么就要通过指定name来停止进程了。</li>
+  <li><code>-u, --user user[:group]</code>，指定脚本用哪个用户或用户组执行，init脚本是必须使用<code>root</code>权限来执行的，但是它fork出来的子进程我们一般会选择一个权限较低的用户。</li>
+  <li><code>-b, --background</code>，强制脚本在后台执行。</li>
+  <li><code>-m, --make-pidfile</code>，这个一般和<code>-b</code>配合，用于生成pid文件</li>
+  <li><code>-d, --chdir path</code>，切换进程的主目录，这个在构建守护进程的时候是很常用的。</li>
+  <li><code>-r, --chroot path</code>，在某些安全性要求较高的情况下，我们就需要用到<code>chroot</code>将进程工作环境与物理环境完全隔离开来。</li>
+  <li><code>-1, --stdout logfile</code>，将标准输出记录到log文件，与之相对应的就是<code>-2, --stderr</code>标准错误流。</li>
+  <li><code>-w, --wait milliseconds</code>，进程启动后，有这个参数会等待几毫秒来检测进程是否仍然存活。</li>
+</ul>
+
+<p>参数说完，下面就是一些需要注意的地方了。</p>
+
+<h2 id="b"><code>-b</code>与守护进程</h2>
+
+<p><code>-b</code>是一个很常用的参数，我们使用<code>start-stop-daemon</code>的目的就是为了实现守护进程。但是有些程序自身也实现了守护进程的功能，比方说mongodb中有一个fork选项就是将自己在后台执行，这个时候假如搭配的<code>-b</code>参数，是得不到正确的pid的，因为<code>start-stop-daemon</code>只能得到最初启动的父进程pid，而父进程在fork完之后就自动退出了，那么<code>start-stop-daemon</code>就永远找不到正确的pid来结束进程了。所以使用<code>-b</code>的时候，一定要保证程序是在前台运行的。</p>
+
+<h2 id="section">其他参数</h2>
+
+<p><code>-x daemon</code>后面跟的执行脚本必须只能是一个文件名，有些程序运行时还需要指定一些参数，比如<code>nginx -c file</code>来指定nginx的配置文件，使用<code>start-stop-daemon -x "nginx -c file"</code>是会报错的，这些程序内的参数以另一种方式加载，<code>start-stop-daemon -x daemon -- $ARGV</code>，这里的双横线<code>--</code>后面跟的所有参数就会被带到程序中了，比如<code>start-stop-daemon -x nginx -c /etc/nginx.conf</code>。</p>
+
+<p>下面是mongodb的一个init脚本，用<code>start-stop-daemon</code>是非常简单的。（貌似源代码中没有提供init脚本，只能自己动手了）。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c">#!/sbin/runscript</span>
+</span><span class="line"><span class="c"># Distributed under the terms of the GNU General Public License v2</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">MONGO_HOME</span><span class="o">=</span>/usr/local/mongo
+</span><span class="line"><span class="nv">MONGO_USER</span><span class="o">=</span>mongo
+</span><span class="line"><span class="nv">MONGO_PID_FILE</span><span class="o">=</span>/var/run/mongo/mongo.pid
+</span><span class="line">
+</span><span class="line">depend<span class="o">()</span> <span class="o">{</span>
+</span><span class="line">    need net
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line">start<span class="o">()</span> <span class="o">{</span>
+</span><span class="line">    ebegin <span class="s2">&quot;Starting Mongodb&quot;</span>
+</span><span class="line">    start-stop-daemon --start       <span class="se">\ </span>
+</span><span class="line">        --chdir  <span class="s2">&quot;${MONGO_HOME}&quot;</span>    <span class="se">\ </span>
+</span><span class="line">        --user <span class="s2">&quot;${MONGO_USER}&quot;</span>      <span class="se">\ </span>
+</span><span class="line">        -m -p <span class="s2">&quot;${MONGO_PID_FILE}&quot;</span>   <span class="se">\ </span>
+</span><span class="line">        -b --exec <span class="s2">&quot;${MONGO_HOME}/bin/mongod&quot;</span> -- --config<span class="o">=</span>/etc/mongodb.conf
+</span><span class="line">    eend <span class="nv">$?</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line">stop<span class="o">()</span> <span class="o">{</span>
+</span><span class="line">    ebegin <span class="s2">&quot;Stopping Mongodb&quot;</span>
+</span><span class="line">    start-stop-daemon --stop        <span class="se">\ </span>
+</span><span class="line">        --chdir <span class="s2">&quot;${MONGO_HOME}&quot;</span>     <span class="se">\ </span>
+</span><span class="line">        --user <span class="s2">&quot;${MONGO_USER}&quot;</span>      <span class="se">\ </span>
+</span><span class="line">        -p <span class="s2">&quot;${MONGO_PID_FILE}&quot;</span>      <span class="se">\ </span>
+</span><span class="line">    eend <span class="nv">$?</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[使用 coffeescript 的注意点]]></title>
@@ -1954,296 +2054,6 @@
 <p>程序猿的脏话，往往见于注释，这也成了代码中的一道亮丽风景，辛辛苦苦读了一天代码，发现一头雾水，这个时候，要是看到这些注释，发现前人也在这里大吐苦水，心里也就释然了。</p>
 
 <p>在这个大数据横行的时候，什么都得靠挖掘嘛，如果写个爬虫，去抓一下各大论坛的脏话做个统计，应该是一件很有意思的事情。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[react.php 中的异步实现]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/03/05/react-dot-php-zhong-de-yi-bu-shi-xian/"/>
-    <updated>2013-03-05T15:29:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/03/05/react-dot-php-zhong-de-yi-bu-shi-xian</id>
-    <content type="html"><![CDATA[<p>在基于事件的异步模型大行其道的今天，各语言都相继推出了自己的异步框架，nodejs原生的异步模型当然是其中的翘楚，然后python有Twisted，ruby有EventMachine(名字俗了点)。php也有一个不错的异步框架，<a href="https://github.com/reactphp/react">react</a>。下面我们从内而外的看看这个异步模型是怎么实现的。</p>
-
-<h3 id="vnement">événement</h3>
-
-<p>首先react的事件模型是建立在一个叫<a href="https://github.com/igorw/evenement">événement</a>的框架上，也是react作者所作，代码只有短短的74行，实现了<code>on</code>(事件监听),<code>emit</code>(触发事件)等方法。下面就单就这两个事件方法分析一下。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
-</span><span class="line"><span class="k">public</span> <span class="k">function</span> <span class="nf">on</span><span class="p">(</span><span class="nv">$event</span><span class="p">,</span> <span class="nv">$listener</span><span class="p">)</span>
-</span><span class="line">    <span class="p">{</span>
-</span><span class="line">        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">is_callable</span><span class="p">(</span><span class="nv">$listener</span><span class="p">))</span> <span class="p">{</span>
-</span><span class="line">            <span class="k">throw</span> <span class="k">new</span> <span class="nx">\InvalidArgumentException</span><span class="p">(</span><span class="s1">&#39;The provided listener was not a valid callable.&#39;</span><span class="p">);</span>
-</span><span class="line">        <span class="p">}</span>
-</span><span class="line">
-</span><span class="line">        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listeners</span><span class="p">[</span><span class="nv">$event</span><span class="p">]))</span> <span class="p">{</span>
-</span><span class="line">            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listeners</span><span class="p">[</span><span class="nv">$event</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
-</span><span class="line">        <span class="p">}</span>
-</span><span class="line">
-</span><span class="line">        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listeners</span><span class="p">[</span><span class="nv">$event</span><span class="p">][]</span> <span class="o">=</span> <span class="nv">$listener</span><span class="p">;</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line"><span class="k">public</span> <span class="k">function</span> <span class="nf">emit</span><span class="p">(</span><span class="nv">$event</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$arguments</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span>
-</span><span class="line">    <span class="p">{</span>
-</span><span class="line">        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">listeners</span><span class="p">(</span><span class="nv">$event</span><span class="p">)</span> <span class="k">as</span> <span class="nv">$listener</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">            <span class="nb">call_user_func_array</span><span class="p">(</span><span class="nv">$listener</span><span class="p">,</span> <span class="nv">$arguments</span><span class="p">);</span>
-</span><span class="line">        <span class="p">}</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>上面的<code>$event</code>其实就是一个事件标识，一般是一个字符串，<code>$listener</code>是一个回调方法。调用<code>on</code>时用数组listeners记录所有回调方法，调用<code>emit</code>时再按次序触发，由此还衍生了<code>once</code>(只触发一次就解除绑定的事件)，<code>removeListener</code>(移除事件)等方法。</p>
-
-<h3 id="eventloop">EventLoop</h3>
-
-<p>更进一步，react事件模型的上一层是一个监听循环，叫做<code>EventLoop</code>，有了这个，就往消息队列或webserver的异步处理模型更近了一步。</p>
-
-<p>下面可以看一下<code>EventLoop</code>的接口文件<code>LoopInterface.php</code>：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
-</span><span class="line"><span class="k">namespace</span> <span class="nx">React\EventLoop</span><span class="p">;</span>
-</span><span class="line"><span class="k">interface</span> <span class="nx">LoopInterface</span>
-</span><span class="line"><span class="p">{</span>
-</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">addReadStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">,</span> <span class="nv">$listener</span><span class="p">);</span>
-</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">addWriteStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">,</span> <span class="nv">$listener</span><span class="p">);</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">removeReadStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
-</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">removeWriteStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
-</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">removeStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">addTimer</span><span class="p">(</span><span class="nv">$interval</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
-</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">addPeriodicTimer</span><span class="p">(</span><span class="nv">$interval</span><span class="p">,</span> <span class="nv">$callback</span><span class="p">);</span>
-</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">cancelTimer</span><span class="p">(</span><span class="nv">$signature</span><span class="p">);</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">tick</span><span class="p">();</span>
-</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">run</span><span class="p">();</span>
-</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">stop</span><span class="p">();</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p><code>react</code>支持php的社区库<code>libevent</code>提供的事件支持，同时有个<code>LibEventLoop.php</code>用来实现<code>LoopInterface</code>接口，但是<code>react</code>也有自己的实现方案<code>StreamSelectLoop</code>，与<code>LibEventLoop</code>不兼容，这点可以在<code>EventLoop\LibEventLoop\Factory</code>中看到。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
-</span><span class="line">    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">create</span><span class="p">()</span>
-</span><span class="line">    <span class="p">{</span>
-</span><span class="line">        <span class="c1">// @codeCoverageIgnoreStart</span>
-</span><span class="line">        <span class="k">if</span> <span class="p">(</span><span class="nb">function_exists</span><span class="p">(</span><span class="s1">&#39;event_base_new&#39;</span><span class="p">))</span> <span class="p">{</span> <span class="c1">//使用libevent</span>
-</span><span class="line">            <span class="k">return</span> <span class="k">new</span> <span class="nx">LibEventLoop</span><span class="p">();</span>
-</span><span class="line">        <span class="p">}</span>
-</span><span class="line">        <span class="k">return</span> <span class="k">new</span> <span class="nx">StreamSelectLoop</span><span class="p">();</span> <span class="c1">//不使用libevent</span>
-</span><span class="line">        <span class="c1">// @codeCoverageIgnoreEnd</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>我们主要来看看<code>StreamSelectLoop</code>的实现。<code>LoopInterface</code>中几个重要的方法<code>addReadStream</code>, <code>addWriteStream</code>, <code>addTimer</code>, <code>tick</code>都可以在<code>StreamSelectLoop</code>找到踪影。下面先说一下<code>addReadStream</code>中的两个参数：</p>
-
-<p>*<code>$stream</code>是一个由<code>stream_socket_server</code>方法生成的socket句柄，支持tcp或文件socket等方式。
-*<code>$listener</code>其实就是一个callback方法，在这个方法中就需要实现具体的应用逻辑了。</p>
-
-<p><code>addWriteStream</code>与<code>addReadStream</code>方法差不多，这两个方法其实啥都没做，只是注册一下两个方法，以供后面调用。真正起作用的方法是<code>tick</code>和<code>runStreamSelect</code>。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-<span class="line-number">29</span>
-<span class="line-number">30</span>
-<span class="line-number">31</span>
-<span class="line-number">32</span>
-<span class="line-number">33</span>
-<span class="line-number">34</span>
-<span class="line-number">35</span>
-<span class="line-number">36</span>
-<span class="line-number">37</span>
-<span class="line-number">38</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
-</span><span class="line">    <span class="k">protected</span> <span class="k">function</span> <span class="nf">runStreamSelect</span><span class="p">()</span>
-</span><span class="line">    <span class="p">{</span>
-</span><span class="line">        <span class="nv">$read</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">readStreams</span> <span class="o">?:</span> <span class="k">null</span><span class="p">;</span>
-</span><span class="line">        <span class="nv">$write</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">writeStreams</span> <span class="o">?:</span> <span class="k">null</span><span class="p">;</span>
-</span><span class="line">        <span class="nv">$except</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
-</span><span class="line">
-</span><span class="line">        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$read</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nv">$write</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sleepOnPendingTimers</span><span class="p">();</span>
-</span><span class="line">
-</span><span class="line">            <span class="k">return</span><span class="p">;</span>
-</span><span class="line">        <span class="p">}</span>
-</span><span class="line">
-</span><span class="line">        <span class="k">if</span> <span class="p">(</span><span class="nb">stream_select</span><span class="p">(</span><span class="nv">$read</span><span class="p">,</span> <span class="nv">$write</span><span class="p">,</span> <span class="nv">$except</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getNextEventTimeInMicroSeconds</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">            <span class="k">if</span> <span class="p">(</span><span class="nv">$read</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">                <span class="k">foreach</span> <span class="p">(</span><span class="nv">$read</span> <span class="k">as</span> <span class="nv">$stream</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">                    <span class="nv">$listener</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">readListeners</span><span class="p">[(</span><span class="nx">int</span><span class="p">)</span> <span class="nv">$stream</span><span class="p">];</span>
-</span><span class="line">                    <span class="k">if</span> <span class="p">(</span><span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$listener</span><span class="p">,</span> <span class="nv">$stream</span><span class="p">,</span> <span class="nv">$this</span><span class="p">)</span> <span class="o">===</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">                        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">removeReadStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
-</span><span class="line">                    <span class="p">}</span>
-</span><span class="line">                <span class="p">}</span>
-</span><span class="line">            <span class="p">}</span>
-</span><span class="line">
-</span><span class="line">            <span class="k">if</span> <span class="p">(</span><span class="nv">$write</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">                <span class="k">foreach</span> <span class="p">(</span><span class="nv">$write</span> <span class="k">as</span> <span class="nv">$stream</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">writeListeners</span><span class="p">[(</span><span class="nx">int</span><span class="p">)</span> <span class="nv">$stream</span><span class="p">]))</span> <span class="p">{</span>
-</span><span class="line">                        <span class="k">continue</span><span class="p">;</span>
-</span><span class="line">                    <span class="p">}</span>
-</span><span class="line">
-</span><span class="line">                    <span class="nv">$listener</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">writeListeners</span><span class="p">[(</span><span class="nx">int</span><span class="p">)</span> <span class="nv">$stream</span><span class="p">];</span>
-</span><span class="line">                    <span class="k">if</span> <span class="p">(</span><span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$listener</span><span class="p">,</span> <span class="nv">$stream</span><span class="p">,</span> <span class="nv">$this</span><span class="p">)</span> <span class="o">===</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">                        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">removeWriteStream</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
-</span><span class="line">                    <span class="p">}</span>
-</span><span class="line">                <span class="p">}</span>
-</span><span class="line">            <span class="p">}</span>
-</span><span class="line">        <span class="p">}</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p><code>runStreamSelect</code>方法在<code>tick</code>方法中被调用，目的是在每个间隔中重复调用之前绑定的<code>$listener</code>方法，这个可以理解，因为本来<code>EventLoop</code>的目的就是实现事件的监听，监听的最简单方法就是通过轮询的方式来调用，假如某些方法不希望被重复调用或者希望在某次成功之后就不再调用，那么在定义<code>$listener</code>方法时，将返回值设置成false即可。至于这个间隔，则是通过<code>Timer</code>来实现的。</p>
-
-<p>在<code>runStreamSelect</code>中调用了一个有意思的方法<a href="http://php.net/manual/en/function.stream-select.php"><code>stream_select</code></a>，用timeout取代传统的<code>sleep</code>，并兼具监听socket端口的功能，一旦有新的连接或者改动，<code>stream_select</code>会立刻返回read或write中被修改的socket连接总数。这样，既能合理的释放cpu资源，又能及时对事件发起响应。比起传统的<code>while+sleep</code>，实在是高明很多。</p>
-
-<h3 id="timer">Timer</h3>
-
-<p>说到<code>tick</code>就不得不提<code>Timer</code>，<code>react</code>中用一个<code>Timer</code>类来模拟步进操作。每隔一定的ticket会唤起一个事件，这样才能保证异步操作能正确的被调用，这个ticket的数量有讲究，设置的太小会让系统耗用大量资源，设置的太大又不能保证异步事件能及时的被调用。下面我们来看看<code>Timer</code>中的tick。</p>
-
-<p><code>Timer</code>中使用一个队列来记录所有将触发的事件，并且将它们按照优先级(也就是触发事件)排序，最后每次调用优先级最高的事件。</p>
-
-<p><code>react</code>中使用<code>SplPriorityQueue</code>类来做优先级队列，这是php5.3后新增的一个标准库类，其功能很简单，就是实现一个按照rank排序的队列，有点类似redis中的zset，但是其值是可以重复的，所以它不是一个集合。它实现了<code>insert</code>, <code>count</code>, <code>count</code>, <code>extract</code>等方法，通过<code>insert</code>往队列中插入的数据会自动按照优先级(priority)由大到小排序(<code>react</code>中根据interval时间取负，实现了由小到大排序)，免去了sort的麻烦，然后可以通过<code>extract</code>方法得到队列顶部优先级(priority)最高的数据。</p>
-
-<p>有了Timer，用户就可以给<code>react</code>设置延迟事件，可以参考js中的<code>setTimeout</code>方法。</p>
-
-<p>最后，<code>react</code>通过<code>EventLoop</code>中的<code>run</code>方法将tick放入一个while循环，实现了监听的目的。</p>
-
-<p>总结一下，<code>react</code>的异步事件模型：</p>
-
-<p>核心的on-emit事件模型 –&gt; EventLoop实现响应socket事件 –&gt; Timer实现事件优先级排序 –&gt; while循环来pending服务端的程序。</p>
-
-<p><code>react</code>还提供了很多的示例文件，一个简单的http-server可以实现如下：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
-</span><span class="line"><span class="k">require</span> <span class="nx">__DIR__</span><span class="o">.</span><span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">;</span>
-</span><span class="line"><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class="line"><span class="nv">$app</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$response</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="o">&amp;</span><span class="nv">$i</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">    <span class="nv">$i</span><span class="o">++</span><span class="p">;</span>
-</span><span class="line">    <span class="nv">$text</span> <span class="o">=</span> <span class="s2">&quot;This is request number </span><span class="si">$i</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class="line">    <span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">);</span>
-</span><span class="line">    <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">writeHead</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="nv">$headers</span><span class="p">);</span>
-</span><span class="line">    <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">end</span><span class="p">(</span><span class="nv">$text</span><span class="p">);</span>
-</span><span class="line"><span class="p">};</span>
-</span><span class="line"><span class="nv">$loop</span> <span class="o">=</span> <span class="nx">React\EventLoop\Factory</span><span class="o">::</span><span class="na">create</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$socket</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">React\Socket\Server</span><span class="p">(</span><span class="nv">$loop</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$http</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">React\Http\Server</span><span class="p">(</span><span class="nv">$socket</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$http</span><span class="o">-&gt;</span><span class="na">on</span><span class="p">(</span><span class="s1">&#39;request&#39;</span><span class="p">,</span> <span class="nv">$app</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$socket</span><span class="o">-&gt;</span><span class="na">listen</span><span class="p">(</span><span class="mi">1337</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$loop</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
-</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h2 id="section">后记</h2>
-
-<p><code>react</code>中用到了很多php5.3之后才出现的新特性(EventEmitter2甚至只支持5.4以上的php版本)，很多方法以前也没有接触过，可以说相比于国内对php的应用，老外对语言的研究更加透彻。想起国内这么普及的php应用，很多人只是略知皮毛，就喜欢大言不惭，甚至能人云亦云的挑出一堆语言的弊端。老外的钻研精神确实值得学习。</p>
-
-<p>记录一下几个可能有用但是不常用的类或方法：</p>
-
-<ul>
-  <li><a href="http://php.net/manual/en/function.stream-socket-server.php"><code>stream_socket_server</code></a> 创建一个服务端套接字。</li>
-  <li><a href="http://php.net/manual/en/function.stream-select.php"><code>stream_select</code></a> 监听读写socket状态的变化，带timeout时间</li>
-  <li><a href="http://www.php.net/manual/en/splpriorityqueue.insert.php"><code>SplPriorityQueue</code></a> 创建一个带优先级的有序队列</li>
-</ul>
-
-<h2 id="section-1">参考文档</h2>
-
-<p><a href="http://www.mwop.net/blog/253-Taming-SplPriorityQueue.html">Taming SplPriorityQueue</a></p>
 ]]></content>
   </entry>
   

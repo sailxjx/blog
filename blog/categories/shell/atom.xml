@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: shell | CodeBean]]></title>
+  <link href="http://sailxjx.github.com/blog/blog/categories/shell/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.com/blog/"/>
+  <updated>2013-06-19T15:04:28+08:00</updated>
+  <id>http://sailxjx.github.com/blog/</id>
+  <author>
+    <name><![CDATA[tristan]]></name>
+    <email><![CDATA[sailxjx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[start-stop-daemon]]></title>
+    <link href="http://sailxjx.github.com/blog/blog/2013/06/19/start-stop-daemon/"/>
+    <updated>2013-06-19T13:44:00+08:00</updated>
+    <id>http://sailxjx.github.com/blog/blog/2013/06/19/start-stop-daemon</id>
+    <content type="html"><![CDATA[<p>很多软件不提供init脚本，或者提供的脚本不合胃口，难免要自己动手丰衣足食。下面就推荐一个用来启动守护进程的神器。</p>
+
+<p><code>start-stop-daemon</code>是<a href="http://www.gentoo.org/proj/en/base/openrc/">OpenRC</a>计划的一部分，这个程序最先出现在Debian系的Linux发行版中，这里有个比较古老的<a href="http://man.he.net/man8/start-stop-daemon">手册</a>页面，更详细更直观的办法当然是通过<code>man start-stop-daemon</code>来查看手册了。我使用的是”start-stop-daemon (OpenRC) 0.10 (Funtoo Linux)”版本，大部分功能是差不多的。</p>
+
+<p><code>start-stop-daemon</code>最基本的两个功能就是<code>--start</code>和<code>--stop</code>，简写为<code>-S</code>和<code>-K</code>，然后再加上一个<code>-s|--signal</code>来给进程发送信号，功德圆满。</p>
+
+<p>至于其中比较常用的一些参数，我列出来参考一下，以免忘了：</p>
+
+<ul>
+  <li><code>-x, --exec daemon</code>，daemon就是真正要执行的进程脚本，比方说启动nginx，那么就是<code>start-stop-daemon -x nginx</code>。</li>
+  <li><code>-p, --pidfile pidfile</code>，指定pid文件，至于pid文件的用途就多了，stop,status都少不了它。</li>
+  <li><code>-n, --name</code>，如果没有指定pid文件，那么就要通过指定name来停止进程了。</li>
+  <li><code>-u, --user user[:group]</code>，指定脚本用哪个用户或用户组执行，init脚本是必须使用<code>root</code>权限来执行的，但是它fork出来的子进程我们一般会选择一个权限较低的用户。</li>
+  <li><code>-b, --background</code>，强制脚本在后台执行。</li>
+  <li><code>-m, --make-pidfile</code>，这个一般和<code>-b</code>配合，用于生成pid文件</li>
+  <li><code>-d, --chdir path</code>，切换进程的主目录，这个在构建守护进程的时候是很常用的。</li>
+  <li><code>-r, --chroot path</code>，在某些安全性要求较高的情况下，我们就需要用到<code>chroot</code>将进程工作环境与物理环境完全隔离开来。</li>
+  <li><code>-1, --stdout logfile</code>，将标准输出记录到log文件，与之相对应的就是<code>-2, --stderr</code>标准错误流。</li>
+  <li><code>-w, --wait milliseconds</code>，进程启动后，有这个参数会等待几毫秒来检测进程是否仍然存活。</li>
+</ul>
+
+<p>参数说完，下面就是一些需要注意的地方了。</p>
+
+<h2 id="b"><code>-b</code>与守护进程</h2>
+
+<p><code>-b</code>是一个很常用的参数，我们使用<code>start-stop-daemon</code>的目的就是为了实现守护进程。但是有些程序自身也实现了守护进程的功能，比方说mongodb中有一个fork选项就是将自己在后台执行，这个时候假如搭配的<code>-b</code>参数，是得不到正确的pid的，因为<code>start-stop-daemon</code>只能得到最初启动的父进程pid，而父进程在fork完之后就自动退出了，那么<code>start-stop-daemon</code>就永远找不到正确的pid来结束进程了。所以使用<code>-b</code>的时候，一定要保证程序是在前台运行的。</p>
+
+<h2 id="section">其他参数</h2>
+
+<p><code>-x daemon</code>后面跟的执行脚本必须只能是一个文件名，有些程序运行时还需要指定一些参数，比如<code>nginx -c file</code>来指定nginx的配置文件，使用<code>start-stop-daemon -x "nginx -c file"</code>是会报错的，这些程序内的参数以另一种方式加载，<code>start-stop-daemon -x daemon -- $ARGV</code>，这里的双横线<code>--</code>后面跟的所有参数就会被带到程序中了，比如<code>start-stop-daemon -x nginx -c /etc/nginx.conf</code>。</p>
+
+<p>下面是mongodb的一个init脚本，用<code>start-stop-daemon</code>是非常简单的。（貌似源代码中没有提供init脚本，只能自己动手了）。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/sbin/runscript</span>
+</span><span class='line'><span class="c"># Distributed under the terms of the GNU General Public License v2&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;MONGO_HOME<span class="o">=</span>/usr/local/mongo
+</span><span class='line'><span class="nv">MONGO_USER</span><span class="o">=</span>mongo
+</span><span class='line'><span class="nv">MONGO_PID_FILE</span><span class="o">=</span>/var/run/mongo/mongo.pid&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;depend<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    need net
+</span><span class='line'><span class="o">}</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;start<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    ebegin “Starting Mongodb”
+</span><span class='line'>    start-stop-daemon –start       <span class="se">\ </span>&lt;br /&gt;
+</span><span class='line'>        –chdir  “<span class="k">${</span><span class="nv">MONGO_HOME</span><span class="k">}</span>”    <span class="se">\ </span>&lt;br /&gt;
+</span><span class='line'>        –user “<span class="k">${</span><span class="nv">MONGO_USER</span><span class="k">}</span>”      <span class="se">\ </span>&lt;br /&gt;
+</span><span class='line'>        -m -p “<span class="k">${</span><span class="nv">MONGO_PID_FILE</span><span class="k">}</span>”   <span class="se">\ </span>&lt;br /&gt;
+</span><span class='line'>        -b –exec “<span class="k">${</span><span class="nv">MONGO_HOME</span><span class="k">}</span>/bin/mongod” – –config<span class="o">=</span>/etc/mongodb.conf
+</span><span class='line'>    eend <span class="nv">$?</span>
+</span><span class='line'><span class="o">}</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;stop<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    ebegin “Stopping Mongodb”
+</span><span class='line'>    start-stop-daemon –stop        <span class="se">\ </span>&lt;br /&gt;
+</span><span class='line'>        –chdir “<span class="k">${</span><span class="nv">MONGO_HOME</span><span class="k">}</span>”     <span class="se">\ </span>&lt;br /&gt;
+</span><span class='line'>        –user “<span class="k">${</span><span class="nv">MONGO_USER</span><span class="k">}</span>”      <span class="se">\ </span>&lt;br /&gt;
+</span><span class='line'>        -p “<span class="k">${</span><span class="nv">MONGO_PID_FILE</span><span class="k">}</span>”      <span class="se">\ </span>&lt;br /&gt;
+</span><span class='line'>    eend <span class="nv">$?</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+</feed>
