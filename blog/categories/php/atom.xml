@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: php | CodeBean]]></title>
-  <link href="http://sailxjx.github.com/blog/blog/categories/php/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-06-19T15:04:28+08:00</updated>
-  <id>http://sailxjx.github.com/blog/</id>
+  <link href="http://sailxjx.github.io/blog/blog/categories/php/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.io/blog/"/>
+  <updated>2013-06-20T09:27:16+08:00</updated>
+  <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[细数 php 中的那些坑]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/05/10/xi-shu-php-zhong-de-na-xie-keng/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/05/10/xi-shu-php-zhong-de-na-xie-keng/"/>
     <updated>2013-05-10T15:59:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/05/10/xi-shu-php-zhong-de-na-xie-keng</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/05/10/xi-shu-php-zhong-de-na-xie-keng</id>
     <content type="html"><![CDATA[<p>Wow，有逮到一个黑PHP的，作为“宇宙中最好的编程语言”，被黑只会加速它的改进，所以偶尔黑一下也无妨嘛~正所谓世界上只有两种语言，一种是被人黑的，另一种是没人用的。</p>
 
 <p>进入正题，下面开始罗列一些PHP需要防备的坑，以免一不小心掉了进去。(只包含在5.3中仍然存在的，5.4中已修复的会做一下说明)。</p>
@@ -215,9 +215,9 @@
   
   <entry>
     <title type="html"><![CDATA[react.php 中的异步实现]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/03/05/react-dot-php-zhong-de-yi-bu-shi-xian/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/03/05/react-dot-php-zhong-de-yi-bu-shi-xian/"/>
     <updated>2013-03-05T15:29:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/03/05/react-dot-php-zhong-de-yi-bu-shi-xian</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/03/05/react-dot-php-zhong-de-yi-bu-shi-xian</id>
     <content type="html"><![CDATA[<p>在基于事件的异步模型大行其道的今天，各语言都相继推出了自己的异步框架，nodejs原生的异步模型当然是其中的翘楚，然后python有Twisted，ruby有EventMachine(名字俗了点)。php也有一个不错的异步框架，<a href="https://github.com/reactphp/react">react</a>。下面我们从内而外的看看这个异步模型是怎么实现的。</p>
 
 <h3 id="vnement">événement</h3>
@@ -498,9 +498,9 @@
   
   <entry>
     <title type="html"><![CDATA[php的命名空间]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/03/04/php-de-namespace/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/03/04/php-de-namespace/"/>
     <updated>2013-03-04T11:38:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/03/04/php-de-namespace</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/03/04/php-de-namespace</id>
     <content type="html"><![CDATA[<p>php中命名空间的概念出现的比较晚(&gt;=5.3)，这也造成了很多人写php程序的时候忽略了这个问题(包括我:)，不过，最近很多老外的开源项目中渐渐流行起在php中使用命名空间。于是我也跟风一把，看看究竟好在哪儿。</p>
 
 <p>在php namespace语句出现之前，通行的做法是根据文件路径定义类名，某些特殊文件再加上后缀，比如存放controller的文件夹中有两个文件，分别存放在<code>controller/Base.php</code>和<code>controller/login/Base.php</code>，根据命名可以看出这是两个基类文件，文件名是一样的，它们的类名一般会写成<code>BaseController</code>和<code>Login_BaseController</code>(首字母大写也是一种约定)，这样就不存在类名冲突的问题了。这样做的一个缺点是类名会很长，用某些人的说法，就是不够优雅，于是命名空间就应运而生了。</p>
@@ -570,9 +570,9 @@
   
   <entry>
     <title type="html"><![CDATA[PHP 验证码]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/01/13/php-yan-zheng-ma/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/01/13/php-yan-zheng-ma/"/>
     <updated>2013-01-13T14:20:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/01/13/php-yan-zheng-ma</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/01/13/php-yan-zheng-ma</id>
     <content type="html"><![CDATA[<p>gd是一个强大的php图像处理库，最近在做验证码加强的策略，才发现用php作图也能玩出很多花样来。</p>
 
 <h2 id="section">几个重要函数</h2>
@@ -919,9 +919,9 @@
   
   <entry>
     <title type="html"><![CDATA[nginx+php-fpm 配置记录]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2012/12/24/nginx-plus-php-fpm-pei-zhi-ji-lu/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2012/12/24/nginx-plus-php-fpm-pei-zhi-ji-lu/"/>
     <updated>2012-12-24T22:03:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2012/12/24/nginx-plus-php-fpm-pei-zhi-ji-lu</id>
+    <id>http://sailxjx.github.io/blog/blog/2012/12/24/nginx-plus-php-fpm-pei-zhi-ji-lu</id>
     <content type="html"><![CDATA[<h3 id="nginx">安装nginx</h3>
 <p>安装过程没什么好说的，不过tarball中没有包含init脚本，官网wiki中提供了<a href="http://wiki.nginx.org/Nginx-init-ubuntu">一个ubuntu的版本</a>，其实在所有linux发行版中都可用，下载下来放到/etc/init.d/nginx，大功告成。</p>
 

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: wine | CodeBean]]></title>
-  <link href="http://sailxjx.github.com/blog/blog/categories/wine/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-06-19T15:04:28+08:00</updated>
-  <id>http://sailxjx.github.com/blog/</id>
+  <link href="http://sailxjx.github.io/blog/blog/categories/wine/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.io/blog/"/>
+  <updated>2013-06-20T09:27:16+08:00</updated>
+  <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[在 mac 中安装 wine]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine/"/>
     <updated>2013-04-28T12:39:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine</id>
     <content type="html"><![CDATA[<p>公司用奇葩的imo，由于没有mac版本，只能用web版。最近imo web版升级之后老是不稳定，又不想装一个笨重的windows虚拟机，于是曲线救国，找找mac上的<a href="http://www.winehq.org/">wine</a>该怎么用。</p>
 
 <p>在mac上安装wine需要备齐三样神器：</p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: git | CodeBean]]></title>
-  <link href="http://sailxjx.github.com/blog/blog/categories/git/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-06-19T15:04:28+08:00</updated>
-  <id>http://sailxjx.github.com/blog/</id>
+  <link href="http://sailxjx.github.io/blog/blog/categories/git/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.io/blog/"/>
+  <updated>2013-06-20T09:27:16+08:00</updated>
+  <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[gitlabhq 部署小记]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji/"/>
     <updated>2012-11-14T20:12:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji</id>
+    <id>http://sailxjx.github.io/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji</id>
     <content type="html"><![CDATA[<p>冬天来了，不知github是不是也去冬眠了，速度慢的像在爬，没办法，屌丝买不起vps，只能自己内网部一套开源的。</p>
 
 <p>gitlabhq是github的一个开源版本，虽然不是官方的，但是已经做的有模有样，总之能想到的功能都已具备，放在国内随便改改UI就能上线建站的那种。安装文档那是写的相当滴详细，体现了码农罕有的耐性，查看文档请移步<a href="https://github.com/gitlabhq/gitlabhq/blob/master/doc/install/installation.md">gitlab文档</a></p>
@@ -234,9 +234,9 @@ A: 我在centos6.2上遇到过这个问题，其他发行版上不知道有没�
   
   <entry>
     <title type="html"><![CDATA[体验gollum]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2012/07/12/ti-yan-gollum/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2012/07/12/ti-yan-gollum/"/>
     <updated>2012-07-12T18:07:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2012/07/12/ti-yan-gollum</id>
+    <id>http://sailxjx.github.io/blog/blog/2012/07/12/ti-yan-gollum</id>
     <content type="html"><![CDATA[<p>gollum是一个轻量级的wiki系统，使用git作为版本管理和跟踪工具，支持markdown，mediawiki，texttile等多种语法，由github开发并且已经投入到githubwiki的应用中。</p>
 
 <ul>

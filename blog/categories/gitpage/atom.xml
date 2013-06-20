@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: gitpage | CodeBean]]></title>
-  <link href="http://sailxjx.github.com/blog/blog/categories/gitpage/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-06-19T15:04:28+08:00</updated>
-  <id>http://sailxjx.github.com/blog/</id>
+  <link href="http://sailxjx.github.io/blog/blog/categories/gitpage/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.io/blog/"/>
+  <updated>2013-06-20T09:27:16+08:00</updated>
+  <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[gitpage and octopress]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2012/06/20/gitpage-and-octopress/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2012/06/20/gitpage-and-octopress/"/>
     <updated>2012-06-20T20:45:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2012/06/20/gitpage-and-octopress</id>
+    <id>http://sailxjx.github.io/blog/blog/2012/06/20/gitpage-and-octopress</id>
     <content type="html"><![CDATA[<p>花了一天时间（上班时不务正业。。。），总算把gitpage主页和这个blog搭起来了</p>
 
 <p>写一些备忘，免得以后忘了。。。</p>

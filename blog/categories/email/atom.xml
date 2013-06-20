@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: email | CodeBean]]></title>
-  <link href="http://sailxjx.github.com/blog/blog/categories/email/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-06-19T15:04:28+08:00</updated>
-  <id>http://sailxjx.github.com/blog/</id>
+  <link href="http://sailxjx.github.io/blog/blog/categories/email/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.io/blog/"/>
+  <updated>2013-06-20T09:27:16+08:00</updated>
+  <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[thunderbird and davmail]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2012/06/28/thunderbird-and-davmail/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2012/06/28/thunderbird-and-davmail/"/>
     <updated>2012-06-28T12:23:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2012/06/28/thunderbird-and-davmail</id>
+    <id>http://sailxjx.github.io/blog/blog/2012/06/28/thunderbird-and-davmail</id>
     <content type="html"><![CDATA[<p>邮件客户端之间的竞争在当今的软件貌似一直处在一个打酱油的位置（就像opera看浏览器之争），毕竟，web端的邮件体验是越做越完美了，传统的客户端不减减肥的话很难再在用户那边分到一杯羹。</p>
 
 <p>不过，在办公领域客户端还是能占有一席之地的，毕竟云端容量有限，而且实时性也是个问题。公司使用内网的ms exchange，那么gmail之类的web端就不考虑了，况且几千封邮件的索引查找还是靠客户端比较靠谱。</p>

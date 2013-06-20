@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: database | CodeBean]]></title>
-  <link href="http://sailxjx.github.com/blog/blog/categories/database/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-06-19T15:04:28+08:00</updated>
-  <id>http://sailxjx.github.com/blog/</id>
+  <link href="http://sailxjx.github.io/blog/blog/categories/database/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.io/blog/"/>
+  <updated>2013-06-20T09:27:16+08:00</updated>
+  <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[初试图形数据库 neo4j]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j/"/>
     <updated>2013-01-23T11:25:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j</id>
     <content type="html"><![CDATA[<h2 id="section">安装</h2>
 
 <p>作为一个java软件，就得充分发挥它<code>Write Once, Run Anywhere</code>的精神。直接下载tarball，解压后运行即可。官方还很贴心的提供了一个init脚本(./bin/neo4j)，链接到init.d下就可以开搞啦。</p>

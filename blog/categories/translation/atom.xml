@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: translation | CodeBean]]></title>
-  <link href="http://sailxjx.github.com/blog/blog/categories/translation/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-06-19T15:04:28+08:00</updated>
-  <id>http://sailxjx.github.com/blog/</id>
+  <link href="http://sailxjx.github.io/blog/blog/categories/translation/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.io/blog/"/>
+  <updated>2013-06-20T09:27:16+08:00</updated>
+  <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[[nginx] if is evil]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/05/15/nginx-if-is-evil/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/05/15/nginx-if-is-evil/"/>
     <updated>2013-05-15T17:36:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/05/15/nginx-if-is-evil</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/05/15/nginx-if-is-evil</id>
     <content type="html"><![CDATA[<p>最近用nginx配置中使用if遇到一些问题，碰巧想起以前在wiki中看到的这个页面，虽然我的问题可能和wiki中提到的不同，但是if还是能避免就避免吧</p>
 
 <p>下面的内容翻译自<a href="http://wiki.nginx.org/IfIsEvil">IfIsEvil</a></p>
@@ -263,9 +263,9 @@
   
   <entry>
     <title type="html"><![CDATA[mysql btree 与 hash 索引比较]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao/"/>
     <updated>2013-05-07T11:45:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao</id>
     <content type="html"><![CDATA[<p>mysql最常用的索引结构是btree(<code>O(log(n))</code>)，但是总有一些情况下我们为了更好的性能希望能使用别的类型的索引。hash就是其中一种选择，例如我们在通过用户名检索用户id的时候，他们总是一对一的关系，用到的操作符只是<code>=</code>而已，假如使用hash作为索引数据结构的话，时间复杂度可以降到<code>O(1)</code>。不幸的是，目前的mysql版本(5.6)中，hash只支持MEMORY和NDB两种引擎，而我们最常用的INNODB和MYISAM都不支持hash类型的索引。</p>
 
 <p>不管怎样，还是要了解一下这两种索引的区别，下面翻译自<a href="http://dev.mysql.com/doc/refman/5.6/en/index-btree-hash.html">mysql官网文档</a>中对这两者的解释。</p>
@@ -370,9 +370,9 @@
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 耐心测试]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi/"/>
     <updated>2013-04-25T12:09:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi</id>
     <content type="html"><![CDATA[<p>在Eric的公司，发布流程中代码从来就没有经过正规的测试。不是说没有这些流程，当然得有。毕竟哪有公司会不经过测试就将代码发布给用户。但是“严格测试”和“健壮度检验”跟他们的公司从来不沾边。甚至连“成功的演示”和“满足用户”这些原则都没有，但这又是另一回事了。</p>
 
 <p>其中一个原因是公司认为为了测试付出大量金钱没什么好处。难道开发人员不应该保证代码不出问题？这有什么难的？</p>
@@ -428,9 +428,9 @@
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 苏格兰早餐]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/18/tdwtf-su-ge-lan-zao-can/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/18/tdwtf-su-ge-lan-zao-can/"/>
     <updated>2013-04-18T11:32:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/18/tdwtf-su-ge-lan-zao-can</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/18/tdwtf-su-ge-lan-zao-can</id>
     <content type="html"><![CDATA[<p>这几天Robert感觉自己简直像英国国王一样。他为一个开发加密软硬件的英国公司工作，并不时在欧洲各地的客户端间飞来飞去。一天，一个叫Willie的苏格兰客户打电话过来，气急败坏的说他的加密服务器挂掉了。“啊~我已经尽了一切奴力！但祂还是泡不起来！”Robert安抚了一下Willie，然后按部就班得问一些问题。（它安装上了吗？开关开了没有？是不是加密组件没有正确的连接上？还是你的服务器被一只巨大的海怪给吃了？）但是毫无结果。</p>
 
 <p>Robert只能跟Willie说：只有上机服务能解决这个问题了，但是我这周没有时间。“我今天在法国处理另一个客户的问题。”</p>
@@ -463,9 +463,9 @@
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 数据库大师]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi/"/>
     <updated>2013-04-11T12:41:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi</id>
     <content type="html"><![CDATA[<p>Maurice一直很好奇，他所在的公司经常不经过测试就把新成员招进来。这样看起来是为了节省了公司的时间和金钱。人力资源部门新招的“IT系统专家”在他刚来的那几个礼拜轻而易举的让Maurice毁三观了。</p>
 
 <p>这个奇葩专家很喜欢自吹自擂。无论谁在他附近都能听见他在吹牛。有一天，他向Maurice吹嘘他最得意的事情，是在一个大电信企业的成功故事。这个时候电话铃响了：有个分公司部门没法进入Maurice和他的团队维护的系统了。于是他对Ben说：</p>

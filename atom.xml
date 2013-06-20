@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[CodeBean]]></title>
-  <link href="http://sailxjx.github.com/blog/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-06-19T15:04:28+08:00</updated>
-  <id>http://sailxjx.github.com/blog/</id>
+  <link href="http://sailxjx.github.io/blog/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.io/blog/"/>
+  <updated>2013-06-20T09:27:16+08:00</updated>
+  <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[start-stop-daemon]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/06/19/start-stop-daemon/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/06/19/start-stop-daemon/"/>
     <updated>2013-06-19T13:44:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/06/19/start-stop-daemon</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/06/19/start-stop-daemon</id>
     <content type="html"><![CDATA[<p>很多软件不提供init脚本，或者提供的脚本不合胃口，难免要自己动手丰衣足食。下面就推荐一个用来启动守护进程的神器。</p>
 
 <p><code>start-stop-daemon</code>是<a href="http://www.gentoo.org/proj/en/base/openrc/">OpenRC</a>计划的一部分，这个程序最先出现在Debian系的Linux发行版中，这里有个比较古老的<a href="http://man.he.net/man8/start-stop-daemon">手册</a>页面，更详细更直观的办法当然是通过<code>man start-stop-daemon</code>来查看手册了。我使用的是”start-stop-daemon (OpenRC) 0.10 (Funtoo Linux)”版本，大部分功能是差不多的。</p>
@@ -115,9 +115,9 @@
   
   <entry>
     <title type="html"><![CDATA[使用 coffeescript 的注意点]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian/"/>
     <updated>2013-06-13T14:48:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian</id>
     <content type="html"><![CDATA[<p><a href="https://github.com/jashkenas/coffee-script">coffeescript</a>是javascript的一个方言，随着javascript在前后端的流行，它在<a href="https://github.com/languages">github</a>的排名也扶摇直上，最近终于挤掉高帅富<a href="https://github.com/languages/Objective-C">Objective-C</a>跻身前十，可喜可贺。</p>
 
 <p>虽然coffeescript号称”It’s just javascript”，但是相比较而言，仍然是添加了很多有趣的特性，大部分特性都是去粗取精，去伪存真，让js玩家喜闻乐见，让旁观路人不明觉厉，但是也随之带来了一些容易忽视的问题，不得不提一下，以免以后碰到后不知所措。</p>
@@ -252,9 +252,9 @@
   
   <entry>
     <title type="html"><![CDATA[mysql 中的 date datetime 和 timestamp]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp/"/>
     <updated>2013-06-05T11:02:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp</id>
     <content type="html"><![CDATA[<p>mysql中用于表示时间的三种类型date, datetime, timestamp (如果算上int的话，四种) 比较容易混淆，下面就比较一下这三种类型的异同</p>
 
 <h1 id="section">相同点</h1>
@@ -289,9 +289,9 @@
   
   <entry>
     <title type="html"><![CDATA[javascript 中使用 callback 控制流程]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng/"/>
     <updated>2013-06-05T10:49:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng</id>
     <content type="html"><![CDATA[<p>javascript中随处可见的callback对于流程控制来说是一场灾难，缺点显而易见：</p>
 
 <ul>
@@ -409,9 +409,9 @@
   
   <entry>
     <title type="html"><![CDATA[[nginx] if is evil]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/05/15/nginx-if-is-evil/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/05/15/nginx-if-is-evil/"/>
     <updated>2013-05-15T17:36:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/05/15/nginx-if-is-evil</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/05/15/nginx-if-is-evil</id>
     <content type="html"><![CDATA[<p>最近用nginx配置中使用if遇到一些问题，碰巧想起以前在wiki中看到的这个页面，虽然我的问题可能和wiki中提到的不同，但是if还是能避免就避免吧</p>
 
 <p>下面的内容翻译自<a href="http://wiki.nginx.org/IfIsEvil">IfIsEvil</a></p>
@@ -658,9 +658,9 @@
   
   <entry>
     <title type="html"><![CDATA[细数 php 中的那些坑]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/05/10/xi-shu-php-zhong-de-na-xie-keng/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/05/10/xi-shu-php-zhong-de-na-xie-keng/"/>
     <updated>2013-05-10T15:59:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/05/10/xi-shu-php-zhong-de-na-xie-keng</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/05/10/xi-shu-php-zhong-de-na-xie-keng</id>
     <content type="html"><![CDATA[<p>Wow，有逮到一个黑PHP的，作为“宇宙中最好的编程语言”，被黑只会加速它的改进，所以偶尔黑一下也无妨嘛~正所谓世界上只有两种语言，一种是被人黑的，另一种是没人用的。</p>
 
 <p>进入正题，下面开始罗列一些PHP需要防备的坑，以免一不小心掉了进去。(只包含在5.3中仍然存在的，5.4中已修复的会做一下说明)。</p>
@@ -859,9 +859,9 @@
   
   <entry>
     <title type="html"><![CDATA[mysql btree 与 hash 索引比较]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao/"/>
     <updated>2013-05-07T11:45:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao</id>
     <content type="html"><![CDATA[<p>mysql最常用的索引结构是btree(<code>O(log(n))</code>)，但是总有一些情况下我们为了更好的性能希望能使用别的类型的索引。hash就是其中一种选择，例如我们在通过用户名检索用户id的时候，他们总是一对一的关系，用到的操作符只是<code>=</code>而已，假如使用hash作为索引数据结构的话，时间复杂度可以降到<code>O(1)</code>。不幸的是，目前的mysql版本(5.6)中，hash只支持MEMORY和NDB两种引擎，而我们最常用的INNODB和MYISAM都不支持hash类型的索引。</p>
 
 <p>不管怎样，还是要了解一下这两种索引的区别，下面翻译自<a href="http://dev.mysql.com/doc/refman/5.6/en/index-btree-hash.html">mysql官网文档</a>中对这两者的解释。</p>
@@ -969,9 +969,9 @@
   
   <entry>
     <title type="html"><![CDATA[追求更快: jQuery.ready 如何实现]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian/"/>
     <updated>2013-05-03T13:30:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian</id>
     <content type="html"><![CDATA[<p>jQuery从1.0版本就提供了一个叫做<code>ready</code>的方法，最常见的调用场景是<code>$(document).ready(handler)</code>，表示当dom树下载完成后触发事件，也可以简写成<code>$(handler)</code>。</p>
 
 <p>以前一直以为这个方法和javascript自己提供的<code>window.onload</code>事件是一回事，直到最近在做一个chrome小插件时搜索了一下，才发现这俩区别还是挺大的。</p>
@@ -1099,9 +1099,9 @@
   
   <entry>
     <title type="html"><![CDATA[执行 javascript 方法的几种方式]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/05/02/zhi-xing-javascript-fang-fa-de-ji-chong-fang-shi/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/05/02/zhi-xing-javascript-fang-fa-de-ji-chong-fang-shi/"/>
     <updated>2013-05-02T12:41:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/05/02/zhi-xing-javascript-fang-fa-de-ji-chong-fang-shi</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/05/02/zhi-xing-javascript-fang-fa-de-ji-chong-fang-shi</id>
     <content type="html"><![CDATA[<p>javascript语法灵活，同一个功能有五六种实现方式并不罕见，然后再加上有些反人类的原型继承和异步特性，就更让人一头雾水了。我经常搞不清楚<code>call</code>,<code>apply</code>之间的区别，今天就记录一下，以免再忘了。</p>
 
 <p>在javascript中，方法可以通过以下几种方式执行：</p>
@@ -1249,9 +1249,9 @@
   
   <entry>
     <title type="html"><![CDATA[在 mac 中安装 wine]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine/"/>
     <updated>2013-04-28T12:39:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine</id>
     <content type="html"><![CDATA[<p>公司用奇葩的imo，由于没有mac版本，只能用web版。最近imo web版升级之后老是不稳定，又不想装一个笨重的windows虚拟机，于是曲线救国，找找mac上的<a href="http://www.winehq.org/">wine</a>该怎么用。</p>
 
 <p>在mac上安装wine需要备齐三样神器：</p>
@@ -1271,9 +1271,9 @@
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 耐心测试]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi/"/>
     <updated>2013-04-25T12:09:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi</id>
     <content type="html"><![CDATA[<p>在Eric的公司，发布流程中代码从来就没有经过正规的测试。不是说没有这些流程，当然得有。毕竟哪有公司会不经过测试就将代码发布给用户。但是“严格测试”和“健壮度检验”跟他们的公司从来不沾边。甚至连“成功的演示”和“满足用户”这些原则都没有，但这又是另一回事了。</p>
 
 <p>其中一个原因是公司认为为了测试付出大量金钱没什么好处。难道开发人员不应该保证代码不出问题？这有什么难的？</p>
@@ -1329,9 +1329,9 @@
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 苏格兰早餐]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/18/tdwtf-su-ge-lan-zao-can/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/18/tdwtf-su-ge-lan-zao-can/"/>
     <updated>2013-04-18T11:32:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/18/tdwtf-su-ge-lan-zao-can</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/18/tdwtf-su-ge-lan-zao-can</id>
     <content type="html"><![CDATA[<p>这几天Robert感觉自己简直像英国国王一样。他为一个开发加密软硬件的英国公司工作，并不时在欧洲各地的客户端间飞来飞去。一天，一个叫Willie的苏格兰客户打电话过来，气急败坏的说他的加密服务器挂掉了。“啊~我已经尽了一切奴力！但祂还是泡不起来！”Robert安抚了一下Willie，然后按部就班得问一些问题。（它安装上了吗？开关开了没有？是不是加密组件没有正确的连接上？还是你的服务器被一只巨大的海怪给吃了？）但是毫无结果。</p>
 
 <p>Robert只能跟Willie说：只有上机服务能解决这个问题了，但是我这周没有时间。“我今天在法国处理另一个客户的问题。”</p>
@@ -1364,9 +1364,9 @@
   
   <entry>
     <title type="html"><![CDATA[awk 学习笔记(3)]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3/"/>
     <updated>2013-04-17T16:11:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3</id>
     <content type="html"><![CDATA[<p>最近线上服务出了一点问题，然后搞了一堆的log来分析。log的格式很乱，需要整理一下，虽然几个月前特意看了一下awk，但是过了这么久，也忘得差不多了，正好靠这次机会练练手，把失去的记忆找回来。</p>
 
 <p>log中的每条数据都被分成了多行，而且都存在一个文件中，现在文件已经有8G的大小。现在要做的就是将这些多行的数据合并成每条一行，只取有用的部分。</p>
@@ -1420,17 +1420,17 @@
 
 <h2 id="link-to">Link to</h2>
 <ul>
-  <li><a href="http://sailxjx.github.com/blog/blog/2013/01/16/awk-xue-xi-bi-ji-1/">awk学习笔记1</a></li>
-  <li><a href="http://sailxjx.github.com/blog/blog/2013/01/21/awk-xue-xi-bi-ji-2/">awk学习笔记2</a></li>
+  <li><a href="http://sailxjx.github.io/blog/blog/2013/01/16/awk-xue-xi-bi-ji-1/">awk学习笔记1</a></li>
+  <li><a href="http://sailxjx.github.io/blog/blog/2013/01/21/awk-xue-xi-bi-ji-2/">awk学习笔记2</a></li>
 </ul>
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[蛋疼的刷屏算法问题]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/15/dan-teng-de-shua-ping-suan-fa-wen-ti/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/15/dan-teng-de-shua-ping-suan-fa-wen-ti/"/>
     <updated>2013-04-15T11:15:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/15/dan-teng-de-shua-ping-suan-fa-wen-ti</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/15/dan-teng-de-shua-ping-suan-fa-wen-ti</id>
     <content type="html"><![CDATA[<p>最近在v2ex的看到一道有趣而蛋疼的<a href="http://www.v2ex.com/t/65703">求助帖</a>，搜了一下，原题刊登在神人matrix67的<a href="http://www.matrix67.com/blog/archives/4092">博客</a>上。先看看题目：</p>
 
 <p>你有一个特殊的键盘，只有四个键：</p>
@@ -1522,9 +1522,9 @@
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 数据库大师]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi/"/>
     <updated>2013-04-11T12:41:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi</id>
     <content type="html"><![CDATA[<p>Maurice一直很好奇，他所在的公司经常不经过测试就把新成员招进来。这样看起来是为了节省了公司的时间和金钱。人力资源部门新招的“IT系统专家”在他刚来的那几个礼拜轻而易举的让Maurice毁三观了。</p>
 
 <p>这个奇葩专家很喜欢自吹自擂。无论谁在他附近都能听见他在吹牛。有一天，他向Maurice吹嘘他最得意的事情，是在一个大电信企业的成功故事。这个时候电话铃响了：有个分公司部门没法进入Maurice和他的团队维护的系统了。于是他对Ben说：</p>
@@ -1561,9 +1561,9 @@
   
   <entry>
     <title type="html"><![CDATA[动态规划求解数组最大差值]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/08/dong-tai-gui-hua-qiu-jie-shu-zu-zui-da-chai-zhi/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/08/dong-tai-gui-hua-qiu-jie-shu-zu-zui-da-chai-zhi/"/>
     <updated>2013-04-08T12:47:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/08/dong-tai-gui-hua-qiu-jie-shu-zu-zui-da-chai-zhi</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/08/dong-tai-gui-hua-qiu-jie-shu-zu-zui-da-chai-zhi</id>
     <content type="html"><![CDATA[<p>前几天碰到一道有趣的面试题，见微知著，由此记录一下一些新的启发和发现。</p>
 
 <p>题目很简单，给一个数组，其中有n个数字，求后面的数与前面的数的差值，将最大差值的两个数找出来。映射到生活中，就是一个股票何时买入何时卖出能达到最大收益的情况（前提是能预知未来的所有报价）。</p>
@@ -1711,9 +1711,9 @@
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 升级Windows7]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/07/tdwtf-sheng-ji-windows7/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/07/tdwtf-sheng-ji-windows7/"/>
     <updated>2013-04-07T14:48:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/07/tdwtf-sheng-ji-windows7</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/07/tdwtf-sheng-ji-windows7</id>
     <content type="html"><![CDATA[<p>在随心所欲的创业公司，最新的时髦可能是BYOD(带自己的设备来上班)，但是政府部门往往会比较保守，尤其是在处理机密数据的部门。当Miguel开始在一个州立部门供职时，他们提供给他一个笔记本电脑。出于安全考虑，他被禁止使用其他的设备，其他人也不允许使用他的。同样是出于安全的原因，那个笔记本不能离开他的桌子，它被一条短短的保险链锁定在桌面上，所能移动的范围只有几英尺而已。</p>
 
 <p>这台电脑很奇葩。它非常陈旧，以至于可以让考古学家将它放在博物馆里。在其使用过程中它得到了一些升级。它的硬盘是500GB的，内存上限是2GB。这给Miguel带来了些挑战，因为除了他们的SAAS报告软件，他还需要安装VS2003，VS2005，VS2008，VS2010。这台机器一瘸一拐的跑着Windows XP。</p>
@@ -1740,9 +1740,9 @@
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 开发账号]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/03/21/tdwtf-kai-fa-zhang-hao/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/03/21/tdwtf-kai-fa-zhang-hao/"/>
     <updated>2013-03-21T16:43:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/03/21/tdwtf-kai-fa-zhang-hao</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/03/21/tdwtf-kai-fa-zhang-hao</id>
     <content type="html"><![CDATA[<p>Karen在办公桌旁瞪着Tom。“你在电脑上安装了Visual Studio？”</p>
 
 <p>“对啊”，Tom搞不明白她为啥要暴走。</p>
@@ -1787,10 +1787,10 @@
   
   <entry>
     <title type="html"><![CDATA[css transition &amp; transform &amp; animation]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/03/12/css-transition-and-transform-and-animation/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/03/12/css-transition-and-transform-and-animation/"/>
     <updated>2013-03-12T16:41:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/03/12/css-transition-and-transform-and-animation</id>
-    <content type="html"><![CDATA[<link rel="stylesheet" href="http://sailxjx.github.com/blog/u/css/trans.css" />
+    <id>http://sailxjx.github.io/blog/blog/2013/03/12/css-transition-and-transform-and-animation</id>
+    <content type="html"><![CDATA[<link rel="stylesheet" href="http://sailxjx.github.io/blog/u/css/trans.css" />
 
 <p>小时候没花功夫学英语（悔之莫及啊~），以至于经常将css中的transition和transform搞混，再加上一个强大而复杂的animation，就更是一头雾水了，今天整理一下，做个笔记。</p>
 
@@ -2005,7 +2005,7 @@
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>
-    <img src="http://sailxjx.github.com/blog/u/image/album-milk.jpg" alt="album-milk" class="album" />
+    <img src="http://sailxjx.github.io/blog/u/image/album-milk.jpg" alt="album-milk" class="album" />
 </p>
 
 <embed src="http://www.xiami.com/widget/0_1771372335/singlePlayer.swf" type="application/x-shockwave-flash" width="257" height="33" wmode="transparent" />
@@ -2018,15 +2018,15 @@
 
 <p>在自己的项目中，我会使用scss来书写css，省却了很多重复的工作。这个页面的scss文件放到这里保存一下。</p>
 
-<p><a href="http://sailxjx.github.com/blog/u/scss/trans.scss">trans.scss</a></p>
+<p><a href="http://sailxjx.github.io/blog/u/scss/trans.scss">trans.scss</a></p>
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[程序猿与脏话]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/03/08/cheng-xu-yuan-yu-zang-hua/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/03/08/cheng-xu-yuan-yu-zang-hua/"/>
     <updated>2013-03-08T09:51:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/03/08/cheng-xu-yuan-yu-zang-hua</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/03/08/cheng-xu-yuan-yu-zang-hua</id>
     <content type="html"><![CDATA[<p>俗话说林子大了什么鸟都有，在程序猿这个群体中，脏话和吹牛是两大显著特征。脏话的种类也是花样百出，下面就来归归类</p>
 
 <h3 id="section">第一类，加强语气型</h3>

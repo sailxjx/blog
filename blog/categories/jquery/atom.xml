@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: jquery | CodeBean]]></title>
-  <link href="http://sailxjx.github.com/blog/blog/categories/jquery/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-06-19T15:04:28+08:00</updated>
-  <id>http://sailxjx.github.com/blog/</id>
+  <link href="http://sailxjx.github.io/blog/blog/categories/jquery/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.io/blog/"/>
+  <updated>2013-06-20T09:27:16+08:00</updated>
+  <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[追求更快: jQuery.ready 如何实现]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian/"/>
     <updated>2013-05-03T13:30:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian</id>
     <content type="html"><![CDATA[<p>jQuery从1.0版本就提供了一个叫做<code>ready</code>的方法，最常见的调用场景是<code>$(document).ready(handler)</code>，表示当dom树下载完成后触发事件，也可以简写成<code>$(handler)</code>。</p>
 
 <p>以前一直以为这个方法和javascript自己提供的<code>window.onload</code>事件是一回事，直到最近在做一个chrome小插件时搜索了一下，才发现这俩区别还是挺大的。</p>

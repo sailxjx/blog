@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: coder | CodeBean]]></title>
-  <link href="http://sailxjx.github.com/blog/blog/categories/coder/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-06-19T15:04:28+08:00</updated>
-  <id>http://sailxjx.github.com/blog/</id>
+  <link href="http://sailxjx.github.io/blog/blog/categories/coder/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.io/blog/"/>
+  <updated>2013-06-20T09:27:16+08:00</updated>
+  <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[程序猿与脏话]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/03/08/cheng-xu-yuan-yu-zang-hua/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/03/08/cheng-xu-yuan-yu-zang-hua/"/>
     <updated>2013-03-08T09:51:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/03/08/cheng-xu-yuan-yu-zang-hua</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/03/08/cheng-xu-yuan-yu-zang-hua</id>
     <content type="html"><![CDATA[<p>俗话说林子大了什么鸟都有，在程序猿这个群体中，脏话和吹牛是两大显著特征。脏话的种类也是花样百出，下面就来归归类</p>
 
 <h3 id="section">第一类，加强语气型</h3>

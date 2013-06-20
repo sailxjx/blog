@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: awk | CodeBean]]></title>
-  <link href="http://sailxjx.github.com/blog/blog/categories/awk/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-06-19T15:04:28+08:00</updated>
-  <id>http://sailxjx.github.com/blog/</id>
+  <link href="http://sailxjx.github.io/blog/blog/categories/awk/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.io/blog/"/>
+  <updated>2013-06-20T09:27:16+08:00</updated>
+  <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[awk 学习笔记(3)]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3/"/>
     <updated>2013-04-17T16:11:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3</id>
     <content type="html"><![CDATA[<p>最近线上服务出了一点问题，然后搞了一堆的log来分析。log的格式很乱，需要整理一下，虽然几个月前特意看了一下awk，但是过了这么久，也忘得差不多了，正好靠这次机会练练手，把失去的记忆找回来。</p>
 
 <p>log中的每条数据都被分成了多行，而且都存在一个文件中，现在文件已经有8G的大小。现在要做的就是将这些多行的数据合并成每条一行，只取有用的部分。</p>
@@ -79,9 +79,9 @@
   
   <entry>
     <title type="html"><![CDATA[awk 学习笔记(2)]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/01/21/awk-xue-xi-bi-ji-2/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/01/21/awk-xue-xi-bi-ji-2/"/>
     <updated>2013-01-21T17:42:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/01/21/awk-xue-xi-bi-ji-2</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/01/21/awk-xue-xi-bi-ji-2</id>
     <content type="html"><![CDATA[<h2 id="section">常用的选项</h2>
 <ul>
   <li>-F 指定分隔符</li>
@@ -180,9 +180,9 @@ switch语句与C中相同，注意break的使用。此外，在兼容模式下�
   
   <entry>
     <title type="html"><![CDATA[awk 学习笔记(1)]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/01/16/awk-xue-xi-bi-ji-1/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/01/16/awk-xue-xi-bi-ji-1/"/>
     <updated>2013-01-16T21:46:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/01/16/awk-xue-xi-bi-ji-1</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/01/16/awk-xue-xi-bi-ji-1</id>
     <content type="html"><![CDATA[<h2 id="awk">第一个awk程序</h2>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>

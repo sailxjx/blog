@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: coffeescript | CodeBean]]></title>
-  <link href="http://sailxjx.github.com/blog/blog/categories/coffeescript/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-06-19T15:04:28+08:00</updated>
-  <id>http://sailxjx.github.com/blog/</id>
+  <link href="http://sailxjx.github.io/blog/blog/categories/coffeescript/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.io/blog/"/>
+  <updated>2013-06-20T09:27:16+08:00</updated>
+  <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[使用 coffeescript 的注意点]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian/"/>
     <updated>2013-06-13T14:48:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian</id>
     <content type="html"><![CDATA[<p><a href="https://github.com/jashkenas/coffee-script">coffeescript</a>是javascript的一个方言，随着javascript在前后端的流行，它在<a href="https://github.com/languages">github</a>的排名也扶摇直上，最近终于挤掉高帅富<a href="https://github.com/languages/Objective-C">Objective-C</a>跻身前十，可喜可贺。</p>
 
 <p>虽然coffeescript号称”It’s just javascript”，但是相比较而言，仍然是添加了很多有趣的特性，大部分特性都是去粗取精，去伪存真，让js玩家喜闻乐见，让旁观路人不明觉厉，但是也随之带来了一些容易忽视的问题，不得不提一下，以免以后碰到后不知所措。</p>

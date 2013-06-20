@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: joke | CodeBean]]></title>
-  <link href="http://sailxjx.github.com/blog/blog/categories/joke/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.com/blog/"/>
-  <updated>2013-06-19T15:04:28+08:00</updated>
-  <id>http://sailxjx.github.com/blog/</id>
+  <link href="http://sailxjx.github.io/blog/blog/categories/joke/atom.xml" rel="self"/>
+  <link href="http://sailxjx.github.io/blog/"/>
+  <updated>2013-06-20T09:27:16+08:00</updated>
+  <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 耐心测试]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi/"/>
     <updated>2013-04-25T12:09:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi</id>
     <content type="html"><![CDATA[<p>在Eric的公司，发布流程中代码从来就没有经过正规的测试。不是说没有这些流程，当然得有。毕竟哪有公司会不经过测试就将代码发布给用户。但是“严格测试”和“健壮度检验”跟他们的公司从来不沾边。甚至连“成功的演示”和“满足用户”这些原则都没有，但这又是另一回事了。</p>
 
 <p>其中一个原因是公司认为为了测试付出大量金钱没什么好处。难道开发人员不应该保证代码不出问题？这有什么难的？</p>
@@ -73,9 +73,9 @@
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 苏格兰早餐]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/18/tdwtf-su-ge-lan-zao-can/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/18/tdwtf-su-ge-lan-zao-can/"/>
     <updated>2013-04-18T11:32:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/18/tdwtf-su-ge-lan-zao-can</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/18/tdwtf-su-ge-lan-zao-can</id>
     <content type="html"><![CDATA[<p>这几天Robert感觉自己简直像英国国王一样。他为一个开发加密软硬件的英国公司工作，并不时在欧洲各地的客户端间飞来飞去。一天，一个叫Willie的苏格兰客户打电话过来，气急败坏的说他的加密服务器挂掉了。“啊~我已经尽了一切奴力！但祂还是泡不起来！”Robert安抚了一下Willie，然后按部就班得问一些问题。（它安装上了吗？开关开了没有？是不是加密组件没有正确的连接上？还是你的服务器被一只巨大的海怪给吃了？）但是毫无结果。</p>
 
 <p>Robert只能跟Willie说：只有上机服务能解决这个问题了，但是我这周没有时间。“我今天在法国处理另一个客户的问题。”</p>
@@ -108,9 +108,9 @@
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 数据库大师]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi/"/>
     <updated>2013-04-11T12:41:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi</id>
     <content type="html"><![CDATA[<p>Maurice一直很好奇，他所在的公司经常不经过测试就把新成员招进来。这样看起来是为了节省了公司的时间和金钱。人力资源部门新招的“IT系统专家”在他刚来的那几个礼拜轻而易举的让Maurice毁三观了。</p>
 
 <p>这个奇葩专家很喜欢自吹自擂。无论谁在他附近都能听见他在吹牛。有一天，他向Maurice吹嘘他最得意的事情，是在一个大电信企业的成功故事。这个时候电话铃响了：有个分公司部门没法进入Maurice和他的团队维护的系统了。于是他对Ben说：</p>
@@ -147,9 +147,9 @@
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 升级Windows7]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/04/07/tdwtf-sheng-ji-windows7/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/04/07/tdwtf-sheng-ji-windows7/"/>
     <updated>2013-04-07T14:48:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/04/07/tdwtf-sheng-ji-windows7</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/04/07/tdwtf-sheng-ji-windows7</id>
     <content type="html"><![CDATA[<p>在随心所欲的创业公司，最新的时髦可能是BYOD(带自己的设备来上班)，但是政府部门往往会比较保守，尤其是在处理机密数据的部门。当Miguel开始在一个州立部门供职时，他们提供给他一个笔记本电脑。出于安全考虑，他被禁止使用其他的设备，其他人也不允许使用他的。同样是出于安全的原因，那个笔记本不能离开他的桌子，它被一条短短的保险链锁定在桌面上，所能移动的范围只有几英尺而已。</p>
 
 <p>这台电脑很奇葩。它非常陈旧，以至于可以让考古学家将它放在博物馆里。在其使用过程中它得到了一些升级。它的硬盘是500GB的，内存上限是2GB。这给Miguel带来了些挑战，因为除了他们的SAAS报告软件，他还需要安装VS2003，VS2005，VS2008，VS2010。这台机器一瘸一拐的跑着Windows XP。</p>
@@ -176,9 +176,9 @@
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 开发账号]]></title>
-    <link href="http://sailxjx.github.com/blog/blog/2013/03/21/tdwtf-kai-fa-zhang-hao/"/>
+    <link href="http://sailxjx.github.io/blog/blog/2013/03/21/tdwtf-kai-fa-zhang-hao/"/>
     <updated>2013-03-21T16:43:00+08:00</updated>
-    <id>http://sailxjx.github.com/blog/blog/2013/03/21/tdwtf-kai-fa-zhang-hao</id>
+    <id>http://sailxjx.github.io/blog/blog/2013/03/21/tdwtf-kai-fa-zhang-hao</id>
     <content type="html"><![CDATA[<p>Karen在办公桌旁瞪着Tom。“你在电脑上安装了Visual Studio？”</p>
 
 <p>“对啊”，Tom搞不明白她为啥要暴走。</p>
