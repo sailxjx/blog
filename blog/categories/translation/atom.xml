@@ -4,7 +4,7 @@
   <title><![CDATA[Category: translation | CodeBean]]></title>
   <link href="http://sailxjx.github.io/blog/blog/categories/translation/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2013-06-20T09:27:16+08:00</updated>
+  <updated>2013-06-21T10:37:39+08:00</updated>
   <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,57 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[[TDWTF] 我们相信傻瓜]]></title>
+    <link href="http://sailxjx.github.io/blog/blog/2013/06/20/tdwtf-wo-men-xiang-xin-sha-gua/"/>
+    <updated>2013-06-20T16:06:00+08:00</updated>
+    <id>http://sailxjx.github.io/blog/blog/2013/06/20/tdwtf-wo-men-xiang-xin-sha-gua</id>
+    <content type="html"><![CDATA[<p>一天早上，Stan去找他的上级Monty，他正在疯狂地的敲着键盘。这意味着两件事：明天他会收到一封讨厌的设计文档，而且那个设计中会用到一个从没用过的数据库。Monty是一个数据库“砖家”，没什么问题是他不能搞定的。Stan在这家公司的第一年，照做了Monty描述的每个设想，因为他不知道有哪些更好的办法。现在他对公司系统有了更多的了解，他渴望有个机会来做一些正确的事。</p>
+
+<p>Stan在邮箱里找到了一份客户发给Monty的需求副本，要求两个ASP.NET应用之间能互相通信。Stan喜上心头，这是一个简单的web服务，既然他们用.NET，那么只要用<a href="http://en.wikipedia.org/wiki/Windows_Communication_Foundation">WCF</a>就行了。</p>
+
+<p>Monty的介入绝对不可能玷污这个方案，他连.NET的基础都不懂。自从入职的第一天起，Stan就想着能对系统的设计有些话语权，这样才像一个“真正的开发”。最后，这个机会来了！</p>
+
+<p>第二天，Monty的设计发到了Stan的邮箱。Stan心不在焉的打开它，就像一个验尸官掀开一张裹尸布。他翻开这份足足45页的“可扩展性数据库驱动进程内通讯框架”。这有点难理解，而且看起来有点像是重复造轮子。里面几乎没有提及客户的应用，因为它看起来想要将任意应用连接在一起。</p>
+
+<p>这个设计需要用到11张数据表来传递元数据（发送，接收，时间戳，用户id，等等）和应用数据（统统被转成字符串并且储存在类似列1，列2等等的字段中）。当一个应用想要给另一个发送消息，它需要发送所有的会话/消息数据给一个存储过程。这个存储过程接收75个参数，大部分是可选的。另一个类似的存储过程允许发送者附加特殊的应用数据。而对于一个接收者，它需要调用<code>SP_CHECK_FOR_MESSAGES_POLLING_PROCEDURE</code>存储过程并传入它的<code>PK_INT_APPLICATION_IDENTIFIER</code>标识。当它消费完这条消息，还要调用<code>SP_MESSAGE_TRANSACTION_COMPLETE_PROCEDURE</code>存储过程来从“收件箱”中清除消息。Monty的系统会将这个事务中的所有数据移到一个结构相同的log表中，但是没有任何完整性可言。</p>
+
+<p>在Stan杂碎屏幕之前，他听到Monty得意洋洋的说：“我对这事很兴奋，我希望这个能用在任何事上！”</p>
+
+<p>“任何事？”Stan抑制住汹涌而来的恶心感。是时候让他坚持自己的原则，来表明他不再是那个毫无主见的职场新人了。“这个实现。。。很有趣，但是没必要用数据库来实现它”。</p>
+
+<p>Monty一笑置之。</p>
+
+<p>“.NET有个叫WCF的框架可以来帮助我们实现这个功能，”Stan继续说，“我们只需要写很少-”</p>
+
+<p>“不行，”Monty不容置疑的说，虽然Stan知道假如他问Monty什么是“WCF”，Monty肯定会顾左右而言他。“我们在调试系统时会碰到一堆的问题。我们需要知道应用和应用之间是怎么通信的，谁，在什么时候，发送了消息。而且我们会将它储存在一个安全的地方。”</p>
+
+<p>“但是，有一大堆的工具可以用来调试WC-”</p>
+
+<p>“请实现我设计的系统。”Monty不留余地的走开了，以防Stan再有什么说辞。</p>
+
+<p>Stan在与内心抗争中，花了几个礼拜的时间来实现这个冒牌的规范。错误不断的冒出来，而且没有什么好办法来解决强数据类型和同步性的问题。加入这种预防措施会让这庞然大物跑的更慢，虽然它已经够慢的了，而且仍然没法保证它按照预期工作。同时，Monty与客户的沟通不畅导致需求不断的变化。他的设计一天天的变化，最后成了一个64页的设计文档，需要14个数据表。</p>
+
+<p>Stan受够了。他最后只能求助Monty的老板David。David实行开门迎客政策。Stan向David描述了现状。</p>
+
+<p>“这不仅仅走了弯路，而且也不是客户想要的。用WCF的话我本来可以在几个礼拜前就完工，但是Monty不想这么干。”Stan总结到，“我觉得现在改正还为时不晚，但是Monty不赞成这样做。您能向他解释一下吗？”</p>
+
+<p>David叹息道：“我知道了”。</p>
+
+<p>终于！Stan兴奋地想他的建议成功了。</p>
+
+<p>David停顿了一小会儿，然后像一个先知布道一样说，“你叫Stan是吧？Monty。。。有一些怪癖，有时候他会让你做一些毫无意义的事。我需要你继续下去并且相信一切都会好起来。他从公司成立时就在这儿了，我们的系统就像他的孩子一样，所以他知道哪种方式最合适。”</p>
+
+<p>Stan明白现在最理智的是什么事情，他一言不发的回到自己的座位，经过一个小时的沉思，永远的离开了这个办公室。</p>
+
+<h2 id="section">后记</h2>
+
+<p>故事归故事，但很多公司的现状如此，如果不能在工作中提高自己，那么就想办法提高工作。后面的的<a href="http://thedailywtf.com/Comments/In-Fool-We-Trust.aspx">评论</a>也很有意思，可以看一下。</p>
+
+<p>原文链接：<a href="http://thedailywtf.com/Articles/In-Fool-We-Trust.aspx">In Fool We Trust</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[nginx] if is evil]]></title>
@@ -458,45 +509,6 @@
 </blockquote>
 
 <p>讲方言真的很有喜感。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[[TDWTF] 数据库大师]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi/"/>
-    <updated>2013-04-11T12:41:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi</id>
-    <content type="html"><![CDATA[<p>Maurice一直很好奇，他所在的公司经常不经过测试就把新成员招进来。这样看起来是为了节省了公司的时间和金钱。人力资源部门新招的“IT系统专家”在他刚来的那几个礼拜轻而易举的让Maurice毁三观了。</p>
-
-<p>这个奇葩专家很喜欢自吹自擂。无论谁在他附近都能听见他在吹牛。有一天，他向Maurice吹嘘他最得意的事情，是在一个大电信企业的成功故事。这个时候电话铃响了：有个分公司部门没法进入Maurice和他的团队维护的系统了。于是他对Ben说：</p>
-
-<p>“试试你能不能ping到他们的机器 - hostname是RHODODENDRON ”</p>
-
-<p>Ben停止了吹嘘，眨了眨眼睛，仿佛从一个美好的梦中醒了过来。“我该怎么做？”</p>
-
-<p>Maurice很好奇他的“专家”到底是哪个地方没听懂。“你。。。你打开命令提示符，然后输入ping RHODODENDRON。”</p>
-
-<p>“我知道，”Ben说道。“但是。。。我上哪儿去找命令提示符？”</p>
-
-<p>Maurice恨不得自己上了，但是这个时候分公司又打了个电话来请求更新状态。他不得不去亲自去处理另一个问题 - 一个配置错误的客户端。</p>
-
-<p>当Maurice接管后，Ben继续吹他的故事。虽然Maurice心不在焉，他还是注意到在Ben的掌控下，一个通常需要跑整晚的报告只跑了一个小时。事实上，很多同事称Ben为“数据库大师”。</p>
-
-<p>“。。。既然你需要管理数据库，”Ben愉快的宣称，“我就是你要找的人！”</p>
-
-<p>决定不再让Ben在命令行间闲逛，Maurice接受了他这个新同事的建议，给他展示他们的生产数据库，一个有着四十G数据的Sql Server数据库。考虑到数据库的增长量，Maurice向他的“数据库大师”征询意见。</p>
-
-<p>“第一件事，”Ben说道，启动管理工具，“确认里面到底有多少条数据。我喜欢说这是为数据库把脉。我们需要先统计总条目数。”</p>
-
-<p>在Ben咕哝了一阵子之后，Maurice从他肩头看过去。控制台上显示着一条SQL语法错误，仿佛在嘲笑这位“数据库大师”：</p>
-
-<blockquote>
-  <p>select count() rowID</p>
-</blockquote>
-
-<p>虽然数据库的增长模式仍然是个迷，Maurice却开始认识到“数据库大师”的“专业模式”。不仅仅他语句有问题，他还选错了数据库：他选择了Sql Server的内建数据库。嗯，当然也叫大师（’master’）。</p>
-
-<p>原文链接：<a href="http://thedailywtf.com/Articles/The-Database-Master.aspx">The Database Master</a></p>
 ]]></content>
   </entry>
   

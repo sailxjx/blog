@@ -4,7 +4,7 @@
   <title><![CDATA[Category: joke | CodeBean]]></title>
   <link href="http://sailxjx.github.io/blog/blog/categories/joke/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2013-06-20T09:27:16+08:00</updated>
+  <updated>2013-06-21T10:37:39+08:00</updated>
   <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,57 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[[TDWTF] 我们相信傻瓜]]></title>
+    <link href="http://sailxjx.github.io/blog/blog/2013/06/20/tdwtf-wo-men-xiang-xin-sha-gua/"/>
+    <updated>2013-06-20T16:06:00+08:00</updated>
+    <id>http://sailxjx.github.io/blog/blog/2013/06/20/tdwtf-wo-men-xiang-xin-sha-gua</id>
+    <content type="html"><![CDATA[<p>一天早上，Stan去找他的上级Monty，他正在疯狂地的敲着键盘。这意味着两件事：明天他会收到一封讨厌的设计文档，而且那个设计中会用到一个从没用过的数据库。Monty是一个数据库“砖家”，没什么问题是他不能搞定的。Stan在这家公司的第一年，照做了Monty描述的每个设想，因为他不知道有哪些更好的办法。现在他对公司系统有了更多的了解，他渴望有个机会来做一些正确的事。</p>
+
+<p>Stan在邮箱里找到了一份客户发给Monty的需求副本，要求两个ASP.NET应用之间能互相通信。Stan喜上心头，这是一个简单的web服务，既然他们用.NET，那么只要用<a href="http://en.wikipedia.org/wiki/Windows_Communication_Foundation">WCF</a>就行了。</p>
+
+<p>Monty的介入绝对不可能玷污这个方案，他连.NET的基础都不懂。自从入职的第一天起，Stan就想着能对系统的设计有些话语权，这样才像一个“真正的开发”。最后，这个机会来了！</p>
+
+<p>第二天，Monty的设计发到了Stan的邮箱。Stan心不在焉的打开它，就像一个验尸官掀开一张裹尸布。他翻开这份足足45页的“可扩展性数据库驱动进程内通讯框架”。这有点难理解，而且看起来有点像是重复造轮子。里面几乎没有提及客户的应用，因为它看起来想要将任意应用连接在一起。</p>
+
+<p>这个设计需要用到11张数据表来传递元数据（发送，接收，时间戳，用户id，等等）和应用数据（统统被转成字符串并且储存在类似列1，列2等等的字段中）。当一个应用想要给另一个发送消息，它需要发送所有的会话/消息数据给一个存储过程。这个存储过程接收75个参数，大部分是可选的。另一个类似的存储过程允许发送者附加特殊的应用数据。而对于一个接收者，它需要调用<code>SP_CHECK_FOR_MESSAGES_POLLING_PROCEDURE</code>存储过程并传入它的<code>PK_INT_APPLICATION_IDENTIFIER</code>标识。当它消费完这条消息，还要调用<code>SP_MESSAGE_TRANSACTION_COMPLETE_PROCEDURE</code>存储过程来从“收件箱”中清除消息。Monty的系统会将这个事务中的所有数据移到一个结构相同的log表中，但是没有任何完整性可言。</p>
+
+<p>在Stan杂碎屏幕之前，他听到Monty得意洋洋的说：“我对这事很兴奋，我希望这个能用在任何事上！”</p>
+
+<p>“任何事？”Stan抑制住汹涌而来的恶心感。是时候让他坚持自己的原则，来表明他不再是那个毫无主见的职场新人了。“这个实现。。。很有趣，但是没必要用数据库来实现它”。</p>
+
+<p>Monty一笑置之。</p>
+
+<p>“.NET有个叫WCF的框架可以来帮助我们实现这个功能，”Stan继续说，“我们只需要写很少-”</p>
+
+<p>“不行，”Monty不容置疑的说，虽然Stan知道假如他问Monty什么是“WCF”，Monty肯定会顾左右而言他。“我们在调试系统时会碰到一堆的问题。我们需要知道应用和应用之间是怎么通信的，谁，在什么时候，发送了消息。而且我们会将它储存在一个安全的地方。”</p>
+
+<p>“但是，有一大堆的工具可以用来调试WC-”</p>
+
+<p>“请实现我设计的系统。”Monty不留余地的走开了，以防Stan再有什么说辞。</p>
+
+<p>Stan在与内心抗争中，花了几个礼拜的时间来实现这个冒牌的规范。错误不断的冒出来，而且没有什么好办法来解决强数据类型和同步性的问题。加入这种预防措施会让这庞然大物跑的更慢，虽然它已经够慢的了，而且仍然没法保证它按照预期工作。同时，Monty与客户的沟通不畅导致需求不断的变化。他的设计一天天的变化，最后成了一个64页的设计文档，需要14个数据表。</p>
+
+<p>Stan受够了。他最后只能求助Monty的老板David。David实行开门迎客政策。Stan向David描述了现状。</p>
+
+<p>“这不仅仅走了弯路，而且也不是客户想要的。用WCF的话我本来可以在几个礼拜前就完工，但是Monty不想这么干。”Stan总结到，“我觉得现在改正还为时不晚，但是Monty不赞成这样做。您能向他解释一下吗？”</p>
+
+<p>David叹息道：“我知道了”。</p>
+
+<p>终于！Stan兴奋地想他的建议成功了。</p>
+
+<p>David停顿了一小会儿，然后像一个先知布道一样说，“你叫Stan是吧？Monty。。。有一些怪癖，有时候他会让你做一些毫无意义的事。我需要你继续下去并且相信一切都会好起来。他从公司成立时就在这儿了，我们的系统就像他的孩子一样，所以他知道哪种方式最合适。”</p>
+
+<p>Stan明白现在最理智的是什么事情，他一言不发的回到自己的座位，经过一个小时的沉思，永远的离开了这个办公室。</p>
+
+<h2 id="section">后记</h2>
+
+<p>故事归故事，但很多公司的现状如此，如果不能在工作中提高自己，那么就想办法提高工作。后面的的<a href="http://thedailywtf.com/Comments/In-Fool-We-Trust.aspx">评论</a>也很有意思，可以看一下。</p>
+
+<p>原文链接：<a href="http://thedailywtf.com/Articles/In-Fool-We-Trust.aspx">In Fool We Trust</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 耐心测试]]></title>
@@ -171,53 +222,6 @@
 <p>“这是个已知的问题，”控制台懒懒的说道：“假如你想要进入BUG跟踪系统，你需要安装一个Windows XP虚拟机。”</p>
 
 <p>原文链接：<a href="http://thedailywtf.com/Articles/The-Windows-7-Upgrade.aspx">The Windows 7 Upgrade</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[[TDWTF] 开发账号]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/03/21/tdwtf-kai-fa-zhang-hao/"/>
-    <updated>2013-03-21T16:43:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/03/21/tdwtf-kai-fa-zhang-hao</id>
-    <content type="html"><![CDATA[<p>Karen在办公桌旁瞪着Tom。“你在电脑上安装了Visual Studio？”</p>
-
-<p>“对啊”，Tom搞不明白她为啥要暴走。</p>
-
-<p>“而且你访问了Oracle数据库？”</p>
-
-<p>“额。。。是啊”</p>
-
-<p>“你为什么要这样干？”</p>
-
-<p>为什么？Tom刚刚作为财务部门的一名开发者加入了这家财富500强公司，并且直接向Karen（一个财务专家）汇报，大部分时间都从事一些财务相关的工作。事实上，在这里他见过的唯一一个IT工作人员是帮他装电脑的。</p>
-
-<p>第一天，Karen让他修复一个财务预测系统，简称FFS。“它性能很差，而且没人搞得懂它到底是怎么工作的甚至它是干什么的。不搞坏点东西的话我就没法向它添加报告记录。把它搞明白，有问题就问财务会计人员。”</p>
-
-<p>Tom没花多久就搞清楚这个系统为什么会比像超车道上过马路的老头还慢了。FFS用的是Access数据库，但是超出了Access处理能力15倍。为什么是这个特殊的数字？因为数据文件被分成了15个2GB的文件。而第16个小得多的文件中包含的VBA代码将这个系统整合在一起。它不是由程序员开发的，而是由某个路人甲搞出来的玩意儿。</p>
-
-<p>不同于传统的链接表结构，在提交表单前VBA会在数个DB文件中执行语句。基本的Access特征，像语句和报告并不能很容易的得到结果。大多数报告记录是手写的VBA表单。（这段没看明白，瞎蒙了。。。）</p>
-
-<p>Karen并没兴趣对Tom进行技术指导，他只能慢慢往下查。第一步是将一些数据迁移到真正的数据库上。他可以慢慢将一些功能迁移到一个.net应用上并且保持原有的需求。这样做有点像一个“牛仔码农”，但是相对于他们已有的系统，这是个巨大的进步。</p>
-
-<p>“我不敢相信你居然干了这种事！” Karen说。“只有研发有权限安装Visual Studio，并且只有研发可以访问数据库。你现在把这些权限搞的一团糟。”</p>
-
-<p>Tom有点迷惑。“我想我应该<em>是</em>一个研发”</p>
-
-<p>“在组织架构上，你不是。” Karen说。“你是一个会计，我们部门不允许招聘研发。”</p>
-
-<p>Tom克制住打开手机查查翻译软件的冲动；他现在相信自己跟Karen没有共同语言。“假如你不能招聘研发，为什么你又招聘他们然后假装他们是会计？”</p>
-
-<p>“集团的IT拒绝支持FFS，”她说。“至少在我们付钱给他们升级.net之前他们不干。但是我们没有这么多的IT经费预算。所以我们试图找一些人来支持Access应用。你唯一需要的研发工具就<em>应该是</em>Access。”</p>
-
-<p>Tom想找出一些理由或名言警句来说服Karen认识到自己的错误，最后他只能放弃了。她的逻辑用官僚主义铸成了一道密不透风的墙。</p>
-
-<p>Tom回到他的座位，开始卸载Visual Studio。在机器硬盘发出轧轧声的时候，他打开一个被<em>允许</em>使用的研发工具-Word-开始更新他的简历。</p>
-
-<p>原文链接: <a href="http://thedailywtf.com/Articles/Accounting-for-Development.aspx">Accounting for Development</a></p>
-
-<h1 id="section">后记</h1>
-
-<p>翻译真是个技术活。。。老外的俚语也很多啊，好多搞不懂啊！~慢慢来吧。</p>
 ]]></content>
   </entry>
   

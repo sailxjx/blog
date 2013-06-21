@@ -7,7 +7,7 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content="在Eric的公司，发布流程中代码从来就没有经过正规的测试。不是说没有这些流程，当然得有。毕竟哪有公司会不经过测试就将代码发布给用户。但是“严格测试”和“健壮度检验”跟他们的公司从来不沾边。甚至连“成功的演示”和“满足用户”这些原则都没有，但这又是另一回事了。 &hellip;">
+	<meta name="description" content="公司用奇葩的imo，由于没有mac版本，只能用web版。最近imo web版升级之后老是不稳定，又不想装一个笨重的windows虚拟机，于是曲线救国，找找mac上的wine该怎么用。 在mac上安装wine需要备齐三样神器： xquartz，在mac上提供对x11的支持，由于mountain &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -75,6 +75,54 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine/">在 Mac 中安装 Wine</a></h1>
+	<div class="entry-content">
+		<p>公司用奇葩的imo，由于没有mac版本，只能用web版。最近imo web版升级之后老是不稳定，又不想装一个笨重的windows虚拟机，于是曲线救国，找找mac上的<a href="http://www.winehq.org/">wine</a>该怎么用。</p>
+
+<p>在mac上安装wine需要备齐三样神器：</p>
+
+<ul>
+  <li><a href="http://xquartz.macosforge.org/landing/">xquartz</a>，在mac上提供对x11的支持，由于mountain lion之后不在预装x11，所以这个需要手动下载。</li>
+  <li><a href="http://winebottler.kronenberg.org/">winebottler</a>，这个包里两个软件，wine和winebottler，winebottler算是一个wine的管理器，里面预设了一些各种wine应用下需要的类库模板。</li>
+</ul>
+
+<p>安装顺序是xquartz-&gt;winebottler-&gt;wine，后面两个从包中直接拖到Application中就行了。安装完后需要先启动xquartz，然后启动wine之后在上面的panel中会有一个酒杯的图标，里面可以打开资源管理器等等，第一次打开时会在用户目录里生成一个Wine Files文件夹，这个就是winebottler中所谓的prefix，里面模拟了一套windows下面的环境。可以通过在winebottler中安装不同的prefix来切换不同应用环境。不过每个prefix都是一个完整的windows环境，非常占空间，没有必要的话，用默认的就行。然后增加类库可以点击wine图标，选择wine trick来安装，还是比较方便的。</p>
+
+<p>youtube上有个<a href="http://www.youtube.com/watch?v=m0BBkISOcEA">视频</a>介绍了如何在mac上安装wine，按照上面说的一步步来，基本不会出错。</p>
+
+<p>但是wine的种种缺点还是很明显的，一个是字体界面都很丑，在mac下更甚，即使想各种办法优化也无济于事。第二个就是很多库都没有，这是最致命的，imo最后还是没有安装成功，按照错误提示装了.net和vcrun2008等等之后还是不能正常启动，也是预料之中的事。wine还是只能算是一个玩具，给喜欢折腾的geek玩玩而已，真要用来跑wow之类的应用，那肯定是闲的蛋疼了。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-28T12:39:00+08:00" pubdate data-updated="true">2013.04.28</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/mac/'>mac</a>, <a class='category' href='/blog/blog/categories/osx/'>osx</a>, <a class='category' href='/blog/blog/categories/software/'>software</a>, <a class='category' href='/blog/blog/categories/wine/'>wine</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1057,67 +1105,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/css/'>css</a>, <a class='category' href='/blog/blog/categories/web/'>web</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/03/08/cheng-xu-yuan-yu-zang-hua/">程序猿与脏话</a></h1>
-	<div class="entry-content">
-		<p>俗话说林子大了什么鸟都有，在程序猿这个群体中，脏话和吹牛是两大显著特征。脏话的种类也是花样百出，下面就来归归类</p>
-
-<h3 id="section">第一类，加强语气型</h3>
-
-<p>常见的有<code>damn</code>,<code>f**k</code>，<code>shit</code>等等，往往后面还跟着些动词与形容词，像<code>stupid</code>啦，<code>idiot</code>啦，没啥创意但是足够醒目。</p>
-
-<h3 id="section-1">第二类，表达不满型</h3>
-
-<p>这一类就没有第一类那么无脑啦，至少人家不是词不达意嘛~如<code>what the f**k</code>，<code>a** hole</code>，<code>son of a b*tch</code>，<code>f**k off</code>，<code>beast</code>等等，常作用于老板和项目经理等不招人待见的群体。</p>
-
-<h3 id="section-2">第三类，口头禅</h3>
-
-<p>这一类人往往从第一类进化而来，某些词说习惯了就很难改过来啦，说着说着就喜欢夹一些动词进来，没办法，不然哪像个大老爷们嘛~</p>
-
-<h3 id="section-3">第四类，自嘲型</h3>
-
-<p>这一类就得注意语境啦，说的好了人家会心一笑，说不好人家可真能拔刀相见。</p>
-
-<p>程序猿向来都是独来独往，心高气傲，自然不甘与程序小白为伍啦，甚至在圈内也是互相看不惯的嘛，于是才有了<code>geek</code>的称号，而<code>geek</code>本身就有着讨厌鬼的意思。不少人以<code>geek</code>自居，嘴上更是得理不饶人。因为很多真正的大牛据说也是脾气古怪，比如linus torvalds，就常常在公众场合竖中指，在邮件中更是口无遮拦，著名的有那句<code>Read the F**ing Source Code</code>，顿时霸气十足，节操掉一地。</p>
-
-<p>这是在网上，但是在生活中，我所接触的程序猿往往又成了别人眼里内向，闷骚的代名词，时不时也能冒出一两句冷笑话，提高下存在感。这种现实与虚拟中的反差很有意思，喜欢心理的可以研究一下。</p>
-
-<p>而且在东西方程序猿的文化上，也有差异，老外骂人直来直往，少不了那一个动词。国人比较含蓄，除了问候一家老小七大姑八大姨之外，还会拐弯抹角，引经据典，凸显我大中华之悠久历史，比如最近流行的<code>去年买了个表</code>，就颇具亲和力。在这方面，猫扑天涯是集大成者，但这又不在我们讨论范围内了。</p>
-
-<p>程序猿的脏话，往往见于注释，这也成了代码中的一道亮丽风景，辛辛苦苦读了一天代码，发现一头雾水，这个时候，要是看到这些注释，发现前人也在这里大吐苦水，心里也就释然了。</p>
-
-<p>在这个大数据横行的时候，什么都得靠挖掘嘛，如果写个爬虫，去抓一下各大论坛的脏话做个统计，应该是一件很有意思的事情。</p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-03-08T09:51:00+08:00" pubdate data-updated="true">2013.03.08</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/chat/'>chat</a>, <a class='category' href='/blog/blog/categories/coder/'>coder</a>
 
 
 </div>
