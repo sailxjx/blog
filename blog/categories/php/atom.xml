@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php | CodeBean]]></title>
   <link href="http://sailxjx.github.io/blog/blog/categories/php/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2013-06-21T15:59:03+08:00</updated>
+  <updated>2013-07-05T12:12:31+08:00</updated>
   <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,177 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[php 闭包：并不像看上去那么美好]]></title>
+    <link href="http://sailxjx.github.io/blog/blog/2013/07/05/php-bi-bao-bing-bu-xiang-kan-shang-qu-na-me-mei-hao/"/>
+    <updated>2013-07-05T10:27:00+08:00</updated>
+    <id>http://sailxjx.github.io/blog/blog/2013/07/05/php-bi-bao-bing-bu-xiang-kan-shang-qu-na-me-mei-hao</id>
+    <content type="html"><![CDATA[<p>最近一个叫<a href="http://laravel.com/">laravel</a>的php框架在社区讨论的风生水起，号称php界的rails，试用了一下，确实非常新鲜，但是又有种似曾相识的感觉。</p>
+
+<p>例如路由中的一段代码：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">View</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>兄弟，你走错了，隔壁javascript出门左拐。</p>
+
+<p>laravel号称将php5.3中新引入的闭包发扬光大，让代码变得更加灵活优雅，趣味十足。</p>
+
+<p>在我看来，坑更多了。</p>
+
+<p>为什么说php闭包没有看上去那么美好，因为他的生搬硬套。</p>
+
+<p>闭包这个概念早已不新鲜，在函数是语言中被早已被用烂了，以至于现在lisp教徒抨击其他语言时都避而不谈closure和lambda，转而讨论currying，otp，metaprogramming等等更玄乎的东西。</p>
+
+<p>php的闭包不能说引入的太晚，没有跟上编程发展的脚步，其实在php4时代，就已经有了这样的概念，<code>call_user_func</code>，<code>array_map</code>等等方法都是支持callback方法的。但是时至今日，它依然是不完善的。</p>
+
+<p>在发展的过程中，php引入了很多舶来品，例如接口，命名空间，异常控制等等，每种都是对自身语言已有编程风格的颠覆，以至于现在同样是编写php，不同的人能写出完全不同风格的代码。自然闭包也非原创，同样很怪异。</p>
+
+<h1 id="section">作用域</h1>
+
+<p>在javascript中，闭包内的变量是继承上层的，这是一种很自然的做法，也相当的灵活。但是php有自身的一套作用域规则，于是在闭包中使用变量就变得非常怪异，例如下面的例子：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="nv">$v</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+</span><span class='line'><span class="nb">array_map</span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="nv">$n</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$v</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nv">$n</span> <span class="o">==</span> <span class="nv">$v</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">echo</span> <span class="s1">&#39;exist&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+</span><span class='line'><span class="p">},</span> <span class="nv">$arr</span><span class="p">);</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>这个<code>use</code>就是用来解决作用域的问题的，使用时可得瞧准咯，每个要用到的变量都得用<code>use</code>引入哦。然后当闭包身处类中时，情况又不一样了，下面的做法在php5.3中是错误的：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php</span>
+</span><span class='line'><span class="x">class Demo {&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;protected $val = &#39;v&#39;;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">public function getClosure() {</span>
+</span><span class='line'><span class="x">    return function() {</span>
+</span><span class='line'><span class="x">        return $this-&amp;gt;val;</span>
+</span><span class='line'><span class="x">    };</span>
+</span><span class='line'><span class="x">} }</span>
+</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;p&gt;$d = new Demo();</span>
+</span><span class='line'><span class="x">echo call_user_func($d-&amp;gt;getClosure()), “\n”;</span>
+</span><span class='line'><span class="x">?&amp;gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>因为php5.3不支持在闭包中使用<code>$this</code>或<code>self</code>关键字，但是在php5.4中得到了支持，所以上面的代码是可运行的，但是这让上面第一个例子情何以堪呢。</p>
+
+<h1 id="section-1">绑定</h1>
+
+<p>在5.4之后，php开始支持将一个闭包绑定到别的对象上，以便能直接调用这个对象的成员：</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">&amp;lt;?php&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;p&gt;class Clo {&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;public function __construct($val) {</span>
+</span><span class='line'><span class="x">    $this-&amp;gt;val = $val;</span>
+</span><span class='line'><span class="x">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">function getClosure() {</span>
+</span><span class='line'><span class="x">    return function() {</span>
+</span><span class='line'><span class="x">        echo $this-&amp;gt;val, &quot;\n&quot;;</span>
+</span><span class='line'><span class="x">    };</span>
+</span><span class='line'><span class="x">} }</span>
+</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;p&gt;class Wrap {</span>
+</span><span class='line'><span class="x">    protected $val = 3;&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;pre&gt;&lt;code&gt;public function bar($foo) {</span>
+</span><span class='line'><span class="x">    call_user_func($foo);</span>
+</span><span class='line'><span class="x">} }</span>
+</span><span class='line'><span class="x">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">&lt;p&gt;$a = new Clo(1);</span>
+</span><span class='line'><span class="x">$wrap = new Wrap();</span>
+</span><span class='line'><span class="x">call_user_func($a-&amp;gt;getClosure());</span>
+</span><span class='line'><span class="x">call_user_func($a-&amp;gt;getClosure()-&amp;gt;bindTo($wrap, $wrap));</span>
+</span><span class='line'><span class="x">?&amp;gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>这在某些场景下有用武之地，不过也要注意作用域，<code>bindTo</code>方法中的第二个参数是设置作用域的，向上面<code>Wrap</code>类中的变量<code>$val</code>是私有的，假如没有<code>bindTo</code>的第二个参数，是行不通滴。</p>
+
+<h1 id="generator">Generator</h1>
+
+<p>顺便再提一下php5.5中新增的Generator，其中的yield支持运行时自定义方法，这显然又是从隔壁python借鉴来的，调用方式同样不是很自然，foreach承担了迭代的责任，相比于ruby中yield的强大功能，更是差之千里了。</p>
+
+<p>不过有总比没有要好，将来一定有创意丰富的人能玩出更多花样，哦，貌似又多了一种编程风格。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[细数 php 中的那些坑]]></title>
@@ -913,236 +1084,6 @@
 <h2 id="section-2">下载</h2>
 <ul>
   <li><a href="/u/patch/verify.zip">源码</a></li>
-</ul>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[nginx+php-fpm 配置记录]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2012/12/24/nginx-plus-php-fpm-pei-zhi-ji-lu/"/>
-    <updated>2012-12-24T22:03:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2012/12/24/nginx-plus-php-fpm-pei-zhi-ji-lu</id>
-    <content type="html"><![CDATA[<h3 id="nginx">安装nginx</h3>
-<p>安装过程没什么好说的，不过tarball中没有包含init脚本，官网wiki中提供了<a href="http://wiki.nginx.org/Nginx-init-ubuntu">一个ubuntu的版本</a>，其实在所有linux发行版中都可用，下载下来放到/etc/init.d/nginx，大功告成。</p>
-
-<p>假如在启动过程中遇到<code>undefined function: log_daemon_msg</code>等等报错，那是缺少一些公用方法，下载或安装init-functions然后在头部引入即可，google到一个可用的<a href="http://www.linuxfromscratch.org/lfs/view/7.0/scripts/apds02.html">地址</a>，此外，假如使用的是ubuntu，在/lib/lsb/中有个文件。</p>
-
-<h3 id="php-fpm">安装php-fpm</h3>
-<p>fpm已经包含在php的远吗中，编译php的时候加上<code>--enable-fpm</code>即可，fpm的init脚本包含在<code>sapi/fpm/init.d.php-fpm</code>，稍加修改即可使用，非常贴心滴。默认配置文件<code>sapi/fpm/php-fm.conf</code>，我把它复制在/etc目录中以供调用。</p>
-
-<h3 id="php-fpm-1">配置php-fpm</h3>
-<p>fpm的配置文件已很多个pool块分割，global是全局配置，www是默认的pool，这里不做修改。
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>php-fpm.conf  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class='ini'><span class='line'><span class="k">[global]</span>
-</span><span class='line'><span class="na">user</span> <span class="o">=</span> <span class="s">tristan</span>
-</span><span class='line'><span class="na">group</span> <span class="o">=</span> <span class="s">tristan</span>
-</span><span class='line'><span class="na">pid</span> <span class="o">=</span> <span class="s">/var/run/php-fpm.pid</span>
-</span><span class='line'><span class="na">error_log</span> <span class="o">=</span> <span class="s">/var/log/php/fpm.err.log</span>
-</span><span class='line'><span class="c">; 下面三个值表示当一分钟内假如有10个子进程收到SIGSEGV或SIGBUS信号而退出的话，php-fpm会自动重启，应该是一种自我保护的机制</span>
-</span><span class='line'><span class="err">emergency_restart_threshold</span> <span class="err">10</span>
-</span><span class='line'><span class="err">emergency_restart_interval</span> <span class="err">1m</span>
-</span><span class='line'><span class="err">process_control_timeout</span> <span class="err">10s</span>
-</span><span class='line'><span class="c">; 超过十秒的慢请求会被记录到fpm.slow.$pool.log中并在errlog中产生一条notice记录</span>
-</span><span class='line'><span class="na">request_slowlog_timeout</span> <span class="o">=</span> <span class="s">10s</span>
-</span><span class='line'><span class="na">slowlog</span> <span class="o">=</span> <span class="s">/var/log/php/fpm.slow.$pool.log</span>
-</span><span class='line'><span class="c">; 允许任意客户端链接</span>
-</span><span class='line'><span class="na">listen.allowed_clients</span> <span class="o">=</span> <span class="s">any</span>
-</span><span class='line'><span class="c">; 可以包含一些分散的config文件</span>
-</span><span class='line'><span class="na">include</span><span class="o">=</span><span class="s">/etc/php-fpm.d/*.conf</span>
-</span><span class='line'><span class="c">; 下面是www pool的配置</span>
-</span><span class='line'><span class="k">[www]</span>
-</span><span class='line'><span class="c">; 设置子进程相关</span>
-</span><span class='line'><span class="na">pm</span> <span class="o">=</span> <span class="s">dynamic</span>
-</span><span class='line'><span class="na">pm.max_children</span> <span class="o">=</span> <span class="s">5</span>
-</span><span class='line'><span class="na">pm.start_servers</span> <span class="o">=</span> <span class="s">3</span>
-</span><span class='line'><span class="na">pm.min_spare_servers</span> <span class="o">=</span> <span class="s">2</span>
-</span><span class='line'><span class="na">pm.max_spare_servers</span> <span class="o">=</span> <span class="s">4</span>
-</span><span class='line'><span class="na">pm.max_requests</span> <span class="o">=</span> <span class="s">200</span>
-</span><span class='line'><span class="c">; 下面还可以用env设置一些环境变量</span>
-</span><span class='line'><span class="na">env[PATH]</span> <span class="o">=</span> <span class="s">/usr/local/bin:/usr/bin:/bin</span>
-</span><span class='line'><span class="na">env[TMP]</span> <span class="o">=</span> <span class="s">/tmp</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-配置完成后，<code>/etc/init.d/php-fpm start</code>即可启动php-fpm，通过<code>netstat -anp</code>可以看到9000端口被php-fpm占用了。</p>
-
-<h3 id="nginx-1">配置nginx</h3>
-<p>下面到了最艰苦卓绝的工作了，配置nginx。
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>nginx </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>user tristan;
-</span><span class='line'>worker_processes 2;
-</span><span class='line'>error_log  /var/log/nginx/error.log;
-</span><span class='line'>pid        /var/run/nginx.pid;
-</span><span class='line'>events {
-</span><span class='line'>    worker_connections  1024;
-</span><span class='line'>}
-</span><span class='line'>http {
-</span><span class='line'>    include       mime.types;
-</span><span class='line'>    default_type  application/octet-stream;
-</span><span class='line'>    sendfile        on; 
-</span><span class='line'>    keepalive_timeout  65; 
-</span><span class='line'>    gzip on; 
-</span><span class='line'>    include /usr/local/nginx/conf/sites-enabled/*;
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div>
-主配置文件中基本没什么可写的，重点在对每个站点的配置上。</p>
-
-<p>对静态站点的配置是最简单的，比如下面的配置就部署了一个bootstrap的demo站点
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>boot </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>server {
-</span><span class='line'>    listen *:80;
-</span><span class='line'>    server_name boot.local.com;
-</span><span class='line'>    access_log  /var/log/nginx/boot.log;
-</span><span class='line'>    location / {
-</span><span class='line'>        root /home/tristan/coding/github/bootstrap/docs; #根目录
-</span><span class='line'>        index index.html; #添加默认索引文件
-</span><span class='line'>    } &lt;br />
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>动态站点稍微麻烦一点，通过fastcgi模式，使用php-fpm配置一个动态站点。
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>fun </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>server {
-</span><span class='line'>    listen &lt;em>:80;
-</span><span class='line'>    server_name fun.local.com;
-</span><span class='line'>    access_log /var/log/nginx/fun.log;
-</span><span class='line'>    location / { 
-</span><span class='line'>        index index.php;
-</span><span class='line'>        rewrite ^(.&lt;/em>)$ /index.php$1 last; #大部分站点都做成了单入口，将所有url rewrite到index文件
-</span><span class='line'>    } &lt;br />
-</span><span class='line'>    location ~ ^/index.php {
-</span><span class='line'>        root /home/tristan/coding/webdata/fun;
-</span><span class='line'>        fastcgi_pass 127.0.0.1:9000;
-</span><span class='line'>        include fastcgi_params;
-</span><span class='line'>        if ($fastcgi_script_name ~ “^(.+?.php)(/.+)$”) {
-</span><span class='line'>            set $real_script_name $1; 
-</span><span class='line'>            set $path_info $2; 
-</span><span class='line'>        } &lt;br />
-</span><span class='line'>        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-</span><span class='line'>        fastcgi_param PATH_INFO $path_info; 
-</span><span class='line'>    }
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div>
-值得注意的是，有些框架使用pathinfo作为路由依据，默认情况下nginx并不会将pathinfo传递给php-fpm，所以上面需要通过正则匹配出准确的pathinfo，通过fastcgi_param传给fpm</p>
-
-<p>下面是一个使用minify的静态资源站点，其中既包含纯静态文件(css|js)，也包含由php压缩成的伪静态文件
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>static </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>server {
-</span><span class='line'>    listen &lt;em>:80;
-</span><span class='line'>    server_name static.local.com;
-</span><span class='line'>    access_log /var/log/nginx/static.log;
-</span><span class='line'>    root /home/tristan/coding/webdata/static;
-</span><span class='line'>    location / { 
-</span><span class='line'>        autoindex on; 
-</span><span class='line'>        index index.php;
-</span><span class='line'>        rewrite ^/static/(.&lt;/em>).(js|css)$ /static/index.php?g=$1 last;
-</span><span class='line'>    } &lt;br />
-</span><span class='line'>    location ~ index.php {
-</span><span class='line'>        fastcgi_pass 127.0.0.1:9000;
-</span><span class='line'>        include fastcgi_params;
-</span><span class='line'>        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-</span><span class='line'>    } &lt;br />
-</span><span class='line'>    location ~ ^(?!\/static)(.*).(jpg|jpeg|gif|png|css|js|ico|xml)$ {
-</span><span class='line'>        access_log off; #关闭log
-</span><span class='line'>        log_not_found off;
-</span><span class='line'>        expires 30d; #纯静态文件设置缓存时间
-</span><span class='line'>    } &lt;br />
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<h2 id="section">参考资料</h2>
-<ul>
-  <li><a href="http://www.if-not-true-then-false.com/2011/nginx-and-php-fpm-configuration-and-optimizing-tips-and-tricks/">Nginx and PHP-FPM Configuration and Optimizing Tips and Tricks</a></li>
-  <li><a href="http://stackoverflow.com/questions/8265941/empty-value-to-path-info-in-nginx-returns-junk-value">stackoverflow: Empty value to PATH_INFO in nginx returns junk value</a></li>
-  <li><a href="http://wiki.nginx.org/HttpFastcgiModule">HttpFastcgiModule</a></li>
-  <li><a href="http://wiki.nginx.org/HttpRewriteModule">HttpRewriteModule</a></li>
 </ul>
 ]]></content>
   </entry>

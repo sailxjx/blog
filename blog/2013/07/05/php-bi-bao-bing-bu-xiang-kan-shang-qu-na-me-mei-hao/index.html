@@ -1,0 +1,342 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>php 闭包：并不像看上去那么美好 - CodeBean</title>
+	<meta name="author" content="tristan">
+
+	
+	<meta name="description" content="最近一个叫laravel的php框架在社区讨论的风生水起，号称php界的rails，试用了一下，确实非常新鲜，但是又有种似曾相识的感觉。 例如路由中的一段代码： 1
+2
+3
+4
+5
+6
+&lt;?php
+Route::get(&#39;/&#39;, function()
+{ return &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="CodeBean" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">CodeBean</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:sailxjx.github.io/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/102588932744890343699?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:sailxjx.github.io/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h1 class="title">Php 闭包：并不像看上去那么美好</h1>
+	<div class="entry-content"><p>最近一个叫<a href="http://laravel.com/">laravel</a>的php框架在社区讨论的风生水起，号称php界的rails，试用了一下，确实非常新鲜，但是又有种似曾相识的感觉。</p>
+
+<p>例如路由中的一段代码：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line"><span class="nx">Route</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">()</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="nx">View</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="p">});</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>兄弟，你走错了，隔壁javascript出门左拐。</p>
+
+<p>laravel号称将php5.3中新引入的闭包发扬光大，让代码变得更加灵活优雅，趣味十足。</p>
+
+<p>在我看来，坑更多了。</p>
+
+<p>为什么说php闭包没有看上去那么美好，因为他的生搬硬套。</p>
+
+<p>闭包这个概念早已不新鲜，在函数是语言中被早已被用烂了，以至于现在lisp教徒抨击其他语言时都避而不谈closure和lambda，转而讨论currying，otp，metaprogramming等等更玄乎的东西。</p>
+
+<p>php的闭包不能说引入的太晚，没有跟上编程发展的脚步，其实在php4时代，就已经有了这样的概念，<code>call_user_func</code>，<code>array_map</code>等等方法都是支持callback方法的。但是时至今日，它依然是不完善的。</p>
+
+<p>在发展的过程中，php引入了很多舶来品，例如接口，命名空间，异常控制等等，每种都是对自身语言已有编程风格的颠覆，以至于现在同样是编写php，不同的人能写出完全不同风格的代码。自然闭包也非原创，同样很怪异。</p>
+
+<h1 id="section">作用域</h1>
+
+<p>在javascript中，闭包内的变量是继承上层的，这是一种很自然的做法，也相当的灵活。但是php有自身的一套作用域规则，于是在闭包中使用变量就变得非常怪异，例如下面的例子：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line"><span class="nv">$v</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class="line"><span class="nv">$arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+</span><span class="line"><span class="nb">array_map</span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="nv">$n</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$v</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">if</span> <span class="p">(</span><span class="nv">$n</span> <span class="o">==</span> <span class="nv">$v</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="k">echo</span> <span class="s1">&#39;exist&#39;</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">    <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+</span><span class="line"><span class="p">},</span> <span class="nv">$arr</span><span class="p">);</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这个<code>use</code>就是用来解决作用域的问题的，使用时可得瞧准咯，每个要用到的变量都得用<code>use</code>引入哦。然后当闭包身处类中时，情况又不一样了，下面的做法在php5.3中是错误的：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line"><span class="k">class</span> <span class="nc">Demo</span> <span class="p">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">protected</span> <span class="nv">$val</span> <span class="o">=</span> <span class="s1">&#39;v&#39;</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">getClosure</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="k">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">val</span><span class="p">;</span>
+</span><span class="line">        <span class="p">};</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">$d</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Demo</span><span class="p">();</span>
+</span><span class="line"><span class="k">echo</span> <span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$d</span><span class="o">-&gt;</span><span class="na">getClosure</span><span class="p">()),</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>因为php5.3不支持在闭包中使用<code>$this</code>或<code>self</code>关键字，但是在php5.4中得到了支持，所以上面的代码是可运行的，但是这让上面第一个例子情何以堪呢。</p>
+
+<h1 id="section-1">绑定</h1>
+
+<p>在5.4之后，php开始支持将一个闭包绑定到别的对象上，以便能直接调用这个对象的成员：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">Clo</span> <span class="p">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$val</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">val</span> <span class="o">=</span> <span class="nv">$val</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">function</span> <span class="nf">getClosure</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="k">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">            <span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">val</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class="line">        <span class="p">};</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">Wrap</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">protected</span> <span class="nv">$val</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">public</span> <span class="k">function</span> <span class="nf">bar</span><span class="p">(</span><span class="nv">$foo</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$foo</span><span class="p">);</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">$a</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Clo</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class="line"><span class="nv">$wrap</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Wrap</span><span class="p">();</span>
+</span><span class="line"><span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$a</span><span class="o">-&gt;</span><span class="na">getClosure</span><span class="p">());</span>
+</span><span class="line"><span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$a</span><span class="o">-&gt;</span><span class="na">getClosure</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">bindTo</span><span class="p">(</span><span class="nv">$wrap</span><span class="p">,</span> <span class="nv">$wrap</span><span class="p">));</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这在某些场景下有用武之地，不过也要注意作用域，<code>bindTo</code>方法中的第二个参数是设置作用域的，向上面<code>Wrap</code>类中的变量<code>$val</code>是私有的，假如没有<code>bindTo</code>的第二个参数，是行不通滴。</p>
+
+<h1 id="generator">Generator</h1>
+
+<p>顺便再提一下php5.5中新增的Generator，其中的yield支持运行时自定义方法，这显然又是从隔壁python借鉴来的，调用方式同样不是很自然，foreach承担了迭代的责任，相比于ruby中yield的强大功能，更是差之千里了。</p>
+
+<p>不过有总比没有要好，将来一定有创意丰富的人能玩出更多花样，哦，貌似又多了一种编程风格。</p>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-05T10:27:00+08:00" pubdate data-updated="true">2013.07.05</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/closure/'>closure</a>, <a class='category' href='/blog/blog/categories/php/'>php</a>
+
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2013
+
+    tristan
+
+</footer>
+	<script src="/blog/javascripts/slash.js"></script>
+<script src="/blog/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sailxjx.github.io/blog/blog/2013/07/05/php-bi-bao-bing-bu-xiang-kan-shang-qu-na-me-mei-hao/';
+        var disqus_url = 'http://sailxjx.github.io/blog/blog/2013/07/05/php-bi-bao-bing-bu-xiang-kan-shang-qu-na-me-mei-hao/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33186961-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+
+</body>
+</html>

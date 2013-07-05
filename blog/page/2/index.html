@@ -7,7 +7,7 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content="公司用奇葩的imo，由于没有mac版本，只能用web版。最近imo web版升级之后老是不稳定，又不想装一个笨重的windows虚拟机，于是曲线救国，找找mac上的wine该怎么用。 在mac上安装wine需要备齐三样神器： xquartz，在mac上提供对x11的支持，由于mountain &hellip;">
+	<meta name="description" content="javascript语法灵活，同一个功能有五六种实现方式并不罕见，然后再加上有些反人类的原型继承和异步特性，就更让人一头雾水了。我经常搞不清楚call,apply之间的区别，今天就记录一下，以免再忘了。 在javascript中，方法可以通过以下几种方式执行： func()， &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -75,6 +75,182 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/05/02/zhi-xing-javascript-fang-fa-de-ji-chong-fang-shi/">执行 Javascript 方法的几种方式</a></h1>
+	<div class="entry-content">
+		<p>javascript语法灵活，同一个功能有五六种实现方式并不罕见，然后再加上有些反人类的原型继承和异步特性，就更让人一头雾水了。我经常搞不清楚<code>call</code>,<code>apply</code>之间的区别，今天就记录一下，以免再忘了。</p>
+
+<p>在javascript中，方法可以通过以下几种方式执行：</p>
+
+<ul>
+  <li>func()，这是最直接最常见的调用方式，也符合一般人的思维逻辑，但是在某些情况下有一些不足，下面会解释。</li>
+  <li>(function(arg){})(window)，匿名方法调用，在构造命名空间时比较有用，后面的括号中的参数与匿名方法中的入参一一对应。</li>
+  <li>func.bind(sth)()，<a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/bind">mozilla手册</a>中提到<code>bind</code>是在<a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">ECMA-262 5th Edition</a>中新增的一个特性，这里单独列出来作为一种调用方式是因为它弥补了直接调用中不能绑定作用域的缺陷。</li>
+  <li>func.call()，这是第二种调用方式，每个方法的原型中都定义了call方法，用来执行当前方法。</li>
+  <li>func.apply()，call的双胞胎兄弟。</li>
+</ul>
+
+<h2 id="func">func()</h2>
+<p>这是最常见的调用方式，在任何语言中随处可见。func(x, y)可以传入不同的参数。在某些语言，例如php，java中，这种调用足以解决一切问题。但是javascript是一门函数式语言，闭包的概念和一个奇怪的关键词<code>this</code>决定了这种调用方式的不足。<code>this</code>应该可以解释为当前代码段的作用域，会随着代码执行到不同的片段而改变，但是某些情况下我们不希望这个<code>this</code>被改变，例如绑定在某些dom上的事件，我们肯定不希望他们被调用的时候<code>this</code>被转移到了<code>window</code>对象上，但有时候确实如此，再比如下面的代码。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span><span class="p">{};</span>
+</span><span class="line"><span class="kd">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="nx">a</span><span class="p">.</span><span class="nx">onclick</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">    <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+</span><span class="line">    <span class="nx">func</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="nx">a</span><span class="p">.</span><span class="nx">onclick</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>可以把a想象成页面中的一个链接，由于我们只是想将定义好的方法绑定到onclick事件上，而不是立刻调用它，而且这个方法拥有一个参数，所以我们需要用一个匿名方法将他包起来传递给a的onclick事件。这样就有了一个问题，func中的this变成了全局对象window，显然我们并不希望如此。这个时候，使用func()这种直接调用的方式就不行了，于是我们需要将func外的this绑定到func方法上。于是就有了<code>bind</code>,<code>call</code>,<code>apply</code>方法。</p>
+
+<h2 id="bind">bind</h2>
+
+<p><code>bind</code>的目的非常简单，返回一个绑定了this对象的相同方法。上面的代码修改一行就可以实现绑定this在a对象上目的。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span><span class="p">{};</span>
+</span><span class="line"><span class="kd">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="nx">a</span><span class="p">.</span><span class="nx">onclick</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">    <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+</span><span class="line">    <span class="nx">func</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">)(</span><span class="nx">x</span><span class="p">);</span>  <span class="c1">// bind here</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="nx">a</span><span class="p">.</span><span class="nx">onclick</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这样，onclick事件的this就不会像无头苍蝇一样到处乱跑啦。</p>
+
+<h2 id="call--apply">call &amp; apply</h2>
+
+<p><code>call</code>和<code>apply</code>要放在一起讲，因为他们实在太像了。他们都支持多参数，而且第一个参数都是即将绑定的this对象，第二个参数则是他们的区别所在，<code>call</code>使用独立的参数作为调用方法的入参，<code>apply</code>使用一个数组作为入参。有的时候我们并不是不想改变this对象，而是想人为的将他绑定到别的对象上，这个时候<code>call</code>和<code>apply</code>是很好用的。（并不是说不能用<code>bind</code>，不过貌似<code>bind</code>出现的比较晚，可能浏览器兼容性不好）。举个栗子：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">a</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">func</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">              <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class="line">          <span class="p">},</span>
+</span><span class="line">    <span class="nx">x</span><span class="o">:</span> <span class="mi">0</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="nx">b</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">a</span><span class="o">:</span> <span class="nx">a</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">x</span><span class="o">:</span> <span class="mi">20</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+</span><span class="line">    <span class="nx">b</span><span class="p">.</span><span class="nx">a</span><span class="p">.</span><span class="nx">func</span><span class="p">();</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>上面的a和b对象中都有x，我们希望func能针对性的修改对应的x，但是直接调用只可能修改func作用域中的x，也就是a.x。修改一下代码，就可以实现修改b.x目的</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">a</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">func</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">              <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class="line">          <span class="p">},</span>
+</span><span class="line">    <span class="nx">x</span><span class="o">:</span> <span class="mi">0</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="nx">b</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">a</span><span class="o">:</span> <span class="nx">a</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">x</span><span class="o">:</span> <span class="mi">20</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line"><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+</span><span class="line">    <span class="nx">b</span><span class="p">.</span><span class="nx">a</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">b</span><span class="p">);</span>  <span class="c1">// bind this to b</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这个栗子举得不好，有点牵强附会，而且这是一种很容易让人迷惑的代码风格，有适用的场景，但不是处处都可用。</p>
+
+<h1 id="section">参考资料</h1>
+<ul>
+  <li><a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference">mozilla</a></li>
+  <li><a href="http://fitzgeraldnick.com/weblog/26/">Nick Fitzgerald’s Weblog</a></li>
+  <li><a href="http://dailyjs.com/2012/06/25/this-binding/">DailyJs</a></li>
+  <li><a href="http://stackoverflow.com/questions/1986896/what-is-the-difference-between-call-and-apply">what-is-the-difference-between-call-and-apply</a></li>
+</ul>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-02T12:41:00+08:00" pubdate data-updated="true">2013.05.02</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/javascript/'>javascript</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -842,269 +1018,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/joke/'>joke</a>, <a class='category' href='/blog/blog/categories/translation/'>translation</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/03/12/css-transition-and-transform-and-animation/">Css Transition &amp; Transform &amp; Animation</a></h1>
-	<div class="entry-content">
-		<link rel="stylesheet" href="/blog/u/css/trans.css" />
-
-<p>小时候没花功夫学英语（悔之莫及啊~），以至于经常将css中的transition和transform搞混，再加上一个强大而复杂的animation，就更是一头雾水了，今天整理一下，做个笔记。</p>
-
-<ul>
-  <li><code>transition</code> 将style的变化用动画的方式来过渡</li>
-  <li><code>transform</code> style的一些高级变换，像拉伸，旋转，缩放之类</li>
-  <li><code>animation</code> css自定义动画，功能强大，并且由于是浏览器内置，流畅度会比javascript动画高</li>
-</ul>
-
-<p>注意咯，以上css属性都不支持IE浏览器，其中，IE9以上支持<code>transform</code>，需要加’-ms-‘前缀。</p>
-
-<h2 id="transition">transition</h2>
-<p>transition可以在同一dom元素的两种不同样式之间添加平滑的动画切换效果，下面是一个简单的例子，可以看出在没transition和有transition的情况下的区别。</p>
-
-<div>
-<div class="color-transition color-demo">color<br />transition</div>
-<div class="color-notransition color-demo">color<br />notransition</div>
-</div>
-
-<p>transition是一种比较好的用户体验，不会让用户对于style的切换感到突兀，要实现上面的效果，只需要在css中添加一行代码：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="nc">.color-transition</span> <span class="p">{</span>
-</span><span class="line">    <span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span><span class="p">;</span>
-</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span><span class="p">;</span>
-</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span><span class="p">;</span>
-</span><span class="line">    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span><span class="p">;</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>你可能在心里暗暗骂我SB（嗯，对的，我也讨厌不会数数的淫），上面明明有四行代码，这个也没办法啦，谁让各个浏览器对于css3标准的支持都不一样，添加不同的prefix只是为了兼容一些较低版本的浏览器，在目前的主流中，一行transition就可以走遍天下。（当然，IE是没救了）。</p>
-
-<p>transition中支持的参数是比较容易理解的，第一个是css中的属性(默认的all可以决定所有style的切换都显示成动画)，第一个表示过渡时间，还有第三个参数表示切换的动画类型，有ease(类似正弦曲线的先慢后快再慢)，linear(匀速)等等，第四个参数表示渐变开始的延时。而且可以用逗号分割多个属性，不嫌麻烦的话可以将它们都写上，就像下面这样。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="nc">.color-ratate-transition</span> <span class="p">{</span>
-</span><span class="line">    <span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span> <span class="n">ease</span><span class="o">-</span><span class="n">in</span><span class="o">-</span><span class="n">out</span><span class="o">,</span> <span class="n">rotate</span> <span class="m">3s</span><span class="p">;</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>上面既然已经用到了rotate，这是一个transform属性，下面就解释一下transform。</p>
-
-<h2 id="transform">transform</h2>
-
-<p>transform是对dom样式的一种变性，一般的样式中，我们可以定义宽高位置，甚至包括圆角。但是要实现旋转，缩放甚至一些3D效果，就需要用到transform了。下面还是先看一个例子：</p>
-
-<div>
-<div class="transform-rotate transform-demo">rotate</div>
-<div class="transform-scale transform-demo">scale</div>
-</div>
-
-<p>rotate可以在很多场景中得到应用，一个比较取巧的方法是用来做输入框的提示箭头，像下面这样.</p>
-
-<div>
-    <div class="rotate-arrow"></div>
-    <div class="input-tip">your messages</div>
-</div>
-
-<p>而scale的作用是在不调整宽高的情况下实现放大与缩小，灵活利用，也能实现一些有趣的功能，比如放大镜，异形字体等。</p>
-
-<p>transform的语法是非常简单的，它只有一个参数，但是形式的是很多变的，详细的列表可见于<a href="http://www.w3schools.com/cssref/css3_pr_transform.asp">w3school的页面</a>。</p>
-
-<h2 id="animation">animation</h2>
-
-<p>下面是重点要介绍的animation了。用css做动画是意见非常geek的事情，相比于js动画，css动画需要更少的代码以及更直观的语法。在做css动画之前，需要先了解keyframes属性，这是css3中新增的一个规则类，实现的方法类似于一些语言中的mixin，而在设计理念上又类似flash中的关键帧，在keyframes中需要定义几个关键帧中dom元素的样式，这几个关键帧可以用百分比来表示，也可以用from,to等一些词汇来表示起点和终点。下面的keyframes表示让一个元素从左向右移动，并加上一些旋转效果。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="k">@keyframes</span> <span class="nt">move</span> <span class="p">{</span>
-</span><span class="line">  <span class="nt">0</span><span class="o">%,</span> <span class="nt">100</span><span class="o">%</span> <span class="p">{</span>
-</span><span class="line">    <span class="k">left</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
-</span><span class="line">    <span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
-</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
-</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
-</span><span class="line">    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
-</span><span class="line">  <span class="p">}</span>
-</span><span class="line">
-</span><span class="line">  <span class="nt">50</span><span class="o">%</span> <span class="p">{</span>
-</span><span class="line">    <span class="k">left</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
-</span><span class="line">    <span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">180</span><span class="n">deg</span><span class="p">);</span>
-</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">180</span><span class="n">deg</span><span class="p">);</span>
-</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">180</span><span class="n">deg</span><span class="p">);</span>
-</span><span class="line">    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">180</span><span class="n">deg</span><span class="p">);</span>
-</span><span class="line">  <span class="p">}</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>keyframes是一个预定义的方法，将它与animation结合，就能实现有趣的css动画，例如上面名叫move的keyframes，放到下面的代码中，就可以看到完整的动画演示了。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="nc">.animate-move</span> <span class="p">{</span>
-</span><span class="line">  <span class="k">position</span><span class="o">:</span> <span class="k">relative</span><span class="p">;</span>
-</span><span class="line">  <span class="n">animation</span><span class="o">:</span> <span class="n">move</span> <span class="m">5s</span> <span class="n">infinite</span><span class="p">;</span>
-</span><span class="line">  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">move</span> <span class="m">5s</span> <span class="n">infinite</span><span class="p">;</span>
-</span><span class="line">  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">move</span> <span class="m">5s</span> <span class="n">infinite</span><span class="p">;</span>
-</span><span class="line">  <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">move</span> <span class="m">5s</span> <span class="n">infinite</span><span class="p">;</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<div>
-    <div class="animate-move animate-demo">animate<br />move</div>
-</div>
-
-<p>上面的例子中包含了animation中的三个参数：keyframes方法名，一次动画持续时间，循环次数。其中无限循环用infinite表示。animation还包含不少有用的参数，比如延迟时间，动画效果等等，在<a href="http://www.w3schools.com/cssref/css3_pr_animation.asp">w3school手册</a>中有详细的记载。</p>
-
-<p>国内音乐网站<a href="http://jing.fm/">jing.fm</a>在交互方面一直很前卫，播放音乐时，专辑封面会像真的在cd中一样打转，模仿一种收听cd的感觉。这个效果就是用animation实现的，下面我们也可以山寨一个玩玩。</p>
-
-<h3 id="section">第一步，打磨圆角</h3>
-
-<p>首先需要的是将正方形的专辑封面变成cd的形状，也就是圆形啦。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="nc">.album</span> <span class="p">{</span>
-</span><span class="line">  <span class="k">width</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
-</span><span class="line">  <span class="k">height</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
-</span><span class="line">  <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">150px</span><span class="p">;</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>专辑封面我们选择300像素的正方形，然后使用150像素的圆角，可以正好变成一个正圆形。</p>
-
-<h3 id="keyframes">第二步，keyframes</h3>
-
-<p>下面就要定义我们的keyframes了，这个动画很简单，在开头设置成rotate(0)，结尾设置成rotate(360deg)。这样我们比较容易计算循环的时间。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="k">@keyframes</span> <span class="nt">dj</span> <span class="p">{</span>
-</span><span class="line">  <span class="nt">0</span><span class="o">%</span> <span class="p">{</span>
-</span><span class="line">    <span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
-</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
-</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
-</span><span class="line">    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
-</span><span class="line">  <span class="p">}</span>
-</span><span class="line">
-</span><span class="line">  <span class="nt">100</span><span class="o">%</span> <span class="p">{</span>
-</span><span class="line">    <span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">360</span><span class="n">deg</span><span class="p">);</span>
-</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">360</span><span class="n">deg</span><span class="p">);</span>
-</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">360</span><span class="n">deg</span><span class="p">);</span>
-</span><span class="line">    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">360</span><span class="n">deg</span><span class="p">);</span>
-</span><span class="line">  <span class="p">}</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section-1">第三步，转起来</h3>
-
-<p>将我们的dj keyframes加入animation，选择匀速(linear)，下面就看效果吧。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="nc">.album</span> <span class="p">{</span>
-</span><span class="line">  <span class="k">width</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
-</span><span class="line">  <span class="k">height</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
-</span><span class="line">  <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">150px</span><span class="p">;</span>
-</span><span class="line">  <span class="n">animation</span><span class="o">:</span> <span class="n">dj</span> <span class="m">10s</span> <span class="n">infinite</span> <span class="n">linear</span><span class="p">;</span>
-</span><span class="line">  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">dj</span> <span class="m">10s</span> <span class="n">infinite</span> <span class="n">linear</span><span class="p">;</span>
-</span><span class="line">  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">dj</span> <span class="m">10s</span> <span class="n">infinite</span> <span class="n">linear</span><span class="p">;</span>
-</span><span class="line">  <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">dj</span> <span class="m">10s</span> <span class="n">infinite</span> <span class="n">linear</span><span class="p">;</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>
-    <img src="/blog/u/image/album-milk.jpg" alt="album-milk" class="album" />
-</p>
-
-<embed src="http://www.xiami.com/widget/0_1771372335/singlePlayer.swf" type="application/x-shockwave-flash" width="257" height="33" wmode="transparent" />
-
-<h2 id="section-2">后记</h2>
-
-<p>上面的效果没有用到一行js。css真是将技术与艺术完美结合的产物，这些动画无疑需要激发人无限的创意，随着浏览器的支持度提高，在web上的应用也会越来越广，应用的明天会非常美好。</p>
-
-<h2 id="section-3">代码</h2>
-
-<p>在自己的项目中，我会使用scss来书写css，省却了很多重复的工作。这个页面的scss文件放到这里保存一下。</p>
-
-<p><a href="/blog/u/scss/trans.scss">trans.scss</a></p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-03-12T16:41:00+08:00" pubdate data-updated="true">2013.03.12</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/css/'>css</a>, <a class='category' href='/blog/blog/categories/web/'>web</a>
 
 
 </div>
