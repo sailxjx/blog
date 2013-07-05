@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://sailxjx.github.io/blog/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2013-07-05T12:12:31+08:00</updated>
+  <updated>2013-07-05T17:35:11+08:00</updated>
   <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,66 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[几款压力测试工具]]></title>
+    <link href="http://sailxjx.github.io/blog/blog/2013/07/05/ji-kuan-ya-li-ce-shi-gong-ju/"/>
+    <updated>2013-07-05T16:45:00+08:00</updated>
+    <id>http://sailxjx.github.io/blog/blog/2013/07/05/ji-kuan-ya-li-ce-shi-gong-ju</id>
+    <content type="html"><![CDATA[<p>压力测试工具林林总总，数不胜数，这里只列举几个命令行下常用的工具，来看看那种用的比较顺手，纯粹个人意见。</p>
+
+<ul>
+  <li>ab (apache benchmark，因为是apache自带的工具，所以用的人比较多)</li>
+  <li>siege (一个不错的开源压力测试工具，简单，好用)</li>
+  <li>httperf (据说很强大，但参数实在繁琐，不考虑)</li>
+</ul>
+
+<h1 id="ab">ab</h1>
+<p>ab是apache自带的测试工具，很多情况下我们要测试一个网站在并发100下的响应速度，用下面的命令就行</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">ab -n1000 -c100 http://domain.com/</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>可不要少了最后的那个’/’，ab接受的url必须是schema, domain, path一个不少的。</p>
+
+<p>其他像添加header，post参数等等的，man一下ab的手册吧。</p>
+
+<p>长久以来我一直以ab作为webserver性能的一个指标，因为使用确实简单，直到遇见了siege。</p>
+
+<h1 id="siege">siege</h1>
+
+<p>siege应该也有些年头了，2000年的时候就已经有这个软件了，直到最近更新了3.0.1版本。在第一次使用的时候，需要用siege.config在主目录下面生成一个配置文件.siegerc。这类文件常用linux的人应该很清楚了，里面每个选项都有明确的注释。需要注意的是delay这个值，做一般测试的时候会按照这个设定的时间间隔停顿，那么这样压力测试出来的结果就不准了，所以在做压测的时候需要加上’-b’参数，或者直接将这个参数设置为0。下面是一个100并发测试10秒钟的例子。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">siege -b -c100 -t10S http://domain.com/</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>siege的一个缺点是没法设置总请求数，但是可以通过重复数和并发数组合来求出总请求数，例如我们要在100并发下发送1000个请求，就用下面的命令，当然这个时候就不能用’-t’参数了</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">siege -b -c100 -r10 http://domain.com/</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>结果与ab差不多，但是他会将历次测试的结果保存在一个文件中供以后比较。</p>
+
+<h1 id="section">测试</h1>
+
+<p>这里我分别用nodejs和php写了两个server脚本，响应值都是’hello world’，都用单一进程作为web server。（php5.4之后用-S参数来启动服务）。</p>
+
+<p>测试结果:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">(request/second)        php     nodejs
+</span><span class="line">siege                   2500    2000
+</span><span class="line">ab                      4880    3480</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>测试软件的评判标准不一样，所以测试结果有差距也比较合理，不能由此说明谁比谁更准确。但是在测试中nodejs的性能比php要慢20%这个倒是让我觉得比较惊讶，看来nodejs在运算效率上并不占优势。但是在复杂的web应用中，更多的时间开销在io中，nodejs合理的将这部分等待时间利用了起来，才会让人感觉比较快吧。</p>
+
+<p>很早就有人对这几款测试软件做了<a href="http://lionet.livejournal.com/99984.html">横向的对比</a>，有兴趣可以看一下，其中keepalive和no-keepalive的效率差距比较大，我自己测试时觉得并不明显，可能是写的例子比较单一吧。</p>
+
+<p>今后假如需要做简单的压力测试，我还是比较倾向于使用siege。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[php 闭包：并不像看上去那么美好]]></title>
@@ -1957,53 +2017,6 @@
 <p>“这是个已知的问题，”控制台懒懒的说道：“假如你想要进入BUG跟踪系统，你需要安装一个Windows XP虚拟机。”</p>
 
 <p>原文链接：<a href="http://thedailywtf.com/Articles/The-Windows-7-Upgrade.aspx">The Windows 7 Upgrade</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[[TDWTF] 开发账号]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/03/21/tdwtf-kai-fa-zhang-hao/"/>
-    <updated>2013-03-21T16:43:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/03/21/tdwtf-kai-fa-zhang-hao</id>
-    <content type="html"><![CDATA[<p>Karen在办公桌旁瞪着Tom。“你在电脑上安装了Visual Studio？”</p>
-
-<p>“对啊”，Tom搞不明白她为啥要暴走。</p>
-
-<p>“而且你访问了Oracle数据库？”</p>
-
-<p>“额。。。是啊”</p>
-
-<p>“你为什么要这样干？”</p>
-
-<p>为什么？Tom刚刚作为财务部门的一名开发者加入了这家财富500强公司，并且直接向Karen（一个财务专家）汇报，大部分时间都从事一些财务相关的工作。事实上，在这里他见过的唯一一个IT工作人员是帮他装电脑的。</p>
-
-<p>第一天，Karen让他修复一个财务预测系统，简称FFS。“它性能很差，而且没人搞得懂它到底是怎么工作的甚至它是干什么的。不搞坏点东西的话我就没法向它添加报告记录。把它搞明白，有问题就问财务会计人员。”</p>
-
-<p>Tom没花多久就搞清楚这个系统为什么会比像超车道上过马路的老头还慢了。FFS用的是Access数据库，但是超出了Access处理能力15倍。为什么是这个特殊的数字？因为数据文件被分成了15个2GB的文件。而第16个小得多的文件中包含的VBA代码将这个系统整合在一起。它不是由程序员开发的，而是由某个路人甲搞出来的玩意儿。</p>
-
-<p>不同于传统的链接表结构，在提交表单前VBA会在数个DB文件中执行语句。基本的Access特征，像语句和报告并不能很容易的得到结果。大多数报告记录是手写的VBA表单。（这段没看明白，瞎蒙了。。。）</p>
-
-<p>Karen并没兴趣对Tom进行技术指导，他只能慢慢往下查。第一步是将一些数据迁移到真正的数据库上。他可以慢慢将一些功能迁移到一个.net应用上并且保持原有的需求。这样做有点像一个“牛仔码农”，但是相对于他们已有的系统，这是个巨大的进步。</p>
-
-<p>“我不敢相信你居然干了这种事！” Karen说。“只有研发有权限安装Visual Studio，并且只有研发可以访问数据库。你现在把这些权限搞的一团糟。”</p>
-
-<p>Tom有点迷惑。“我想我应该<em>是</em>一个研发”</p>
-
-<p>“在组织架构上，你不是。” Karen说。“你是一个会计，我们部门不允许招聘研发。”</p>
-
-<p>Tom克制住打开手机查查翻译软件的冲动；他现在相信自己跟Karen没有共同语言。“假如你不能招聘研发，为什么你又招聘他们然后假装他们是会计？”</p>
-
-<p>“集团的IT拒绝支持FFS，”她说。“至少在我们付钱给他们升级.net之前他们不干。但是我们没有这么多的IT经费预算。所以我们试图找一些人来支持Access应用。你唯一需要的研发工具就<em>应该是</em>Access。”</p>
-
-<p>Tom想找出一些理由或名言警句来说服Karen认识到自己的错误，最后他只能放弃了。她的逻辑用官僚主义铸成了一道密不透风的墙。</p>
-
-<p>Tom回到他的座位，开始卸载Visual Studio。在机器硬盘发出轧轧声的时候，他打开一个被<em>允许</em>使用的研发工具-Word-开始更新他的简历。</p>
-
-<p>原文链接: <a href="http://thedailywtf.com/Articles/Accounting-for-Development.aspx">Accounting for Development</a></p>
-
-<h1 id="section">后记</h1>
-
-<p>翻译真是个技术活。。。老外的俚语也很多啊，好多搞不懂啊！~慢慢来吧。</p>
 ]]></content>
   </entry>
   
