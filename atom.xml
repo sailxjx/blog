@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://sailxjx.github.io/blog/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2013-07-05T17:35:11+08:00</updated>
+  <updated>2013-07-10T15:02:49+08:00</updated>
   <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,157 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Javascript并行计算： web worker]]></title>
+    <link href="http://sailxjx.github.io/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker/"/>
+    <updated>2013-07-10T12:09:00+08:00</updated>
+    <id>http://sailxjx.github.io/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker</id>
+    <content type="html"><![CDATA[<p>最近发现了chrome下面的一个奇特现象，像下面这样的一段代码：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">  <span class="nb">document</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">document</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class="line"><span class="p">},</span> <span class="mi">300</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这段代码本来是为了让标签栏内容出现滚动的效果，每300毫秒变化一次，这本来没什么问题，但是偶然切换的其他标签时，这个滚动的速度就会变慢，网上查了一下，原来<a href="https://codereview.chromium.org/6577021">chrome设计如此</a>，当标签页不活动时，chrome会将所有定时任务的最小间隔设置为1秒，这样来减轻浏览器的压力，会影响所有带有timer的方法，如<code>setInterval</code>和<code>setTimeout</code>。像上面这样的任务，间隔就被提高到了1秒。</p>
+
+<p>由此引发的思考是，假如这个任务实时性要求很高，不容许这种时间机器的出现怎么办。stackoverflow也有人给出了<a href="http://stackoverflow.com/questions/5927284/how-can-i-make-setinterval-also-work-when-a-tab-is-inactive-in-chrome">一种解答</a>，不使用内置的timer，而是在代码中主动计算时间差，来模拟<code>setInterval</code>的行为。这种方法能解决问题，但是总觉得不够“优雅”。更好的方法是使用html5的<a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/workers.html">web worker</a>。</p>
+
+<p>web worker目前支持的浏览器包括Firefox 3.5+，Chrome和Safari 4+。你用IE6？那自求多福吧。</p>
+
+<p>搞过消息队列和异步计算的人对worker这个词应该不陌生，html5为我们提供了web worker这样一个优秀的特性，旨在将后台任务和前台交互分开，worker中的任务不会阻塞页面事件。我们先来解决上面提出的问题。</p>
+
+<p>由于不隶属于任意页面，所以chrome不会将worker中的进程timer也改成1秒。所以我们可以对上面的代码稍作修改，拆分成worker和main两部分。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>main.js  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">worker</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Worker</span><span class="p">(</span><span class="s1">&#39;worker.js&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="nx">worker</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="nb">document</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">document</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class="line"><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>worker.js  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">self</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">();</span>
+</span><span class="line"><span class="p">},</span> <span class="mi">300</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这样触发更新title的任务就由worker来完成了。</p>
+
+<p>上面只是一个粗浅的demo，worker真正的意义应该还是在并行计算，不过目前的web应用中前端基本没有大运算量的任务，所以worker在这里就没用武之地了。我们可以设想下面一种情况。</p>
+
+<p>md5是很多网站用于保存密码的方式，由此也产生了很多md5解码的工具，由于md5是一种不可逆的加密算法，解密的方法除了使用字典以外，还有一种简单粗暴的方法，就是暴力破解，而这是非常耗时间的。我们拿到了一个加密过的字符串’77b3e6926e7295494dd3be91c6934899’，而且知道明文是一个六位的数字，那么可以用数字循环来制造碰撞(里面的md5方法是引入外部库，这里及不贴出来了)：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>main.js  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">cipher</span> <span class="o">=</span> <span class="s1">&#39;77b3e6926e7295494dd3be91c6934899&#39;</span><span class="p">;</span>
+</span><span class="line"><span class="kd">var</span> <span class="nx">start</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+</span><span class="line"><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">999999</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">if</span> <span class="p">(</span><span class="nx">md5</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">===</span> <span class="nx">cipher</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;plain text: &#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">);</span>
+</span><span class="line">    <span class="k">break</span><span class="p">;</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;time cost: &#39;</span> <span class="o">+</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()</span> <span class="o">-</span> <span class="nx">start</span><span class="p">));</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>跑下来时间大概是12330毫秒。下面我们用十个worker来分担任务，实现相同的功能。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>main.js  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">cipher</span> <span class="o">=</span> <span class="s1">&#39;77b3e6926e7295494dd3be91c6934899&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">workerList</span> <span class="o">=</span> <span class="p">[],</span>
+</span><span class="line">    <span class="nx">start</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+</span><span class="line"><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// init 10 workers</span>
+</span><span class="line">  <span class="nx">workerList</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">new</span> <span class="nx">Worker</span><span class="p">(</span><span class="s1">&#39;worker.js&#39;</span><span class="p">));</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nx">workerList</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">worker</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// send task to each worker</span>
+</span><span class="line">  <span class="nx">worker</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;plain text: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+</span><span class="line">    <span class="nx">workerList</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_worker</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">      <span class="nx">_worker</span><span class="p">.</span><span class="nx">terminate</span><span class="p">();</span>  <span class="c1">// terminate all workers after task finished</span>
+</span><span class="line">    <span class="p">});</span>
+</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;time cost: &#39;</span> <span class="o">+</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()</span> <span class="o">-</span> <span class="nx">start</span><span class="p">));</span>
+</span><span class="line">  <span class="p">});</span>
+</span><span class="line">  <span class="nx">worker</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
+</span><span class="line">    <span class="nx">start</span><span class="o">:</span> <span class="nx">index</span> <span class="o">*</span> <span class="mi">100000</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">end</span><span class="o">:</span> <span class="nx">index</span> <span class="o">*</span> <span class="mi">100000</span> <span class="o">+</span> <span class="mi">99999</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">cipher</span><span class="o">:</span> <span class="nx">cipher</span>
+</span><span class="line">  <span class="p">});</span>
+</span><span class="line"><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>worker.js  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">self</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">start</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">end</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">if</span> <span class="p">(</span><span class="nx">md5</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">===</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">cipher</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">      <span class="nx">self</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+</span><span class="line">      <span class="k">break</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line"><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>最佳期望是总时间的十分之一，实际执行下来用了2792毫秒，这与给worker分配任务的方式有关，假如我们给worker随机指派计算值，那么得到的结果会更平均，而不会因为密文的变化而有大的波动。</p>
+
+<p>web worker对于javascript全局对象的访问也是有一些限制的，比如window，document，parent对象，这也是不能用worker取代所有页面script的一个原因。</p>
+
+<p>关于worker的具体介绍，<a href="http://www.html5rocks.com/en/tutorials/workers/basics/">这篇文章</a>讲的很好，里面还提供了几个现实的例子，非常详细。</p>
+
+<h2 id="section">参考文档</h2>
+<ul>
+  <li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/">The Basics of Web Workers</a></li>
+  <li><a href="http://robertnyman.com/2010/03/25/using-html5-web-workers-to-have-background-computational-power/">Using HTML5 Web Workers To Have Background Computational Power</a></li>
+  <li><a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/workers.html#creating-a-dedicated-worker">9 Web workers</a></li>
+</ul>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[几款压力测试工具]]></title>
@@ -1988,35 +2139,6 @@
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>上面是分别在1000和5000的数组长度下运行的结果，可以看出使用第二种算法的时间增长基本是线性的，而使用第一种算法的耗时则会指数级的增长。两种算法横向比较更是高下立分，本来想画图来表示，结果发现差距太大，使用第二种算法的时间柱在图上基本看不到了，于是作罢。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[[TDWTF] 升级Windows7]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/04/07/tdwtf-sheng-ji-windows7/"/>
-    <updated>2013-04-07T14:48:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/04/07/tdwtf-sheng-ji-windows7</id>
-    <content type="html"><![CDATA[<p>在随心所欲的创业公司，最新的时髦可能是BYOD(带自己的设备来上班)，但是政府部门往往会比较保守，尤其是在处理机密数据的部门。当Miguel开始在一个州立部门供职时，他们提供给他一个笔记本电脑。出于安全考虑，他被禁止使用其他的设备，其他人也不允许使用他的。同样是出于安全的原因，那个笔记本不能离开他的桌子，它被一条短短的保险链锁定在桌面上，所能移动的范围只有几英尺而已。</p>
-
-<p>这台电脑很奇葩。它非常陈旧，以至于可以让考古学家将它放在博物馆里。在其使用过程中它得到了一些升级。它的硬盘是500GB的，内存上限是2GB。这给Miguel带来了些挑战，因为除了他们的SAAS报告软件，他还需要安装VS2003，VS2005，VS2008，VS2010。这台机器一瘸一拐的跑着Windows XP。</p>
-
-<p>Miguel和他可敬的电脑每天辛勤地为程序套件解决bug。同时，IT部门在忙着他们自己的事儿。有些人注意到（微软对）Window XP的支持将在2014年结束。意识到将所有的用户迁移到新的平台上对于他们来说将是个史诗般的挑战，这帮人决定现在开始行动，而最佳的开始目标就是IT外包部门。</p>
-
-<p>周一，Miguel去上班的时候发现他的笔记本不见了。取而代之的是一张升级中的字条。Miguel不能使用别的电脑，所以整个周一和周二的大部分时间，他所做的就是暖椅子和玩手机游戏。周二下午很晚的时候，他的电脑回来了，并且装上了Windows7和Office2003，其他什么都没有。</p>
-
-<p>Miguel开始重新安装他的开发工具。他先进入保留存了Visual Studio镜像文件的共享文件夹，开始第一步安装，然后发现这次升级撤回了他的管理员权限，禁止他安装任何软件。他用邮箱给控制台提交了一个需求，申请需要的权限。</p>
-
-<p>同样因为安全的原因，就像禁止Miguel使用其他电脑一样，控制台不能轻易授予他这些权限，即使他仅仅是在最初的几天需要这些权限。他们需要经理的签字。而且需要三个人的签名，事实上，这个礼拜其中一个经理请假了。而等到他回来上班，另一个又度假去了。</p>
-
-<p>Miguel花了两个礼拜好不容易等到这些官老爷们聚在一起（世纪之交么？）。在这期间，Miguel什么都没做，每天他就玩着愤怒的小鸟，看着截止日期一天天过去，因为他没有什么事能做。</p>
-
-<p>最后，Miguel的权限终于批下来了。他开始安装需要的工具。时间一分一秒的过去，但是日志系统仍然需要六个小时才能装完，并且每三十分钟就需要他确认一次管理员权限。而在这一切之后，他有不得不把这些都卸载掉，因为他将这些组件的安装顺序搞错了，以至于现在软件没法运行起来。</p>
-
-<p>在这次升级20天后，Miguel终于将一切搞定。他“迫不及待”的打开IE并转向他们的BUG跟踪系统。他预计这计周累积了一大堆的工作任务，但是，他只看到一个错误提示：他们的BUG跟踪系统使用的ActiveX与Windows7不兼容。彻底跪了，他给控制台打电话求助。</p>
-
-<p>“这是个已知的问题，”控制台懒懒的说道：“假如你想要进入BUG跟踪系统，你需要安装一个Windows XP虚拟机。”</p>
-
-<p>原文链接：<a href="http://thedailywtf.com/Articles/The-Windows-7-Upgrade.aspx">The Windows 7 Upgrade</a></p>
 ]]></content>
   </entry>
   
