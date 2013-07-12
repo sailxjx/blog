@@ -7,11 +7,7 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content="最近发现了chrome下面的一个奇特现象，像下面这样的一段代码： 1
-2
-3
-setInterval(function() { document.title = document.title.substr(1) + document.title.substr(0, 1);
-}, 300); &hellip;">
+	<meta name="description" content="写了这么多文章，技术屌丝味太浓了，以前每次想写点随想也是起了个标题就没下文了，正好今天早上看到了一篇喷技术创业的文章，文中观点不敢苟同，趁着早晨清醒的时刻，咱也文艺范一次，写点有感而发的文字。 很多公司，无论大小，都想将部门划分的细之又细。所谓麻雀虽小，五脏俱全。 &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -79,6 +75,98 @@ setInterval(function() { document.title = document.title.substr(1) + document.ti
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/07/12/guan-yu-gong-si-jia-gou-de-yi-xie-tu-cao/">关于公司架构的一些吐槽</a></h1>
+	<div class="entry-content">
+		<p>写了这么多文章，技术屌丝味太浓了，以前每次想写点随想也是<a href="/blog/blog/2012/07/29/jing-ji-de-le-qu/">起了个标题就没下文了</a>，正好今天早上看到了一篇<a href="http://www.36kr.com/p/204557.html">喷技术创业的文章</a>，文中观点不敢苟同，趁着早晨清醒的时刻，咱也文艺范一次，写点有感而发的文字。</p>
+
+<p>很多公司，无论大小，都想将部门划分的细之又细。所谓麻雀虽小，五脏俱全。随意拉一张公司的组织结构图出来看看 – 总裁办，行政部，人力资源部，技术部，产品部，市场部，客服部，运营部。。。别人有的我们就得有，别人没有的我们也得有，不论有些部门是不是必须，只要一两个人也能成立个部门。不明真相的人跑来一看，瞧，多正规，高端洋气上档次。</p>
+
+<p>且不论其他职能部门，我就来说说跟研发关系最大的一些部门，以及如何显得他们的工作是不可或缺的。</p>
+
+<h2 id="section">产品部</h2>
+
+<p>产品部本身就是一个比较扯的部门，因为这个词打击面太大，整天挖空心思想点子的，想的是不是产品？没日没夜扣腚的，做的是不是产品？上线后胆战心惊监测的，维护的是不是产品？我们尊崇’less is more’，谁也说不清产品到底是个啥玩意，但是就有这样一个部门，叫做“产品部”。</p>
+
+<p>再回到<a href="http://www.36kr.com/p/204557.html">这篇文章</a>的观点，技术人员过于注重技术，而忽略了对产品的思考，所以需要专门设置这样一个产品经理的职位来构思整个产品的走向。看似有理，但是他的前提是“技术人员不会思考产品”，这就是一个弥天大谎，我见过的大部分技术人员，对于项目的细节，业务逻辑的理解都比普通产品高出不知道多少个档次，我们不能纸上谈兵，只有真正理解了产品实现的业务逻辑，才能提出更有建设性和创新性的意见，这叫站在巨人的肩膀上。但是我看到的很多产品是，进入公司一个礼拜都不到，以前从来没有用过公司的产品，就能洋洋洒洒写出一大篇设计文档来，而问到为什么要这样改，则又支支吾吾，说不出个所以然，最后来一句我看到某某网站也是这样做的，所以我们也要这样做。</p>
+
+<p>回到技术人员的自我修养上来，我认为每个研发应该视自己开发的产品如孩子一般，在关注技术进步之余，能花时间来培养这个孩子，让其更健壮，更优雅，更招人待见。同时，也要多看看外面的世界，试用别人的产品，包括竞争对手的，以和自己创造的孩子进行对比。技术人员提出的产品改进意见往往更务实，更切中要害。</p>
+
+<p>将这种视如己出的概念再推广到所有员工身上，其实人人都可以为产品添砖加瓦出谋划策，那么，产品部门存在的价值何在？</p>
+
+<h2 id="section-1">测试部</h2>
+
+<p>测试可以分为好多类：1.做黑盒的。2.做白盒的。3.自动化测试。
+我们一一道来。</p>
+
+<p>先说第一种，做黑盒的。很多公司曲解了黑盒的意思，认为做黑盒就是一个功能开发好了，你拿去用，不出问题就行了。这样就把软件开发变成了一个劳动密集型行业，这样的测试与拿到内测账号的用户有什么区别。更何况我们有些测试人员的使用经验可能还不如用户。这样的测试，效率既低下，效果还不明显。</p>
+
+<p>再说第二种，做白盒的。一些公司有白盒测试，其实就是看看代码。很多公司认为，这个人写代码不行，就让他做测试吧。这是一个大大的误区，对测试人员的要求应该比研发更高，因为我认为<a href="http://blogs.msdn.com/b/ericlippert/archive/2004/06/14/reading-code-is-hard.aspx">读代码往往比写代码更难</a>。上面这种做法的后果就是，一些人做白盒测试的时候，一旦看到不明白的地方，就跑来问研发，需要研发手把手的一条条教来，这不光是浪费双方的时间，也是在做无用功。我相信任意一个合格的研发人员，在提测之前应该都对代码做完整细致的自测。</p>
+
+<p>最后说说第三种，做自动化测试的。这个其实要求较高，很多公司没有，即使有也是认为装个hudson写写配置文件就算自动化测试了。而我认为的自动化测试应该有很强的编码能力，能写出简单有效的单元测试用例，能配置不同的运行环境来确保软件的跨平台性，能进行性能测试，来保证软件的工作效率。这都对测试人员提出了较高的要求，这种人少之又少，而我见到的大多数测试人员连apache的vhost文件都不会写。</p>
+
+<p>真正的测试人员应该得到相当的尊敬，因为他们需要对业务和代码都有很深的理解，他们比程序员更细心，既能防止程序员犯一些低级的错误，又能在一些容易忽略的问题是上保持警惕。</p>
+
+<p>假如找不到这样合适的测试人员，测试部就没有存在的意义。</p>
+
+<h2 id="ued">UED部</h2>
+
+<p>UED这个词是个舶来品，你甚至很难找到合适的中文替代词，只能用“用户体验”这种虚无缥缈的词来囊括。很多公司的UED，其实就是美工。</p>
+
+<p>我自认为对设计和绘画不在行，所以我很尊重设计师的工作。设计师负责原型和效果设计，程序员负责实现，这是由人的左右半脑分工决定的，而且一个好的设计师，简而美的设计，应该是先在公司内部群体中产生认同感，才能让更多的用户认可。</p>
+
+<p>下面是我的吐槽，一些我见过的设计师，可能读过一本<a href="http://book.douban.com/subject/1440223/">Don’t Make Me Think</a>，就能自诩得到了设计的精髓，接着就对页面开始做大刀阔斧的改革，也不需要其他人的意见，因为设计师都有一些自负天才的心理在作怪（嗯，其实程序员也有）。更有甚者，是一天一小改，三天一大改，也没有统一的风格，去别的网站东边抄一块，西边抄一块，就变成了咱家的东西。别人做瀑布流，我们也搞瀑布流，别人做下拉刷新，我们也用下拉刷新，可是从来没有独创的功能被人认可，这也是“一直在模仿，从未被超越”的典型了。</p>
+
+<p>再说到“用户体验”这个词上，世界上恐怕再也找不到这样一个百搭的词了。一个按钮加大点可以叫用户体验，换个字体也叫用户体验，但是众口难调，<a href="http://lesswrong.com/lw/dr/generalizing_from_one_example/">人的大脑是很奇怪的</a>，你喜欢的未必是人家喜欢的。所以真正需要做到的是在公司这个小范围内赢得众人的认同，然后将风格延续下去，这样才能让更多的用户接受乃至迷恋这种风格。有个很成功的例子就是苹果。</p>
+
+<p>这里又要说到关于设计师和程序员两类人的区别了。我认为一个好的设计师和一个好的程序员应该是可以互补并相互学习的。我以前的一个研发经理，技术上肯定是毋庸置疑的，但是也做得一手好画，从鼠绘到原型到效果图，无所不能。这样的人才非常难得，但并不是没有，一个诸葛亮是远远高于三个臭皮匠的。而更多的人可以在学习中达到这个高度。</p>
+
+<h2 id="section-2">理想中的组织架构</h2>
+
+<p>任何组织发展壮大之后，人员就会变得复杂，管理难度相应也会增大。职场如战场，公司就是一个缩小的社会，我们不妨就从历史中找个例子出来。清廷倒台之前，曾有一番关于“共和”还是“立宪”的争论，两派人争得不可开交，最后的结果我们知道，共和派取得了胜利。</p>
+
+<p>“共和”和“立宪”的根本区别还是权力集中在何处。相比帝制的独裁，“立宪”在名义上是说君主也要遵纪守法，权力还是集中于小部分人（真正的“立宪”君主只是个象征，内阁还是要选举的）。而“共和”则将权力下放于大众，政府则是大众意志的集中。</p>
+
+<p>开源软件的圣经<a href="http://en.wikipedia.org/wiki/The_Cathedral_and_the_Bazaar">《大教堂与市集》</a>其实也表达了这样一种思想。软件开发由自上而下的瀑布流发展到今天的开源模式，最有代表性的就是<a href="http://scottchacon.com/2011/08/31/github-flow.html">github flow</a>。就是任何人都有权利对产品提出改进意见，并且可以亲自来实现这些功能，而项目的管理者(owner)在更新自己的产品之余，还需要接受来自四面八方的(pull request)。owner有权力决定这些功能的加入，也有义务鉴定这个功能的风险。</p>
+
+<p>同样对公司的管理也是这样，权力不应该集中于个人，每个员工都应该有发言权。每个员工都应该有自由发挥的空间，来实现自己需要的功能。同时也不能忽略了合作的重要性，所以在日常的工作中，需要三两人一组，作为一个cell，可以是同一个部门中志同道合的人，也可以是不同部门中可以互补的人(比如设计师和程序员)。以cell为最小单位，来完成每个任务。最基本的目标：追求效率，追求自我提高，追求快乐工作。</p>
+
+<p>这对个人也是有要求的，就是每个人都需要能独当一面。我想谁都不会愿意与一个一无所知和整日拖沓的同事合作吧（MM除外）。同时，管理层(owner)的责任就是协调cell之间的工作，有权力决定cell提出的功能的去留，也有义务听取大家的意见。</p>
+
+<p>这也是我觉得创业公司比大公司好的一个原因，就是你有决定权，或者能将意见直接反馈到管理层，而不需要经过大公司死板结构的层层汇报。同样，这样的办事效率也是很多公司望尘莫及的。赠人玫瑰手有余香，以开放的心态接受他人，那么他人也会以同样的姿态来回报你。</p>
+
+<p>最后贴一个豆瓣上的小段子，娱乐一下。<a href="http://www.douban.com/note/157604143/">不同部门员工吃饭时聊些什么</a>。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-12T09:42:00+08:00" pubdate data-updated="true">2013.07.12</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/caprice/'>caprice</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1384,233 +1472,6 @@ setInterval(function() { document.title = document.title.substr(1) + document.ti
 
 
 	<a class='category' href='/blog/blog/categories/nginx/'>nginx</a>, <a class='category' href='/blog/blog/categories/translation/'>translation</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/05/10/xi-shu-php-zhong-de-na-xie-keng/">细数 Php 中的那些坑</a></h1>
-	<div class="entry-content">
-		<p>Wow，有逮到一个黑PHP的，作为“宇宙中最好的编程语言”，被黑只会加速它的改进，所以偶尔黑一下也无妨嘛~正所谓世界上只有两种语言，一种是被人黑的，另一种是没人用的。</p>
-
-<p>进入正题，下面开始罗列一些PHP需要防备的坑，以免一不小心掉了进去。(只包含在5.3中仍然存在的，5.4中已修复的会做一下说明)。</p>
-
-<h2 id="section">变量类型</h2>
-<p>说PHP入门门槛低，其中一个原因是我们不需要关心变量的类型，PHP为我们做了自动的转化。但事实上是这样吗？下面就是一个隐蔽的bug。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
-</span><span class="line"><span class="nb">var_dump</span><span class="p">(</span><span class="s1">&#39;string&#39;</span> <span class="o">==</span> <span class="mi">0</span><span class="p">);</span>
-</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
-</span><span class="line"><span class="x">==&gt; true</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>很神奇吧，php在这里自动将字符串作为整数0来比较了。由此引发了一系列问题：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
-</span><span class="line"><span class="nv">$a</span> <span class="o">=</span> <span class="s2">&quot;1234567&quot;</span><span class="p">;</span>
-</span><span class="line"><span class="nb">var_dump</span><span class="p">(</span><span class="nv">$a</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">]);</span>
-</span><span class="line"><span class="o">==&gt;</span> <span class="mi">1</span>  <span class="c1">//坑爹的等同于$a[0], php5.4会给出一个非法索引warning，但是仍然返回1，php5.3则连warning都没有。</span>
-</span><span class="line"><span class="nb">var_dump</span><span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$a</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">]));</span>
-</span><span class="line"><span class="o">==&gt;</span> <span class="k">true</span>  <span class="c1">//这是一个完全错误的结果，在php5.4中得到修复</span>
-</span><span class="line"><span class="nb">var_dump</span><span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;xxx&#39;</span><span class="p">)));</span>
-</span><span class="line"><span class="o">==&gt;</span> <span class="k">true</span>  <span class="c1">//这也是一个令人费解的bug，暂且还是理解为php将&#39;xxx&#39;转化成0了吧</span>
-</span><span class="line"><span class="nb">var_dump</span><span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="k">false</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;xxx&#39;</span><span class="p">)));</span>
-</span><span class="line"><span class="o">==&gt;</span> <span class="k">false</span>  <span class="c1">//与之相对的，这个结果确是符合预料的。问题是，在php中0==false呀。</span>
-</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>所以当一个表达式中同时包含0和字符串的时候就要特别留意了，以免被奇葩的bug坑了。</p>
-
-<h2 id="section-1">比较符号</h2>
-
-<h3 id="section-2">等号<code>==</code>与不等<code>!=</code></h3>
-
-<p>严格的来说，PHP中的<code>==</code>符号完全没有作用，因为<code>'string' == true</code>，而且<code>'string' == 0</code>，<strong>但是</strong>，<code>true != 0</code>。</p>
-
-<p>然后是<code>123 == "123foo"</code>，但是当你用引号将123包起来以明确说明这是一个字符串时，<code>'123' != "123foo"</code>，但是在现实中，谁会用常量比较呢，这个123换成了一个变量，而根据php的哲学，谁会在意这个变量是什么类型。</p>
-
-<p>在使用其他进制的时候这种混淆尤其明显，像下面的例子:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
-</span><span class="line"><span class="s2">&quot;133&quot;</span> <span class="o">==</span> <span class="s2">&quot;0133&quot;</span><span class="p">;</span>
-</span><span class="line"><span class="mi">133</span> <span class="o">==</span> <span class="s2">&quot;0133&quot;</span><span class="p">;</span>
-</span><span class="line"><span class="mi">133</span> <span class="o">==</span> <span class="mo">0133</span><span class="p">;</span>    <span class="c1">//因为0133是一个八进制数，转成十进制是91</span>
-</span><span class="line"><span class="s2">&quot;0133&quot;</span> <span class="o">!=</span> <span class="mi">91</span><span class="p">;</span>   <span class="c1">//字符串中的数字始终是十进制的，这个也可以理解</span>
-</span><span class="line"><span class="s2">&quot;0x10&quot;</span> <span class="o">==</span> <span class="mi">16</span><span class="p">;</span>   <span class="c1">//但是!，在十六进制中上面的说法又不成立了</span>
-</span><span class="line"><span class="s2">&quot;1e3&quot;</span> <span class="o">==</span> <span class="mi">1000</span><span class="p">;</span>  <span class="c1">//科学计数表示也一样</span>
-</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section-3">大于<code>&gt;</code>小于<code>&lt;</code></h3>
-
-<p>被搞糊涂的话，下面还有：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
-</span><span class="line"><span class="k">null</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">//这个可以理解</span>
-</span><span class="line"><span class="k">null</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>  <span class="c1">//但是你会想到这个吗？难道zend认为0&lt;-1？</span>
-</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>使用<code>==</code>时，参照javascript中的做法，我们可以使用<code>===</code>让比较更规范一些，但是<code>&gt;</code>,<code>&lt;</code>这些怎么办？只能尽量避免。</p>
-
-<h2 id="section-4">三元运算符</h2>
-
-<p>很多语言都提供了三元运算符<code>?:</code>，因为它足够简洁，也够geek。但是php中的表现与其他语言中又不同：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
-</span><span class="line"><span class="nv">$arg</span> <span class="o">=</span> <span class="s1">&#39;T&#39;</span><span class="p">;</span>
-</span><span class="line"><span class="nv">$vehicle</span> <span class="o">=</span> <span class="p">(</span> <span class="p">(</span> <span class="nv">$arg</span> <span class="o">==</span> <span class="s1">&#39;B&#39;</span> <span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;bus&#39;</span> <span class="o">:</span>
-</span><span class="line">             <span class="p">(</span> <span class="nv">$arg</span> <span class="o">==</span> <span class="s1">&#39;A&#39;</span> <span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;airplane&#39;</span> <span class="o">:</span>
-</span><span class="line">             <span class="p">(</span> <span class="nv">$arg</span> <span class="o">==</span> <span class="s1">&#39;T&#39;</span> <span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;train&#39;</span> <span class="o">:</span>
-</span><span class="line">             <span class="p">(</span> <span class="nv">$arg</span> <span class="o">==</span> <span class="s1">&#39;C&#39;</span> <span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;car&#39;</span> <span class="o">:</span>
-</span><span class="line">             <span class="p">(</span> <span class="nv">$arg</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span> <span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;horse&#39;</span> <span class="o">:</span>
-</span><span class="line">             <span class="s1">&#39;feet&#39;</span> <span class="p">);</span>
-</span><span class="line"><span class="k">echo</span> <span class="nv">$vehicle</span><span class="p">;</span>
-</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>猜猜结果是什么？’horse’，而我们预料中的（在其他语言中）应该是’train’。这种做法被称为”left associative”(左结合)，也即上面的表达式在php看来等同于<code>$vehicle = (condition) ? 'horse' : 'feet'</code>，所以你永远不可能得到中间的结果，这有违人的第一感觉，也与其他语言正好相反。</p>
-
-<h2 id="empty">empty</h2>
-
-<p>empty是我在php中非常喜欢的一个方法，这里我说错了，其实它是一个语言结构，而不是一个方法，但是它的使用方式又像一个方法。于是，empty()中包含运算式的话是会报错的，这也造成了它的局限性。</p>
-
-<h2 id="section-5">数组</h2>
-
-<p>php中的数组应该是一个’数组’,’hash表’,’集合’的结合体，这在使用上有它的方便之处，但是也造成了一些不易理解的地方，尤其体现在一些array相关的方法上。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
-</span><span class="line"><span class="k">array</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="k">array</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="s2">&quot;foo&quot;</span><span class="p">);</span>  <span class="c1">//这个时候，array就是数组</span>
-</span><span class="line"><span class="k">array</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="k">array</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;foo&quot;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">);</span>  <span class="c1">//这个时候，array又变成了无序hash表</span>
-</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>好吧，其实php中的array就是一个hash表，无论什么情况下。<code>array('bar', 'foo')</code>就是<code>array('0'=&gt;'bar', '1'=&gt;'foo')</code>，这样对理解array的一些奇怪表现应该会有帮助，但是下面的方法，有推翻了上面的论述，我将它算做一个bug：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
-</span><span class="line"><span class="nv">$first</span>  <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span> <span class="o">=&gt;</span> <span class="mi">123</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span> <span class="o">=&gt;</span> <span class="mi">456</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$second</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span> <span class="o">=&gt;</span> <span class="mi">456</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span> <span class="o">=&gt;</span> <span class="mi">123</span><span class="p">);</span>
-</span><span class="line"><span class="nb">var_dump</span><span class="p">(</span><span class="nb">array_diff</span><span class="p">(</span><span class="nv">$first</span><span class="p">,</span> <span class="nv">$second</span><span class="p">));</span>
-</span><span class="line"><span class="o">==&gt;</span> <span class="k">array</span><span class="p">()</span>
-</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>看到了吧，如果array是个hash表的话，$first和$second显然是不一样的。但是diff的结果却认为这是两个一样的数组。所以在愉快的使用array时，别忘了停下来，测试一下这些隐含的bug。</p>
-
-<h2 id="section-6"><code>++</code>与<code>--</code></h2>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="cp">&lt;?php</span>
-</span><span class="line"><span class="nv">$a</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
-</span><span class="line"><span class="nv">$a</span> <span class="o">++</span><span class="p">;</span>  <span class="c1">// $a == 1, 可以理解</span>
-</span><span class="line"><span class="nv">$a</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
-</span><span class="line"><span class="nv">$a</span> <span class="o">--</span><span class="p">;</span>  <span class="c1">// $a == null, 凌乱了</span>
-</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>解决这种<code>++</code>和<code>--</code>中的不一致的办法就是根本不用它们，用<code>+=</code>和<code>-=</code>代替。</p>
-
-<h2 id="section-7">命名习惯</h2>
-
-<p>下面这些就与bug无关了，而是php中过于随意的命名规则和变量顺序，像<code>htmlentities</code>和<code>html_entity_decode</code>，你能想象这两个方法是一张纸的两面吗？</p>
-
-<p>其实方法的命名不规范问题也不大，但是变量顺序混乱就要人命了，比如array中的一大堆方法，看起来都以array打头，相当清晰。但是你能料到<code>array_filter($input, $callback)</code>和<code>array_map($callback, $input)</code>两个方法的回调方法位置正好相反吗？我就经常记错<code>strpos</code>中哪个参数才是该被搜索的字符串。</p>
-
-<p>还有一个要命的地方就是很多参数的引用传递不明，比如上面的<code>array_filter</code>是对源对象的一个拷贝，但是<code>array_walk</code>却是一个引用。这些在<a href="http://www.php.net/">php.net</a>上有“粗略”的说明，我想谁也不希望一边翻文档一边写代码吧。</p>
-
-<h2 id="section-8">错误控制</h2>
-
-<p>关于php的错误控制其实是一个关于“配置优于约定”还是“约定优于配置”的讨论，而显然php选择了前者。在php中，有一个全局的配置文件“php.ini”，里面关于错误控制的两个选项<code>error_reporting</code>和<code>display_errors</code>分别代表错误等级和是否显示错误。</p>
-
-<p>这没有问题，问题是这些配置在运行时是可以修改的。有些框架或有些人为了掩盖无处不在的<code>notice</code>，将<code>error_reporting</code>等级调高，或者索性将<code>display_errors</code>设置为<code>off</code>，这会让其他开发者困惑，让错误无迹可寻。</p>
-
-<p>这也不是什么问题，最大的问题是php中还有<code>set_error_handler</code>和<code>set_exception_handler</code>，看字面意思，这两个都是用来控制错误的。但是在php中，<code>error</code>和<code>exception</code>却是不一样的。于是你要么在框架里写上两套一样的<code>handler</code>方法，要么就索性都不写，由php去决定这些错误该以什么形式表现。最糟糕的是只写一个或者写两套不一样的<code>handler</code>，这回让人困惑为什么有些错误以一种形式表现，而一些错误又以别的方式出现，而且要找到这些<code>handler</code>也不是一件容易的事，他们可能出现在任何一个文件的任何一个角落，除非你用<code>debug_backtrace</code>将堆栈信息都打印出来。</p>
-
-<h2 id="section-9">后记</h2>
-
-<p>以上大部分内容和例子来自<a href="http://me.veekun.com/blog/2012/04/09/php-a-fractal-of-bad-design/">PHP: a fractal of bad design</a>，一个狂热的python教徒。我不是python教徒，甚至连爱好者都说不上，所以写这篇文章只是为了记录php中存在的bug，以防一不小心被坑了。只有有了这些意识，才能在这门语言中更好的发挥，物尽其用。</p>
-
-<h1 id="section-10">相关链接</h1>
-<p><a href="http://me.veekun.com/blog/2012/04/09/php-a-fractal-of-bad-design/">PHP: a fractal of bad design</a></p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-10T15:59:00+08:00" pubdate data-updated="true">2013.05.10</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/php/'>php</a>
 
 
 </div>
