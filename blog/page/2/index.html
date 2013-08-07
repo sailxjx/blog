@@ -7,7 +7,7 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content="Wow，有逮到一个黑PHP的，作为“宇宙中最好的编程语言”，被黑只会加速它的改进，所以偶尔黑一下也无妨嘛~正所谓世界上只有两种语言，一种是被人黑的，另一种是没人用的。 进入正题，下面开始罗列一些PHP需要防备的坑，以免一不小心掉了进去。(只包含在5.3中仍然存在的，5.4中已修复的会做一下说明 &hellip;">
+	<meta name="description" content="最近用nginx配置中使用if遇到一些问题，碰巧想起以前在wiki中看到的这个页面，虽然我的问题可能和wiki中提到的不同，但是if还是能避免就避免吧 下面的内容翻译自IfIsEvil IfIsEvil (标题就不翻了，保持原汁原味的比较带感) 简介 &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -75,6 +75,281 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/05/15/nginx-if-is-evil/">[Nginx] if Is Evil</a></h1>
+	<div class="entry-content">
+		<p>最近用nginx配置中使用if遇到一些问题，碰巧想起以前在wiki中看到的这个页面，虽然我的问题可能和wiki中提到的不同，但是if还是能避免就避免吧</p>
+
+<p>下面的内容翻译自<a href="http://wiki.nginx.org/IfIsEvil">IfIsEvil</a></p>
+
+<h1 id="ifisevil-">IfIsEvil (标题就不翻了，保持原汁原味的比较带感)</h1>
+
+<h2 id="section">简介</h2>
+
+<p><a href="http://wiki.nginx.org/NginxHttpRewriteModule#if"><code>if</code></a>指令在使用在<code>location</code>上下文中时有一些问题。有时候它不能如你所愿，而是做一些完全相反的事情。有时候甚至会引发分段错误。通常来说应该尽量避免使用<code>if</code>。</p>
+
+<p>唯一100%可以安全的在<code>location</code>上下文中使用<code>if</code>的场景是：</p>
+
+<ul>
+  <li><a href="http://wiki.nginx.org/NginxHttpRewriteModule#return">return</a> …;</li>
+  <li><a href="http://wiki.nginx.org/NginxHttpRewriteModule#rewrite">rewrite</a> … last;</li>
+</ul>
+
+<p>任何其他情况都可能引发不可预知的行为，包括潜在的分段错误。</p>
+
+<p>需要注意的是<code>if</code>的行为并不是始终如一的。两个相同的请求不会在其中一个上失败而在另一个上成功，通过完善的测试并且对<code>if</code>有深刻理解的话，它可以使用。但是仍然强烈建议使用其他指令来代替。</p>
+
+<p>这些情况下可能你不能轻易的避免使用<code>if</code>，比如说你想测试一个变量，就没有类似的指令可以替代。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="nginx"><span class="line"><span class="k">if</span> <span class="s">(</span><span class="nv">$request_method</span> <span class="p">=</span> <span class="s">POST</span> <span class="s">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="kn">return</span> <span class="mi">405</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="k">if</span> <span class="s">(</span><span class="nv">$args</span> <span class="p">~</span> <span class="sr">post=140)</span><span class="p">{</span>
+</span><span class="line">  <span class="kn">rewrite</span> <span class="s">^</span> <span class="s">http://example.com/</span> <span class="s">permanent</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="section-1">用什么替代</h2>
+
+<p>在符合你的需求前提下，可以用<a href="http://wiki.nginx.org/NginxHttpCoreModule#try_files"><code>try_files</code></a>代替。在其他情况下用”return …“或”rewrite … last”。在有些情况下可以将<code>if</code>移动到server级别（在这里它是安全的，只有其他重写模块指令允许写在它里面）。</p>
+
+<p>例如，下面的的用法在处理请求时可以安全的修改<code>location</code>。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="nginx"><span class="line"><span class="k">location</span> <span class="s">/</span> <span class="p">{</span>
+</span><span class="line">    <span class="kn">error_page</span> <span class="mi">418</span> <span class="p">=</span> <span class="s">@other</span><span class="p">;</span>
+</span><span class="line">    <span class="kn">recursive_error_pages</span> <span class="no">on</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="kn">if</span> <span class="s">(</span><span class="nv">$something</span><span class="s">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="kn">return</span> <span class="mi">418</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1"># 一些配置</span>
+</span><span class="line">    <span class="kn">...</span>
+</span><span class="line"><span class="err">}</span>
+</span><span class="line">
+</span><span class="line"><span class="s">location</span> <span class="s">@other</span> <span class="p">{</span>
+</span><span class="line">    <span class="c1"># 其他配置</span>
+</span><span class="line">    <span class="kn">...</span>
+</span><span class="line"><span class="err">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>有些情况下，使用嵌入式脚本模块（<a href="http://wiki.nginx.org/EmbeddedPerlModule">嵌入式perl</a>，或其他<a href="http://wiki.nginx.org/3rdPartyModules">第三方模块</a>）来写这些脚本。</p>
+
+<h2 id="section-2">例子</h2>
+
+<p>下面是一些例子用来解释为什么”if is evil”。不要在家里尝试这些，你被警告过了。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+<span class="line-number">51</span>
+<span class="line-number">52</span>
+<span class="line-number">53</span>
+<span class="line-number">54</span>
+<span class="line-number">55</span>
+<span class="line-number">56</span>
+<span class="line-number">57</span>
+<span class="line-number">58</span>
+<span class="line-number">59</span>
+<span class="line-number">60</span>
+<span class="line-number">61</span>
+<span class="line-number">62</span>
+<span class="line-number">63</span>
+<span class="line-number">64</span>
+<span class="line-number">65</span>
+<span class="line-number">66</span>
+<span class="line-number">67</span>
+<span class="line-number">68</span>
+</pre></td><td class="code"><pre><code class="nginx"><span class="line"><span class="c1"># 下面用一些意想不到的bug来说明在location块中if is evil</span>
+</span><span class="line"><span class="c1"># 只有第二个header会被输出到响应，这事实上不是bug，它就是这样工作的。</span>
+</span><span class="line">
+</span><span class="line"><span class="k">location</span> <span class="s">/only-one-if</span> <span class="p">{</span>
+</span><span class="line">    <span class="kn">set</span> <span class="nv">$true</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="kn">if</span> <span class="s">(</span><span class="nv">$true</span><span class="s">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="kn">add_header</span> <span class="s">X-First</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kn">if</span> <span class="s">(</span><span class="nv">$true</span><span class="s">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="kn">add_header</span> <span class="s">X-Second</span> <span class="mi">2</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kn">return</span> <span class="mi">204</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># 请求会被发送到后端但是uri不会改变为&#39;/&#39;，这是if造成的</span>
+</span><span class="line">
+</span><span class="line"><span class="k">location</span> <span class="s">/proxy-pass-uri</span> <span class="p">{</span>
+</span><span class="line">    <span class="kn">proxy_pass</span> <span class="s">http://127.0.0.1:8080/</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="kn">set</span> <span class="nv">$true</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="kn">if</span> <span class="s">(</span><span class="nv">$true</span><span class="s">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="c1"># nothing</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># 因为if的问题，try_files不会起作用</span>
+</span><span class="line">
+</span><span class="line"><span class="k">location</span> <span class="s">/if-try-files</span> <span class="p">{</span>
+</span><span class="line">     <span class="kn">try_files</span>  <span class="s">/file</span>  <span class="s">@fallback</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">     <span class="kn">set</span> <span class="nv">$true</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">     <span class="kn">if</span> <span class="s">(</span><span class="nv">$true</span><span class="s">)</span> <span class="p">{</span>
+</span><span class="line">         <span class="c1"># nothing</span>
+</span><span class="line">     <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># nginx会引发段冲突</span>
+</span><span class="line">
+</span><span class="line"><span class="k">location</span> <span class="s">/crash</span> <span class="p">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="kn">set</span> <span class="nv">$true</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="kn">if</span> <span class="s">(</span><span class="nv">$true</span><span class="s">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="c1"># fastcgi_pass here</span>
+</span><span class="line">        <span class="kn">fastcgi_pass</span>  <span class="n">127.0.0.1</span><span class="p">:</span><span class="mi">9000</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kn">if</span> <span class="s">(</span><span class="nv">$true</span><span class="s">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="c1"># no handler here</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># 捕获的别名在if创造的嵌套location中不会被正确的继承</span>
+</span><span class="line">
+</span><span class="line"><span class="k">location</span> <span class="p">~</span><span class="sr">*</span> <span class="s">^/if-and-alias/(?&lt;file&gt;.*)</span> <span class="p">{</span>
+</span><span class="line">    <span class="kn">alias</span> <span class="s">/tmp/</span><span class="nv">$file</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="kn">set</span> <span class="nv">$true</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="kn">if</span> <span class="s">(</span><span class="nv">$true</span><span class="s">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="c1"># nothing</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>假如你发现了一个没有在上面列出来的例子 - 请将它报告给<a href="http://wiki.nginx.org/User:MaximDounin">MaximDounin</a>。</p>
+
+<h2 id="section-3">为什么这些问题存在但没有被修复</h2>
+
+<p><code>if</code>指令是重写模块的一部分而且是必须的。从另一方面说，nginx的配置通常来说是说明式的。有些用户希望尝试在<code>if</code>指令中使用非重写的指令，这造成了这种处境。它大部分时间是有效的，但是。。。瞧上面。</p>
+
+<p>看起来唯一正确的方式就是完全避免在<code>if</code>中使用非重写指令。这会破坏很多已存在的配置，所以这没有被实施。</p>
+
+<h2 id="if">假如你还是想用<code>if</code></h2>
+
+<p>假如你读了上面的内容仍然想用<code>if</code>：</p>
+
+<ul>
+  <li>请确保你知道它是怎么工作的。一些基础知识可以<a href="http://agentzh.blogspot.com/2011/03/how-nginx-location-if-works.html">看这里</a></li>
+  <li>做完整的测试</li>
+</ul>
+
+<p>你被警告过了。</p>
+
+<p><a href="http://wiki.nginx.org/IfIsEvil">原文链接</a></p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-15T17:36:00+08:00" pubdate data-updated="true">2013.05.15</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/nginx/'>nginx</a>, <a class='category' href='/blog/blog/categories/translation/'>translation</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1168,71 +1443,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/algorithm/'>algorithm</a>, <a class='category' href='/blog/blog/categories/code/'>code</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi/">[TDWTF] 数据库大师</a></h1>
-	<div class="entry-content">
-		<p>Maurice一直很好奇，他所在的公司经常不经过测试就把新成员招进来。这样看起来是为了节省了公司的时间和金钱。人力资源部门新招的“IT系统专家”在他刚来的那几个礼拜轻而易举的让Maurice毁三观了。</p>
-
-<p>这个奇葩专家很喜欢自吹自擂。无论谁在他附近都能听见他在吹牛。有一天，他向Maurice吹嘘他最得意的事情，是在一个大电信企业的成功故事。这个时候电话铃响了：有个分公司部门没法进入Maurice和他的团队维护的系统了。于是他对Ben说：</p>
-
-<p>“试试你能不能ping到他们的机器 - hostname是RHODODENDRON ”</p>
-
-<p>Ben停止了吹嘘，眨了眨眼睛，仿佛从一个美好的梦中醒了过来。“我该怎么做？”</p>
-
-<p>Maurice很好奇他的“专家”到底是哪个地方没听懂。“你。。。你打开命令提示符，然后输入ping RHODODENDRON。”</p>
-
-<p>“我知道，”Ben说道。“但是。。。我上哪儿去找命令提示符？”</p>
-
-<p>Maurice恨不得自己上了，但是这个时候分公司又打了个电话来请求更新状态。他不得不去亲自去处理另一个问题 - 一个配置错误的客户端。</p>
-
-<p>当Maurice接管后，Ben继续吹他的故事。虽然Maurice心不在焉，他还是注意到在Ben的掌控下，一个通常需要跑整晚的报告只跑了一个小时。事实上，很多同事称Ben为“数据库大师”。</p>
-
-<p>“。。。既然你需要管理数据库，”Ben愉快的宣称，“我就是你要找的人！”</p>
-
-<p>决定不再让Ben在命令行间闲逛，Maurice接受了他这个新同事的建议，给他展示他们的生产数据库，一个有着四十G数据的Sql Server数据库。考虑到数据库的增长量，Maurice向他的“数据库大师”征询意见。</p>
-
-<p>“第一件事，”Ben说道，启动管理工具，“确认里面到底有多少条数据。我喜欢说这是为数据库把脉。我们需要先统计总条目数。”</p>
-
-<p>在Ben咕哝了一阵子之后，Maurice从他肩头看过去。控制台上显示着一条SQL语法错误，仿佛在嘲笑这位“数据库大师”：</p>
-
-<blockquote>
-  <p>select count() rowID</p>
-</blockquote>
-
-<p>虽然数据库的增长模式仍然是个迷，Maurice却开始认识到“数据库大师”的“专业模式”。不仅仅他语句有问题，他还选错了数据库：他选择了Sql Server的内建数据库。嗯，当然也叫大师（’master’）。</p>
-
-<p>原文链接：<a href="http://thedailywtf.com/Articles/The-Database-Master.aspx">The Database Master</a></p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-11T12:41:00+08:00" pubdate data-updated="true">2013.04.11</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/joke/'>joke</a>, <a class='category' href='/blog/blog/categories/translation/'>translation</a>
 
 
 </div>
