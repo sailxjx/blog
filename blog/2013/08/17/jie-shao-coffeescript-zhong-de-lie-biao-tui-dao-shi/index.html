@@ -1,0 +1,222 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>介绍 coffeescript 中的列表推导式 - CodeBean</title>
+	<meta name="author" content="tristan">
+
+	
+	<meta name="description" content="列表推导式是一个很著名的语法结构，它的特点是能让代码更简短，优雅，而且易于阅读。捎带些函数式编程特点的语言都支持这种语法结构，例如lisp家族和python。coffeescript作为一门年轻的语言，自然而然的继承了这个特点。 我们先看看这种语法和普通循环的区别： 1
+2
+3
+4
+5
+6
+arr &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="CodeBean" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">CodeBean</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:sailxjx.github.io/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/102588932744890343699?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:sailxjx.github.io/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h1 class="title">介绍 Coffeescript 中的列表推导式</h1>
+	<div class="entry-content"><p><a href="http://en.wikipedia.org/wiki/List_comprehension">列表推导式</a>是一个很著名的语法结构，它的特点是能让代码更简短，优雅，而且易于阅读。捎带些函数式编程特点的语言都支持这种语法结构，例如lisp家族和python。coffeescript作为一门年轻的语言，自然而然的继承了这个特点。</p>
+
+<p>我们先看看这种语法和普通循环的区别：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">arr = </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">v</span> <span class="k">of</span> <span class="nx">arr</span>  <span class="c1"># use for..of loop</span>
+</span><span class="line">    <span class="nx">arr1</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span> <span class="o">*</span> <span class="mi">2</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">arr2 = </span><span class="p">(</span><span class="nx">v</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">v</span> <span class="k">of</span> <span class="nx">arr</span><span class="p">)</span>  <span class="c1"># use list comprehension</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>可以看到本来需要两行的代码变成了一行，这对于略有装逼犯情结的码农来说，心理上的满足感自然是无与伦比的。优点也是显而易见的，就是可读。在有些语言中，这种语法还会产生一个新的作用域，不会污染外界的变量，比方说ruby。</p>
+
+<p>我们再来看看一些进阶用法，下面是带上<code>if</code>条件的列表推导式：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">arr = </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+</span><span class="line"><span class="nv">arr1 = </span><span class="p">(</span><span class="nx">v</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">v</span> <span class="k">of</span> <span class="nx">arr</span><span class="p">)</span> <span class="k">if</span> <span class="nx">arr</span><span class="o">?</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>一般的列表推导式返回的结果是一个一维数组，这在我们需要对某个<code>object</code>中的值做转换时会产生不便（<code>key</code>会丢失），这个时候我们可以采用一种变通的方法：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">obj = </span><span class="p">{</span><span class="nv">a: </span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="nv">b: </span><span class="s">&#39;b&#39;</span><span class="p">}</span>
+</span><span class="line"><span class="nx">obj1</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span> <span class="o">+</span> <span class="nx">v</span> <span class="k">for</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="k">of</span> <span class="nx">obj1</span> <span class="k">if</span> <span class="nx">obj1</span><span class="o">?</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>没加两边的括号和加了括号是有区别的，像上面这种结构，可以理解为将<code>for..of</code>结构中的第二行搬到了等号左边，其中的临时变量<code>k, v</code>当然也是可以直接使用的，而且后面<code>if</code>条件是对整个循环生效的，而不是单独加在每个循环中的，比较好理解吧。</p>
+
+<p>熟练掌握了列表推导式之后，编写代码的时候会更加得心应手，对于代码重构，想必也是极好的。</p>
+
+<h2 id="section">相关文档</h2>
+
+<ul>
+  <li><a href="http://userinexperience.com/?p=753">CoffeeScript Object Comprehensions </a></li>
+</ul>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-17T16:58:00+08:00" pubdate data-updated="true">2013.08.17</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/code-style/'>code style</a>, <a class='category' href='/blog/blog/categories/coffee/'>coffee</a>
+
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2013
+
+    tristan
+
+</footer>
+	<script src="/blog/javascripts/slash.js"></script>
+<script src="/blog/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sailxjx.github.io/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi/';
+        var disqus_url = 'http://sailxjx.github.io/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33186961-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+
+</body>
+</html>
