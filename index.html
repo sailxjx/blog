@@ -7,12 +7,7 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content="列表推导式是一个很著名的语法结构，它的特点是能让代码更简短，优雅，而且易于阅读。捎带些函数式编程特点的语言都支持这种语法结构，例如lisp家族和python。coffeescript作为一门年轻的语言，自然而然的继承了这个特点。 我们先看看这种语法和普通循环的区别： 1
-2
-3
-4
-5
-6 &hellip;">
+	<meta name="description" content="今天回家的路上，竟然刮起了大风，虽然骑行艰难，但是想想公交中的闷热，倒是觉得凉爽多了。 在路上的时间是无聊的，于是就喜欢胡思乱想，很多自以为很棒的点子其实都是在这种不经意间想到的，办公室里的久坐反而显得效率低下了。回味一下最近做的几个项目，高屋建瓴的想想当初的设计， &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -80,6 +75,70 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi/">软件极简主义</a></h1>
+	<div class="entry-content">
+		<p>今天回家的路上，竟然刮起了大风，虽然骑行艰难，但是想想公交中的闷热，倒是觉得凉爽多了。</p>
+
+<p>在路上的时间是无聊的，于是就喜欢胡思乱想，很多自以为很棒的点子其实都是在这种不经意间想到的，办公室里的久坐反而显得效率低下了。回味一下最近做的几个项目，高屋建瓴的想想当初的设计，突然很想写一些关于软件设计的文章。就着饮料和巧克力（来点酒么？），今天就来写写软件极简主义吧。</p>
+
+<p>Google了一圈，也没找到对“软件极简主义”的定义，姑且当做是我的独创吧。一般认为“极简主义”是设计界的一种风潮，但是软件发展至今，好像也渐渐有了这样的趋势，甚至我认为这是未来的必然，我们经常听人说“flexible”这个词，字面上来看就是“灵活的”，但是具体到这个软件是否灵活，就不太好判断了。但是，简单的软件，一定是灵活的。</p>
+
+<h2 id="section">极简主义的的大敌</h2>
+
+<p>软件极简主义的三个大敌：配置文件，冗余的参数，和大量复杂的接口。</p>
+
+<p>很多人热爱配置，迷恋配置，认为越多的配置项意味着软件越强大，适用范围越广，但这是九十年代的事了。实际我们仔细翻翻常用的软件，90%的配置都是多余，没有人明白他是做什么的，也没有人希望去改变他。比方很多软件的configure文件，常常能列出上百个配置项，但是我们真的需要这么多吗？不，我们需要默认的那些值就行了。何谓默认？因为软件的设计者觉得这些是最优化也最有可能被选择的配置，那么既然是最优配置，我们又有什么理由去改变他们？</p>
+
+<p>再说说冗余的参数，linux中有一个非常强大的命令’tar’，从man文件看来他起码有二十来个参数，但是我真的需要这么多参数吗？其实我只要记住压缩是<code>-c</code>，解压是<code>-x</code>就可以了，那么何必为了1%的功能而去加上这99%的参数呢。</p>
+
+<p>最后是复杂的接口，举个栗子，全文搜索引擎solr非常强大，能满足我们对于文档索引的各种需求。但是他使用起来可不简单，原因我想就是因为他那种sql式的查询接口，把一件很单纯的事情搞复杂了。我们来设想一下，需要找出包含某几个关键词的文章，必要的条件是什么？关键词，文档，没了。而文档是存储在服务器的，为什么我们提供了关键词之后，仍需加上各种条件，他才能告诉我们想要的答案呢？我想软件发展到一定的智能，他就应该像一部能说话的百科全书，提问，然后告诉我们答案即可。</p>
+
+<p>凡事都要对比着看，所以我们找点软件来对比一下。</p>
+
+<h2 id="redis--sql">redis 与 sql</h2>
+
+<p>redis很灵巧，所有源代码加起来不满5M，但是他很强大，hash结构能取代我们80%对于sql的需求。他也有配置文件，但是选项很少，而且每一项都有详尽的注释，并且使用默认配置就可以应对大部分的情况。唯一值得诟病的就是他的接口种类繁多，但好在这些接口很有规律可循，你只需了解了redis的基础数据结构，那么跟着官网的文档就很容易搞懂所有接口的用途，而且大部分的接口都只接受3个以内的参数，这可好记多了。我刚接触redis的时候，只花了半个小时就能玩得起来，我想面对sql恐怕没人能这么轻松的掌握吧。</p>
+
+<h2 id="cake--grunt">cake 与 grunt</h2>
+<p><a href="https://github.com/jashkenas/coffee-script/blob/master/src/cake.coffee">cake</a>和<a href="https://github.com/gruntjs/grunt">grunt</a>是nodejs中两个管理任务的模块，后者的名声更大一些，前者甚至不能说是一个模块，他只是coffeescript中附带的一个小工具。我曾尝试使用grunt来做任务管理，但是当我看到grunt官网那长长的一段initConfig时，就望而却步了。就像是我希望在墙里敲个钉子，你却给了我一台破城锤。我只不过想要给每个任务起个名字方便我以后调用和查阅而已，所以cake的一行命令足矣。</p>
+
+<h2 id="zmq--rabbitmq">zmq 与 rabbitmq</h2>
+<p>zmq是我见过的最具有极简主义风格的软件（组件）。一方面他要面对的任务非常繁杂，在异步通信中所有我们可能遇到的情况，他都为我们考虑到了，但是他又将底层的复杂问题掩盖起来，让我们看到一个光滑的表面，深藏功与名。同样来看看他的同行rabbitmq，关键词：中心服务，多线程，模式单一，最后一个特点，慢！而仅有1.7M的zmq，快是最直观的感觉，而分布式和扩展性则是锦上添花。有人说zmq就像乐高积木，每个人都能搭出他想要的形状，这话一点都不错。</p>
+
+<h2 id="section-1">不是结束的结语</h2>
+<p>软件的设计日新月异，将来肯定会接触到更多优秀的软件，也许哪天我想法变了，也许哪天遇到了更神奇的方案，可能我会补充在这里。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-17T21:03:00+08:00" pubdate data-updated="true">2013.09.17</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/caprice/'>caprice</a>, <a class='category' href='/blog/blog/categories/software/'>software</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1197,69 +1256,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/coffeescript/'>coffeescript</a>, <a class='category' href='/blog/blog/categories/nodejs/'>nodejs</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp/">Mysql 中的 Date Datetime 和 Timestamp</a></h1>
-	<div class="entry-content">
-		<p>mysql中用于表示时间的三种类型date, datetime, timestamp (如果算上int的话，四种) 比较容易混淆，下面就比较一下这三种类型的异同</p>
-
-<h1 id="section">相同点</h1>
-
-<ul>
-  <li>都可以用于表示时间</li>
-  <li>都呈字符串显示</li>
-</ul>
-
-<h1 id="section-1">不同点</h1>
-
-<ul>
-  <li>顾名思义，date只表示’YYYY-MM-DD’形式的日期，datetime表示’YYYY-MM-DD HH:mm:ss’形式的日期加时间，timestamp与datetime显示形式一样。</li>
-  <li>date和datetime可表示的时间范围为’1000-01-01’到’9999-12-31’，timestamp由于受32位int型的限制，能表示’1970-01-01 00:00:01’到’2038-01-19 03:14:07’的UTC时间。</li>
-  <li>mysql在存储timestamp类型时会将时间转为UTC时间，然后读取的时候再恢复成当前时区。
-假如你存储了一个timestamp类型的值之后，修改了mysql的时区，当你再读取这个值时就会得到一个错误的时间。而这种情况在date和datetime中不会发生。</li>
-  <li>timestamp类型提供了自动更新的功能，你只需要将它的默认值设置为CURRENT_TIMESTAMP。</li>
-  <li>除了date是保留到天，datetime和timestamp都保留到秒，而忽略毫秒。</li>
-</ul>
-
-<h1 id="section-2">时间格式</h1>
-
-<p>mysql提供了一种比较宽松的时间字符串格式用于增删改查。参考<a href="http://wwp.greenwichmeantime.com/info/iso.htm">iso时间格式</a>，一般习惯于写成’2013-06-05 16:34:18’。但是你也可以简写成’13-6-5’，但是这样容易造成混淆，比如mysql也会把’13:6:5’也当做年月日处理，而当’13:16:5’这种形式，则被mysql认为是不正确的格式，会给出一个警告，然后存入数据库的值是’0000-00-00 00:00:00’。</p>
-
-<p>手册中还特意提到了一种情况，就是当年的值是0~69时，mysql认为是2000~2069，而70~99时则认为是1970~1999。我感觉是一种画蛇添足了。</p>
-
-<p>总之，以不变应万变，使用’YYYY-MM-DD HH:mm:ss’格式总是不会错的。</p>
-
-<p>原文链接：<a href="http://dev.mysql.com/doc/refman/5.1/en/datetime.html">datetime</a></p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-06-05T11:02:00+08:00" pubdate data-updated="true">2013.06.05</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/mysql/'>mysql</a>
 
 
 </div>

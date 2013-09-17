@@ -7,7 +7,7 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content="javascript中随处可见的callback对于流程控制来说是一场灾难，缺点显而易见： 没有显式的return，容易产生多余流程，以及由此引发的bug。 造成代码无限嵌套，难以阅读。 下面就来说说怎么解决避免上述的问题。 第一个问题是一个习惯问题， &hellip;">
+	<meta name="description" content="mysql中用于表示时间的三种类型date, datetime, timestamp (如果算上int的话，四种) 比较容易混淆，下面就比较一下这三种类型的异同 相同点 都可以用于表示时间 都呈字符串显示 不同点 顾名思义，date只表示’YYYY-MM-DD’形式的日期，datetime表示’ &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -75,6 +75,69 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp/">Mysql 中的 Date Datetime 和 Timestamp</a></h1>
+	<div class="entry-content">
+		<p>mysql中用于表示时间的三种类型date, datetime, timestamp (如果算上int的话，四种) 比较容易混淆，下面就比较一下这三种类型的异同</p>
+
+<h1 id="section">相同点</h1>
+
+<ul>
+  <li>都可以用于表示时间</li>
+  <li>都呈字符串显示</li>
+</ul>
+
+<h1 id="section-1">不同点</h1>
+
+<ul>
+  <li>顾名思义，date只表示’YYYY-MM-DD’形式的日期，datetime表示’YYYY-MM-DD HH:mm:ss’形式的日期加时间，timestamp与datetime显示形式一样。</li>
+  <li>date和datetime可表示的时间范围为’1000-01-01’到’9999-12-31’，timestamp由于受32位int型的限制，能表示’1970-01-01 00:00:01’到’2038-01-19 03:14:07’的UTC时间。</li>
+  <li>mysql在存储timestamp类型时会将时间转为UTC时间，然后读取的时候再恢复成当前时区。
+假如你存储了一个timestamp类型的值之后，修改了mysql的时区，当你再读取这个值时就会得到一个错误的时间。而这种情况在date和datetime中不会发生。</li>
+  <li>timestamp类型提供了自动更新的功能，你只需要将它的默认值设置为CURRENT_TIMESTAMP。</li>
+  <li>除了date是保留到天，datetime和timestamp都保留到秒，而忽略毫秒。</li>
+</ul>
+
+<h1 id="section-2">时间格式</h1>
+
+<p>mysql提供了一种比较宽松的时间字符串格式用于增删改查。参考<a href="http://wwp.greenwichmeantime.com/info/iso.htm">iso时间格式</a>，一般习惯于写成’2013-06-05 16:34:18’。但是你也可以简写成’13-6-5’，但是这样容易造成混淆，比如mysql也会把’13:6:5’也当做年月日处理，而当’13:16:5’这种形式，则被mysql认为是不正确的格式，会给出一个警告，然后存入数据库的值是’0000-00-00 00:00:00’。</p>
+
+<p>手册中还特意提到了一种情况，就是当年的值是0~69时，mysql认为是2000~2069，而70~99时则认为是1970~1999。我感觉是一种画蛇添足了。</p>
+
+<p>总之，以不变应万变，使用’YYYY-MM-DD HH:mm:ss’格式总是不会错的。</p>
+
+<p>原文链接：<a href="http://dev.mysql.com/doc/refman/5.1/en/datetime.html">datetime</a></p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-05T11:02:00+08:00" pubdate data-updated="true">2013.06.05</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/mysql/'>mysql</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1379,96 +1442,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/joke/'>joke</a>, <a class='category' href='/blog/blog/categories/translation/'>translation</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3/">Awk 学习笔记(3)</a></h1>
-	<div class="entry-content">
-		<p>最近线上服务出了一点问题，然后搞了一堆的log来分析。log的格式很乱，需要整理一下，虽然几个月前特意看了一下awk，但是过了这么久，也忘得差不多了，正好靠这次机会练练手，把失去的记忆找回来。</p>
-
-<p>log中的每条数据都被分成了多行，而且都存在一个文件中，现在文件已经有8G的大小。现在要做的就是将这些多行的数据合并成每条一行，只取有用的部分。</p>
-
-<p>目标明确之后，就是编码啦。</p>
-
-<p>先以日期开头的行为单条数据的起点，这个日期就通过正则来匹配出来，然后再通过substr来截取。在使用substr的时候貌似awk不支持负数输入，没办法，截取末尾字符的时候只能先计算整行的长度再减去要截取的长度了。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="awk"><span class="line"><span class="k">if</span> <span class="p">(</span><span class="o">$</span><span class="mi">0</span> <span class="o">~</span> <span class="sr">/^2013.*[0-9]&#39;$/</span><span class="p">)</span> <span class="p">{</span>  <span class="c1"># id line</span>
-</span><span class="line">        <span class="nx">len</span> <span class="o">=</span> <span class="kr">length</span><span class="p">(</span><span class="o">$</span><span class="mi">0</span><span class="p">)</span>
-</span><span class="line">        <span class="nx">date</span> <span class="o">=</span> <span class="kr">substr</span><span class="p">(</span><span class="o">$</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-</span><span class="line">        <span class="nx">line</span> <span class="o">=</span> <span class="kr">substr</span><span class="p">(</span><span class="o">$</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">19</span><span class="p">)</span> <span class="kr">substr</span><span class="p">(</span><span class="o">$</span><span class="mi">0</span><span class="p">,</span> <span class="nx">len</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>awk中的字符串连接也比较搞，不需要<code>+,.</code>等等符号，直接接上就好了，中间可以加上” “来分隔。</p>
-
-<p>下面就是将每行的匹配数据加到line变量后面，最后，一起print出来，这里重定向到文件也是一个不错的选择</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="awk"><span class="line"><span class="k">if</span> <span class="p">(</span><span class="o">$</span><span class="mi">0</span> <span class="o">~</span> <span class="sr">/\[template\]/</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">        <span class="nx">line</span> <span class="o">=</span> <span class="nx">line</span><span class="s2">&quot; &quot;</span><span class="o">$</span><span class="mi">3</span>
-</span><span class="line">        <span class="kr">print</span> <span class="nx">line</span> <span class="o">&gt;&gt;</span> <span class="s2">&quot;desc.log.&quot;</span><span class="nx">date</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>下面还有一个需求就是根据统计类似数据再排排序，awk的数组可以实现统计关键词出现的次数，不过它数组的排序功能实在是太弱了，所以还需要结合sort命令。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>awk <span class="s1">&#39;{a[$4] += 1}END{for (k in a) print a[k], k}&#39;</span> <span class="nv">$i</span> | sort -rn &gt; <span class="s2">&quot;emailsort_${i}&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>大功告成。</p>
-
-<p>下面整理一下笔记，总结一下用到的东西</p>
-
-<ul>
-  <li>正则表达式： 根据gawk的官方文档，原版貌似不支持所谓的<code>interval expression</code>，也就是一些<code>\w</code>,<code>\d</code>之类的东西，实际也确实如此，gawk对它进行了扩展，加上<code>--re-interval</code>之后就行了。</li>
-  <li>substr： 截取字符串</li>
-  <li><code>&gt;,&gt;&gt;</code>： 重定向，跟shell一样，不过后面的文件名需要加上双引号</li>
-  <li>数组： 数组的遍历使用<code>for(k in a) print k</code>的方式，排序有asort方法，不过这样排序之后key就全部丢掉了，我还是倾向于选择通过管道让<code>sort</code>来干这事。</li>
-</ul>
-
-<h2 id="link-to">Link to</h2>
-<ul>
-  <li><a href="/blog/blog/2013/01/16/awk-xue-xi-bi-ji-1/">awk学习笔记1</a></li>
-  <li><a href="/blog/blog/2013/01/21/awk-xue-xi-bi-ji-2/">awk学习笔记2</a></li>
-</ul>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-17T16:11:00+08:00" pubdate data-updated="true">2013.04.17</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/awk/'>awk</a>, <a class='category' href='/blog/blog/categories/note/'>note</a>
 
 
 </div>
