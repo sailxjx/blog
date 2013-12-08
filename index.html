@@ -7,7 +7,7 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content="今天回家的路上，竟然刮起了大风，虽然骑行艰难，但是想想公交中的闷热，倒是觉得凉爽多了。 在路上的时间是无聊的，于是就喜欢胡思乱想，很多自以为很棒的点子其实都是在这种不经意间想到的，办公室里的久坐反而显得效率低下了。回味一下最近做的几个项目，高屋建瓴的想想当初的设计， &hellip;">
+	<meta name="description" content="注：本文作者是npm的作者Isaac Z. Schlueter，也是nodejs的主要作者之一 “我们需要找到更好的方法来为开源软件筹资”，这事我近几年反复思考的一个问题，下面我要说的也许是一种解决方案。 大部分开发者传统的合作方式下都干得不错。激励方式也很简单：努力工作，改善产品， &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -75,6 +75,94 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part-1/">金钱与开源（part1）</a></h1>
+	<div class="entry-content">
+		<blockquote>
+  <p>注：本文作者是npm的作者<a href="http://blog.izs.me/">Isaac Z. Schlueter</a>，也是nodejs的主要作者之一</p>
+</blockquote>
+
+<p>“我们需要找到更好的方法来为开源软件筹资”，这事我近几年反复思考的一个问题，下面我要说的也许是一种解决方案。</p>
+
+<p>大部分开发者传统的合作方式下都干得不错。激励方式也很简单：努力工作，改善产品，帮助团队完成产品，然后取得共赢。当一切正常时，这种方式很好。你会发现自己很有归属感，而且在不断的自我提高。</p>
+
+<p>但这并不适用于所有人。出于愚蠢的安全性考虑，你可能必须牺牲一些灵活性和创造力。至少，它会限制你的软件的适用范围，因此它能提供的价值也仅止于此。</p>
+
+<p>自从我开始全身心投入编写开源软件，我感觉非常愉快，而且更有创造力了。事实上，我不会接受一份要求我放弃编写开源软件的工作，我也很有幸能有足有的资本来避免做出这种荒唐的决定。当然，这也可能导致很坏的结果，但是我很幸运的用这些时间来写了<a href="https://npmjs.org/">npm</a>，然后<a href="http://www.joyent.com/">Joyent</a>和<a href="http://nodejs.org/">Node.js</a>开始迅速发展起来，现在我在干的正是这些。</p>
+
+<h2 id="section">艺术家和浪客</h2>
+
+<p>可悲的是，很多有望成为开源软件界超级明星的人并没有我这么幸运。没有钱是万万不能的，而最实际的赚钱方式就是找一个工作。</p>
+
+<p>很多雇主希望“让”雇员用“私人的”时间来处理自己的项目，或者至少能贡献给公司的项目（通着这些项目会带有一份公司的保密条款）。这并不是很明智，“自由(free)”时间并不“免费(free)”，将精力全花在工作上会让你失去应有的生活。</p>
+
+<p>有些人则放弃了在公司工作的机会，成为了一个自由职业者，换句话说，一个挨着饿的艺术家。他们用最少的时间来接一些活，然后将剩余的时间和创造力花在开发开源软件上。但这是一种很窘迫的生活方式，特别是需要供孩子上学的时候，甚至连抚养孩子都有困难。</p>
+
+<p>这就是我们和社会面临的困境。开源软件给软件工业带来了巨大的好处，也就意味着，给所有工业领域提供了巨大的帮助。假如专注于开源软件的都是一些幸运和热情的人，那么这里面就存在很多未经发掘的潜力股。</p>
+
+<p>假如我们想继续从开源软件中得到好处，特别是想让这种好处最大化的话，我们就得找出一种为它买单的方式。除了能让开源软件开发者吃饱喝足以外，付款也能将他们的努力与现实世界联系在一起。</p>
+
+<p>下面我会提到一些这个领域的开发现状。每一个都一些致命的缺点，而且我还能找到解决这些问题的办法。我不认为这会让我们觉得悲观，这些需要解决的问题反而让我们觉得正朝正确的方向而行。</p>
+
+<h2 id="section-1">合同，训练，咨询……</h2>
+
+<p>许多开发者通过签订短期合同来为喜欢的项目工作。虽然这有时是一个不错的赚钱养家的方式。但是我并不认为它从根源上解决了开源软件筹资的问题。</p>
+
+<p>这与成为一个传统雇员，然后用空余时间来处理开源项目没什么不同。这并不能让开发者直接通过他们的开源项目来盈利。就像做培训和别的一些活一样，这并没有真正的为开源软件筹资，这只不过是你通过开源软件找到了一份工作而已。</p>
+
+<p>话虽如此，合同当然可以资助一个人其他的开源活动，同样提供临时援助也能帮助创业者步入正轨。</p>
+
+<h2 id="section-2">专职员工</h2>
+
+<p>一种为开源软件筹资的方式是让雇员在工作时间为开源项目做贡献。这正是Node核心项目的运作方式。Joyent，StrongLoop, Voxer, Mozilla, LearnBoost, 和Microsoft的雇员都会将他们的部分工作时间花在Node上面。</p>
+
+<p>（注：我没有在这里囊括那些用私人时间开发项目的人。这当然也很重要，但是“动用你的私人时间来做项目”正是这里提到的问题。）</p>
+
+<p>这样的效果相当好，事实上带来的好处是，能让软件更符合他们大部分用户的需求。当公司付给你薪水的时候，你就会觉得有必要为自己的代码负责。假如一个团队完全不考虑用户需求的开发软件，这会显得相当的不靠谱。</p>
+
+<p>任何能给开源软件生态系统带来益处的方法都值得鼓励。
+但是这种方式也存在一些问题。</p>
+
+<p>当一个社区项目由现实中的企业驱动时，往往企业会利用它的优势地位，来做出一些符合自己利益的改变。从长远来看，这会损害项目的可靠性和预期目标。Joyent的高级副总裁Bryan Cantrill对这些事情可能导致的严重后果有一个很精彩的演讲：<a href="http://smartos.org/2012/07/27/corporate-open-source-anti-patterns-doing-it-wrong/">企业反开源模式：大错特错</a></p>
+
+<p>就算企业能考虑尽量避免上面的情况发生（这样做得很少），表面上的优待条件也会给社区带来损害。开源社区的很多人认为企业的利益本质上就是邪恶的。这样说并不客观，但是考虑到这些企业的反开源模式，这样说也并不是毫无道理。</p>
+
+<p>此外，这种解决方案的可能性微乎其微，作为企业雇员，那么开源项目必须与企业的利益相关，这就很难发生了。当然，大多数使用Node的公司可能不能让Nodejs核心开发者雇员做出一个像样的商业应用，嗯，是运气的问题。</p>
+
+<blockquote>
+  <p>实在太长了，未完待续… :)</p>
+</blockquote>
+
+<h1 id="section-3">参考</h1>
+
+<p><a href="https://medium.com/building-gittip/d44a1953749c">Money and Open Source</a></p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-08T14:24:00+08:00" pubdate data-updated="true">2013.12.08</time></div>
+	<div class="tags">
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1093,169 +1181,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/blog/categories/shell/'>shell</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian/">使用 Coffeescript 的注意点</a></h1>
-	<div class="entry-content">
-		<p><a href="https://github.com/jashkenas/coffee-script">coffeescript</a>是javascript的一个方言，随着javascript在前后端的流行，它在<a href="https://github.com/languages">github</a>的排名也扶摇直上，最近终于挤掉高帅富<a href="https://github.com/languages/Objective-C">Objective-C</a>跻身前十，可喜可贺。</p>
-
-<p>虽然coffeescript号称”It’s just javascript”，但是相比较而言，仍然是添加了很多有趣的特性，大部分特性都是去粗取精，去伪存真，让js玩家喜闻乐见，让旁观路人不明觉厉，但是也随之带来了一些容易忽视的问题，不得不提一下，以免以后碰到后不知所措。</p>
-
-<h1 id="section">重载的符号</h1>
-
-<p>coffeescript重载了javascript中的一些符号和语法结构，最常用的就是<code>==</code>和<code>in</code>。</p>
-
-<h2 id="section-1"><code>==</code></h2>
-<p>在js中最为人诟病的就是<code>==</code>符号表意不明，所以很多严谨的js开发者就强迫自己在比较时尽可能的使用<code>===</code>，coffeescript在这一点上做的更绝，你不能使用<code>===</code>，因为它将所有的<code>==</code>都转化成了<code>===</code>。这样对于一些经常需要在两种语言之间切换的码农来说，就是一种考验了。</p>
-
-<h2 id="in"><code>in</code></h2>
-<p>在js中，遍历一个数组或hash对象可以使用<code>for(var i in arr)</code>的语言结构，这个时候遍历得到的<code>i</code>其实是数组的下标或者hash的key。coffeescript对<code>in</code>做了重载，使其更符合自然语义，遍历出的是数组的值和hash的value。同时引入<code>of</code>操作符，可以用它来代替原生的<code>in</code>，遍历出数组的下标，如<code>for i of arr</code>。</p>
-
-<h1 id="class">class</h1>
-
-<p>原生的js中是没有class的概念的，但是有经验的码农会用prototype模型来将方法打包成class，以实现代码的重复利用。coffeescript中提供了class关键词，让类的实现和继承更加简单，但是也由此引发一些问题。假如说上面的问题只是人所共知的新特性的话，下面这些就是需要在编码时注意绕行的坑了。</p>
-
-<h2 id="section-2">变量名与类名</h2>
-
-<p>coffeescript对于类型和变量名并没有强制性的格式要求，这在其他语言中也不会出现问题，因为可以通过类型检查来区分两者，但是在coffeescript中，其实类和变量都是通过<code>var</code>关键词生成的变量，而在coffeescript语法中又禁用了<code>var</code>（这样就无法人为的指定变量的作用域，虽然coffeescript会比较智能的分配的作用域）。这在一般情况下也没有问题，直到碰到了下面的代码：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="k">class</span> <span class="nx">demo</span>
-</span><span class="line">  <span class="nv">foo1: </span><span class="o">-&gt;</span>
-</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">demo</span>
-</span><span class="line">    <span class="k">return</span> <span class="nx">@</span>
-</span><span class="line">  <span class="nv">foo2: </span><span class="o">-&gt;</span>
-</span><span class="line">    <span class="nv">demo = </span><span class="p">[]</span>
-</span><span class="line">    <span class="k">return</span> <span class="nx">@</span>
-</span><span class="line">
-</span><span class="line"><span class="k">new</span> <span class="nx">demo</span><span class="p">().</span><span class="nx">foo1</span><span class="p">().</span><span class="nx">foo2</span><span class="p">().</span><span class="nx">foo1</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line"><span class="o">==&gt;</span> <span class="p">[</span><span class="nb">Function</span><span class="o">:</span> <span class="nx">demo</span><span class="p">]</span>
-</span><span class="line"><span class="o">==&gt;</span> <span class="p">[]</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>同样的两次调用foo1方法，得到的结果却是不同的，这是因为foo2中的变量与类名冲突了，而且他们处于同一个作用域，这样foo2方法就变成了一个隐藏的地雷，踩到就爆炸。避免这种情况的一种做法是在命名上做区分，比如类命名必须以大字母开头，变量必须以小写字母开头，这样就不会造成这两者的混淆。</p>
-
-<h2 id="section-3">类成员变量</h2>
-
-<p>使用类的一个好处就是可以初始化一些变量，让这个类的所有方法共享，而又不会影响外层作用域。但是需要注意的是，javascript中对于数组和对象是引用传递，在coffeescript类中使用这两种类型作为成员变量时，就会产生一些不曾期待的后果。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="k">class</span> <span class="nx">Demo</span>
-</span><span class="line">  <span class="nv">member: </span><span class="p">[]</span>
-</span><span class="line">  <span class="nv">setMember: </span><span class="nf">(str) -&gt;</span>
-</span><span class="line">    <span class="nx">@member</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="nv">a = </span><span class="k">new</span> <span class="nx">Demo</span>
-</span><span class="line"><span class="nx">a</span><span class="p">.</span><span class="nx">setMember</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">)</span>
-</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">a</span><span class="p">.</span><span class="nx">member</span>  <span class="c1"># [&#39;a&#39;]</span>
-</span><span class="line"><span class="nv">b = </span><span class="k">new</span> <span class="nx">Demo</span>
-</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">b</span><span class="p">.</span><span class="nx">member</span>  <span class="c1"># [&#39;a&#39;]</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>当我们使用<code>new</code>关键词的时候，希望得到的是一个干干净净的对象，可是在初始化b的时候我们发现他的成员变量member已经变成了<code>['a']</code>，这是我们不希望看到的。究其原因就是member是一个数组。解决办法是将这些变量的初始化放在coffeescript的构造方法<code>constructor</code>中。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="k">class</span> <span class="nx">Demo</span>
-</span><span class="line">  <span class="nv">constructor: </span><span class="o">-&gt;</span>
-</span><span class="line">    <span class="vi">@member = </span><span class="p">[]</span>
-</span><span class="line">  <span class="nv">setMember: </span><span class="nf">(str) -&gt;</span>
-</span><span class="line">    <span class="nx">@member</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="nv">a = </span><span class="k">new</span> <span class="nx">Demo</span>
-</span><span class="line"><span class="nx">a</span><span class="p">.</span><span class="nx">setMember</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">)</span>
-</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">a</span><span class="p">.</span><span class="nx">member</span>  <span class="c1"># [&#39;a&#39;]</span>
-</span><span class="line"><span class="nv">b = </span><span class="k">new</span> <span class="nx">Demo</span>
-</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">b</span><span class="p">.</span><span class="nx">member</span>  <span class="c1"># []</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>至于为什么这两种写法会产生不一样的效果，可以将coffeescript编译成js来分析。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line">    <span class="p">(</span><span class="nx">use</span> <span class="nx">constructor</span><span class="p">)</span>                                             <span class="o">|</span>    <span class="p">(</span><span class="nx">not</span> <span class="nx">use</span> <span class="nx">constructor</span><span class="p">)</span>
-</span><span class="line">    <span class="mi">5</span>   <span class="nx">Demo</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>                                      <span class="o">|</span>    <span class="mi">5</span>   <span class="nx">Demo</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">    <span class="mi">6</span>     <span class="kd">function</span> <span class="nx">Demo</span><span class="p">()</span> <span class="p">{</span>                                       <span class="o">|</span>    <span class="mi">6</span>     <span class="kd">function</span> <span class="nx">Demo</span><span class="p">()</span> <span class="p">{}</span>
-</span><span class="line">    <span class="mi">7</span>       <span class="k">this</span><span class="p">.</span><span class="nx">member</span> <span class="o">=</span> <span class="p">[];</span>                                     <span class="o">|</span>    <span class="mi">7</span>
-</span><span class="line">    <span class="mi">8</span>     <span class="p">}</span>                                                       <span class="o">|</span>    <span class="mi">8</span>     <span class="nx">Demo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">member</span> <span class="o">=</span> <span class="p">[];</span>
-</span><span class="line">    <span class="mi">9</span>                                                             <span class="o">|</span>    <span class="mi">9</span>
-</span><span class="line">   <span class="mi">10</span>     <span class="nx">Demo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setMember</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>              <span class="o">|</span>   <span class="mi">10</span>     <span class="nx">Demo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setMember</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">   <span class="mi">11</span>       <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">member</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">str</span><span class="p">);</span>                         <span class="o">|</span>   <span class="mi">11</span>       <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">member</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">str</span><span class="p">);</span>
-</span><span class="line">   <span class="mi">12</span>     <span class="p">};</span>                                                      <span class="o">|</span>   <span class="mi">12</span>     <span class="p">};</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>上面是vimdiff对比出的两种不同写法，第一种是使用构造方法<code>constructor</code>的，可以看到member作为Demo方法的私有变量，在没有用<code>new</code>实例化的时候，这个<code>member</code>是不存在的，所以每一次实例化我们都能得到一个全新未开箱的<code>member</code>。但是第二种写法则不同，在没有实例化Demo类的时候，<code>member</code>对象就已经存在，所有无论你实例化Demo多少次，调用的都是同一个<code>member</code>，也就造成了在多个Demo实例中共用一个<code>member</code>的结果。</p>
-
-<h1 id="section-4">后记</h1>
-
-<p>假如让我在javascript和coffeescript两种语言之间选择，我仍然倾向于coffeescript，抛开上面的问题不说，它给人编码的时候带来的愉悦是无法衡量的。So just try it!</p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-06-13T14:48:00+08:00" pubdate data-updated="true">2013.06.13</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/coffeescript/'>coffeescript</a>, <a class='category' href='/blog/blog/categories/nodejs/'>nodejs</a>
 
 
 </div>
