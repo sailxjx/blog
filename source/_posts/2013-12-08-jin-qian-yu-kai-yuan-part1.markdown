@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "金钱与开源（part1）"
+title: "金钱与开源(part1)"
 date: 2013-12-08 14:24
 comments: true
-categories:
+categories: [opensource, translation]
 ---
 
 > 注：本文作者是npm的作者[Isaac Z. Schlueter](http://blog.izs.me/)，也是nodejs的主要作者之一
