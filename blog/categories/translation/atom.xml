@@ -4,7 +4,7 @@
   <title><![CDATA[Category: translation | CodeBean]]></title>
   <link href="http://sailxjx.github.io/blog/blog/categories/translation/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-03-19T11:11:17+08:00</updated>
+  <updated>2014-04-19T18:06:12+08:00</updated>
   <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,197 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[回调 vs 协同程序]]></title>
+    <link href="http://sailxjx.github.io/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu/"/>
+    <updated>2014-04-19T15:44:00+08:00</updated>
+    <id>http://sailxjx.github.io/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>原文地址：<a href="https://medium.com/code-adventures/174f1fe66127">Callbacks vs Coroutines</a></p>
+</blockquote>
+
+<p>最近 Google V8 引擎的一个补丁提供了 <a href="http://wiki.ecmascript.org/doku.php?id=harmony:generators">ES6 生成器</a>，一篇叫做<a href="http://jlongster.com/A-Study-on-Solving-Callbacks-with-JavaScript-Generators">“用 Javascript 生成器来解决回调问题的研究”</a>的文章引发了很大的争议。虽然生成器到目前为止仍然需要 <code>--harmony</code> 或 <code>--harmony-generators</code> 选项才能激活，但是它已经值得你跃跃欲试！在这篇文章中我想要阐述的是自己对于<a href="http://en.wikipedia.org/wiki/Coroutine">协同程序</a>的体验，并且说明为什么我认为它们是一种好方法。</p>
+
+<h2 id="section">回调和生成器</h2>
+<p>在认识回调和生成器之间的不同之前，我们先来看看生成器在 Nodejs 或浏览器这种由回调主宰的环境中是怎样发挥作用的。</p>
+
+<p>首先生成器是回调的一种扩展，有些类型的回调就是用来“模拟”生成器的。这些“futures”，“thunks”，或“promises” —— 无论你怎么称呼，都是用来延迟执行一小段逻辑的，就好比你 yield 了一个变量然后由生成器来处理其他的部分。</p>
+
+<p>一旦这些变量 yield 给了调用方，这个调用方等待回调然后重新回到生成器。见仁见智，生成器的原理和回调其实是一样的，然而下面我们会说到使用它的一些好处。</p>
+
+<p>假如你还是不太清楚该怎么使用生成器，这里有一个简单的例子实现了由生成器来控制流程。</p>
+
+<p>```javascript
+var fs = require(‘fs’);
+function thread(fn) {
+  var gen = fn();
+  function next(err, res) {
+    var ret = gen.next(res);
+    if (ret.done) return;
+    ret.value(next);
+  }</p>
+
+<p>next();
+}
+thread(function *(){
+  var a = yield read(‘app.js’);
+  var b = yield read(‘package.json’);
+  console.log(a);
+  console.log(b);
+});
+function read(path) {
+  return function(done){
+    fs.readFile(path, ‘utf8’, done);
+  }
+}
+```</p>
+
+<h2 id="section-1">为什么协同程序会使代码更健壮</h2>
+
+<p>对于传统的浏览器或 Nodejs 环境，协同程序在自己的堆栈上运行每个“纤程”。这些纤程的实现各不相同，但是它们只需要一个很小的栈空间就能初始化（大约4kb），然后随需求增长。</p>
+
+<p>为什么这样棒极了？错误处理！假如你使用过 Nodejs， 你就会知道错误处理不是那么简单。有些时候你会得到多个包含未知边际效应的回调，或者完全忘了回调这回事并且没有正确的处理和汇报异常。也许你忘了监听一个“error”事件，这样的话它就变成了一个未捕获的异常而让整个进程挂掉。</p>
+
+<p>有些人喜欢使用进程，而且这样也挺好，但是作为一个在早期就使用 Nodejs 的人来说，在我看来这种流程有很多地方值得改进。Nodejs 在很多方面都很出色，但是这个就是它的阿喀琉斯之踵。</p>
+
+<p>我们用一个简单的例子来看看由回调来读写同一个文件：</p>
+
+<p><code>javascript
+function read(path, fn) {
+  fs.readFile(path, 'utf8', fn);
+}
+function write(path, str, fn) {
+  fs.writeFile(path, str, fn);
+}
+function readAndWrite(fn) {
+  read('Readme.md', function(err, str){
+    if (err) return fn(err);
+    str = str.replace('Something', 'Else');
+    write('Readme.md', str, fn);
+  });
+}
+</code></p>
+
+<p>你可能会想这看起来也没那么糟糕，那是因为你整天看到这样的代码！好吧这是错误的:)为什么？应为大多数 node 核心方法，和多数第三方库都没有 try/catch 他们的回调。</p>
+
+<p>下面的代码会抛出一个未捕获异常而且没有任何方法能捕获它。就算内核检测到这个异常并且告诉调用方这可能是一个错误点，大多数回调都有未知的行为。</p>
+
+<p><code>javascript
+function readAndWrite(fn) {
+  read('Readme.md', function(err, str){
+    throw new Error('oh no, reference error etc');
+    if (err) return fn(err);
+    str = str.replace('Something', 'Else');
+    write('Readme.md', str, fn);
+  });
+}
+</code></p>
+
+<p>所以生成器是怎么来优化这一点的？下面的代码片段用生成器和 <a href="https://github.com/visionmedia/co">Co</a> 库来实现了相同的逻辑。你可能会想“这只是一些愚蠢的语法糖而已” - 但是你错了。只要我们将生成器传给 <code>Co()</code> 方法，所有委派给调用方的 yields，特别是强健的错误处理都会由 Co 来委派。</p>
+
+<p><code>javascript
+co(function *(){
+  var str = yield read('Readme.md')
+  str = str.replace('Something', 'Else')
+  yield write('Readme.md', str)
+})
+</code></p>
+
+<p>就像下面这样，Co 这样的库会将异常“抛”回给他们原本的流程，这意味着你可以用 try/catch 来捕获异常，或者任其自流由最后 Co 的回调来处理这些错误。</p>
+
+<p><code>javascript
+co(function *(){
+  try {
+    var str = yield read('Readme.md')
+  } catch (err) {
+    // whatever
+  }
+  str = str.replace('Something', 'Else')
+  yield write('Readme.md', str)
+})
+</code></p>
+
+<p>在编写 Co 的时候貌似只有它实现了健壮的错误处理，但是假如你看一下 Co 的<a href="https://github.com/visionmedia/co/blob/master/index.js#L30">源代码</a>你会注意到所有的 try/catch 代码块。假如你用生成器你需要将 try/catch 添加到每个你用过的库中，来保证代码的健壮性。这就是为什么在今天看来，用 Nodejs 编写健壮性代码是一件不可能完成的任务。</p>
+
+<h2 id="section-2">生成器对于协同程序</h2>
+<p>生成器有时会被当成“半协同程序”，一个不完善，仅对调用方有效的协同程序。这让使用生成器比协同程序的目的更明确，好比 yield 能被当成“线程”。</p>
+
+<p>协同程序要更加灵活一些，看起来就像是普通代码块，而不需要 yield：</p>
+
+<p><code>javascript
+var str = read('Readme.md')
+str = str.replace('Something', 'Else')
+write('Readme.md', str)
+console.log('all done!')
+</code></p>
+
+<p>有些人认为完整的协同程序是“危险的”，因为它不清楚哪个方法有没有延迟执行线程。个人来说我认为这种争论很可笑，大部分延迟执行的方法都很明显，比方说从文件或套接字中读写，http 请求，睡眠等等延迟执行不会让任何人感到惊讶。</p>
+
+<p>假如有些不友善的方法，那么你就 “fork” 它们来强迫这些任务变成异步的，就像你在 Go 中做的一样。</p>
+
+<p>在我看来生成器可能比协同程序更危险（当然比回调好得多）——仅仅是忘记一个 yield 表达式就可能让你费解或在它执行下面的代码时导致未知的行为结果。半协同程序和协同程序两者各自有优缺点，但是我很高兴现在至少已经有了其一。</p>
+
+<p>让我们来看看你用生成器可以怎样实现新的构造方法。</p>
+
+<h2 id="section-3">用协同程序实现简单的异步流程</h2>
+<p>你已经看到一个简单读/写表达式看起来比回调更优雅，我们来看看更多的内容。</p>
+
+<p>假设所有操作默认按顺序执行简化了模型，有些人声称生成器或协同程序使状态变得复杂化，这事不正确的。用回调处理状态也是一样的。全局变量依然是全局变量，局部变量依然是局部变量，而闭包依然是闭包。</p>
+
+<p>我们用例子来说明这个流程，假设你需要请求一个 web 页面，解析其中的链接，然后同步请求所有的链接并输出他们的 Content-types。</p>
+
+<p>这里是一个使用传统回调的例子，没有使用第三方流程控制库。</p>
+
+<p>```javascript
+function showTypes(fn) {
+ get(‘http://cloudup.com’, function(err, res){
+   if (err) return fn(err);
+   var done;
+   var urls = links(res.text);
+   var pending = urls.length;
+   var results = new Array(pending);
+   urls.forEach(function(url, i){
+     get(url, function(err, res){
+       if (done) return;
+       if (err) return done = true, fn(err);
+       results[i] = res.header[‘content-type’];
+       —pending || fn(null, results);
+     });
+   });
+ });
+}</p>
+
+<p>showTypes(function(err, types){
+  if (err) throw err;
+  console.log(types);
+});
+```</p>
+
+<p>这么简单的一个任务被回调搞得毫无可读性。再加上错误处理，重复回调的预防，存储结果和他们本身的一些回调，你会完全搞不懂这个方法是用来干嘛的。假如你需要使代码更健壮，还需要在最后的方法处加上 try/catch 代码块。</p>
+
+<p>现在下面有一个由生成器实现的相同的 showTypes() 方法。你会看到结果和用回调实现的方法是一样的，在这里例子中 Co 处理了所有我们在上面需要手工处理的错误和结果集的组装。被 urls.maps(get) 方法 yield 的数组被平行执行，但是结果集然后是保持不变的顺序。</p>
+
+<p><code>javascript
+function header(field) {
+  return function(res){
+    return res.headers[field]
+  }
+}
+function showTypes(fn) {
+  co(function *(){
+    var res = yield get('http://cloudup.com')
+    var responses = yield links(res.text).map(get)
+    return responses.map(header('content-type'))
+  })(fn)
+}
+</code></p>
+
+<p>我并不是建议所有的 Npm 模块使用生成器并且强制依赖 Co，我仍然建议使用相反的方法 —— 但是在应用层面我强烈推荐它。</p>
+
+<p>我希望这能说明协同程序在编写无阻塞的程序时是一个强有力的工具。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[金钱与开源(part2)]]></title>
@@ -488,113 +679,6 @@
 <p>你被警告过了。</p>
 
 <p><a href="http://wiki.nginx.org/IfIsEvil">原文链接</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[mysql btree 与 hash 索引比较]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao/"/>
-    <updated>2013-05-07T11:45:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao</id>
-    <content type="html"><![CDATA[<p>mysql最常用的索引结构是btree(<code>O(log(n))</code>)，但是总有一些情况下我们为了更好的性能希望能使用别的类型的索引。hash就是其中一种选择，例如我们在通过用户名检索用户id的时候，他们总是一对一的关系，用到的操作符只是<code>=</code>而已，假如使用hash作为索引数据结构的话，时间复杂度可以降到<code>O(1)</code>。不幸的是，目前的mysql版本(5.6)中，hash只支持MEMORY和NDB两种引擎，而我们最常用的INNODB和MYISAM都不支持hash类型的索引。</p>
-
-<p>不管怎样，还是要了解一下这两种索引的区别，下面翻译自<a href="http://dev.mysql.com/doc/refman/5.6/en/index-btree-hash.html">mysql官网文档</a>中对这两者的解释。</p>
-
-<h2 id="b-tree-">B-Tree 索引特征</h2>
-<p>B-Tree索引可以被用在像<code>=</code>,<code>&gt;</code>,<code>&gt;=</code>,<code>&lt;</code>,<code>&lt;=</code>和<code>BETWEEN</code>这些比较操作符上。而且还可以用于<code>LIKE</code>操作符，只要它的查询条件是一个不以通配符开头的常量。像下面的语句就可以使用索引：</p>
-
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">tbl_name</span> <span class="k">WHERE</span> <span class="n">key_col</span> <span class="k">LIKE</span> <span class="err">‘</span><span class="n">Patrick</span><span class="o">%</span><span class="err">’</span><span class="p">;</span>
-</span><span class='line'><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">tbl_name</span> <span class="k">WHERE</span> <span class="n">key_col</span> <span class="k">LIKE</span> <span class="err">‘</span><span class="n">Pat</span><span class="o">%</span><span class="n">_ck</span><span class="o">%</span><span class="err">’</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>下面这两种情况不会使用索引：</p>
-
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">tbl_name</span> <span class="k">WHERE</span> <span class="n">key_col</span> <span class="k">LIKE</span> <span class="err">‘</span><span class="o">%</span><span class="n">Patrick</span><span class="o">%</span><span class="err">’</span><span class="p">;</span>
-</span><span class='line'><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">tbl_name</span> <span class="k">WHERE</span> <span class="n">key_col</span> <span class="k">LIKE</span> <span class="n">other_col</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>第一条是因为它以通配符开头，第二条是因为没有使用常量。</p>
-
-<p>假如你使用<code>... LIKE '%string%'</code>而且<code>string</code>超过三个字符，MYSQL使用<code>Turbo Boyer-Moore algorithm</code>算法来初始化查询表达式，然后用这个表达式来让查询更迅速。</p>
-
-<p>一个这样的查询<code>col_name IS NULL</code>是可以使用<code>col_name</code>的索引的。</p>
-
-<p>任何一个没有覆盖所有<code>WHERE</code>中<code>AND</code>级别条件的索引是不会被使用的。也就是说，要使用一个索引，这个索引中的第一列需要在每个<code>AND</code>组中出现。</p>
-
-<p>下面的<code>WHERE</code>条件会使用索引：</p>
-
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="err">…</span> <span class="k">WHERE</span> <span class="n">index_part1</span><span class="o">=</span><span class="mi">1</span> <span class="k">AND</span> <span class="n">index_part2</span><span class="o">=</span><span class="mi">2</span> <span class="k">AND</span> <span class="n">other_column</span><span class="o">=</span><span class="mi">3</span>
-</span><span class='line'>    <span class="cm">/* index = 1 OR index = 2 &lt;em&gt;/</span>
-</span><span class='line'><span class="cm">… WHERE index=1 OR A=10 AND index=2</span>
-</span><span class='line'><span class="cm">    /&lt;/em&gt; 优化成 “index_part1=’hello’” &lt;em&gt;/</span>
-</span><span class='line'><span class="cm">… WHERE index_part1=’hello’ AND index_part3=5</span>
-</span><span class='line'><span class="cm">    /&lt;/em&gt; 可以使用 index1 的索引但是不会使用 index2 和 index3 */</span>
-</span><span class='line'><span class="err">…</span> <span class="k">WHERE</span> <span class="n">index1</span><span class="o">=</span><span class="mi">1</span> <span class="k">AND</span> <span class="n">index2</span><span class="o">=</span><span class="mi">2</span> <span class="k">OR</span> <span class="n">index1</span><span class="o">=</span><span class="mi">3</span> <span class="k">AND</span> <span class="n">index3</span><span class="o">=</span><span class="mi">3</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>下面的<code>WHERE</code>条件不会使用索引：</p>
-
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='sql'><span class='line'>    <span class="cm">/* index_part1 没有被使用到 */</span>
-</span><span class='line'><span class="err">…</span> <span class="k">WHERE</span> <span class="n">index_part2</span><span class="o">=</span><span class="mi">1</span> <span class="k">AND</span> <span class="n">index_part3</span><span class="o">=</span><span class="mi">2</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="cm">/* 索引 index 没有出现在每个 where 子句中 */</span> <span class="p">...</span> <span class="k">WHERE</span> <span class="k">index</span><span class="o">=</span><span class="mi">1</span> <span class="k">OR</span> <span class="n">A</span><span class="o">=</span><span class="mi">10</span>
-</span><span class='line'>
-</span><span class='line'><span class="cm">/* 没有索引覆盖所有列 */</span> <span class="p">...</span> <span class="k">WHERE</span> <span class="n">index_part1</span><span class="o">=</span><span class="mi">1</span> <span class="k">OR</span> <span class="n">index_part2</span><span class="o">=</span><span class="mi">10</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-</code></pre>
-
-<p>有时候mysql不会使用索引，即使这个在可用的情况下。例如当mysql预估使用索引会读取大部分的行数据时。（在这种情况下，一次全表扫描可能比使用索引更快，因为它需要更少的检索）。然而，假如语句中使用<code>LIMIT</code>来限定返回的行数，mysql则会使用索引。因为当结果行数较少的情况下使用索引的效率会更高。</p>
-
-<h2 id="hash-">Hash 索引特征</h2>
-
-<p>Hash类型的索引有一些区别于以上所述的特征：</p>
-
-<ul>
-  <li>
-    <p>它们只能用于对等比较，例如<code>=</code>和<code>&lt;=&gt;</code>操作符（但是快很多）。它们不能被用于像<code>&lt;</code>这样的范围查询条件。假如系统只需要使用像“键值对”的这样的存储结构，尽量使用hash类型索引。</p>
-  </li>
-  <li>
-    <p>优化器不能用hash索引来为<code>ORDER BY</code>操作符加速。（这类索引不能被用于搜索下一个次序的值）</p>
-  </li>
-  <li>
-    <p>mysql不能判断出两个值之间有多少条数据（这需要使用范围查询操作符来决定使用哪个索引）。假如你将一个<code>MyISAM</code>表转为一个依靠hash索引的<code>MEMORY</code>表，可能会影响一些语句（的性能）。</p>
-  </li>
-  <li>
-    <p>只有完整的键才能被用于搜索一行数据。（假如用B-tree索引，任何一个键的片段都可以用于查找。我觉得可能意味着带通配符<code>LIKE</code>操作符会不起作用）。</p>
-  </li>
-</ul>
-
-<h1 id="section">后记</h1>
-
-<p>顺便记录一下在使用mysql过程中碰到的一些问题：</p>
-
-<ul>
-  <li>有时候使用脚本迁移数据时会碰到乱码的问题，即使将表字符集设置成<code>utf8</code>也无济于事，这个时候在执行sql之前加一句<code>set names utf8</code>即可。</li>
-</ul>
-
-<h1 id="section-1">参考文档</h1>
-
-<ul>
-  <li><a href="http://dev.mysql.com/doc/refman/5.6/en/index-btree-hash.html">index-btree-hash</a></li>
-  <li><a href="http://dba.stackexchange.com/questions/2817/why-does-mysql-not-have-hash-indices-on-myisam-or-innodb">why-does-mysql-not-have-hash-indices-on-myisam-or-innodb</a></li>
-</ul>
 ]]></content>
   </entry>
   

@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://sailxjx.github.io/blog/atom.xml" rel="self"/>
   <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-03-19T11:11:17+08:00</updated>
+  <updated>2014-04-19T18:06:12+08:00</updated>
   <id>http://sailxjx.github.io/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
@@ -12,6 +12,284 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[回调 vs 协同程序]]></title>
+    <link href="http://sailxjx.github.io/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu/"/>
+    <updated>2014-04-19T15:44:00+08:00</updated>
+    <id>http://sailxjx.github.io/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>原文地址：<a href="https://medium.com/code-adventures/174f1fe66127">Callbacks vs Coroutines</a></p>
+</blockquote>
+
+<p>最近 Google V8 引擎的一个补丁提供了 <a href="http://wiki.ecmascript.org/doku.php?id=harmony:generators">ES6 生成器</a>，一篇叫做<a href="http://jlongster.com/A-Study-on-Solving-Callbacks-with-JavaScript-Generators">“用 Javascript 生成器来解决回调问题的研究”</a>的文章引发了很大的争议。虽然生成器到目前为止仍然需要 <code>--harmony</code> 或 <code>--harmony-generators</code> 选项才能激活，但是它已经值得你跃跃欲试！在这篇文章中我想要阐述的是自己对于<a href="http://en.wikipedia.org/wiki/Coroutine">协同程序</a>的体验，并且说明为什么我认为它们是一种好方法。</p>
+
+<h2 id="section">回调和生成器</h2>
+<p>在认识回调和生成器之间的不同之前，我们先来看看生成器在 Nodejs 或浏览器这种由回调主宰的环境中是怎样发挥作用的。</p>
+
+<p>首先生成器是回调的一种扩展，有些类型的回调就是用来“模拟”生成器的。这些“futures”，“thunks”，或“promises” —— 无论你怎么称呼，都是用来延迟执行一小段逻辑的，就好比你 yield 了一个变量然后由生成器来处理其他的部分。</p>
+
+<p>一旦这些变量 yield 给了调用方，这个调用方等待回调然后重新回到生成器。见仁见智，生成器的原理和回调其实是一样的，然而下面我们会说到使用它的一些好处。</p>
+
+<p>假如你还是不太清楚该怎么使用生成器，这里有一个简单的例子实现了由生成器来控制流程。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="kd">function</span> <span class="nx">thread</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="kd">var</span> <span class="nx">gen</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">();</span>
+</span><span class="line">  <span class="kd">function</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">gen</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">res</span><span class="p">);</span>
+</span><span class="line">    <span class="k">if</span> <span class="p">(</span><span class="nx">ret</span><span class="p">.</span><span class="nx">done</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</span><span class="line">    <span class="nx">ret</span><span class="p">.</span><span class="nx">value</span><span class="p">(</span><span class="nx">next</span><span class="p">);</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="nx">next</span><span class="p">();</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nx">thread</span><span class="p">(</span><span class="kd">function</span> <span class="o">*</span><span class="p">(){</span>
+</span><span class="line">  <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">yield</span> <span class="nx">read</span><span class="p">(</span><span class="s1">&#39;app.js&#39;</span><span class="p">);</span>
+</span><span class="line">  <span class="kd">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">yield</span> <span class="nx">read</span><span class="p">(</span><span class="s1">&#39;package.json&#39;</span><span class="p">);</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">b</span><span class="p">);</span>
+</span><span class="line"><span class="p">});</span>
+</span><span class="line"><span class="kd">function</span> <span class="nx">read</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">done</span><span class="p">){</span>
+</span><span class="line">    <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">,</span> <span class="nx">done</span><span class="p">);</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="section-1">为什么协同程序会使代码更健壮</h2>
+
+<p>对于传统的浏览器或 Nodejs 环境，协同程序在自己的堆栈上运行每个“纤程”。这些纤程的实现各不相同，但是它们只需要一个很小的栈空间就能初始化（大约4kb），然后随需求增长。</p>
+
+<p>为什么这样棒极了？错误处理！假如你使用过 Nodejs， 你就会知道错误处理不是那么简单。有些时候你会得到多个包含未知边际效应的回调，或者完全忘了回调这回事并且没有正确的处理和汇报异常。也许你忘了监听一个“error”事件，这样的话它就变成了一个未捕获的异常而让整个进程挂掉。</p>
+
+<p>有些人喜欢使用进程，而且这样也挺好，但是作为一个在早期就使用 Nodejs 的人来说，在我看来这种流程有很多地方值得改进。Nodejs 在很多方面都很出色，但是这个就是它的阿喀琉斯之踵。</p>
+
+<p>我们用一个简单的例子来看看由回调来读写同一个文件：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">function</span> <span class="nx">read</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">,</span> <span class="nx">fn</span><span class="p">);</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="kd">function</span> <span class="nx">write</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">str</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFile</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">str</span><span class="p">,</span> <span class="nx">fn</span><span class="p">);</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="kd">function</span> <span class="nx">readAndWrite</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">read</span><span class="p">(</span><span class="s1">&#39;Readme.md&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">str</span><span class="p">){</span>
+</span><span class="line">    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+</span><span class="line">    <span class="nx">str</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39;Something&#39;</span><span class="p">,</span> <span class="s1">&#39;Else&#39;</span><span class="p">);</span>
+</span><span class="line">    <span class="nx">write</span><span class="p">(</span><span class="s1">&#39;Readme.md&#39;</span><span class="p">,</span> <span class="nx">str</span><span class="p">,</span> <span class="nx">fn</span><span class="p">);</span>
+</span><span class="line">  <span class="p">});</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>你可能会想这看起来也没那么糟糕，那是因为你整天看到这样的代码！好吧这是错误的:)为什么？应为大多数 node 核心方法，和多数第三方库都没有 try/catch 他们的回调。</p>
+
+<p>下面的代码会抛出一个未捕获异常而且没有任何方法能捕获它。就算内核检测到这个异常并且告诉调用方这可能是一个错误点，大多数回调都有未知的行为。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">function</span> <span class="nx">readAndWrite</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">read</span><span class="p">(</span><span class="s1">&#39;Readme.md&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">str</span><span class="p">){</span>
+</span><span class="line">    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;oh no, reference error etc&#39;</span><span class="p">);</span>
+</span><span class="line">    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+</span><span class="line">    <span class="nx">str</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39;Something&#39;</span><span class="p">,</span> <span class="s1">&#39;Else&#39;</span><span class="p">);</span>
+</span><span class="line">    <span class="nx">write</span><span class="p">(</span><span class="s1">&#39;Readme.md&#39;</span><span class="p">,</span> <span class="nx">str</span><span class="p">,</span> <span class="nx">fn</span><span class="p">);</span>
+</span><span class="line">  <span class="p">});</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>所以生成器是怎么来优化这一点的？下面的代码片段用生成器和 <a href="https://github.com/visionmedia/co">Co</a> 库来实现了相同的逻辑。你可能会想“这只是一些愚蠢的语法糖而已” - 但是你错了。只要我们将生成器传给 <code>Co()</code> 方法，所有委派给调用方的 yields，特别是强健的错误处理都会由 Co 来委派。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">co</span><span class="p">(</span><span class="kd">function</span> <span class="o">*</span><span class="p">(){</span>
+</span><span class="line">  <span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="nx">yield</span> <span class="nx">read</span><span class="p">(</span><span class="s1">&#39;Readme.md&#39;</span><span class="p">)</span>
+</span><span class="line">  <span class="nx">str</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39;Something&#39;</span><span class="p">,</span> <span class="s1">&#39;Else&#39;</span><span class="p">)</span>
+</span><span class="line">  <span class="nx">yield</span> <span class="nx">write</span><span class="p">(</span><span class="s1">&#39;Readme.md&#39;</span><span class="p">,</span> <span class="nx">str</span><span class="p">)</span>
+</span><span class="line"><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>就像下面这样，Co 这样的库会将异常“抛”回给他们原本的流程，这意味着你可以用 try/catch 来捕获异常，或者任其自流由最后 Co 的回调来处理这些错误。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">co</span><span class="p">(</span><span class="kd">function</span> <span class="o">*</span><span class="p">(){</span>
+</span><span class="line">  <span class="k">try</span> <span class="p">{</span>
+</span><span class="line">    <span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="nx">yield</span> <span class="nx">read</span><span class="p">(</span><span class="s1">&#39;Readme.md&#39;</span><span class="p">)</span>
+</span><span class="line">  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="c1">// whatever</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="nx">str</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39;Something&#39;</span><span class="p">,</span> <span class="s1">&#39;Else&#39;</span><span class="p">)</span>
+</span><span class="line">  <span class="nx">yield</span> <span class="nx">write</span><span class="p">(</span><span class="s1">&#39;Readme.md&#39;</span><span class="p">,</span> <span class="nx">str</span><span class="p">)</span>
+</span><span class="line"><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>在编写 Co 的时候貌似只有它实现了健壮的错误处理，但是假如你看一下 Co 的<a href="https://github.com/visionmedia/co/blob/master/index.js#L30">源代码</a>你会注意到所有的 try/catch 代码块。假如你用生成器你需要将 try/catch 添加到每个你用过的库中，来保证代码的健壮性。这就是为什么在今天看来，用 Nodejs 编写健壮性代码是一件不可能完成的任务。</p>
+
+<h2 id="section-2">生成器对于协同程序</h2>
+<p>生成器有时会被当成“半协同程序”，一个不完善，仅对调用方有效的协同程序。这让使用生成器比协同程序的目的更明确，好比 yield 能被当成“线程”。</p>
+
+<p>协同程序要更加灵活一些，看起来就像是普通代码块，而不需要 yield：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="nx">read</span><span class="p">(</span><span class="s1">&#39;Readme.md&#39;</span><span class="p">)</span>
+</span><span class="line"><span class="nx">str</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39;Something&#39;</span><span class="p">,</span> <span class="s1">&#39;Else&#39;</span><span class="p">)</span>
+</span><span class="line"><span class="nx">write</span><span class="p">(</span><span class="s1">&#39;Readme.md&#39;</span><span class="p">,</span> <span class="nx">str</span><span class="p">)</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;all done!&#39;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>有些人认为完整的协同程序是“危险的”，因为它不清楚哪个方法有没有延迟执行线程。个人来说我认为这种争论很可笑，大部分延迟执行的方法都很明显，比方说从文件或套接字中读写，http 请求，睡眠等等延迟执行不会让任何人感到惊讶。</p>
+
+<p>假如有些不友善的方法，那么你就 “fork” 它们来强迫这些任务变成异步的，就像你在 Go 中做的一样。</p>
+
+<p>在我看来生成器可能比协同程序更危险（当然比回调好得多）——仅仅是忘记一个 yield 表达式就可能让你费解或在它执行下面的代码时导致未知的行为结果。半协同程序和协同程序两者各自有优缺点，但是我很高兴现在至少已经有了其一。</p>
+
+<p>让我们来看看你用生成器可以怎样实现新的构造方法。</p>
+
+<h2 id="section-3">用协同程序实现简单的异步流程</h2>
+<p>你已经看到一个简单读/写表达式看起来比回调更优雅，我们来看看更多的内容。</p>
+
+<p>假设所有操作默认按顺序执行简化了模型，有些人声称生成器或协同程序使状态变得复杂化，这事不正确的。用回调处理状态也是一样的。全局变量依然是全局变量，局部变量依然是局部变量，而闭包依然是闭包。</p>
+
+<p>我们用例子来说明这个流程，假设你需要请求一个 web 页面，解析其中的链接，然后同步请求所有的链接并输出他们的 Content-types。</p>
+
+<p>这里是一个使用传统回调的例子，没有使用第三方流程控制库。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">function</span> <span class="nx">showTypes</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line"> <span class="nx">get</span><span class="p">(</span><span class="s1">&#39;http://cloudup.com&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span>
+</span><span class="line">   <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+</span><span class="line">   <span class="kd">var</span> <span class="nx">done</span><span class="p">;</span>
+</span><span class="line">   <span class="kd">var</span> <span class="nx">urls</span> <span class="o">=</span> <span class="nx">links</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
+</span><span class="line">   <span class="kd">var</span> <span class="nx">pending</span> <span class="o">=</span> <span class="nx">urls</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+</span><span class="line">   <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">pending</span><span class="p">);</span>
+</span><span class="line">   <span class="nx">urls</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">i</span><span class="p">){</span>
+</span><span class="line">     <span class="nx">get</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span>
+</span><span class="line">       <span class="k">if</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</span><span class="line">       <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">done</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+</span><span class="line">       <span class="nx">results</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">res</span><span class="p">.</span><span class="nx">header</span><span class="p">[</span><span class="s1">&#39;content-type&#39;</span><span class="p">];</span>
+</span><span class="line">       <span class="err">—</span><span class="nx">pending</span> <span class="o">||</span> <span class="nx">fn</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">results</span><span class="p">);</span>
+</span><span class="line">     <span class="p">});</span>
+</span><span class="line">   <span class="p">});</span>
+</span><span class="line"> <span class="p">});</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">showTypes</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">types</span><span class="p">){</span>
+</span><span class="line">  <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">types</span><span class="p">);</span>
+</span><span class="line"><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这么简单的一个任务被回调搞得毫无可读性。再加上错误处理，重复回调的预防，存储结果和他们本身的一些回调，你会完全搞不懂这个方法是用来干嘛的。假如你需要使代码更健壮，还需要在最后的方法处加上 try/catch 代码块。</p>
+
+<p>现在下面有一个由生成器实现的相同的 showTypes() 方法。你会看到结果和用回调实现的方法是一样的，在这里例子中 Co 处理了所有我们在上面需要手工处理的错误和结果集的组装。被 urls.maps(get) 方法 yield 的数组被平行执行，但是结果集然后是保持不变的顺序。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">function</span> <span class="nx">header</span><span class="p">(</span><span class="nx">field</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">res</span><span class="p">){</span>
+</span><span class="line">    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">headers</span><span class="p">[</span><span class="nx">field</span><span class="p">]</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="kd">function</span> <span class="nx">showTypes</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">co</span><span class="p">(</span><span class="kd">function</span> <span class="o">*</span><span class="p">(){</span>
+</span><span class="line">    <span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">yield</span> <span class="nx">get</span><span class="p">(</span><span class="s1">&#39;http://cloudup.com&#39;</span><span class="p">)</span>
+</span><span class="line">    <span class="kd">var</span> <span class="nx">responses</span> <span class="o">=</span> <span class="nx">yield</span> <span class="nx">links</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">text</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">get</span><span class="p">)</span>
+</span><span class="line">    <span class="k">return</span> <span class="nx">responses</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">header</span><span class="p">(</span><span class="s1">&#39;content-type&#39;</span><span class="p">))</span>
+</span><span class="line">  <span class="p">})(</span><span class="nx">fn</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>我并不是建议所有的 Npm 模块使用生成器并且强制依赖 Co，我仍然建议使用相反的方法 —— 但是在应用层面我强烈推荐它。</p>
+
+<p>我希望这能说明协同程序在编写无阻塞的程序时是一个强有力的工具。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[软件与配置]]></title>
@@ -2007,156 +2285,6 @@
   <li><a href="http://stackoverflow.com/questions/5959194/how-does-jquerys-document-ready-function-work">how-does-jquerys-document-ready-function-work</a></li>
   <li><a href="http://stackoverflow.com/questions/5082094/register-domcontentloaded-in-google-chrome">register-domcontentloaded-in-google-chrome</a></li>
   <li><a href="https://developer.mozilla.org/en-US/docs/DOM/Mozilla_event_reference/DOMContentLoaded">DOMContentLoaded</a></li>
-</ul>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[执行 javascript 方法的几种方式]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/05/02/zhi-xing-javascript-fang-fa-de-ji-chong-fang-shi/"/>
-    <updated>2013-05-02T12:41:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/05/02/zhi-xing-javascript-fang-fa-de-ji-chong-fang-shi</id>
-    <content type="html"><![CDATA[<p>javascript语法灵活，同一个功能有五六种实现方式并不罕见，然后再加上有些反人类的原型继承和异步特性，就更让人一头雾水了。我经常搞不清楚<code>call</code>,<code>apply</code>之间的区别，今天就记录一下，以免再忘了。</p>
-
-<p>在javascript中，方法可以通过以下几种方式执行：</p>
-
-<ul>
-  <li>func()，这是最直接最常见的调用方式，也符合一般人的思维逻辑，但是在某些情况下有一些不足，下面会解释。</li>
-  <li>(function(arg){})(window)，匿名方法调用，在构造命名空间时比较有用，后面的括号中的参数与匿名方法中的入参一一对应。</li>
-  <li>func.bind(sth)()，<a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Function/bind">mozilla手册</a>中提到<code>bind</code>是在<a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">ECMA-262 5th Edition</a>中新增的一个特性，这里单独列出来作为一种调用方式是因为它弥补了直接调用中不能绑定作用域的缺陷。</li>
-  <li>func.call()，这是第二种调用方式，每个方法的原型中都定义了call方法，用来执行当前方法。</li>
-  <li>func.apply()，call的双胞胎兄弟。</li>
-</ul>
-
-<h2 id="func">func()</h2>
-<p>这是最常见的调用方式，在任何语言中随处可见。func(x, y)可以传入不同的参数。在某些语言，例如php，java中，这种调用足以解决一切问题。但是javascript是一门函数式语言，闭包的概念和一个奇怪的关键词<code>this</code>决定了这种调用方式的不足。<code>this</code>应该可以解释为当前代码段的作用域，会随着代码执行到不同的片段而改变，但是某些情况下我们不希望这个<code>this</code>被改变，例如绑定在某些dom上的事件，我们肯定不希望他们被调用的时候<code>this</code>被转移到了<code>window</code>对象上，但有时候确实如此，再比如下面的代码。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span><span class="p">{};</span>
-</span><span class="line"><span class="kd">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-</span><span class="line"><span class="p">};</span>
-</span><span class="line"><span class="nx">a</span><span class="p">.</span><span class="nx">onclick</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">    <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
-</span><span class="line">    <span class="nx">func</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
-</span><span class="line"><span class="p">};</span>
-</span><span class="line"><span class="nx">a</span><span class="p">.</span><span class="nx">onclick</span><span class="p">();</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>可以把a想象成页面中的一个链接，由于我们只是想将定义好的方法绑定到onclick事件上，而不是立刻调用它，而且这个方法拥有一个参数，所以我们需要用一个匿名方法将他包起来传递给a的onclick事件。这样就有了一个问题，func中的this变成了全局对象window，显然我们并不希望如此。这个时候，使用func()这种直接调用的方式就不行了，于是我们需要将func外的this绑定到func方法上。于是就有了<code>bind</code>,<code>call</code>,<code>apply</code>方法。</p>
-
-<h2 id="bind">bind</h2>
-
-<p><code>bind</code>的目的非常简单，返回一个绑定了this对象的相同方法。上面的代码修改一行就可以实现绑定this在a对象上目的。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span><span class="p">{};</span>
-</span><span class="line"><span class="kd">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-</span><span class="line"><span class="p">};</span>
-</span><span class="line"><span class="nx">a</span><span class="p">.</span><span class="nx">onclick</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">    <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
-</span><span class="line">    <span class="nx">func</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">)(</span><span class="nx">x</span><span class="p">);</span>  <span class="c1">// bind here</span>
-</span><span class="line"><span class="p">};</span>
-</span><span class="line"><span class="nx">a</span><span class="p">.</span><span class="nx">onclick</span><span class="p">();</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>这样，onclick事件的this就不会像无头苍蝇一样到处乱跑啦。</p>
-
-<h2 id="call--apply">call &amp; apply</h2>
-
-<p><code>call</code>和<code>apply</code>要放在一起讲，因为他们实在太像了。他们都支持多参数，而且第一个参数都是即将绑定的this对象，第二个参数则是他们的区别所在，<code>call</code>使用独立的参数作为调用方法的入参，<code>apply</code>使用一个数组作为入参。有的时候我们并不是不想改变this对象，而是想人为的将他绑定到别的对象上，这个时候<code>call</code>和<code>apply</code>是很好用的。（并不是说不能用<code>bind</code>，不过貌似<code>bind</code>出现的比较晚，可能浏览器兼容性不好）。举个栗子：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">a</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class="line">    <span class="nx">func</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">              <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
-</span><span class="line">          <span class="p">},</span>
-</span><span class="line">    <span class="nx">x</span><span class="o">:</span> <span class="mi">0</span>
-</span><span class="line"><span class="p">};</span>
-</span><span class="line"><span class="nx">b</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class="line">    <span class="nx">a</span><span class="o">:</span> <span class="nx">a</span><span class="p">,</span>
-</span><span class="line">    <span class="nx">x</span><span class="o">:</span> <span class="mi">20</span>
-</span><span class="line"><span class="p">};</span>
-</span><span class="line"><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
-</span><span class="line">    <span class="nx">b</span><span class="p">.</span><span class="nx">a</span><span class="p">.</span><span class="nx">func</span><span class="p">();</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
-</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>上面的a和b对象中都有x，我们希望func能针对性的修改对应的x，但是直接调用只可能修改func作用域中的x，也就是a.x。修改一下代码，就可以实现修改b.x目的</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">a</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class="line">    <span class="nx">func</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">              <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
-</span><span class="line">          <span class="p">},</span>
-</span><span class="line">    <span class="nx">x</span><span class="o">:</span> <span class="mi">0</span>
-</span><span class="line"><span class="p">};</span>
-</span><span class="line"><span class="nx">b</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class="line">    <span class="nx">a</span><span class="o">:</span> <span class="nx">a</span><span class="p">,</span>
-</span><span class="line">    <span class="nx">x</span><span class="o">:</span> <span class="mi">20</span>
-</span><span class="line"><span class="p">};</span>
-</span><span class="line"><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
-</span><span class="line">    <span class="nx">b</span><span class="p">.</span><span class="nx">a</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">b</span><span class="p">);</span>  <span class="c1">// bind this to b</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
-</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>这个栗子举得不好，有点牵强附会，而且这是一种很容易让人迷惑的代码风格，有适用的场景，但不是处处都可用。</p>
-
-<h1 id="section">参考资料</h1>
-<ul>
-  <li><a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference">mozilla</a></li>
-  <li><a href="http://fitzgeraldnick.com/weblog/26/">Nick Fitzgerald’s Weblog</a></li>
-  <li><a href="http://dailyjs.com/2012/06/25/this-binding/">DailyJs</a></li>
-  <li><a href="http://stackoverflow.com/questions/1986896/what-is-the-difference-between-call-and-apply">what-is-the-difference-between-call-and-apply</a></li>
 </ul>
 ]]></content>
   </entry>

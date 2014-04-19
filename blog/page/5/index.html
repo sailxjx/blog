@@ -7,13 +7,7 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content="常用的选项 -F 指定分隔符 -f 指定调用脚本，可以多次引用，不同文件会被合并成一个awk脚本 -d 输出所有变量到文件，默认输出到awkvars.out，也可以通过在-d后加文件路径来指定文件，但是注意-d与文件名之间不能有空格。调试的时候这个选项会非常有用。 1
-2
-3
-4
-5
-6
-7 &hellip;">
+	<meta name="description" content="安装 作为一个java软件，就得充分发挥它Write Once, Run Anywhere的精神。直接下载tarball，解压后运行即可。官方还很贴心的提供了一个init脚本(./bin/neo4j)，链接到init.d下就可以开搞啦。 默认的服务实例在localhost:7474， &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -81,6 +75,277 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j/">初试图形数据库 Neo4j</a></h1>
+	<div class="entry-content">
+		<h2 id="section">安装</h2>
+
+<p>作为一个java软件，就得充分发挥它<code>Write Once, Run Anywhere</code>的精神。直接下载tarball，解压后运行即可。官方还很贴心的提供了一个init脚本(./bin/neo4j)，链接到init.d下就可以开搞啦。</p>
+
+<p>默认的服务实例在localhost:7474，其余配置还是值得好好研究一番的。</p>
+
+<h2 id="neo4j-shell">neo4j shell</h2>
+<p>neo4j提供了一种叫做<code>Cypher Query Language</code>的查询方言，可以看做是图形数据库的sql，neo4j还提供了一个<code>neo4j-shell</code>用于做查询交互，在命令行下可以使用<code>./bin/neo4j-shell</code>来开启，web中也有一个tab叫做<code>power-tool console</code>可以使用neo4j-shell。</p>
+
+<h3 id="section-1">增删改节点</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="c"># 创建节点</span>
+</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>CREATE <span class="nv">n</span> <span class="o">=</span> <span class="o">{</span> name : <span class="s1">&#39;Andres&#39;</span>, title : <span class="s1">&#39;Developer&#39;</span> <span class="o">}</span> RETURN n;
+</span><span class="line">+-------------------------------------------+
+</span><span class="line">| n                                         |
+</span><span class="line">+-------------------------------------------+
+</span><span class="line">| Node<span class="o">[</span>37<span class="o">]{</span>name:<span class="s2">&quot;Andres&quot;</span>,title:<span class="s2">&quot;Developer&quot;</span><span class="o">}</span> |
+</span><span class="line">+-------------------------------------------+
+</span><span class="line">1 row
+</span><span class="line">Nodes created: 1
+</span><span class="line">Properties <span class="nb">set</span>: 2
+</span><span class="line">8 ms
+</span><span class="line"><span class="c"># 修改节点</span>
+</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">n</span> <span class="o">=</span> node<span class="o">(</span>37<span class="o">)</span> SET n.surname <span class="o">=</span> <span class="s1">&#39;Taylor&#39;</span> RETURN n;
+</span><span class="line">+------------------------------------------------------------+
+</span><span class="line">| n                                                          |
+</span><span class="line">+------------------------------------------------------------+
+</span><span class="line">| Node<span class="o">[</span>37<span class="o">]{</span>name:<span class="s2">&quot;Andres&quot;</span>,title:<span class="s2">&quot;Developer&quot;</span>,surname:<span class="s2">&quot;Taylor&quot;</span><span class="o">}</span> |
+</span><span class="line">+------------------------------------------------------------+
+</span><span class="line">1 row
+</span><span class="line">Properties <span class="nb">set</span>: 1
+</span><span class="line">15 ms
+</span><span class="line"><span class="c"># 删除节点</span>
+</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">n</span> <span class="o">=</span> node<span class="o">(</span>37<span class="o">)</span> DELETE n;
+</span><span class="line">+-------------------+
+</span><span class="line">| No data returned. |
+</span><span class="line">+-------------------+
+</span><span class="line">Nodes deleted: 1
+</span><span class="line">4 ms
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section-2">创建关系</h3>
+<p>图形数据库最重要的一个概念就是关系(relationship)，各个节点直接通过双向或单向的关系连接在一起，这样才能从一个节点查找到其他的节点，这种设计在某些场景下会让查询变得更加高效而灵活，例如社交网络中的好友关系，人立方中查找任意两人之间的亲友，假如使用传统的关系数据库，查找朋友的朋友就会变得非常的困难，其耗时也是指数型的增长，而使用图形数据库，则可以保持线性的效率。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="c"># 创建两个节点的关系</span>
+</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">a</span> <span class="o">=</span> node<span class="o">(</span>34<span class="o">)</span>, <span class="nv">b</span> <span class="o">=</span> node<span class="o">(</span>36<span class="o">)</span> CREATE a-<span class="o">[</span>r:knowns<span class="o">]</span>-&gt;b RETURN r;
+</span><span class="line">+---------------+
+</span><span class="line">| r             |
+</span><span class="line">+---------------+
+</span><span class="line">| :knowns<span class="o">[</span>0<span class="o">]</span> <span class="o">{}</span> |
+</span><span class="line">+---------------+
+</span><span class="line">1 row
+</span><span class="line">Relationships created: 1
+</span><span class="line">20 ms
+</span><span class="line"><span class="c"># 查找关系</span>
+</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">r</span> <span class="o">=</span> rel<span class="o">(</span>0<span class="o">)</span> <span class="k">return </span>r;
+</span><span class="line">+-----------------------------------+
+</span><span class="line">| r                                 |
+</span><span class="line">+-----------------------------------+
+</span><span class="line">| :isdogof<span class="o">[</span>0<span class="o">]</span> <span class="o">{</span>ctime:1359365331933<span class="o">}</span> |
+</span><span class="line">+-----------------------------------+
+</span><span class="line">1 row
+</span><span class="line">1 ms
+</span><span class="line"><span class="c"># 删除某节点和它的所有关系</span>
+</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">n</span> <span class="o">=</span> node<span class="o">(</span>34<span class="o">)</span> MATCH n-<span class="o">[</span>r<span class="o">]</span>-<span class="o">()</span> DELETE n, r;
+</span><span class="line">+-------------------+
+</span><span class="line">| No data returned. |
+</span><span class="line">+-------------------+
+</span><span class="line">Nodes deleted: 1
+</span><span class="line">Relationships deleted: 3
+</span><span class="line">3 ms
+</span><span class="line"><span class="c"># 查找节点的关系</span>
+</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">a</span> <span class="o">=</span> node<span class="o">(</span>2<span class="o">)</span> match a&lt;-<span class="o">[</span>r:isfamilyof<span class="o">]</span>-&gt;b RETURN a,r,b;
+</span><span class="line">+----------------------------------------------------------------------------------------+
+</span><span class="line">| a                           | r                          | b                           |
+</span><span class="line">+----------------------------------------------------------------------------------------+
+</span><span class="line">| Node<span class="o">[</span>2<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span> | :isfamilyof<span class="o">[</span>2<span class="o">]</span> <span class="o">{</span>ctime:200<span class="o">}</span> | Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;snow&quot;</span>,age:17<span class="o">}</span> |
+</span><span class="line">+----------------------------------------------------------------------------------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>有意思的是注意其中<code>CREATE a-[r:knowns]-&gt;b</code>中的箭头走向表示这种关系的指向，我们可以通过<code>CREATE a&lt;-[r:knowns]-b</code>来创建一个b到a的关系，但是当我想用<code>CREATE a&lt;-[r:knowns]-&gt;b</code>来创建一个双向关系时却没有成功，仍然只创建了从a到b的关系。而在查找某个节点的关系时，双向箭头确是起作用的，应该算做一个bug。</p>
+
+<h3 id="section-3">删除所有节点和关系</h3>
+<p><code>Cypher</code>中可以使用通配符<code>*</code>来找出所有的节点或者关系，那么假如我们需要删除所有节点，语句如下</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="c"># 如果节点上还有对应的关系，该节点是无法删除的，所以需要先删除所有关系</span>
+</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">r</span> <span class="o">=</span> rel<span class="o">(</span>*<span class="o">)</span> delete r;
+</span><span class="line">+--------------------------------------------+
+</span><span class="line">| No data returned, and nothing was changed. |
+</span><span class="line">+--------------------------------------------+
+</span><span class="line">0 ms
+</span><span class="line"><span class="c"># 删除节点</span>
+</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">n</span> <span class="o">=</span> node<span class="o">(</span>*<span class="o">)</span> delete n;
+</span><span class="line">+-------------------+
+</span><span class="line">| No data returned. |
+</span><span class="line">+-------------------+
+</span><span class="line">Nodes deleted: 2
+</span><span class="line">4 ms
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>删除所有节点后，在web端显示的节点数和关系数可能会对不上真实的数据，这些数量官方叫做”Primitive count”，其实在<code>neo4j-shell</code>下可以用下面的命令得到，按字面意思应该表示一个估算值，并不准确。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>0<span class="o">)</span><span class="nv">$ </span>dbinfo -g <span class="s2">&quot;Primitive count&quot;</span>
+</span><span class="line"><span class="o">{</span>
+</span><span class="line">  <span class="s2">&quot;NumberOfNodeIdsInUse&quot;</span>: 1,
+</span><span class="line">  <span class="s2">&quot;NumberOfPropertyIdsInUse&quot;</span>: 0,
+</span><span class="line">  <span class="s2">&quot;NumberOfRelationshipIdsInUse&quot;</span>: 0,
+</span><span class="line">  <span class="s2">&quot;NumberOfRelationshipTypeIdsInUse&quot;</span>: 0
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>在自己看来，<code>Cypher Query Language</code>的增删改语句还是比较直观的，但是一旦牵涉到关系就有点没节操了，一句查询中一半的操作符，真是让人看花眼，相较之下还是sql发展的比较成熟，也更易为人所接受了。<a href="http://docs.neo4j.org/chunked/milestone/cypher-query-lang.html">更多的操作符和更多的语法</a></p>
+
+<p>不过，各种neo4j的客户端都将晦涩的<code>Cypher</code>语言封装起来，提供了可读性更高的接口方法，下面就找个客户端来试用一下。</p>
+
+<h2 id="nodejs-bundle">nodejs bundle</h2>
+<p>官网上给出了java和python版本的实例，我等屌丝玩点轻量级的，这里找了一个<a href="https://github.com/thingdom/node-neo4j">nodejs的客户端</a>，初窥图形数据库的魅力。</p>
+
+<h3 id="section-4">创建及修改节点</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">neo4j = </span><span class="nx">require</span> <span class="s">&#39;neo4j&#39;</span>     <span class="c1">#使用coffee-script，那就尽量写的更coffee一点儿吧</span>
+</span><span class="line"><span class="nv">db = </span><span class="k">new</span> <span class="nx">neo4j</span><span class="p">.</span><span class="nx">GraphDatabase</span><span class="p">(</span><span class="s">&#39;http://localhost:7474&#39;</span><span class="p">)</span> <span class="c1">#连接默认的REST端口</span>
+</span><span class="line"><span class="nx">node</span><span class="p">.</span><span class="nx">createNode</span> <span class="p">{</span>             <span class="c1">#初始化一个节点</span>
+</span><span class="line">    <span class="nv">username: </span><span class="s">&#39;bran&#39;</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nx">node</span><span class="p">.</span><span class="nx">save</span> <span class="nf">(err, node)-&gt;</span>       <span class="c1">#需要save才能真正的保存这个节点到数据库</span>
+</span><span class="line">    <span class="nv">node.data = </span><span class="p">{</span>           <span class="c1">#可以通过直接修改node的data属性来修改node值</span>
+</span><span class="line">        <span class="nv">username: </span><span class="s">&#39;bran&#39;</span>
+</span><span class="line">        <span class="nv">nickname: </span><span class="s">&#39;bird man&#39;</span>
+</span><span class="line">        <span class="nv">email: </span><span class="s">&#39;bran@gmail.com&#39;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">    <span class="nx">node</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>             <span class="c1">#不要忘了再次保存</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="section-5">备份数据库</h2>
+<p>之前造出了那么多的脏数据，有点洁癖的人都想要把数据清理一下吧。网上找了找，发现只有’enterprise’版才有export的功能，这不是明摆着鄙视我等屌丝么。在<a href="http://www.mail-archive.com/user@lists.neo4j.org/msg08932.html">这里</a>(翻墙可入)有兄台说了一个很暴力的办法，直接删除<code>data/graph.db</code>文件夹，我试了一下，确实可行，重启后世界干干净净，只剩下了0号node，果断再用<code>start n = node(0) delete n;</code>删除之。这大概也是nosql的好处，数据就是文件，取消了维护索引，关系等等的麻烦，随去随用，冷备份和迁移的时候也简单，直接copy文件夹即可。</p>
+
+<h2 id="section-6">参考文档</h2>
+<ul>
+  <li><a href="http://docs.neo4j.org/chunked/milestone/">v1.9手册</a></li>
+  <li><a href="http://docs.neo4j.org.cn/">v1.8中文开发文档</a></li>
+  <li><a href="http://coffeedoc.info/github/thingdom/node-neo4j/master/">node-neo4j文档</a></li>
+</ul>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-23T11:25:00+08:00" pubdate data-updated="true">2013.01.23</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/coffee/'>coffee</a>, <a class='category' href='/blog/blog/categories/database/'>database</a>, <a class='category' href='/blog/blog/categories/neo4j/'>neo4j</a>, <a class='category' href='/blog/blog/categories/nodejs/'>nodejs</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1692,37 +1957,6 @@ A: 我在centos6.2上遇到过这个问题，其他发行版上不知道有没�
 
 	<a class='category' href='/blog/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/blog/categories/mysql/'>mysql</a>
 
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/07/29/jing-ji-de-le-qu/">竞技的乐趣</a></h1>
-	<div class="entry-content">
-		
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-29T19:06:00+08:00" pubdate data-updated="true">2012.07.29</time></div>
-	<div class="tags">
 
 </div>
 	
