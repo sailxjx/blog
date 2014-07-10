@@ -1,7 +1,7 @@
 source "http://ruby.taobao.org/"
 
 group :development do
-  gem 'rake', '~> 10.1.0'
+  gem 'rake', '~> 10.3.1'
   gem 'rack', '~> 1.4.1'
   gem 'jekyll', '~> 0.11.2'
   gem 'rdiscount', '~> 1.6.8'
