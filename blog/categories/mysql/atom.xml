@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: mysql | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/mysql/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/mysql/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[mysql 中的 date datetime 和 timestamp]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp/"/>
+    <link href="http://jingxin.me/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp/"/>
     <updated>2013-06-05T11:02:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp</id>
+    <id>http://jingxin.me/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp</id>
     <content type="html"><![CDATA[<p>mysql中用于表示时间的三种类型date, datetime, timestamp (如果算上int的话，四种) 比较容易混淆，下面就比较一下这三种类型的异同</p>
 
 <h1 id="section">相同点</h1>
@@ -52,9 +52,9 @@
   
   <entry>
     <title type="html"><![CDATA[mysql btree 与 hash 索引比较]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao/"/>
+    <link href="http://jingxin.me/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao/"/>
     <updated>2013-05-07T11:45:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao</id>
+    <id>http://jingxin.me/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao</id>
     <content type="html"><![CDATA[<p>mysql最常用的索引结构是btree(<code>O(log(n))</code>)，但是总有一些情况下我们为了更好的性能希望能使用别的类型的索引。hash就是其中一种选择，例如我们在通过用户名检索用户id的时候，他们总是一对一的关系，用到的操作符只是<code>=</code>而已，假如使用hash作为索引数据结构的话，时间复杂度可以降到<code>O(1)</code>。不幸的是，目前的mysql版本(5.6)中，hash只支持MEMORY和NDB两种引擎，而我们最常用的INNODB和MYISAM都不支持hash类型的索引。</p>
 
 <p>不管怎样，还是要了解一下这两种索引的区别，下面翻译自<a href="http://dev.mysql.com/doc/refman/5.6/en/index-btree-hash.html">mysql官网文档</a>中对这两者的解释。</p>
@@ -159,9 +159,9 @@
   
   <entry>
     <title type="html"><![CDATA[Mysql 多实例启动]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2012/08/13/mysql-duo-shi-li-qi-dong/"/>
+    <link href="http://jingxin.me/blog/blog/2012/08/13/mysql-duo-shi-li-qi-dong/"/>
     <updated>2012-08-13T17:03:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2012/08/13/mysql-duo-shi-li-qi-dong</id>
+    <id>http://jingxin.me/blog/blog/2012/08/13/mysql-duo-shi-li-qi-dong</id>
     <content type="html"><![CDATA[<p>当开发与生产环境在同一台机器上，或需要在一台机器上部署多套测试环境时，往往需要同时起多个mysqld进程，最近帮测试搭环境的时候就碰到了这样的问题。</p>
 
 <p>还是从安装mysql开始，下载tarball安装，</p>

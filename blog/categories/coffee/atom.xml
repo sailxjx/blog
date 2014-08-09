@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: coffee | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/coffee/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/coffee/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[介绍 coffeescript 中的列表推导式]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi/"/>
+    <link href="http://jingxin.me/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi/"/>
     <updated>2013-08-17T16:58:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi</id>
+    <id>http://jingxin.me/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi</id>
     <content type="html"><![CDATA[<p><a href="http://en.wikipedia.org/wiki/List_comprehension">列表推导式</a>是一个很著名的语法结构，它的特点是能让代码更简短，优雅，而且易于阅读。捎带些函数式编程特点的语言都支持这种语法结构，例如lisp家族和python。coffeescript作为一门年轻的语言，自然而然的继承了这个特点。</p>
 
 <p>我们先看看这种语法和普通循环的区别：</p>
@@ -72,9 +72,9 @@
   
   <entry>
     <title type="html"><![CDATA[一个例子验证 do 在 coffeescript 中干了什么]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me/"/>
+    <link href="http://jingxin.me/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me/"/>
     <updated>2013-08-07T17:20:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me</id>
+    <id>http://jingxin.me/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me</id>
     <content type="html"><![CDATA[<p>使用jslint的时候有可能会见到这样的提示</p>
 
 <blockquote>
@@ -171,9 +171,9 @@
   
   <entry>
     <title type="html"><![CDATA[初试图形数据库 neo4j]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j/"/>
+    <link href="http://jingxin.me/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j/"/>
     <updated>2013-01-23T11:25:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j</id>
+    <id>http://jingxin.me/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j</id>
     <content type="html"><![CDATA[<h2 id="section">安装</h2>
 
 <p>作为一个java软件，就得充分发挥它<code>Write Once, Run Anywhere</code>的精神。直接下载tarball，解压后运行即可。官方还很贴心的提供了一个init脚本(./bin/neo4j)，链接到init.d下就可以开搞啦。</p>

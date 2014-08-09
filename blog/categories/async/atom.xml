@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: async | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/async/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/async/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[javascript 中使用 callback 控制流程]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng/"/>
+    <link href="http://jingxin.me/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng/"/>
     <updated>2013-06-05T10:49:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng</id>
+    <id>http://jingxin.me/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng</id>
     <content type="html"><![CDATA[<p>javascript中随处可见的callback对于流程控制来说是一场灾难，缺点显而易见：</p>
 
 <ul>

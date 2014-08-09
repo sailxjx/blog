@@ -7,7 +7,7 @@
 	<meta name="author" content="tristan">
 
 	
-	<meta name="description" content="原文地址：Callbacks vs Coroutines 最近 Google V8 引擎的一个补丁提供了 ES6 生成器，一篇叫做“用 Javascript 生成器来解决回调问题的研究”的文章引发了很大的争议。虽然生成器到目前为止仍然需要 --harmony 或 --harmony- &hellip;">
+	<meta name="description" content="Github 免费提供了很棒的静态站托管服务 github pages，并且为每人准备了一个二级域名 username.github.io。 但是对于喜欢个性又爱折腾的码农来说，使用别人的域名，是万万不能忍受滴，所以 github 支持了绑定个人域名。 英语不错的可直接传送官方文档 Tips &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -16,7 +16,7 @@
 	<link href="/blog/favicon.ico" rel="shortcut icon">
 	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
 	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 	
 </head>
 
@@ -42,7 +42,7 @@
 		<div class="container">
 			<form action="http://google.com/search" method="get">
 				<input type="text" name="q" results="0">
-				<input type="hidden" name="q" value="site:sailxjx.github.io/blog">
+				<input type="hidden" name="q" value="site:jingxin.me/blog">
 			</form>
 		</div>
 	</div>
@@ -66,7 +66,7 @@
 	</div>
 	<form class="search" action="http://google.com/search" method="get">
 		<input class="alignright" type="text" name="q" results="0">
-		<input type="hidden" name="q" value="site:sailxjx.github.io/blog">
+		<input type="hidden" name="q" value="site:jingxin.me/blog">
 	</form>
 </nav>
 
@@ -75,6 +75,66 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2014/08/09/gei-github-page-she-zhi-yu-ming/">给 Github Page 设置域名</a></h1>
+	<div class="entry-content">
+		<p>Github 免费提供了很棒的静态站托管服务 <a href="https://pages.github.com/">github pages</a>，并且为每人准备了一个二级域名 username.github.io。</p>
+
+<p>但是对于喜欢个性又爱折腾的码农来说，使用别人的域名，是万万不能忍受滴，所以 github 支持了绑定个人域名。</p>
+
+<p>英语不错的可直接传送官方文档 <a href="https://help.github.com/articles/setting-up-a-custom-domain-with-github-pages">Tips for configuring a CNAME record with your DNS provider</a>，如我这样记性不好的，就看下面的流程：</p>
+
+<p>首先，你得有个自己的域名，比如这个 jingxin.me，然后我的目标是绑定到 sailxjx.github.io，并支持所有二级域名的跳转，如从 sailxjx.github.io/blog 会自动转到 jingxin.me/blog。</p>
+
+<p>然后，我们要创建 CNAME 记录，这一步要在个人域名托管的 dns 服务上操作，添加一条 CNAME 记录，指向 sailxjx.github.io，这样，就实现了通过 jingxin.me 访问 github page 内容的目的。通过 dig 命令可以查看是否生效，这个时候如果你用 ping 或者 nslookup 会看到两个域名的 ip 是一样的。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ dig jingxin.me +nostats +nocomments +nocmd
+</span><span class="line">;jingxin.me.                  IN  A
+</span><span class="line">jingxin.me.             346   IN  CNAME sailxjx.github.io.
+</span><span class="line">sailxjx.github.io.      3346  IN  CNAME github.map.fastly.net.
+</span><span class="line">github.map.fastly.net.  46    IN  A 103.245.222.133</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>最后，当然是告诉 github 需要自动从 sailxjx.github.io 跳转到 jingxin.me，是需要在相关的 repository 中添加一个 CNAME 文件，里面保留一行域名记录（不包含 http 等 schema 部分），比如<a href="https://github.com/sailxjx/sailxjx.github.com/blob/master/CNAME">这里</a>，push 之后就可以在项目的设置中看到这样的提示</p>
+
+<p><img src="https://github-images.s3.amazonaws.com/help/settings/pages-section.png" alt="pages-section.png" /></p>
+
+<p>下面就是短暂的等待了，快的话立即就生效了。</p>
+
+<h2 id="section">多余的话</h2>
+
+<p>除了使用 CNAME，github 还提供了另一种做法 <a href="https://help.github.com/articles/about-custom-domains-for-github-pages-sites#apex-domains">Apex domains</a>，由于官方并不推荐，所以这里也就不介绍了。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-08-09T18:28:00+08:00" pubdate data-updated="true">2014.08.09</time></div>
+	<div class="tags">
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1214,92 +1274,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/html5/'>html5</a>, <a class='category' href='/blog/blog/categories/javascript/'>javascript</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/07/05/ji-kuan-ya-li-ce-shi-gong-ju/">几款压力测试工具</a></h1>
-	<div class="entry-content">
-		<p>压力测试工具林林总总，数不胜数，这里只列举几个命令行下常用的工具，来看看那种用的比较顺手，纯粹个人意见。</p>
-
-<ul>
-  <li>ab (apache benchmark，因为是apache自带的工具，所以用的人比较多)</li>
-  <li>siege (一个不错的开源压力测试工具，简单，好用)</li>
-  <li>httperf (据说很强大，但参数实在繁琐，不考虑)</li>
-</ul>
-
-<h1 id="ab">ab</h1>
-<p>ab是apache自带的测试工具，很多情况下我们要测试一个网站在并发100下的响应速度，用下面的命令就行</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">ab -n1000 -c100 http://domain.com/</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>可不要少了最后的那个’/’，ab接受的url必须是schema, domain, path一个不少的。</p>
-
-<p>其他像添加header，post参数等等的，man一下ab的手册吧。</p>
-
-<p>长久以来我一直以ab作为webserver性能的一个指标，因为使用确实简单，直到遇见了siege。</p>
-
-<h1 id="siege">siege</h1>
-
-<p>siege应该也有些年头了，2000年的时候就已经有这个软件了，直到最近更新了3.0.1版本。在第一次使用的时候，需要用siege.config在主目录下面生成一个配置文件.siegerc。这类文件常用linux的人应该很清楚了，里面每个选项都有明确的注释。需要注意的是delay这个值，做一般测试的时候会按照这个设定的时间间隔停顿，那么这样压力测试出来的结果就不准了，所以在做压测的时候需要加上’-b’参数，或者直接将这个参数设置为0。下面是一个100并发测试10秒钟的例子。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">siege -b -c100 -t10S http://domain.com/</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>siege的一个缺点是没法设置总请求数，但是可以通过重复数和并发数组合来求出总请求数，例如我们要在100并发下发送1000个请求，就用下面的命令，当然这个时候就不能用’-t’参数了</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">siege -b -c100 -r10 http://domain.com/</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>结果与ab差不多，但是他会将历次测试的结果保存在一个文件中供以后比较。</p>
-
-<h1 id="section">测试</h1>
-
-<p>这里我分别用nodejs和php写了两个server脚本，响应值都是’hello world’，都用单一进程作为web server。（php5.4之后用-S参数来启动服务）。</p>
-
-<p>测试结果:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">(request/second)        php     nodejs
-</span><span class="line">siege                   2500    2000
-</span><span class="line">ab                      4880    3480</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>测试软件的评判标准不一样，所以测试结果有差距也比较合理，不能由此说明谁比谁更准确。但是在测试中nodejs的性能比php要慢20%这个倒是让我觉得比较惊讶，看来nodejs在运算效率上并不占优势。但是在复杂的web应用中，更多的时间开销在io中，nodejs合理的将这部分等待时间利用了起来，才会让人感觉比较快吧。</p>
-
-<p>很早就有人对这几款测试软件做了<a href="http://lionet.livejournal.com/99984.html">横向的对比</a>，有兴趣可以看一下，其中keepalive和no-keepalive的效率差距比较大，我自己测试时觉得并不明显，可能是写的例子比较单一吧。</p>
-
-<p>今后假如需要做简单的压力测试，我还是比较倾向于使用siege。</p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-05T16:45:00+08:00" pubdate data-updated="true">2013.07.05</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/ab/'>ab</a>, <a class='category' href='/blog/blog/categories/httperf/'>httperf</a>, <a class='category' href='/blog/blog/categories/siege/'>siege</a>, <a class='category' href='/blog/blog/categories/test/'>test</a>
 
 
 </div>

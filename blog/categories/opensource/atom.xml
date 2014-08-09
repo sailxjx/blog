@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: opensource | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/opensource/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/opensource/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[金钱与开源(part2)]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/12/11/jin-qian-yu-kai-yuan-part2/"/>
+    <link href="http://jingxin.me/blog/blog/2013/12/11/jin-qian-yu-kai-yuan-part2/"/>
     <updated>2013-12-11T17:14:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/12/11/jin-qian-yu-kai-yuan-part2</id>
+    <id>http://jingxin.me/blog/blog/2013/12/11/jin-qian-yu-kai-yuan-part2</id>
     <content type="html"><![CDATA[<blockquote>
   <p>接上篇<a href="/blog/2013/12/08/jin-qian-yu-kai-yuan-part1/">金钱与开源(part1)</a></p>
 </blockquote>
@@ -128,9 +128,9 @@
   
   <entry>
     <title type="html"><![CDATA[金钱与开源(part1)]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part1/"/>
+    <link href="http://jingxin.me/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part1/"/>
     <updated>2013-12-08T14:24:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part1</id>
+    <id>http://jingxin.me/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part1</id>
     <content type="html"><![CDATA[<blockquote>
   <p>注：本文作者是npm的作者<a href="http://blog.izs.me/">Isaac Z. Schlueter</a>，也是nodejs的主要作者之一</p>
 </blockquote>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: zsh | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/zsh/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/zsh/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[zsh自动补全]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2012/08/30/zshzi-dong-bu-quan/"/>
+    <link href="http://jingxin.me/blog/blog/2012/08/30/zshzi-dong-bu-quan/"/>
     <updated>2012-08-30T18:15:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2012/08/30/zshzi-dong-bu-quan</id>
+    <id>http://jingxin.me/blog/blog/2012/08/30/zshzi-dong-bu-quan</id>
     <content type="html"><![CDATA[<p>最近被zsh搞的够郁闷，Mark一下，好好翻翻文档，下周写出自己的自动补全脚本</p>
 ]]></content>
   </entry>

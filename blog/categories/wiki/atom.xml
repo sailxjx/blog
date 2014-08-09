@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: wiki | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/wiki/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/wiki/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[体验gollum]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2012/07/12/ti-yan-gollum/"/>
+    <link href="http://jingxin.me/blog/blog/2012/07/12/ti-yan-gollum/"/>
     <updated>2012-07-12T18:07:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2012/07/12/ti-yan-gollum</id>
+    <id>http://jingxin.me/blog/blog/2012/07/12/ti-yan-gollum</id>
     <content type="html"><![CDATA[<p>gollum是一个轻量级的wiki系统，使用git作为版本管理和跟踪工具，支持markdown，mediawiki，texttile等多种语法，由github开发并且已经投入到githubwiki的应用中。</p>
 
 <ul>

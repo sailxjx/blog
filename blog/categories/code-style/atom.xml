@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: code style | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/code-style/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/code-style/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[介绍 coffeescript 中的列表推导式]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi/"/>
+    <link href="http://jingxin.me/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi/"/>
     <updated>2013-08-17T16:58:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi</id>
+    <id>http://jingxin.me/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi</id>
     <content type="html"><![CDATA[<p><a href="http://en.wikipedia.org/wiki/List_comprehension">列表推导式</a>是一个很著名的语法结构，它的特点是能让代码更简短，优雅，而且易于阅读。捎带些函数式编程特点的语言都支持这种语法结构，例如lisp家族和python。coffeescript作为一门年轻的语言，自然而然的继承了这个特点。</p>
 
 <p>我们先看看这种语法和普通循环的区别：</p>

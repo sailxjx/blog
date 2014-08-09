@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: note | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/note/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/note/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[awk 学习笔记(3)]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3/"/>
+    <link href="http://jingxin.me/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3/"/>
     <updated>2013-04-17T16:11:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3</id>
+    <id>http://jingxin.me/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3</id>
     <content type="html"><![CDATA[<p>最近线上服务出了一点问题，然后搞了一堆的log来分析。log的格式很乱，需要整理一下，虽然几个月前特意看了一下awk，但是过了这么久，也忘得差不多了，正好靠这次机会练练手，把失去的记忆找回来。</p>
 
 <p>log中的每条数据都被分成了多行，而且都存在一个文件中，现在文件已经有8G的大小。现在要做的就是将这些多行的数据合并成每条一行，只取有用的部分。</p>
@@ -79,9 +79,9 @@
   
   <entry>
     <title type="html"><![CDATA[Cypher Query Language 学习笔记(2)]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/02/06/cypher-query-language-xue-xi-bi-ji-2/"/>
+    <link href="http://jingxin.me/blog/blog/2013/02/06/cypher-query-language-xue-xi-bi-ji-2/"/>
     <updated>2013-02-06T14:32:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/02/06/cypher-query-language-xue-xi-bi-ji-2</id>
+    <id>http://jingxin.me/blog/blog/2013/02/06/cypher-query-language-xue-xi-bi-ji-2</id>
     <content type="html"><![CDATA[<h3 id="create-unique">create unique</h3>
 <p>顾名思义，<code>create unique</code>与<code>create</code>在功能上是类似的，不过当新建的node或relationship已经存在时，<code>create unique</code>不会再生成一个新的node或relationship。</p>
 
@@ -165,9 +165,9 @@
   
   <entry>
     <title type="html"><![CDATA[Cypher Query Language 学习笔记(1)]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/02/01/cypher-query-language-xue-xi-bi-ji-1/"/>
+    <link href="http://jingxin.me/blog/blog/2013/02/01/cypher-query-language-xue-xi-bi-ji-1/"/>
     <updated>2013-02-01T11:30:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/02/01/cypher-query-language-xue-xi-bi-ji-1</id>
+    <id>http://jingxin.me/blog/blog/2013/02/01/cypher-query-language-xue-xi-bi-ji-1</id>
     <content type="html"><![CDATA[<p>紧接前文<a href="http://sailxjx.github.com/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j/">初试图形数据库 neo4j</a>初窥了这种语言的特性，几天使用下来，初期不适应的便秘感慢慢退去，渐入佳境，竟然觉得有些妙不可言鸟。就如同nodejs基于事件的特点和函数式语法对传统编程方法的改变，学习<code>Cypher</code>同样需要改改传统<code>Sql</code>的思路，下面记录一下最近的新发现。</p>
 
 <h3 id="section">版本号</h3>
@@ -392,9 +392,9 @@
   
   <entry>
     <title type="html"><![CDATA[node-neo4j 学习笔记]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji/"/>
+    <link href="http://jingxin.me/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji/"/>
     <updated>2013-01-28T11:49:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji</id>
+    <id>http://jingxin.me/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji</id>
     <content type="html"><![CDATA[<h2 id="node-neo4jhttpsgithubcomthingdomnode-neo4j"><a href="https://github.com/thingdom/node-neo4j">node-neo4j</a></h2>
 
 <h3 id="section">查找节点</h3>
@@ -496,9 +496,9 @@ callback中返回的是一个关系对象数组。</p>
   
   <entry>
     <title type="html"><![CDATA[awk 学习笔记(2)]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/01/21/awk-xue-xi-bi-ji-2/"/>
+    <link href="http://jingxin.me/blog/blog/2013/01/21/awk-xue-xi-bi-ji-2/"/>
     <updated>2013-01-21T17:42:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/01/21/awk-xue-xi-bi-ji-2</id>
+    <id>http://jingxin.me/blog/blog/2013/01/21/awk-xue-xi-bi-ji-2</id>
     <content type="html"><![CDATA[<h2 id="section">常用的选项</h2>
 <ul>
   <li>-F 指定分隔符</li>

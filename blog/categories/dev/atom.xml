@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: dev | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/dev/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/dev/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[gitlabhq 部署小记]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji/"/>
+    <link href="http://jingxin.me/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji/"/>
     <updated>2012-11-14T20:12:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji</id>
+    <id>http://jingxin.me/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji</id>
     <content type="html"><![CDATA[<p>冬天来了，不知github是不是也去冬眠了，速度慢的像在爬，没办法，屌丝买不起vps，只能自己内网部一套开源的。</p>
 
 <p>gitlabhq是github的一个开源版本，虽然不是官方的，但是已经做的有模有样，总之能想到的功能都已具备，放在国内随便改改UI就能上线建站的那种。安装文档那是写的相当滴详细，体现了码农罕有的耐性，查看文档请移步<a href="https://github.com/gitlabhq/gitlabhq/blob/master/doc/install/installation.md">gitlab文档</a></p>

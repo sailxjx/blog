@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: translation | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/translation/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/translation/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[回调 vs 协同程序]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu/"/>
+    <link href="http://jingxin.me/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu/"/>
     <updated>2014-04-19T15:44:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu</id>
+    <id>http://jingxin.me/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu</id>
     <content type="html"><![CDATA[<blockquote>
   <p>原文地址：<a href="https://medium.com/code-adventures/174f1fe66127">Callbacks vs Coroutines</a></p>
 </blockquote>
@@ -206,9 +206,9 @@ function showTypes(fn) {
   
   <entry>
     <title type="html"><![CDATA[金钱与开源(part2)]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/12/11/jin-qian-yu-kai-yuan-part2/"/>
+    <link href="http://jingxin.me/blog/blog/2013/12/11/jin-qian-yu-kai-yuan-part2/"/>
     <updated>2013-12-11T17:14:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/12/11/jin-qian-yu-kai-yuan-part2</id>
+    <id>http://jingxin.me/blog/blog/2013/12/11/jin-qian-yu-kai-yuan-part2</id>
     <content type="html"><![CDATA[<blockquote>
   <p>接上篇<a href="/blog/2013/12/08/jin-qian-yu-kai-yuan-part1/">金钱与开源(part1)</a></p>
 </blockquote>
@@ -319,9 +319,9 @@ function showTypes(fn) {
   
   <entry>
     <title type="html"><![CDATA[金钱与开源(part1)]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part1/"/>
+    <link href="http://jingxin.me/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part1/"/>
     <updated>2013-12-08T14:24:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part1</id>
+    <id>http://jingxin.me/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part1</id>
     <content type="html"><![CDATA[<blockquote>
   <p>注：本文作者是npm的作者<a href="http://blog.izs.me/">Isaac Z. Schlueter</a>，也是nodejs的主要作者之一</p>
 </blockquote>
@@ -385,9 +385,9 @@ function showTypes(fn) {
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 我们相信傻瓜]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/06/20/tdwtf-wo-men-xiang-xin-sha-gua/"/>
+    <link href="http://jingxin.me/blog/blog/2013/06/20/tdwtf-wo-men-xiang-xin-sha-gua/"/>
     <updated>2013-06-20T16:06:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/06/20/tdwtf-wo-men-xiang-xin-sha-gua</id>
+    <id>http://jingxin.me/blog/blog/2013/06/20/tdwtf-wo-men-xiang-xin-sha-gua</id>
     <content type="html"><![CDATA[<p>一天早上，Stan去找他的上级Monty，他正在疯狂地的敲着键盘。这意味着两件事：明天他会收到一封讨厌的设计文档，而且那个设计中会用到一个从没用过的数据库。Monty是一个数据库“砖家”，没什么问题是他不能搞定的。Stan在这家公司的第一年，照做了Monty描述的每个设想，因为他不知道有哪些更好的办法。现在他对公司系统有了更多的了解，他渴望有个机会来做一些正确的事。</p>
 
 <p>Stan在邮箱里找到了一份客户发给Monty的需求副本，要求两个ASP.NET应用之间能互相通信。Stan喜上心头，这是一个简单的web服务，既然他们用.NET，那么只要用<a href="http://en.wikipedia.org/wiki/Windows_Communication_Foundation">WCF</a>就行了。</p>
@@ -436,9 +436,9 @@ function showTypes(fn) {
   
   <entry>
     <title type="html"><![CDATA[[nginx] if is evil]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/05/15/nginx-if-is-evil/"/>
+    <link href="http://jingxin.me/blog/blog/2013/05/15/nginx-if-is-evil/"/>
     <updated>2013-05-15T17:36:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/05/15/nginx-if-is-evil</id>
+    <id>http://jingxin.me/blog/blog/2013/05/15/nginx-if-is-evil</id>
     <content type="html"><![CDATA[<p>最近用nginx配置中使用if遇到一些问题，碰巧想起以前在wiki中看到的这个页面，虽然我的问题可能和wiki中提到的不同，但是if还是能避免就避免吧</p>
 
 <p>下面的内容翻译自<a href="http://wiki.nginx.org/IfIsEvil">IfIsEvil</a></p>

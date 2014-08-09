@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: nodejs | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/nodejs/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/nodejs/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[回调 vs 协同程序]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu/"/>
+    <link href="http://jingxin.me/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu/"/>
     <updated>2014-04-19T15:44:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu</id>
+    <id>http://jingxin.me/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu</id>
     <content type="html"><![CDATA[<blockquote>
   <p>原文地址：<a href="https://medium.com/code-adventures/174f1fe66127">Callbacks vs Coroutines</a></p>
 </blockquote>
@@ -206,9 +206,9 @@ function showTypes(fn) {
   
   <entry>
     <title type="html"><![CDATA[一个例子验证 do 在 coffeescript 中干了什么]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me/"/>
+    <link href="http://jingxin.me/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me/"/>
     <updated>2013-08-07T17:20:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me</id>
+    <id>http://jingxin.me/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me</id>
     <content type="html"><![CDATA[<p>使用jslint的时候有可能会见到这样的提示</p>
 
 <blockquote>
@@ -305,9 +305,9 @@ function showTypes(fn) {
   
   <entry>
     <title type="html"><![CDATA[使用 coffeescript 的注意点]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian/"/>
+    <link href="http://jingxin.me/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian/"/>
     <updated>2013-06-13T14:48:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian</id>
+    <id>http://jingxin.me/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian</id>
     <content type="html"><![CDATA[<p><a href="https://github.com/jashkenas/coffee-script">coffeescript</a>是javascript的一个方言，随着javascript在前后端的流行，它在<a href="https://github.com/languages">github</a>的排名也扶摇直上，最近终于挤掉高帅富<a href="https://github.com/languages/Objective-C">Objective-C</a>跻身前十，可喜可贺。</p>
 
 <p>虽然coffeescript号称”It’s just javascript”，但是相比较而言，仍然是添加了很多有趣的特性，大部分特性都是去粗取精，去伪存真，让js玩家喜闻乐见，让旁观路人不明觉厉，但是也随之带来了一些容易忽视的问题，不得不提一下，以免以后碰到后不知所措。</p>
@@ -442,9 +442,9 @@ function showTypes(fn) {
   
   <entry>
     <title type="html"><![CDATA[node-neo4j 学习笔记]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji/"/>
+    <link href="http://jingxin.me/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji/"/>
     <updated>2013-01-28T11:49:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji</id>
+    <id>http://jingxin.me/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji</id>
     <content type="html"><![CDATA[<h2 id="node-neo4jhttpsgithubcomthingdomnode-neo4j"><a href="https://github.com/thingdom/node-neo4j">node-neo4j</a></h2>
 
 <h3 id="section">查找节点</h3>
@@ -546,9 +546,9 @@ callback中返回的是一个关系对象数组。</p>
   
   <entry>
     <title type="html"><![CDATA[初试图形数据库 neo4j]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j/"/>
+    <link href="http://jingxin.me/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j/"/>
     <updated>2013-01-23T11:25:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j</id>
+    <id>http://jingxin.me/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j</id>
     <content type="html"><![CDATA[<h2 id="section">安装</h2>
 
 <p>作为一个java软件，就得充分发挥它<code>Write Once, Run Anywhere</code>的精神。直接下载tarball，解压后运行即可。官方还很贴心的提供了一个init脚本(./bin/neo4j)，链接到init.d下就可以开搞啦。</p>

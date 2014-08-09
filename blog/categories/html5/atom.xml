@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: html5 | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/html5/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/html5/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Javascript并行计算： web worker]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker/"/>
+    <link href="http://jingxin.me/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker/"/>
     <updated>2013-07-10T12:09:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker</id>
+    <id>http://jingxin.me/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker</id>
     <content type="html"><![CDATA[<p>最近发现了chrome下面的一个奇特现象，像下面这样的一段代码：</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>

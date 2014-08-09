@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: caprice | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/caprice/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/caprice/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[软件与配置]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2014/02/28/ruan-jian-yu-pei-zhi/"/>
+    <link href="http://jingxin.me/blog/blog/2014/02/28/ruan-jian-yu-pei-zhi/"/>
     <updated>2014-02-28T13:07:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2014/02/28/ruan-jian-yu-pei-zhi</id>
+    <id>http://jingxin.me/blog/blog/2014/02/28/ruan-jian-yu-pei-zhi</id>
     <content type="html"><![CDATA[<p>前段时间不间断的开发新项目，实际是想得多，写得少，最后落实到代码中，大概也就200多k文件。现在回头看一下，觉得还挺满意的，因为每个新项目会找出些不一样的地方，不求做到最好，但求标新立异，否则岂不是失去了开发的意义，也辜负了“程序猿”这个需要些许创造性的工作。</p>
 
 <p>每次新项目达到一个阶段，能回顾一下，总是极好的。这次细想一下，有什么值得总结的地方，就又回到了“软件配置”这个极庸俗的话题上来了。</p>
@@ -61,9 +61,9 @@
   
   <entry>
     <title type="html"><![CDATA[软件极简主义]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi/"/>
+    <link href="http://jingxin.me/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi/"/>
     <updated>2013-09-17T21:03:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi</id>
+    <id>http://jingxin.me/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi</id>
     <content type="html"><![CDATA[<p>今天回家的路上，竟然刮起了大风，虽然骑行艰难，但是想想公交中的闷热，倒是觉得凉爽多了。</p>
 
 <p>在路上的时间是无聊的，于是就喜欢胡思乱想，很多自以为很棒的点子其实都是在这种不经意间想到的，办公室里的久坐反而显得效率低下了。回味一下最近做的几个项目，高屋建瓴的想想当初的设计，突然很想写一些关于软件设计的文章。就着饮料和巧克力（来点酒么？），今天就来写写软件极简主义吧。</p>
@@ -99,9 +99,9 @@
   
   <entry>
     <title type="html"><![CDATA[关于公司架构的一些吐槽]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/07/12/guan-yu-gong-si-jia-gou-de-yi-xie-tu-cao/"/>
+    <link href="http://jingxin.me/blog/blog/2013/07/12/guan-yu-gong-si-jia-gou-de-yi-xie-tu-cao/"/>
     <updated>2013-07-12T09:42:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/07/12/guan-yu-gong-si-jia-gou-de-yi-xie-tu-cao</id>
+    <id>http://jingxin.me/blog/blog/2013/07/12/guan-yu-gong-si-jia-gou-de-yi-xie-tu-cao</id>
     <content type="html"><![CDATA[<p>写了这么多文章，技术屌丝味太浓了，以前每次想写点随想也是<a href="/blog/2012/07/29/jing-ji-de-le-qu/">起了个标题就没下文了</a>，正好今天早上看到了一篇<a href="http://www.36kr.com/p/204557.html">喷技术创业的文章</a>，文中观点不敢苟同，趁着早晨清醒的时刻，咱也文艺范一次，写点有感而发的文字。</p>
 
 <p>很多公司，无论大小，都想将部门划分的细之又细。所谓麻雀虽小，五脏俱全。随意拉一张公司的组织结构图出来看看 – 总裁办，行政部，人力资源部，技术部，产品部，市场部，客服部，运营部。。。别人有的我们就得有，别人没有的我们也得有，不论有些部门是不是必须，只要一两个人也能成立个部门。不明真相的人跑来一看，瞧，多正规，高端洋气上档次。</p>

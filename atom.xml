@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -14,10 +14,48 @@
 
   
   <entry>
+    <title type="html"><![CDATA[给 github page 设置域名]]></title>
+    <link href="http://jingxin.me/blog/blog/2014/08/09/gei-github-page-she-zhi-yu-ming/"/>
+    <updated>2014-08-09T18:28:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2014/08/09/gei-github-page-she-zhi-yu-ming</id>
+    <content type="html"><![CDATA[<p>Github 免费提供了很棒的静态站托管服务 <a href="https://pages.github.com/">github pages</a>，并且为每人准备了一个二级域名 username.github.io。</p>
+
+<p>但是对于喜欢个性又爱折腾的码农来说，使用别人的域名，是万万不能忍受滴，所以 github 支持了绑定个人域名。</p>
+
+<p>英语不错的可直接传送官方文档 <a href="https://help.github.com/articles/setting-up-a-custom-domain-with-github-pages">Tips for configuring a CNAME record with your DNS provider</a>，如我这样记性不好的，就看下面的流程：</p>
+
+<p>首先，你得有个自己的域名，比如这个 jingxin.me，然后我的目标是绑定到 sailxjx.github.io，并支持所有二级域名的跳转，如从 sailxjx.github.io/blog 会自动转到 jingxin.me/blog。</p>
+
+<p>然后，我们要创建 CNAME 记录，这一步要在个人域名托管的 dns 服务上操作，添加一条 CNAME 记录，指向 sailxjx.github.io，这样，就实现了通过 jingxin.me 访问 github page 内容的目的。通过 dig 命令可以查看是否生效，这个时候如果你用 ping 或者 nslookup 会看到两个域名的 ip 是一样的。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ dig jingxin.me +nostats +nocomments +nocmd
+</span><span class="line">;jingxin.me.                  IN  A
+</span><span class="line">jingxin.me.             346   IN  CNAME sailxjx.github.io.
+</span><span class="line">sailxjx.github.io.      3346  IN  CNAME github.map.fastly.net.
+</span><span class="line">github.map.fastly.net.  46    IN  A 103.245.222.133</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>最后，当然是告诉 github 需要自动从 sailxjx.github.io 跳转到 jingxin.me，是需要在相关的 repository 中添加一个 CNAME 文件，里面保留一行域名记录（不包含 http 等 schema 部分），比如<a href="https://github.com/sailxjx/sailxjx.github.com/blob/master/CNAME">这里</a>，push 之后就可以在项目的设置中看到这样的提示</p>
+
+<p><img src="https://github-images.s3.amazonaws.com/help/settings/pages-section.png" alt="pages-section.png" /></p>
+
+<p>下面就是短暂的等待了，快的话立即就生效了。</p>
+
+<h2 id="section">多余的话</h2>
+
+<p>除了使用 CNAME，github 还提供了另一种做法 <a href="https://help.github.com/articles/about-custom-domains-for-github-pages-sites#apex-domains">Apex domains</a>，由于官方并不推荐，所以这里也就不介绍了。</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[回调 vs 协同程序]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu/"/>
+    <link href="http://jingxin.me/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu/"/>
     <updated>2014-04-19T15:44:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu</id>
+    <id>http://jingxin.me/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu</id>
     <content type="html"><![CDATA[<blockquote>
   <p>原文地址：<a href="https://medium.com/code-adventures/174f1fe66127">Callbacks vs Coroutines</a></p>
 </blockquote>
@@ -293,14 +331,14 @@
   
   <entry>
     <title type="html"><![CDATA[软件与配置]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2014/02/28/ruan-jian-yu-pei-zhi/"/>
+    <link href="http://jingxin.me/blog/blog/2014/02/28/ruan-jian-yu-pei-zhi/"/>
     <updated>2014-02-28T13:07:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2014/02/28/ruan-jian-yu-pei-zhi</id>
+    <id>http://jingxin.me/blog/blog/2014/02/28/ruan-jian-yu-pei-zhi</id>
     <content type="html"><![CDATA[<p>前段时间不间断的开发新项目，实际是想得多，写得少，最后落实到代码中，大概也就200多k文件。现在回头看一下，觉得还挺满意的，因为每个新项目会找出些不一样的地方，不求做到最好，但求标新立异，否则岂不是失去了开发的意义，也辜负了“程序猿”这个需要些许创造性的工作。</p>
 
 <p>每次新项目达到一个阶段，能回顾一下，总是极好的。这次细想一下，有什么值得总结的地方，就又回到了“软件配置”这个极庸俗的话题上来了。</p>
 
-<p>在我看来，任何软件都少不了配置，但是在之前的文章中我也提到过，<a href="http://sailxjx.github.io/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi/">配置是软件的大敌</a>。任何软件配置越复杂，学习成本也就越高，这是一种反人类的趋势，所以这种软件，要么被更新，更简单的软件取代，要么就根本无人问津，消失在软件的海洋中。</p>
+<p>在我看来，任何软件都少不了配置，但是在之前的文章中我也提到过，<a href="http://jingxin.me/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi/">配置是软件的大敌</a>。任何软件配置越复杂，学习成本也就越高，这是一种反人类的趋势，所以这种软件，要么被更新，更简单的软件取代，要么就根本无人问津，消失在软件的海洋中。</p>
 
 <p>当然，配置也可以被广泛的定义，形式是多种多样的，有些还是群众们喜闻乐见的，不能一棒子打死了。下面谨罗列一下我心目中的配置文件类型，和它们的适用范围。</p>
 
@@ -339,11 +377,11 @@
   
   <entry>
     <title type="html"><![CDATA[金钱与开源(part2)]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/12/11/jin-qian-yu-kai-yuan-part2/"/>
+    <link href="http://jingxin.me/blog/blog/2013/12/11/jin-qian-yu-kai-yuan-part2/"/>
     <updated>2013-12-11T17:14:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/12/11/jin-qian-yu-kai-yuan-part2</id>
+    <id>http://jingxin.me/blog/blog/2013/12/11/jin-qian-yu-kai-yuan-part2</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>接上篇<a href="http://sailxjx.github.io/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part1/">金钱与开源(part1)</a></p>
+  <p>接上篇<a href="http://jingxin.me/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part1/">金钱与开源(part1)</a></p>
 </blockquote>
 
 <h2 id="section">虚拟小费</h2>
@@ -452,9 +490,9 @@
   
   <entry>
     <title type="html"><![CDATA[金钱与开源(part1)]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part1/"/>
+    <link href="http://jingxin.me/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part1/"/>
     <updated>2013-12-08T14:24:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part1</id>
+    <id>http://jingxin.me/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part1</id>
     <content type="html"><![CDATA[<blockquote>
   <p>注：本文作者是npm的作者<a href="http://blog.izs.me/">Isaac Z. Schlueter</a>，也是nodejs的主要作者之一</p>
 </blockquote>
@@ -518,9 +556,9 @@
   
   <entry>
     <title type="html"><![CDATA[软件极简主义]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi/"/>
+    <link href="http://jingxin.me/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi/"/>
     <updated>2013-09-17T21:03:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi</id>
+    <id>http://jingxin.me/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi</id>
     <content type="html"><![CDATA[<p>今天回家的路上，竟然刮起了大风，虽然骑行艰难，但是想想公交中的闷热，倒是觉得凉爽多了。</p>
 
 <p>在路上的时间是无聊的，于是就喜欢胡思乱想，很多自以为很棒的点子其实都是在这种不经意间想到的，办公室里的久坐反而显得效率低下了。回味一下最近做的几个项目，高屋建瓴的想想当初的设计，突然很想写一些关于软件设计的文章。就着饮料和巧克力（来点酒么？），今天就来写写软件极简主义吧。</p>
@@ -556,9 +594,9 @@
   
   <entry>
     <title type="html"><![CDATA[介绍 coffeescript 中的列表推导式]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi/"/>
+    <link href="http://jingxin.me/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi/"/>
     <updated>2013-08-17T16:58:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi</id>
+    <id>http://jingxin.me/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi</id>
     <content type="html"><![CDATA[<p><a href="http://en.wikipedia.org/wiki/List_comprehension">列表推导式</a>是一个很著名的语法结构，它的特点是能让代码更简短，优雅，而且易于阅读。捎带些函数式编程特点的语言都支持这种语法结构，例如lisp家族和python。coffeescript作为一门年轻的语言，自然而然的继承了这个特点。</p>
 
 <p>我们先看看这种语法和普通循环的区别：</p>
@@ -609,9 +647,9 @@
   
   <entry>
     <title type="html"><![CDATA[一个例子验证 do 在 coffeescript 中干了什么]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me/"/>
+    <link href="http://jingxin.me/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me/"/>
     <updated>2013-08-07T17:20:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me</id>
+    <id>http://jingxin.me/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me</id>
     <content type="html"><![CDATA[<p>使用jslint的时候有可能会见到这样的提示</p>
 
 <blockquote>
@@ -708,10 +746,10 @@
   
   <entry>
     <title type="html"><![CDATA[关于公司架构的一些吐槽]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/07/12/guan-yu-gong-si-jia-gou-de-yi-xie-tu-cao/"/>
+    <link href="http://jingxin.me/blog/blog/2013/07/12/guan-yu-gong-si-jia-gou-de-yi-xie-tu-cao/"/>
     <updated>2013-07-12T09:42:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/07/12/guan-yu-gong-si-jia-gou-de-yi-xie-tu-cao</id>
-    <content type="html"><![CDATA[<p>写了这么多文章，技术屌丝味太浓了，以前每次想写点随想也是<a href="http://sailxjx.github.io/blog/blog/2012/07/29/jing-ji-de-le-qu/">起了个标题就没下文了</a>，正好今天早上看到了一篇<a href="http://www.36kr.com/p/204557.html">喷技术创业的文章</a>，文中观点不敢苟同，趁着早晨清醒的时刻，咱也文艺范一次，写点有感而发的文字。</p>
+    <id>http://jingxin.me/blog/blog/2013/07/12/guan-yu-gong-si-jia-gou-de-yi-xie-tu-cao</id>
+    <content type="html"><![CDATA[<p>写了这么多文章，技术屌丝味太浓了，以前每次想写点随想也是<a href="http://jingxin.me/blog/blog/2012/07/29/jing-ji-de-le-qu/">起了个标题就没下文了</a>，正好今天早上看到了一篇<a href="http://www.36kr.com/p/204557.html">喷技术创业的文章</a>，文中观点不敢苟同，趁着早晨清醒的时刻，咱也文艺范一次，写点有感而发的文字。</p>
 
 <p>很多公司，无论大小，都想将部门划分的细之又细。所谓麻雀虽小，五脏俱全。随意拉一张公司的组织结构图出来看看 – 总裁办，行政部，人力资源部，技术部，产品部，市场部，客服部，运营部。。。别人有的我们就得有，别人没有的我们也得有，不论有些部门是不是必须，只要一两个人也能成立个部门。不明真相的人跑来一看，瞧，多正规，高端洋气上档次。</p>
 
@@ -774,9 +812,9 @@
   
   <entry>
     <title type="html"><![CDATA[Javascript并行计算： web worker]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker/"/>
+    <link href="http://jingxin.me/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker/"/>
     <updated>2013-07-10T12:09:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker</id>
+    <id>http://jingxin.me/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker</id>
     <content type="html"><![CDATA[<p>最近发现了chrome下面的一个奇特现象，像下面这样的一段代码：</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -925,9 +963,9 @@
   
   <entry>
     <title type="html"><![CDATA[几款压力测试工具]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/07/05/ji-kuan-ya-li-ce-shi-gong-ju/"/>
+    <link href="http://jingxin.me/blog/blog/2013/07/05/ji-kuan-ya-li-ce-shi-gong-ju/"/>
     <updated>2013-07-05T16:45:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/07/05/ji-kuan-ya-li-ce-shi-gong-ju</id>
+    <id>http://jingxin.me/blog/blog/2013/07/05/ji-kuan-ya-li-ce-shi-gong-ju</id>
     <content type="html"><![CDATA[<p>压力测试工具林林总总，数不胜数，这里只列举几个命令行下常用的工具，来看看那种用的比较顺手，纯粹个人意见。</p>
 
 <ul>
@@ -985,9 +1023,9 @@
   
   <entry>
     <title type="html"><![CDATA[php 闭包：并不像看上去那么美好]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/07/05/php-bi-bao-bing-bu-xiang-kan-shang-qu-na-me-mei-hao/"/>
+    <link href="http://jingxin.me/blog/blog/2013/07/05/php-bi-bao-bing-bu-xiang-kan-shang-qu-na-me-mei-hao/"/>
     <updated>2013-07-05T10:27:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/07/05/php-bi-bao-bing-bu-xiang-kan-shang-qu-na-me-mei-hao</id>
+    <id>http://jingxin.me/blog/blog/2013/07/05/php-bi-bao-bing-bu-xiang-kan-shang-qu-na-me-mei-hao</id>
     <content type="html"><![CDATA[<p>最近一个叫<a href="http://laravel.com/">laravel</a>的php框架在社区讨论的风生水起，号称php界的rails，试用了一下，确实非常新鲜，但是又有种似曾相识的感觉。</p>
 
 <p>例如路由中的一段代码：</p>
@@ -1156,9 +1194,9 @@
   
   <entry>
     <title type="html"><![CDATA[[TDWTF] 我们相信傻瓜]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/06/20/tdwtf-wo-men-xiang-xin-sha-gua/"/>
+    <link href="http://jingxin.me/blog/blog/2013/06/20/tdwtf-wo-men-xiang-xin-sha-gua/"/>
     <updated>2013-06-20T16:06:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/06/20/tdwtf-wo-men-xiang-xin-sha-gua</id>
+    <id>http://jingxin.me/blog/blog/2013/06/20/tdwtf-wo-men-xiang-xin-sha-gua</id>
     <content type="html"><![CDATA[<p>一天早上，Stan去找他的上级Monty，他正在疯狂地的敲着键盘。这意味着两件事：明天他会收到一封讨厌的设计文档，而且那个设计中会用到一个从没用过的数据库。Monty是一个数据库“砖家”，没什么问题是他不能搞定的。Stan在这家公司的第一年，照做了Monty描述的每个设想，因为他不知道有哪些更好的办法。现在他对公司系统有了更多的了解，他渴望有个机会来做一些正确的事。</p>
 
 <p>Stan在邮箱里找到了一份客户发给Monty的需求副本，要求两个ASP.NET应用之间能互相通信。Stan喜上心头，这是一个简单的web服务，既然他们用.NET，那么只要用<a href="http://en.wikipedia.org/wiki/Windows_Communication_Foundation">WCF</a>就行了。</p>
@@ -1207,9 +1245,9 @@
   
   <entry>
     <title type="html"><![CDATA[start-stop-daemon]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/06/19/start-stop-daemon/"/>
+    <link href="http://jingxin.me/blog/blog/2013/06/19/start-stop-daemon/"/>
     <updated>2013-06-19T13:44:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/06/19/start-stop-daemon</id>
+    <id>http://jingxin.me/blog/blog/2013/06/19/start-stop-daemon</id>
     <content type="html"><![CDATA[<p>很多软件不提供init脚本，或者提供的脚本不合胃口，难免要自己动手丰衣足食。下面就推荐一个用来启动守护进程的神器。</p>
 
 <p><code>start-stop-daemon</code>是<a href="http://www.gentoo.org/proj/en/base/openrc/">OpenRC</a>计划的一部分，这个程序最先出现在Debian系的Linux发行版中，这里有个比较古老的<a href="http://man.he.net/man8/start-stop-daemon">手册</a>页面，更详细更直观的办法当然是通过<code>man start-stop-daemon</code>来查看手册了。我使用的是”start-stop-daemon (OpenRC) 0.10 (Funtoo Linux)”版本，大部分功能是差不多的。</p>
@@ -1307,9 +1345,9 @@
   
   <entry>
     <title type="html"><![CDATA[使用 coffeescript 的注意点]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian/"/>
+    <link href="http://jingxin.me/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian/"/>
     <updated>2013-06-13T14:48:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian</id>
+    <id>http://jingxin.me/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian</id>
     <content type="html"><![CDATA[<p><a href="https://github.com/jashkenas/coffee-script">coffeescript</a>是javascript的一个方言，随着javascript在前后端的流行，它在<a href="https://github.com/languages">github</a>的排名也扶摇直上，最近终于挤掉高帅富<a href="https://github.com/languages/Objective-C">Objective-C</a>跻身前十，可喜可贺。</p>
 
 <p>虽然coffeescript号称”It’s just javascript”，但是相比较而言，仍然是添加了很多有趣的特性，大部分特性都是去粗取精，去伪存真，让js玩家喜闻乐见，让旁观路人不明觉厉，但是也随之带来了一些容易忽视的问题，不得不提一下，以免以后碰到后不知所措。</p>
@@ -1444,9 +1482,9 @@
   
   <entry>
     <title type="html"><![CDATA[mysql 中的 date datetime 和 timestamp]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp/"/>
+    <link href="http://jingxin.me/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp/"/>
     <updated>2013-06-05T11:02:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp</id>
+    <id>http://jingxin.me/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp</id>
     <content type="html"><![CDATA[<p>mysql中用于表示时间的三种类型date, datetime, timestamp (如果算上int的话，四种) 比较容易混淆，下面就比较一下这三种类型的异同</p>
 
 <h1 id="section">相同点</h1>
@@ -1481,9 +1519,9 @@
   
   <entry>
     <title type="html"><![CDATA[javascript 中使用 callback 控制流程]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng/"/>
+    <link href="http://jingxin.me/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng/"/>
     <updated>2013-06-05T10:49:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng</id>
+    <id>http://jingxin.me/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng</id>
     <content type="html"><![CDATA[<p>javascript中随处可见的callback对于流程控制来说是一场灾难，缺点显而易见：</p>
 
 <ul>
@@ -1601,9 +1639,9 @@
   
   <entry>
     <title type="html"><![CDATA[[nginx] if is evil]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/05/15/nginx-if-is-evil/"/>
+    <link href="http://jingxin.me/blog/blog/2013/05/15/nginx-if-is-evil/"/>
     <updated>2013-05-15T17:36:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/05/15/nginx-if-is-evil</id>
+    <id>http://jingxin.me/blog/blog/2013/05/15/nginx-if-is-evil</id>
     <content type="html"><![CDATA[<p>最近用nginx配置中使用if遇到一些问题，碰巧想起以前在wiki中看到的这个页面，虽然我的问题可能和wiki中提到的不同，但是if还是能避免就避免吧</p>
 
 <p>下面的内容翻译自<a href="http://wiki.nginx.org/IfIsEvil">IfIsEvil</a></p>
@@ -1850,9 +1888,9 @@
   
   <entry>
     <title type="html"><![CDATA[细数 php 中的那些坑]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/05/10/xi-shu-php-zhong-de-na-xie-keng/"/>
+    <link href="http://jingxin.me/blog/blog/2013/05/10/xi-shu-php-zhong-de-na-xie-keng/"/>
     <updated>2013-05-10T15:59:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/05/10/xi-shu-php-zhong-de-na-xie-keng</id>
+    <id>http://jingxin.me/blog/blog/2013/05/10/xi-shu-php-zhong-de-na-xie-keng</id>
     <content type="html"><![CDATA[<p>Wow，有逮到一个黑PHP的，作为“宇宙中最好的编程语言”，被黑只会加速它的改进，所以偶尔黑一下也无妨嘛~正所谓世界上只有两种语言，一种是被人黑的，另一种是没人用的。</p>
 
 <p>进入正题，下面开始罗列一些PHP需要防备的坑，以免一不小心掉了进去。(只包含在5.3中仍然存在的，5.4中已修复的会做一下说明)。</p>
@@ -2051,9 +2089,9 @@
   
   <entry>
     <title type="html"><![CDATA[mysql btree 与 hash 索引比较]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao/"/>
+    <link href="http://jingxin.me/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao/"/>
     <updated>2013-05-07T11:45:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao</id>
+    <id>http://jingxin.me/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao</id>
     <content type="html"><![CDATA[<p>mysql最常用的索引结构是btree(<code>O(log(n))</code>)，但是总有一些情况下我们为了更好的性能希望能使用别的类型的索引。hash就是其中一种选择，例如我们在通过用户名检索用户id的时候，他们总是一对一的关系，用到的操作符只是<code>=</code>而已，假如使用hash作为索引数据结构的话，时间复杂度可以降到<code>O(1)</code>。不幸的是，目前的mysql版本(5.6)中，hash只支持MEMORY和NDB两种引擎，而我们最常用的INNODB和MYISAM都不支持hash类型的索引。</p>
 
 <p>不管怎样，还是要了解一下这两种索引的区别，下面翻译自<a href="http://dev.mysql.com/doc/refman/5.6/en/index-btree-hash.html">mysql官网文档</a>中对这两者的解释。</p>
@@ -2155,136 +2193,6 @@
 <ul>
   <li><a href="http://dev.mysql.com/doc/refman/5.6/en/index-btree-hash.html">index-btree-hash</a></li>
   <li><a href="http://dba.stackexchange.com/questions/2817/why-does-mysql-not-have-hash-indices-on-myisam-or-innodb">why-does-mysql-not-have-hash-indices-on-myisam-or-innodb</a></li>
-</ul>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[追求更快: jQuery.ready 如何实现]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian/"/>
-    <updated>2013-05-03T13:30:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian</id>
-    <content type="html"><![CDATA[<p>jQuery从1.0版本就提供了一个叫做<code>ready</code>的方法，最常见的调用场景是<code>$(document).ready(handler)</code>，表示当dom树下载完成后触发事件，也可以简写成<code>$(handler)</code>。</p>
-
-<p>以前一直以为这个方法和javascript自己提供的<code>window.onload</code>事件是一回事，直到最近在做一个chrome小插件时搜索了一下，才发现这俩区别还是挺大的。</p>
-
-<h2 id="windowonload">window.onload</h2>
-
-<p><code>window.onload</code>是javascript自身提供的一个方法，表示当dom树中所有元素，包括img，js，css等等资源文件都加载完毕时触发的事件。最直观的就是在浏览器加载过程中标签栏上会有一个转动的loading图标，当这个图标消失或停止转动，就是onload时间触发的时候。这个方法还有另一种绑定的方式<code>window.addEventListener('load', handler)</code>。</p>
-
-<p>这样就可以理解，假如页面中某个图片的加载时间特别长，那么<code>window.onload</code>是不可能触发的，但是大多数时候，我们想要的只是等dom结构完整加载之后，就可以绑定一些js事件了，假如我们把js代码都写在<code>window.onload</code>中，显然会有很长一段时间用户的操作得不到响应。</p>
-
-<p>所以<code>jquery</code>提供了<code>ready</code>方法。</p>
-
-<h2 id="documentreadyhandler">$(document).ready(handler)</h2>
-
-<p>根据<a href="http://api.jquery.com/ready/">官方文档</a>，<code>ready</code>方法与<code>&lt;body onload=""&gt;</code>属性不兼容，不过后者现在也不是很常见了。下面一段代码放到浏览器中跑一下可以实验<code>ready</code>与<code>window.onload</code>谁先触发。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
-</span><span class="line"><span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
-</span><span class="line">    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;window onload&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="p">};</span>
-</span><span class="line"><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
-</span><span class="line">    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;document ready&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="p">});</span>
-</span><span class="line"><span class="o">&lt;</span><span class="err">/script&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>这个方法又是如何实现的呢？其实是利用了javascript中的<code>DOMContentLoaded</code>事件，至于这个事件为什么没有得到广泛的利用，可能是出于兼容性的考虑，至少在IE9以下，这个事件没有得到支持，所以jquery中使用了IE事件模型中的<code>onreadystatechange</code>来取代此方法。通过查找jquery源代码可以看到下面几行：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>jquery-1.9.1.js  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="c1">// Catch cases where $(document).ready() is called after the browser event has already occurred.</span>
-</span><span class="line"><span class="c1">// we once tried to use readyState &quot;interactive&quot; here, but it caused issues like the one</span>
-</span><span class="line"><span class="c1">// discovered by ChrisS here: http://bugs.jquery.com/ticket/12282#comment:15</span>
-</span><span class="line"><span class="k">if</span> <span class="p">(</span> <span class="nb">document</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">===</span> <span class="s2">&quot;complete&quot;</span> <span class="p">)</span> <span class="p">{</span>
-</span><span class="line">    <span class="c1">// Handle it asynchronously to allow scripts the opportunity to delay ready</span>
-</span><span class="line">    <span class="nx">setTimeout</span><span class="p">(</span> <span class="nx">jQuery</span><span class="p">.</span><span class="nx">ready</span> <span class="p">);</span>
-</span><span class="line">
-</span><span class="line"><span class="c1">// Standards-based browsers support DOMContentLoaded</span>
-</span><span class="line"><span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span> <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="p">)</span> <span class="p">{</span>
-</span><span class="line">    <span class="c1">// Use the handy event callback</span>
-</span><span class="line">    <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span> <span class="s2">&quot;DOMContentLoaded&quot;</span><span class="p">,</span> <span class="nx">completed</span><span class="p">,</span> <span class="kc">false</span> <span class="p">);</span>
-</span><span class="line">
-</span><span class="line">    <span class="c1">// A fallback to window.onload, that will always work</span>
-</span><span class="line">    <span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span> <span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="nx">completed</span><span class="p">,</span> <span class="kc">false</span> <span class="p">);</span>
-</span><span class="line">
-</span><span class="line"><span class="c1">// If IE event model is used</span>
-</span><span class="line"><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class="line">    <span class="c1">// Ensure firing before onload, maybe late but safe also for iframes</span>
-</span><span class="line">    <span class="nb">document</span><span class="p">.</span><span class="nx">attachEvent</span><span class="p">(</span> <span class="s2">&quot;onreadystatechange&quot;</span><span class="p">,</span> <span class="nx">completed</span> <span class="p">);</span>
-</span><span class="line">
-</span><span class="line">    <span class="c1">// A fallback to window.onload, that will always work</span>
-</span><span class="line">    <span class="nb">window</span><span class="p">.</span><span class="nx">attachEvent</span><span class="p">(</span> <span class="s2">&quot;onload&quot;</span><span class="p">,</span> <span class="nx">completed</span> <span class="p">);</span>
-</span><span class="line">
-</span><span class="line">    <span class="c1">// If IE and not a frame</span>
-</span><span class="line">    <span class="c1">// continually check to see if the document is ready</span>
-</span><span class="line">    <span class="kd">var</span> <span class="nx">top</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-</span><span class="line"><span class="p">......</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>这是jquery中<code>ready</code>方法实现的一个片段，可以通过检测<code>document.readyState == "complete"</code>来判断<code>DOMContentLoaded</code>事件是否触发。</p>
-
-<h2 id="chrome">在chrome扩展中</h2>
-
-<p>在chrome扩展的content_scripts中，使用<code>DOMContentLoaded</code>有时候并不能得到想要的结果，这是content_scripts往往在页面加载后再插入页面，就不能响应这个事件了。解决办法是在manifest.json中加入<code>"run_at":"document_start"</code>一行：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="json"><span class="line">  <span class="s2">&quot;content_scripts&quot;</span><span class="err">:</span> <span class="p">[</span>
-</span><span class="line">    <span class="p">{</span>
-</span><span class="line">      <span class="nt">&quot;matches&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://*/*&quot;</span><span class="p">],</span>
-</span><span class="line">      <span class="nt">&quot;js&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ghost.js&quot;</span><span class="p">],</span>
-</span><span class="line">      <span class="nt">&quot;run_at&quot;</span><span class="p">:</span> <span class="s2">&quot;document_start&quot;</span>  <span class="err">//</span> <span class="err">add</span> <span class="err">run_at</span> <span class="err">document_start</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line">  <span class="p">]</span><span class="err">,</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h1 id="section">参考资料</h1>
-<ul>
-  <li><a href="http://api.jquery.com/ready/">api.jquery.ready</a></li>
-  <li><a href="http://stackoverflow.com/questions/5959194/how-does-jquerys-document-ready-function-work">how-does-jquerys-document-ready-function-work</a></li>
-  <li><a href="http://stackoverflow.com/questions/5082094/register-domcontentloaded-in-google-chrome">register-domcontentloaded-in-google-chrome</a></li>
-  <li><a href="https://developer.mozilla.org/en-US/docs/DOM/Mozilla_event_reference/DOMContentLoaded">DOMContentLoaded</a></li>
 </ul>
 ]]></content>
   </entry>

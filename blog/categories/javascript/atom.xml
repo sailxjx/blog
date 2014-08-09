@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: javascript | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/javascript/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/javascript/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Javascript并行计算： web worker]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker/"/>
+    <link href="http://jingxin.me/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker/"/>
     <updated>2013-07-10T12:09:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker</id>
+    <id>http://jingxin.me/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker</id>
     <content type="html"><![CDATA[<p>最近发现了chrome下面的一个奇特现象，像下面这样的一段代码：</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -166,9 +166,9 @@
   
   <entry>
     <title type="html"><![CDATA[javascript 中使用 callback 控制流程]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng/"/>
+    <link href="http://jingxin.me/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng/"/>
     <updated>2013-06-05T10:49:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng</id>
+    <id>http://jingxin.me/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng</id>
     <content type="html"><![CDATA[<p>javascript中随处可见的callback对于流程控制来说是一场灾难，缺点显而易见：</p>
 
 <ul>
@@ -286,9 +286,9 @@
   
   <entry>
     <title type="html"><![CDATA[追求更快: jQuery.ready 如何实现]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian/"/>
+    <link href="http://jingxin.me/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian/"/>
     <updated>2013-05-03T13:30:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian</id>
+    <id>http://jingxin.me/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian</id>
     <content type="html"><![CDATA[<p>jQuery从1.0版本就提供了一个叫做<code>ready</code>的方法，最常见的调用场景是<code>$(document).ready(handler)</code>，表示当dom树下载完成后触发事件，也可以简写成<code>$(handler)</code>。</p>
 
 <p>以前一直以为这个方法和javascript自己提供的<code>window.onload</code>事件是一回事，直到最近在做一个chrome小插件时搜索了一下，才发现这俩区别还是挺大的。</p>
@@ -417,9 +417,9 @@
   
   <entry>
     <title type="html"><![CDATA[执行 javascript 方法的几种方式]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/05/02/zhi-xing-javascript-fang-fa-de-ji-chong-fang-shi/"/>
+    <link href="http://jingxin.me/blog/blog/2013/05/02/zhi-xing-javascript-fang-fa-de-ji-chong-fang-shi/"/>
     <updated>2013-05-02T12:41:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/05/02/zhi-xing-javascript-fang-fa-de-ji-chong-fang-shi</id>
+    <id>http://jingxin.me/blog/blog/2013/05/02/zhi-xing-javascript-fang-fa-de-ji-chong-fang-shi</id>
     <content type="html"><![CDATA[<p>javascript语法灵活，同一个功能有五六种实现方式并不罕见，然后再加上有些反人类的原型继承和异步特性，就更让人一头雾水了。我经常搞不清楚<code>call</code>,<code>apply</code>之间的区别，今天就记录一下，以免再忘了。</p>
 
 <p>在javascript中，方法可以通过以下几种方式执行：</p>

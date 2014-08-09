@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: nosql | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/nosql/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/nosql/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[redis hashes 实践]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2012/07/19/redis-hashes-shi-jian/"/>
+    <link href="http://jingxin.me/blog/blog/2012/07/19/redis-hashes-shi-jian/"/>
     <updated>2012-07-19T14:27:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2012/07/19/redis-hashes-shi-jian</id>
+    <id>http://jingxin.me/blog/blog/2012/07/19/redis-hashes-shi-jian</id>
     <content type="html"><![CDATA[<p>这是项目中遇到的一个问题，mysql的用户表做了分表，主键可以通过取模来读取分表信息，但是往往在注册的时候需要检测邮箱的唯一性，这个email就无法定位到分表了，之前的做法是用另一张表emailtoid对邮箱和id做了一个映射，现在想将该表迁移到redis上。就想测试一下redis对hashes类型的处理性能了。</p>
 
 <h3 id="multi">方案一(multi)：</h3>
@@ -29,7 +29,7 @@
 <h3 id="single">附加测试(single)：</h3>
 <p>给redis设置一个hashes，只有一个field和value，反复读写，用于比较redis在hashes长度变化时性能的升降幅度</p>
 
-<iframe id="highchart" src="http://sailxjx.github.io/blog/u/html/redis-hashes-test-chart.html" style="width: 100%; height: 280px;"></iframe>
+<iframe id="highchart" src="http://jingxin.me/blog/u/html/redis-hashes-test-chart.html" style="width: 100%; height: 280px;"></iframe>
 <p>测试对redis进行1000000次读写，使用本地loop，没有网络延迟，没有事务，结果基本没有多大意外。总结成三点：</p>
 
 <ol>

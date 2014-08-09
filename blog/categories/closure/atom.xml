@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: closure | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/closure/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/closure/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[一个例子验证 do 在 coffeescript 中干了什么]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me/"/>
+    <link href="http://jingxin.me/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me/"/>
     <updated>2013-08-07T17:20:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me</id>
+    <id>http://jingxin.me/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me</id>
     <content type="html"><![CDATA[<p>使用jslint的时候有可能会见到这样的提示</p>
 
 <blockquote>
@@ -114,9 +114,9 @@
   
   <entry>
     <title type="html"><![CDATA[php 闭包：并不像看上去那么美好]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/07/05/php-bi-bao-bing-bu-xiang-kan-shang-qu-na-me-mei-hao/"/>
+    <link href="http://jingxin.me/blog/blog/2013/07/05/php-bi-bao-bing-bu-xiang-kan-shang-qu-na-me-mei-hao/"/>
     <updated>2013-07-05T10:27:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/07/05/php-bi-bao-bing-bu-xiang-kan-shang-qu-na-me-mei-hao</id>
+    <id>http://jingxin.me/blog/blog/2013/07/05/php-bi-bao-bing-bu-xiang-kan-shang-qu-na-me-mei-hao</id>
     <content type="html"><![CDATA[<p>最近一个叫<a href="http://laravel.com/">laravel</a>的php框架在社区讨论的风生水起，号称php界的rails，试用了一下，确实非常新鲜，但是又有种似曾相识的感觉。</p>
 
 <p>例如路由中的一段代码：</p>

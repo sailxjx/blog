@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: react | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/react/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/react/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[react.php 中的异步实现]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/03/05/react-dot-php-zhong-de-yi-bu-shi-xian/"/>
+    <link href="http://jingxin.me/blog/blog/2013/03/05/react-dot-php-zhong-de-yi-bu-shi-xian/"/>
     <updated>2013-03-05T15:29:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/03/05/react-dot-php-zhong-de-yi-bu-shi-xian</id>
+    <id>http://jingxin.me/blog/blog/2013/03/05/react-dot-php-zhong-de-yi-bu-shi-xian</id>
     <content type="html"><![CDATA[<p>在基于事件的异步模型大行其道的今天，各语言都相继推出了自己的异步框架，nodejs原生的异步模型当然是其中的翘楚，然后python有Twisted，ruby有EventMachine(名字俗了点)。php也有一个不错的异步框架，<a href="https://github.com/reactphp/react">react</a>。下面我们从内而外的看看这个异步模型是怎么实现的。</p>
 
 <h3 id="vnement">événement</h3>

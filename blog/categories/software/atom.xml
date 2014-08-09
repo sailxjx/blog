@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: software | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/software/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/software/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[软件与配置]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2014/02/28/ruan-jian-yu-pei-zhi/"/>
+    <link href="http://jingxin.me/blog/blog/2014/02/28/ruan-jian-yu-pei-zhi/"/>
     <updated>2014-02-28T13:07:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2014/02/28/ruan-jian-yu-pei-zhi</id>
+    <id>http://jingxin.me/blog/blog/2014/02/28/ruan-jian-yu-pei-zhi</id>
     <content type="html"><![CDATA[<p>前段时间不间断的开发新项目，实际是想得多，写得少，最后落实到代码中，大概也就200多k文件。现在回头看一下，觉得还挺满意的，因为每个新项目会找出些不一样的地方，不求做到最好，但求标新立异，否则岂不是失去了开发的意义，也辜负了“程序猿”这个需要些许创造性的工作。</p>
 
 <p>每次新项目达到一个阶段，能回顾一下，总是极好的。这次细想一下，有什么值得总结的地方，就又回到了“软件配置”这个极庸俗的话题上来了。</p>
@@ -61,9 +61,9 @@
   
   <entry>
     <title type="html"><![CDATA[软件极简主义]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi/"/>
+    <link href="http://jingxin.me/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi/"/>
     <updated>2013-09-17T21:03:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi</id>
+    <id>http://jingxin.me/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi</id>
     <content type="html"><![CDATA[<p>今天回家的路上，竟然刮起了大风，虽然骑行艰难，但是想想公交中的闷热，倒是觉得凉爽多了。</p>
 
 <p>在路上的时间是无聊的，于是就喜欢胡思乱想，很多自以为很棒的点子其实都是在这种不经意间想到的，办公室里的久坐反而显得效率低下了。回味一下最近做的几个项目，高屋建瓴的想想当初的设计，突然很想写一些关于软件设计的文章。就着饮料和巧克力（来点酒么？），今天就来写写软件极简主义吧。</p>
@@ -99,9 +99,9 @@
   
   <entry>
     <title type="html"><![CDATA[在 mac 中安装 wine]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine/"/>
+    <link href="http://jingxin.me/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine/"/>
     <updated>2013-04-28T12:39:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine</id>
+    <id>http://jingxin.me/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine</id>
     <content type="html"><![CDATA[<p>公司用奇葩的imo，由于没有mac版本，只能用web版。最近imo web版升级之后老是不稳定，又不想装一个笨重的windows虚拟机，于是曲线救国，找找mac上的<a href="http://www.winehq.org/">wine</a>该怎么用。</p>
 
 <p>在mac上安装wine需要备齐三样神器：</p>
@@ -121,9 +121,9 @@
   
   <entry>
     <title type="html"><![CDATA[gitlabhq 部署小记]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji/"/>
+    <link href="http://jingxin.me/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji/"/>
     <updated>2012-11-14T20:12:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji</id>
+    <id>http://jingxin.me/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji</id>
     <content type="html"><![CDATA[<p>冬天来了，不知github是不是也去冬眠了，速度慢的像在爬，没办法，屌丝买不起vps，只能自己内网部一套开源的。</p>
 
 <p>gitlabhq是github的一个开源版本，虽然不是官方的，但是已经做的有模有样，总之能想到的功能都已具备，放在国内随便改改UI就能上线建站的那种。安装文档那是写的相当滴详细，体现了码农罕有的耐性，查看文档请移步<a href="https://github.com/gitlabhq/gitlabhq/blob/master/doc/install/installation.md">gitlab文档</a></p>

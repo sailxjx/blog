@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: siege | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/siege/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/siege/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[几款压力测试工具]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/07/05/ji-kuan-ya-li-ce-shi-gong-ju/"/>
+    <link href="http://jingxin.me/blog/blog/2013/07/05/ji-kuan-ya-li-ce-shi-gong-ju/"/>
     <updated>2013-07-05T16:45:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/07/05/ji-kuan-ya-li-ce-shi-gong-ju</id>
+    <id>http://jingxin.me/blog/blog/2013/07/05/ji-kuan-ya-li-ce-shi-gong-ju</id>
     <content type="html"><![CDATA[<p>压力测试工具林林总总，数不胜数，这里只列举几个命令行下常用的工具，来看看那种用的比较顺手，纯粹个人意见。</p>
 
 <ul>

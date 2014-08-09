@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: rest | CodeBean]]></title>
-  <link href="http://sailxjx.github.io/blog/blog/categories/rest/atom.xml" rel="self"/>
-  <link href="http://sailxjx.github.io/blog/"/>
-  <updated>2014-08-09T12:14:37+08:00</updated>
-  <id>http://sailxjx.github.io/blog/</id>
+  <link href="http://jingxin.me/blog/blog/categories/rest/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2014-08-09T21:29:10+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[tristan]]></name>
     <email><![CDATA[sailxjx@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[get post put delete 傻傻分不清楚]]></title>
-    <link href="http://sailxjx.github.io/blog/blog/2013/01/30/get-post-put-delete-sha-sha-fen-bu-qing-chu/"/>
+    <link href="http://jingxin.me/blog/blog/2013/01/30/get-post-put-delete-sha-sha-fen-bu-qing-chu/"/>
     <updated>2013-01-30T12:41:00+08:00</updated>
-    <id>http://sailxjx.github.io/blog/blog/2013/01/30/get-post-put-delete-sha-sha-fen-bu-qing-chu</id>
+    <id>http://jingxin.me/blog/blog/2013/01/30/get-post-put-delete-sha-sha-fen-bu-qing-chu</id>
     <content type="html"><![CDATA[<p>最近看了一些REST API设计的文章，被http中的四种请求类型搞的晕头转向，记录一下，以免忘记。</p>
 
 <h2 id="section">准备工具</h2>
