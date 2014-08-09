@@ -1,1 +1,3 @@
-## CodeBean, powered by [octopress](http://octopress.org/)
+CodeBean
+===
+Just a blog

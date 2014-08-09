@@ -2,8 +2,8 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://sailxjx.github.io/blog
-title: CodeBean 
+url: http://jingxin.me/blog
+title: CodeBean
 subtitle: 一颗神奇的绿豆
 author: tristan
 simple_search: http://google.com/search
@@ -33,7 +33,7 @@ destination: public
 plugins: plugins
 code_dir: downloads/code
 category_dir: blog/categories
-markdown: kramdown 
+markdown: kramdown
 pygments: false # default python pygments have been replaced by pygments.rb
 
 paginate: 10          # Posts per page on the blog index
