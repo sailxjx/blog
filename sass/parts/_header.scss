@@ -215,7 +215,6 @@ $header-height: 30px;
 		top: 0;
 		right: 0;
 		.button{
-			background: $color-gray04;
 			width: 30px;
 			height: 30px;
 			position: absolute;
@@ -232,7 +231,6 @@ $header-height: 30px;
 				left: 7px;
 			}
 			&.on{
-				background: $color-gray03;
 				&:before{
 					content: "\f00d";
 				}
@@ -245,7 +243,7 @@ $header-height: 30px;
 		}
 		input[type="text"]{
 			background: #fff;
-			border: 1px solid $color-gray04;
+			border: 1px solid $color-gray03;
 			border-right: none;
 			color: $color-gray02;
 			font: 13px $font-default;
@@ -283,9 +281,8 @@ $header-height: 30px;
 			right: 125px;
 		}
 		input[type="text"]{
-			background: #f2f2f2;
 			color: $color-gray02;
-			border: 1px solid $color-gray04;
+			border: 1px solid $color-gray03;
 			font: 13px $font-default;
 			padding: 6px 15px 6px 35px;
 			width: 100px;
