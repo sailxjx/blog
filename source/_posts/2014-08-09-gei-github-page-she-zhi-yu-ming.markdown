@@ -3,7 +3,7 @@ layout: post
 title: "给 github page 设置域名"
 date: 2014-08-09 18:28
 comments: true
-categories:
+categories: [github, page, server, domain]
 ---
 
 Github 免费提供了很棒的静态站托管服务 [github pages](https://pages.github.com/)，并且为每人准备了一个二级域名 username.github.io。
