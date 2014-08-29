@@ -6,6 +6,8 @@ comments: true
 categories: [nodejs, mongodb, mongoose, database]
 ---
 
+![简聊一下 轻松协作](https://dn-talk.oss.aliyuncs.com/site/images/workspace-c16d9d49.jpg)
+
 对于 nodejs 生态来说，使用 mongoose 作为 Model 模块是再好不过的一件事，其一大特点就是简洁优雅的 Schema 定义，提供了每个键值的类型验证，数据验证，索引声明，虚拟键，并自带实例化方法的扩展，大大节省了开发的成本。但是在考虑开放数据的时候，一切就显得不那么美好了。
 
 在打造[简聊](https://talk.ai/)这款应用的过程中，我们就实实在在的遇到了这样的问题。由于需要使用 [Teambition](https://www.teambition.com/) 的用户和团队数据，并且当[简聊](https://talk.ai/)更新了用户数据之后，在 [Teambition](https://www.teambition.com/) 中能实时的将这些更新推送到用户那里。按照惯例，我们最初使用的是 restful 接口。

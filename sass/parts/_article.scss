@@ -54,7 +54,7 @@ article{
 			font-style: italic;
 		}
 		p{
-			margin-top: 10px;	
+			margin-top: 10px;
 		}
 		h2{
 			font-weight: 300;
@@ -71,6 +71,8 @@ article{
 		img, video{
 			max-width: 100%;
 			height: auto;
+			border-radius: 5px;
+			box-shadow: 1px 1px 10px rgba(0,0,0,0.5);
 		}
 		blockquote{
 			background: $color-gray04;
