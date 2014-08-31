@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://jingxin.me/blog/atom.xml" rel="self"/>
   <link href="http://jingxin.me/blog/"/>
-  <updated>2014-08-19T20:40:52+08:00</updated>
+  <updated>2014-08-31T18:38:02+08:00</updated>
   <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[Xu Jingxin]]></name>
@@ -12,6 +12,117 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[limbo: 简单访问远程数据库]]></title>
+    <link href="http://jingxin.me/blog/blog/2014/08/28/limbo-jian-dan-fang-wen-yuan-cheng-shu-ju-ku/"/>
+    <updated>2014-08-28T17:41:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2014/08/28/limbo-jian-dan-fang-wen-yuan-cheng-shu-ju-ku</id>
+    <content type="html"><![CDATA[<p><img src="https://dn-talk.oss.aliyuncs.com/site/images/workspace-c16d9d49.jpg" alt="简聊一下 轻松协作" /></p>
+
+<p>对于 nodejs 生态来说，使用 mongoose 作为 Model 模块是再好不过的一件事，其一大特点就是简洁优雅的 Schema 定义，提供了每个键值的类型验证，数据验证，索引声明，虚拟键，并自带实例化方法的扩展，大大节省了开发的成本。但是在考虑开放数据的时候，一切就显得不那么美好了。</p>
+
+<p>在打造<a href="https://talk.ai/">简聊</a>这款应用的过程中，我们就实实在在的遇到了这样的问题。由于需要使用 <a href="https://www.teambition.com/">Teambition</a> 的用户和团队数据，并且当<a href="https://talk.ai/">简聊</a>更新了用户数据之后，在 <a href="https://www.teambition.com/">Teambition</a> 中能实时的将这些更新推送到用户那里。按照惯例，我们最初使用的是 restful 接口。</p>
+
+<h2 id="restful-">第一阶段，使用 restful 接口</h2>
+
+<p>restful 接口的应用面最广，但是仍然存在很多不足，比如接口在参数和结构上限制较多，在考虑修改接口 api 的时候，往往会顾虑客户端的兼容性，而一旦客户端程序有新的需求，则需等待接口的更新。另一个麻烦的地方是需要做签名校验，对于内部的应用来说，我们完全可以通过防火墙来控制特定 ip 对端口的访问，签名在此处就显得有点多余。</p>
+
+<h2 id="schema">第二阶段，单独拆封 Schema</h2>
+
+<p>然后我们想到了将 Schema 拆封成一个单独的仓库，nodejs 有良好的模块管理，在不同的应用中，我们只需要将这些模块引入进来，既做到同步更新，又做到 DRY。相对于 restful 接口的缺点就是，对于数据的调用入口过多，而且应用之间互相是不知情的。例如在<a href="https://talk.ai/">简聊</a>中有更新用户数据，在 <a href="https://www.teambition.com">Teambition</a> 中就无法得知，并推送给其他客户端。</p>
+
+<h2 id="rpc">第三阶段，远程过程调用（rpc）</h2>
+
+<p>这个阶段和 restful 接口其实类似，我们在 <a href="https://www.teambition.com">Teambition</a>  的后端进程中将一些接口方法暴露出来，这样我们的客户端程序就能通过简单的 rpc 方式调用这些接口。例如我们导出了 <code>user.update</code> 方法，在客户端代码中使用 <code>rpc.call('user.update', params, callback)</code> 即可调用相应的过程。这样的调用行为与使用本地代码无异，可能是目前能找到的最简单直接的方式了。</p>
+
+<h2 id="rpc--mongoose-">第四阶段，rpc 与 mongoose 的结合</h2>
+
+<p>事情可以变得更简单，由于目的主要是为了操作数据库，所以我们开发了一个模块 <a href="https://github.com/teambition/limbo">limbo</a>，将 mongoose model 中所有方法暴露出来，以命名空间来划分，实现了在客户端与服务端程序一致的使用体验。</p>
+
+<p>例如我们在服务端程序中使用 limbo 连接 mongodb，只需要做如下声明：（以下的代码都以 coffeescript 作为示例）</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">limbo = </span><span class="nx">require</span> <span class="s">&#39;limbo&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># 定义 Schema</span>
+</span><span class="line"><span class="nv">UserSchame = </span><span class="nf">(Schema) -&gt;</span>
+</span><span class="line">  <span class="c1"># 这里的 Schema 即 mongoose.Schema</span>
+</span><span class="line">  <span class="k">new</span> <span class="nx">Schema</span>
+</span><span class="line">    <span class="nv">name: </span><span class="nb">String</span>
+</span><span class="line">    <span class="nv">email: </span><span class="nb">String</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># use 方法用作区分不同数据库连接的命名空间，一般参数选择数据库名就行</span>
+</span><span class="line"><span class="nv">db = </span><span class="nx">limbo</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">).</span><span class="nx">connect</span><span class="p">(</span><span class="s">&#39;mongodb://localhost:27017/test&#39;</span><span class="p">).</span><span class="nx">load</span> <span class="s">&#39;User&#39;</span><span class="p">,</span> <span class="nx">UserSchema</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>使用方式就与 mongoose 一致了</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">user = </span><span class="nx">db</span><span class="p">.</span><span class="nx">user</span>
+</span><span class="line"><span class="c1"># user 是一个 limbo 中用于封装 model 的一个对象，你可以直接使用 user.model 来直接调用 mongoose model</span>
+</span><span class="line"><span class="nx">user</span><span class="p">.</span><span class="nx">findOne</span> <span class="nv">_id: </span><span class="s">&#39;xxxx&#39;</span>
+</span><span class="line"><span class="nx">user</span><span class="p">.</span><span class="nx">create</span> <span class="nv">name: </span><span class="s">&#39;xxx&#39;</span><span class="p">,</span> <span class="nv">email: </span><span class="s">&#39;yyy&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>下面是 limbo 中最激动人心的地方，你可以导出一个 collection 中的所有方法到 rpc server 中，只需要通过一个简单的声明</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nx">limbo</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="mi">7001</span><span class="p">).</span><span class="nx">enableRpc</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>下面我们就要提到如何在客户端程序中调用这些方法</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="c1"># 在客户端也需要初始化一个 limbo 命名空间，需要与服务端一致，链接改为服务端的域名和端口号</span>
+</span><span class="line"><span class="nv">db = </span><span class="nx">limbo</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">).</span><span class="nx">connect</span><span class="p">(</span><span class="s">&#39;tcp://localhost:7001&#39;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># 下面有两种方式来使用 rpc</span>
+</span><span class="line"><span class="c1"># 1. 使用 call 方法</span>
+</span><span class="line"><span class="nx">db</span><span class="p">.</span><span class="nx">call</span> <span class="s">&#39;user.findOne&#39;</span><span class="p">,</span> <span class="nv">_id: </span><span class="s">&#39;xxxx&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+</span><span class="line"><span class="c1"># 2. 使用方法链</span>
+</span><span class="line"><span class="nx">db</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">findOne</span> <span class="nv">_id: </span><span class="s">&#39;xxxx&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+</span><span class="line"><span class="c1"># 第二种方式存在一个延迟，必须要在 limbo 与服务端程序握手成功之后才可以使用，</span>
+</span><span class="line"><span class="c1"># 否则会抛出一个对象不存在的异常，不过在一般的应用中，</span>
+</span><span class="line"><span class="c1"># 初始化所需的时间都会长于这个链接所需时间，所以延迟可以忽略不计了</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>可以看出，上面的第二种方式与服务端在本地使用 mongoose 的方式一模一样，这种黑魔法式的调用方式应该是广大码农喜闻乐见的。</p>
+
+<p>limbo 另一个值得称道的功能是可以在服务端程序监听这些远程调用的事件，这得益于 nodejs 的 event 对象，limbo 本身就继承于 EventEmitter 对象，所以我们在每次远程调用后会触发一个事件给服务端程序，而在服务端只需要简单的监听这个事件即可</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nx">limbo</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;test.user.findOne&#39;</span><span class="p">,</span> <span class="nf">(user) -&gt;</span> <span class="p">...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>正是这种 rpc 加事件反馈的机制，让<a href="https://talk.ai/">简聊</a>和 <a href="https://www.teambition.com">Teambition</a> 可以实现简单实时的数据交换。我们将 <a href="https://github.com/teambition/limbo">limbo</a> 托管在 github 上开源，是深知它还存在很多可以改进的地方，所以不免庸俗的说一句，欢迎 issue 和 pr~</p>
+
+<p>最后，欢迎访问我们的新产品<a href="https://talk.ai">简聊</a>，一款基于话题的轻量级协作应用。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[给 github page 设置域名]]></title>
@@ -2084,116 +2195,6 @@
 
 <h1 id="section-10">相关链接</h1>
 <p><a href="http://me.veekun.com/blog/2012/04/09/php-a-fractal-of-bad-design/">PHP: a fractal of bad design</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[mysql btree 与 hash 索引比较]]></title>
-    <link href="http://jingxin.me/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao/"/>
-    <updated>2013-05-07T11:45:00+08:00</updated>
-    <id>http://jingxin.me/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao</id>
-    <content type="html"><![CDATA[<p>mysql最常用的索引结构是btree(<code>O(log(n))</code>)，但是总有一些情况下我们为了更好的性能希望能使用别的类型的索引。hash就是其中一种选择，例如我们在通过用户名检索用户id的时候，他们总是一对一的关系，用到的操作符只是<code>=</code>而已，假如使用hash作为索引数据结构的话，时间复杂度可以降到<code>O(1)</code>。不幸的是，目前的mysql版本(5.6)中，hash只支持MEMORY和NDB两种引擎，而我们最常用的INNODB和MYISAM都不支持hash类型的索引。</p>
-
-<p>不管怎样，还是要了解一下这两种索引的区别，下面翻译自<a href="http://dev.mysql.com/doc/refman/5.6/en/index-btree-hash.html">mysql官网文档</a>中对这两者的解释。</p>
-
-<h2 id="b-tree-">B-Tree 索引特征</h2>
-<p>B-Tree索引可以被用在像<code>=</code>,<code>&gt;</code>,<code>&gt;=</code>,<code>&lt;</code>,<code>&lt;=</code>和<code>BETWEEN</code>这些比较操作符上。而且还可以用于<code>LIKE</code>操作符，只要它的查询条件是一个不以通配符开头的常量。像下面的语句就可以使用索引：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">tbl_name</span> <span class="k">WHERE</span> <span class="n">key_col</span> <span class="k">LIKE</span> <span class="s1">&#39;Patrick%&#39;</span><span class="p">;</span>
-</span><span class="line"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">tbl_name</span> <span class="k">WHERE</span> <span class="n">key_col</span> <span class="k">LIKE</span> <span class="s1">&#39;Pat%_ck%&#39;</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>下面这两种情况不会使用索引：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">tbl_name</span> <span class="k">WHERE</span> <span class="n">key_col</span> <span class="k">LIKE</span> <span class="s1">&#39;%Patrick%&#39;</span><span class="p">;</span>
-</span><span class="line"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">tbl_name</span> <span class="k">WHERE</span> <span class="n">key_col</span> <span class="k">LIKE</span> <span class="n">other_col</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>第一条是因为它以通配符开头，第二条是因为没有使用常量。</p>
-
-<p>假如你使用<code>... LIKE '%string%'</code>而且<code>string</code>超过三个字符，MYSQL使用<code>Turbo Boyer-Moore algorithm</code>算法来初始化查询表达式，然后用这个表达式来让查询更迅速。</p>
-
-<p>一个这样的查询<code>col_name IS NULL</code>是可以使用<code>col_name</code>的索引的。</p>
-
-<p>任何一个没有覆盖所有<code>WHERE</code>中<code>AND</code>级别条件的索引是不会被使用的。也就是说，要使用一个索引，这个索引中的第一列需要在每个<code>AND</code>组中出现。</p>
-
-<p>下面的<code>WHERE</code>条件会使用索引：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="p">...</span> <span class="k">WHERE</span> <span class="n">index_part1</span><span class="o">=</span><span class="mi">1</span> <span class="k">AND</span> <span class="n">index_part2</span><span class="o">=</span><span class="mi">2</span> <span class="k">AND</span> <span class="n">other_column</span><span class="o">=</span><span class="mi">3</span>
-</span><span class="line">    <span class="cm">/* index = 1 OR index = 2 */</span>
-</span><span class="line"><span class="p">...</span> <span class="k">WHERE</span> <span class="k">index</span><span class="o">=</span><span class="mi">1</span> <span class="k">OR</span> <span class="n">A</span><span class="o">=</span><span class="mi">10</span> <span class="k">AND</span> <span class="k">index</span><span class="o">=</span><span class="mi">2</span>
-</span><span class="line">    <span class="cm">/* 优化成 &quot;index_part1=&#39;hello&#39;&quot; */</span>
-</span><span class="line"><span class="p">...</span> <span class="k">WHERE</span> <span class="n">index_part1</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span> <span class="k">AND</span> <span class="n">index_part3</span><span class="o">=</span><span class="mi">5</span>
-</span><span class="line">    <span class="cm">/* 可以使用 index1 的索引但是不会使用 index2 和 index3 */</span>
-</span><span class="line"><span class="p">...</span> <span class="k">WHERE</span> <span class="n">index1</span><span class="o">=</span><span class="mi">1</span> <span class="k">AND</span> <span class="n">index2</span><span class="o">=</span><span class="mi">2</span> <span class="k">OR</span> <span class="n">index1</span><span class="o">=</span><span class="mi">3</span> <span class="k">AND</span> <span class="n">index3</span><span class="o">=</span><span class="mi">3</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>下面的<code>WHERE</code>条件不会使用索引：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="sql"><span class="line">    <span class="cm">/* index_part1 没有被使用到 */</span>
-</span><span class="line"><span class="p">...</span> <span class="k">WHERE</span> <span class="n">index_part2</span><span class="o">=</span><span class="mi">1</span> <span class="k">AND</span> <span class="n">index_part3</span><span class="o">=</span><span class="mi">2</span>
-</span><span class="line">
-</span><span class="line">    <span class="cm">/* 索引 index 没有出现在每个 where 子句中 */</span>
-</span><span class="line"><span class="p">...</span> <span class="k">WHERE</span> <span class="k">index</span><span class="o">=</span><span class="mi">1</span> <span class="k">OR</span> <span class="n">A</span><span class="o">=</span><span class="mi">10</span>
-</span><span class="line">
-</span><span class="line">    <span class="cm">/* 没有索引覆盖所有列 */</span>
-</span><span class="line"><span class="p">...</span> <span class="k">WHERE</span> <span class="n">index_part1</span><span class="o">=</span><span class="mi">1</span> <span class="k">OR</span> <span class="n">index_part2</span><span class="o">=</span><span class="mi">10</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>有时候mysql不会使用索引，即使这个在可用的情况下。例如当mysql预估使用索引会读取大部分的行数据时。（在这种情况下，一次全表扫描可能比使用索引更快，因为它需要更少的检索）。然而，假如语句中使用<code>LIMIT</code>来限定返回的行数，mysql则会使用索引。因为当结果行数较少的情况下使用索引的效率会更高。</p>
-
-<h2 id="hash-">Hash 索引特征</h2>
-
-<p>Hash类型的索引有一些区别于以上所述的特征：</p>
-
-<ul>
-  <li>
-    <p>它们只能用于对等比较，例如<code>=</code>和<code>&lt;=&gt;</code>操作符（但是快很多）。它们不能被用于像<code>&lt;</code>这样的范围查询条件。假如系统只需要使用像“键值对”的这样的存储结构，尽量使用hash类型索引。</p>
-  </li>
-  <li>
-    <p>优化器不能用hash索引来为<code>ORDER BY</code>操作符加速。（这类索引不能被用于搜索下一个次序的值）</p>
-  </li>
-  <li>
-    <p>mysql不能判断出两个值之间有多少条数据（这需要使用范围查询操作符来决定使用哪个索引）。假如你将一个<code>MyISAM</code>表转为一个依靠hash索引的<code>MEMORY</code>表，可能会影响一些语句（的性能）。</p>
-  </li>
-  <li>
-    <p>只有完整的键才能被用于搜索一行数据。（假如用B-tree索引，任何一个键的片段都可以用于查找。我觉得可能意味着带通配符<code>LIKE</code>操作符会不起作用）。</p>
-  </li>
-</ul>
-
-<h1 id="section">后记</h1>
-
-<p>顺便记录一下在使用mysql过程中碰到的一些问题：</p>
-
-<ul>
-  <li>有时候使用脚本迁移数据时会碰到乱码的问题，即使将表字符集设置成<code>utf8</code>也无济于事，这个时候在执行sql之前加一句<code>set names utf8</code>即可。</li>
-</ul>
-
-<h1 id="section-1">参考文档</h1>
-
-<ul>
-  <li><a href="http://dev.mysql.com/doc/refman/5.6/en/index-btree-hash.html">index-btree-hash</a></li>
-  <li><a href="http://dba.stackexchange.com/questions/2817/why-does-mysql-not-have-hash-indices-on-myisam-or-innodb">why-does-mysql-not-have-hash-indices-on-myisam-or-innodb</a></li>
-</ul>
 ]]></content>
   </entry>
   

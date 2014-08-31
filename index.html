@@ -7,7 +7,7 @@
 	<meta name="author" content="Xu Jingxin">
 
 	
-	<meta name="description" content="Github 免费提供了很棒的静态站托管服务 github pages，并且为每人准备了一个二级域名 username.github.io。 但是对于喜欢个性又爱折腾的码农来说，使用别人的域名，是万万不能忍受滴，所以 github 支持了绑定个人域名。 英语不错的可直接传送官方文档 Tips &hellip;">
+	<meta name="description" content="对于 nodejs 生态来说，使用 mongoose 作为 Model 模块是再好不过的一件事，其一大特点就是简洁优雅的 Schema 定义，提供了每个键值的类型验证，数据验证，索引声明，虚拟键，并自带实例化方法的扩展，大大节省了开发的成本。但是在考虑开放数据的时候，一切就显得不那么美好了。 &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -75,6 +75,143 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2014/08/28/limbo-jian-dan-fang-wen-yuan-cheng-shu-ju-ku/">Limbo: 简单访问远程数据库</a></h1>
+	<div class="entry-content">
+		<p><img src="https://dn-talk.oss.aliyuncs.com/site/images/workspace-c16d9d49.jpg" alt="简聊一下 轻松协作" /></p>
+
+<p>对于 nodejs 生态来说，使用 mongoose 作为 Model 模块是再好不过的一件事，其一大特点就是简洁优雅的 Schema 定义，提供了每个键值的类型验证，数据验证，索引声明，虚拟键，并自带实例化方法的扩展，大大节省了开发的成本。但是在考虑开放数据的时候，一切就显得不那么美好了。</p>
+
+<p>在打造<a href="https://talk.ai/">简聊</a>这款应用的过程中，我们就实实在在的遇到了这样的问题。由于需要使用 <a href="https://www.teambition.com/">Teambition</a> 的用户和团队数据，并且当<a href="https://talk.ai/">简聊</a>更新了用户数据之后，在 <a href="https://www.teambition.com/">Teambition</a> 中能实时的将这些更新推送到用户那里。按照惯例，我们最初使用的是 restful 接口。</p>
+
+<h2 id="restful-">第一阶段，使用 restful 接口</h2>
+
+<p>restful 接口的应用面最广，但是仍然存在很多不足，比如接口在参数和结构上限制较多，在考虑修改接口 api 的时候，往往会顾虑客户端的兼容性，而一旦客户端程序有新的需求，则需等待接口的更新。另一个麻烦的地方是需要做签名校验，对于内部的应用来说，我们完全可以通过防火墙来控制特定 ip 对端口的访问，签名在此处就显得有点多余。</p>
+
+<h2 id="schema">第二阶段，单独拆封 Schema</h2>
+
+<p>然后我们想到了将 Schema 拆封成一个单独的仓库，nodejs 有良好的模块管理，在不同的应用中，我们只需要将这些模块引入进来，既做到同步更新，又做到 DRY。相对于 restful 接口的缺点就是，对于数据的调用入口过多，而且应用之间互相是不知情的。例如在<a href="https://talk.ai/">简聊</a>中有更新用户数据，在 <a href="https://www.teambition.com">Teambition</a> 中就无法得知，并推送给其他客户端。</p>
+
+<h2 id="rpc">第三阶段，远程过程调用（rpc）</h2>
+
+<p>这个阶段和 restful 接口其实类似，我们在 <a href="https://www.teambition.com">Teambition</a>  的后端进程中将一些接口方法暴露出来，这样我们的客户端程序就能通过简单的 rpc 方式调用这些接口。例如我们导出了 <code>user.update</code> 方法，在客户端代码中使用 <code>rpc.call('user.update', params, callback)</code> 即可调用相应的过程。这样的调用行为与使用本地代码无异，可能是目前能找到的最简单直接的方式了。</p>
+
+<h2 id="rpc--mongoose-">第四阶段，rpc 与 mongoose 的结合</h2>
+
+<p>事情可以变得更简单，由于目的主要是为了操作数据库，所以我们开发了一个模块 <a href="https://github.com/teambition/limbo">limbo</a>，将 mongoose model 中所有方法暴露出来，以命名空间来划分，实现了在客户端与服务端程序一致的使用体验。</p>
+
+<p>例如我们在服务端程序中使用 limbo 连接 mongodb，只需要做如下声明：（以下的代码都以 coffeescript 作为示例）</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">limbo = </span><span class="nx">require</span> <span class="s">&#39;limbo&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># 定义 Schema</span>
+</span><span class="line"><span class="nv">UserSchame = </span><span class="nf">(Schema) -&gt;</span>
+</span><span class="line">  <span class="c1"># 这里的 Schema 即 mongoose.Schema</span>
+</span><span class="line">  <span class="k">new</span> <span class="nx">Schema</span>
+</span><span class="line">    <span class="nv">name: </span><span class="nb">String</span>
+</span><span class="line">    <span class="nv">email: </span><span class="nb">String</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># use 方法用作区分不同数据库连接的命名空间，一般参数选择数据库名就行</span>
+</span><span class="line"><span class="nv">db = </span><span class="nx">limbo</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">).</span><span class="nx">connect</span><span class="p">(</span><span class="s">&#39;mongodb://localhost:27017/test&#39;</span><span class="p">).</span><span class="nx">load</span> <span class="s">&#39;User&#39;</span><span class="p">,</span> <span class="nx">UserSchema</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>使用方式就与 mongoose 一致了</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">user = </span><span class="nx">db</span><span class="p">.</span><span class="nx">user</span>
+</span><span class="line"><span class="c1"># user 是一个 limbo 中用于封装 model 的一个对象，你可以直接使用 user.model 来直接调用 mongoose model</span>
+</span><span class="line"><span class="nx">user</span><span class="p">.</span><span class="nx">findOne</span> <span class="nv">_id: </span><span class="s">&#39;xxxx&#39;</span>
+</span><span class="line"><span class="nx">user</span><span class="p">.</span><span class="nx">create</span> <span class="nv">name: </span><span class="s">&#39;xxx&#39;</span><span class="p">,</span> <span class="nv">email: </span><span class="s">&#39;yyy&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>下面是 limbo 中最激动人心的地方，你可以导出一个 collection 中的所有方法到 rpc server 中，只需要通过一个简单的声明</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nx">limbo</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="mi">7001</span><span class="p">).</span><span class="nx">enableRpc</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>下面我们就要提到如何在客户端程序中调用这些方法</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="c1"># 在客户端也需要初始化一个 limbo 命名空间，需要与服务端一致，链接改为服务端的域名和端口号</span>
+</span><span class="line"><span class="nv">db = </span><span class="nx">limbo</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">).</span><span class="nx">connect</span><span class="p">(</span><span class="s">&#39;tcp://localhost:7001&#39;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># 下面有两种方式来使用 rpc</span>
+</span><span class="line"><span class="c1"># 1. 使用 call 方法</span>
+</span><span class="line"><span class="nx">db</span><span class="p">.</span><span class="nx">call</span> <span class="s">&#39;user.findOne&#39;</span><span class="p">,</span> <span class="nv">_id: </span><span class="s">&#39;xxxx&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+</span><span class="line"><span class="c1"># 2. 使用方法链</span>
+</span><span class="line"><span class="nx">db</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">findOne</span> <span class="nv">_id: </span><span class="s">&#39;xxxx&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+</span><span class="line"><span class="c1"># 第二种方式存在一个延迟，必须要在 limbo 与服务端程序握手成功之后才可以使用，</span>
+</span><span class="line"><span class="c1"># 否则会抛出一个对象不存在的异常，不过在一般的应用中，</span>
+</span><span class="line"><span class="c1"># 初始化所需的时间都会长于这个链接所需时间，所以延迟可以忽略不计了</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>可以看出，上面的第二种方式与服务端在本地使用 mongoose 的方式一模一样，这种黑魔法式的调用方式应该是广大码农喜闻乐见的。</p>
+
+<p>limbo 另一个值得称道的功能是可以在服务端程序监听这些远程调用的事件，这得益于 nodejs 的 event 对象，limbo 本身就继承于 EventEmitter 对象，所以我们在每次远程调用后会触发一个事件给服务端程序，而在服务端只需要简单的监听这个事件即可</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nx">limbo</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;test.user.findOne&#39;</span><span class="p">,</span> <span class="nf">(user) -&gt;</span> <span class="p">...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>正是这种 rpc 加事件反馈的机制，让<a href="https://talk.ai/">简聊</a>和 <a href="https://www.teambition.com">Teambition</a> 可以实现简单实时的数据交换。我们将 <a href="https://github.com/teambition/limbo">limbo</a> 托管在 github 上开源，是深知它还存在很多可以改进的地方，所以不免庸俗的说一句，欢迎 issue 和 pr~</p>
+
+<p>最后，欢迎访问我们的新产品<a href="https://talk.ai">简聊</a>，一款基于话题的轻量级协作应用。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-08-28T17:41:00+08:00" pubdate data-updated="true">2014.08.28</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/database/'>database</a>, <a class='category' href='/blog/blog/categories/mongodb/'>mongodb</a>, <a class='category' href='/blog/blog/categories/mongoose/'>mongoose</a>, <a class='category' href='/blog/blog/categories/nodejs/'>nodejs</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1107,183 +1244,6 @@
 	
 </div></article>
 
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker/">Javascript并行计算： Web Worker</a></h1>
-	<div class="entry-content">
-		<p>最近发现了chrome下面的一个奇特现象，像下面这样的一段代码：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">  <span class="nb">document</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">document</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-</span><span class="line"><span class="p">},</span> <span class="mi">300</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>这段代码本来是为了让标签栏内容出现滚动的效果，每300毫秒变化一次，这本来没什么问题，但是偶然切换的其他标签时，这个滚动的速度就会变慢，网上查了一下，原来<a href="https://codereview.chromium.org/6577021">chrome设计如此</a>，当标签页不活动时，chrome会将所有定时任务的最小间隔设置为1秒，这样来减轻浏览器的压力，会影响所有带有timer的方法，如<code>setInterval</code>和<code>setTimeout</code>。像上面这样的任务，间隔就被提高到了1秒。</p>
-
-<p>由此引发的思考是，假如这个任务实时性要求很高，不容许这种时间机器的出现怎么办。stackoverflow也有人给出了<a href="http://stackoverflow.com/questions/5927284/how-can-i-make-setinterval-also-work-when-a-tab-is-inactive-in-chrome">一种解答</a>，不使用内置的timer，而是在代码中主动计算时间差，来模拟<code>setInterval</code>的行为。这种方法能解决问题，但是总觉得不够“优雅”。更好的方法是使用html5的<a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/workers.html">web worker</a>。</p>
-
-<p>web worker目前支持的浏览器包括Firefox 3.5+，Chrome和Safari 4+。你用IE6？那自求多福吧。</p>
-
-<p>搞过消息队列和异步计算的人对worker这个词应该不陌生，html5为我们提供了web worker这样一个优秀的特性，旨在将后台任务和前台交互分开，worker中的任务不会阻塞页面事件。我们先来解决上面提出的问题。</p>
-
-<p>由于不隶属于任意页面，所以chrome不会将worker中的进程timer也改成1秒。所以我们可以对上面的代码稍作修改，拆分成worker和main两部分。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>main.js  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">worker</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Worker</span><span class="p">(</span><span class="s1">&#39;worker.js&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="nx">worker</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">    <span class="nb">document</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">document</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-</span><span class="line"><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>worker.js  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">    <span class="nx">self</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">();</span>
-</span><span class="line"><span class="p">},</span> <span class="mi">300</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>这样触发更新title的任务就由worker来完成了。</p>
-
-<p>上面只是一个粗浅的demo，worker真正的意义应该还是在并行计算，不过目前的web应用中前端基本没有大运算量的任务，所以worker在这里就没用武之地了。我们可以设想下面一种情况。</p>
-
-<p>md5是很多网站用于保存密码的方式，由此也产生了很多md5解码的工具，由于md5是一种不可逆的加密算法，解密的方法除了使用字典以外，还有一种简单粗暴的方法，就是暴力破解，而这是非常耗时间的。我们拿到了一个加密过的字符串’77b3e6926e7295494dd3be91c6934899’，而且知道明文是一个六位的数字，那么可以用数字循环来制造碰撞(里面的md5方法是引入外部库，这里及不贴出来了)：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>main.js  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">cipher</span> <span class="o">=</span> <span class="s1">&#39;77b3e6926e7295494dd3be91c6934899&#39;</span><span class="p">;</span>
-</span><span class="line"><span class="kd">var</span> <span class="nx">start</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
-</span><span class="line"><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">999999</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">  <span class="k">if</span> <span class="p">(</span><span class="nx">md5</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">===</span> <span class="nx">cipher</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;plain text: &#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">);</span>
-</span><span class="line">    <span class="k">break</span><span class="p">;</span>
-</span><span class="line">  <span class="p">}</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;time cost: &#39;</span> <span class="o">+</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()</span> <span class="o">-</span> <span class="nx">start</span><span class="p">));</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>跑下来时间大概是12330毫秒。下面我们用十个worker来分担任务，实现相同的功能。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>main.js  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">cipher</span> <span class="o">=</span> <span class="s1">&#39;77b3e6926e7295494dd3be91c6934899&#39;</span><span class="p">,</span>
-</span><span class="line">    <span class="nx">workerList</span> <span class="o">=</span> <span class="p">[],</span>
-</span><span class="line">    <span class="nx">start</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
-</span><span class="line"><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// init 10 workers</span>
-</span><span class="line">  <span class="nx">workerList</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">new</span> <span class="nx">Worker</span><span class="p">(</span><span class="s1">&#39;worker.js&#39;</span><span class="p">));</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line"><span class="nx">workerList</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">worker</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// send task to each worker</span>
-</span><span class="line">  <span class="nx">worker</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;plain text: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
-</span><span class="line">    <span class="nx">workerList</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_worker</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">      <span class="nx">_worker</span><span class="p">.</span><span class="nx">terminate</span><span class="p">();</span>  <span class="c1">// terminate all workers after task finished</span>
-</span><span class="line">    <span class="p">});</span>
-</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;time cost: &#39;</span> <span class="o">+</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()</span> <span class="o">-</span> <span class="nx">start</span><span class="p">));</span>
-</span><span class="line">  <span class="p">});</span>
-</span><span class="line">  <span class="nx">worker</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-</span><span class="line">    <span class="nx">start</span><span class="o">:</span> <span class="nx">index</span> <span class="o">*</span> <span class="mi">100000</span><span class="p">,</span>
-</span><span class="line">    <span class="nx">end</span><span class="o">:</span> <span class="nx">index</span> <span class="o">*</span> <span class="mi">100000</span> <span class="o">+</span> <span class="mi">99999</span><span class="p">,</span>
-</span><span class="line">    <span class="nx">cipher</span><span class="o">:</span> <span class="nx">cipher</span>
-</span><span class="line">  <span class="p">});</span>
-</span><span class="line"><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>worker.js  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">self</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">  <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">start</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">end</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">    <span class="k">if</span> <span class="p">(</span><span class="nx">md5</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">===</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">cipher</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">      <span class="nx">self</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
-</span><span class="line">      <span class="k">break</span><span class="p">;</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line">  <span class="p">}</span>
-</span><span class="line"><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>最佳期望是总时间的十分之一，实际执行下来用了2792毫秒，这与给worker分配任务的方式有关，假如我们给worker随机指派计算值，那么得到的结果会更平均，而不会因为密文的变化而有大的波动。</p>
-
-<p>web worker对于javascript全局对象的访问也是有一些限制的，比如window，document，parent对象，这也是不能用worker取代所有页面script的一个原因。</p>
-
-<p>关于worker的具体介绍，<a href="http://www.html5rocks.com/en/tutorials/workers/basics/">这篇文章</a>讲的很好，里面还提供了几个现实的例子，非常详细。</p>
-
-<h2 id="section">参考文档</h2>
-<ul>
-  <li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/">The Basics of Web Workers</a></li>
-  <li><a href="http://robertnyman.com/2010/03/25/using-html5-web-workers-to-have-background-computational-power/">Using HTML5 Web Workers To Have Background Computational Power</a></li>
-  <li><a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/workers.html#creating-a-dedicated-worker">9 Web workers</a></li>
-</ul>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-10T12:09:00+08:00" pubdate data-updated="true">2013.07.10</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/html5/'>html5</a>, <a class='category' href='/blog/blog/categories/javascript/'>javascript</a>
-
-
-</div>
-	
-</div></article>
-
 <nav id="pagenavi">
     
     
@@ -1313,17 +1273,11 @@
 </script>
 
 
-
-	<script type="text/javascript">
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-33186961-1', 'auto');
-    ga('send', 'pageview');
-  </script>
-
+<script id="gta-main" src="/blog/javascripts/gta.js", data-baidu="43f786342ba0680af108248b28280fdb", data-google="UA-33186961-1", data-mixpanel="204d761f0c52d9ddcf031ec634f98772"></script>
+<!-- mixpanel pageview -->
+<script>
+  mixpanel.track("pageview: " + document.URL);
+</script>
 
 
 
