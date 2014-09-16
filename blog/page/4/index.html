@@ -7,7 +7,7 @@
 	<meta name="author" content="Xu Jingxin">
 
 	
-	<meta name="description" content="在随心所欲的创业公司，最新的时髦可能是BYOD(带自己的设备来上班)，但是政府部门往往会比较保守，尤其是在处理机密数据的部门。当Miguel开始在一个州立部门供职时，他们提供给他一个笔记本电脑。出于安全考虑，他被禁止使用其他的设备，其他人也不允许使用他的。同样是出于安全的原因， &hellip;">
+	<meta name="description" content="前几天碰到一道有趣的面试题，见微知著，由此记录一下一些新的启发和发现。 题目很简单，给一个数组，其中有n个数字，求后面的数与前面的数的差值，将最大差值的两个数找出来。映射到生活中，就是一个股票何时买入何时卖出能达到最大收益的情况（前提是能预知未来的所有报价）。 一个测试用例是下面这样： 输入：[ &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -75,6 +75,182 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/04/08/dong-tai-gui-hua-qiu-jie-shu-zu-zui-da-chai-zhi/">动态规划求解数组最大差值</a></h1>
+	<div class="entry-content">
+		<p>前几天碰到一道有趣的面试题，见微知著，由此记录一下一些新的启发和发现。</p>
+
+<p>题目很简单，给一个数组，其中有n个数字，求后面的数与前面的数的差值，将最大差值的两个数找出来。映射到生活中，就是一个股票何时买入何时卖出能达到最大收益的情况（前提是能预知未来的所有报价）。</p>
+
+<p>一个测试用例是下面这样：</p>
+
+<ul>
+  <li>输入：[3,10,11,9,1,2,-1,10,7]</li>
+  <li>输出：[-1, 10]</li>
+</ul>
+
+<p>这个题目乍看上去相当的简单，我第一个想到的就是，既然要求最大差值，那可以先将每个值与的数之间的差值求出来，然后再进行一次排序，结果不就出来了嘛。这样需要用到两次循环，代码可以参考下面。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">stepIn</span><span class="p">(</span><span class="n">dataInput</span><span class="p">)</span>
+</span><span class="line">  <span class="n">dataLen</span> <span class="o">=</span> <span class="n">dataInput</span><span class="o">.</span><span class="n">length</span>
+</span><span class="line">  <span class="n">diff</span> <span class="o">=</span> <span class="kp">nil</span>
+</span><span class="line">  <span class="n">dataResule</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class="line">  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">dataLen</span><span class="o">-</span><span class="mi">1</span>
+</span><span class="line">    <span class="k">for</span> <span class="n">n</span> <span class="k">in</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">dataLen</span>
+</span><span class="line">      <span class="n">diff2</span> <span class="o">=</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">n</span><span class="o">]</span> <span class="o">-</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">i</span><span class="o">]</span>
+</span><span class="line">      <span class="k">if</span> <span class="n">diff</span> <span class="o">==</span> <span class="kp">nil</span> <span class="ow">or</span> <span class="n">diff</span> <span class="o">&lt;</span> <span class="n">diff2</span>
+</span><span class="line">        <span class="n">diff</span> <span class="o">=</span> <span class="n">diff2</span>
+</span><span class="line">        <span class="n">dataResule</span><span class="o">[</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">i</span><span class="si">}</span><span class="s2">,</span><span class="si">#{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="n">diff</span>
+</span><span class="line">      <span class="k">end</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">  <span class="n">rIdxs</span> <span class="o">=</span> <span class="n">dataResule</span><span class="o">.</span><span class="n">sort_by</span> <span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="o">-</span><span class="n">v</span><span class="p">}</span> <span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">].</span><span class="n">split</span> <span class="s1">&#39;,&#39;</span>
+</span><span class="line">  <span class="k">return</span> <span class="o">[</span><span class="n">dataInput</span><span class="o">[</span><span class="n">rIdxs</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">to_i</span><span class="o">]</span><span class="p">,</span> <span class="n">dataInput</span><span class="o">[</span><span class="n">rIdxs</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_i</span><span class="o">]]</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>上面的代码已经经过了优化，在每次循环后，保留了之前计算的差值的结果，下面的循环中小于这个差值的索引值就被抛弃了，这样的一个好处是可以减少最后sort时花费的时间。假如保留所有两数之间的差值，假设使用冒泡排序，输入数组长度是m，排序算法复杂度是O(n<sup>2</sup>)，而这个n会达到(m+1)*m/2，所以总的算法复杂度就成了O(n<sup>4</sup>)。而在循环中预处理之后，最后参与排序的元素个数最大不会超过m，总的时间复杂度还是O(n<sup>2</sup>)。其实这只是针对最后的sort而言，而这个程序真正的耗时在上面的嵌套循环，这里的复杂度不管有没有优化，其实都是一样的O(n<sup>2</sup>)，下面sort的消费可以忽略不计。</p>
+
+<p>这是一种比较直观的解法了，事实证明，没有经过斟酌的想法都是不完善的（事实也证明，很多灵光一闪的想法都很很靠谱滴，不过在这里不适用(^_^)。经人启发，才知道有一种解法，只需要一次循环，时间复杂度是O(n)。</p>
+
+<p>这个叫做动态规划的算法说的太笼统，网上的解释也实在是太理论，我们联系实际，就以上面的题目为例。</p>
+
+<p>动态规划的思想通常可以分成下面几部：</p>
+
+<ol>
+  <li>给问题分阶段</li>
+  <li>确定每个阶段的状态</li>
+  <li>确定相邻阶段的之间的递推关系（也就是找出从前一个阶段转化到后一个阶段的条件）</li>
+</ol>
+
+<p>上面的例子很容易可以分出三个阶段</p>
+
+<ol>
+  <li>开始阶段，将数组中开头的两个元素作为最大，最小值记录在结果数组中，[3,10]</li>
+  <li>过程阶段，将后面的数与前面的数比较，比如将11与10比较，并将符合条件的值替换结果数组</li>
+  <li>结束阶段，当游标抵达数组最后一个元素时，跳出循环。</li>
+</ol>
+
+<p>而这几个状态之间的转移条件在上面已有了说明，主要在第二个阶段，哪些条件能决定替换结果数组，这些条件称为决策</p>
+
+<ol>
+  <li>游标所指的数大于结果数组中的最大值，比如后面有11，那么结果数组就变成[3,11]</li>
+  <li>游标所指的数小于结果数组中的最小值，那么它就有可能在后面替换结果数组中的最小值，例如后面出现了1，这个时候不能立刻替换掉3，需要找个临时变量将1保存下来。</li>
+  <li>游标所指的数与临时最小值之差大于结果数组中两数字之差。这个条件应该优先于决策2和决策1，一旦这个决策生效，将同时替换结果数组中的最大最小值，决策1和决策2在这个时候应该不生效。例如后面出现了12，那么结果数组就应该变成[1,12]。假如这个时候决策1优先生效，那么结果数组会变成[3,12]，而临时变量1将永远没有上位之日了。</li>
+</ol>
+
+<p>有了上面的阶段和决策之后，代码就很容易实现了</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">stepIn</span><span class="p">(</span><span class="n">list</span><span class="p">)</span>
+</span><span class="line">  <span class="n">min</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># minimal index</span>
+</span><span class="line">  <span class="n">max</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># maximal index</span>
+</span><span class="line">  <span class="n">differ</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># max differ</span>
+</span><span class="line">  <span class="n">minTmp</span> <span class="o">=</span> <span class="kp">nil</span>  <span class="c1"># temp minimal index</span>
+</span><span class="line">  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">length</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">minTmp</span> <span class="o">!=</span> <span class="kp">nil</span> <span class="ow">and</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">differ</span>  <span class="c1"># if current index minus temp minimal index is bigger than differ, replace it</span>
+</span><span class="line">      <span class="n">differ</span> <span class="o">=</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span>  <span class="c1"># new differ</span>
+</span><span class="line">      <span class="n">min</span> <span class="o">=</span> <span class="n">minTmp</span>  <span class="c1"># new minimal index</span>
+</span><span class="line">      <span class="n">max</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># new maximal index</span>
+</span><span class="line">    <span class="k">elsif</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">list</span><span class="o">[</span><span class="n">max</span><span class="o">]</span>  <span class="c1"># replace the maximal index</span>
+</span><span class="line">      <span class="n">max</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># new maximal index</span>
+</span><span class="line">      <span class="n">differ</span> <span class="o">=</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">-</span> <span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span>  <span class="c1"># new differ</span>
+</span><span class="line">    <span class="k">elsif</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span> <span class="ow">and</span> <span class="p">(</span> <span class="n">minTmp</span> <span class="o">==</span> <span class="kp">nil</span> <span class="ow">or</span> <span class="n">list</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">list</span><span class="o">[</span><span class="n">minTmp</span><span class="o">]</span> <span class="p">)</span>  <span class="c1"># replace the temp minimal index</span>
+</span><span class="line">      <span class="n">minTmp</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># change temp minimal index</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="k">next</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">  <span class="k">return</span> <span class="o">[</span><span class="n">list</span><span class="o">[</span><span class="n">min</span><span class="o">]</span><span class="p">,</span> <span class="n">list</span><span class="o">[</span><span class="n">max</span><span class="o">]]</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这种解法可能读起来需要稍微绕点弯，而且隐含问题，我在第一次写这段代码的时候就将决策3和决策1的顺序搞反了，但是几个测试脚本都顺利通过了，这就是一个“不明显的bug”，往往比“明显的bug”还要致命，因为根本无迹可查。</p>
+
+<p>不过，相对于性能的提高，牺牲一点可读性还是值得的。在上面的例子中不太明显，但是当我将输入数组的长度变成1000甚至5000时，两种算法的反差是相当惊人的。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">bash<span class="nv">$ </span>ruby benchmark.rb 1000
+</span><span class="line">dysort: 0.000435
+</span><span class="line">trsort: 0.13827
+</span><span class="line">bash<span class="nv">$ </span>ruby benchmark.rb 5000
+</span><span class="line">dysort: 0.002027
+</span><span class="line">trsort: 3.28997
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>上面是分别在1000和5000的数组长度下运行的结果，可以看出使用第二种算法的时间增长基本是线性的，而使用第一种算法的耗时则会指数级的增长。两种算法横向比较更是高下立分，本来想画图来表示，结果发现差距太大，使用第二种算法的时间柱在图上基本看不到了，于是作罢。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-08T12:47:00+08:00" pubdate data-updated="true">2013.04.08</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/algorithm/'>algorithm</a>, <a class='category' href='/blog/blog/categories/code/'>code</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1235,270 +1411,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/vagrant/'>vagrant</a>, <a class='category' href='/blog/blog/categories/virtualbox/'>virtualbox</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/02/01/cypher-query-language-xue-xi-bi-ji-1/">Cypher Query Language 学习笔记(1)</a></h1>
-	<div class="entry-content">
-		<p>紧接前文<a href="http://sailxjx.github.com/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j/">初试图形数据库 neo4j</a>初窥了这种语言的特性，几天使用下来，初期不适应的便秘感慢慢退去，渐入佳境，竟然觉得有些妙不可言鸟。就如同nodejs基于事件的特点和函数式语法对传统编程方法的改变，学习<code>Cypher</code>同样需要改改传统<code>Sql</code>的思路，下面记录一下最近的新发现。</p>
-
-<h3 id="section">版本号</h3>
-<p><code>dbinfo</code>可以用于查询一些与数据库状态相关的信息，查看版本号是其中一个应用。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>dbinfo -g Kernel
-</span><span class="line"><span class="o">{</span>
-</span><span class="line">  <span class="s2">&quot;KernelStartTime&quot;</span>: <span class="s2">&quot;Mon Feb 04 14:45:48 CST 2013&quot;</span>,
-</span><span class="line">  <span class="s2">&quot;KernelVersion&quot;</span>: <span class="s2">&quot;Neo4j - Graph Database Kernel 1.9.M04&quot;</span>,
-</span><span class="line">  <span class="s2">&quot;MBeanQuery&quot;</span>: <span class="s2">&quot;org.neo4j:instance=kernel#0,name=*&quot;</span>,
-</span><span class="line">  <span class="s2">&quot;ReadOnly&quot;</span>: <span class="nb">false</span>,
-</span><span class="line">  <span class="s2">&quot;StoreCreationDate&quot;</span>: <span class="s2">&quot;Thu Jan 31 16:42:31 CST 2013&quot;</span>,
-</span><span class="line">  <span class="s2">&quot;StoreDirectory&quot;</span>: <span class="s2">&quot;/usr/local/neo4j/data/graph.db&quot;</span>,
-</span><span class="line">  <span class="s2">&quot;StoreId&quot;</span>: <span class="s2">&quot;b9dcdac5ae2b9e82&quot;</span>,
-</span><span class="line">  <span class="s2">&quot;StoreLogVersion&quot;</span>: 1
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="match">match</h3>
-<p>说起这<code>match</code>真是个很神奇的东西，可以用<code>sql</code>中的<code>where</code>作类比，但是又不同于<code>where</code>，因为<code>Cypher</code>中有专门的<code>where</code>。</p>
-
-<p>这个<code>match</code>可以比作正则中的捕获组，还兼具了赋值的功能，如下面的例子</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>13<span class="o">)</span> match bran-<span class="o">[</span>r<span class="o">]</span>-&gt;b <span class="k">return </span>r, b;
-</span><span class="line">+--------------------------------------------------------------------------+
-</span><span class="line">| r                                         | b                            |
-</span><span class="line">+--------------------------------------------------------------------------+
-</span><span class="line">| :islittlebrotherof<span class="o">[</span>2<span class="o">]</span> <span class="o">{</span>age:1359622995523<span class="o">}</span> | Node<span class="o">[</span>14<span class="o">]{</span>name:<span class="s2">&quot;snow&quot;</span>,age:17<span class="o">}</span> |
-</span><span class="line">+--------------------------------------------------------------------------+
-</span><span class="line">1 row
-</span><span class="line">0 ms
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>上面的例子中通过<code>match</code>找出了节点bran出去的所有关系r和所有终点b，这在传统的<code>sql</code>中可以比较难办到的哦。</p>
-
-<p><code>match</code>一般需要和下面要提到的独有的模式(pattern)配合使用，比如下面这个很神奇的语句，能匹配出与节点summer和snow都有关系的中间节点，甚至你可以在中途添加一些表达式来获得沿途的关系对象。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">summer</span> <span class="o">=</span> node<span class="o">(</span>15<span class="o">)</span>, <span class="nv">snow</span> <span class="o">=</span> node<span class="o">(</span>14<span class="o">)</span> match summer-<span class="o">[</span>r<span class="o">]</span>-&gt;n&lt;--snow <span class="k">return </span>n, r;
-</span><span class="line">+--------------------------------------------------------+
-</span><span class="line">| n                            | r                       |
-</span><span class="line">+--------------------------------------------------------+
-</span><span class="line">| Node<span class="o">[</span>13<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span> | :isdogof<span class="o">[</span>3<span class="o">]</span> <span class="o">{</span>ctime:100<span class="o">}</span> |
-</span><span class="line">+--------------------------------------------------------+
-</span><span class="line">1 row
-</span><span class="line">1 ms
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>当你不想要将匹配结果赋值时，可以使用()来代替node，用[]来代替relationship，当然，relationship不填写也是可以的。</p>
-
-<p><code>match</code>中还有一种表示深度的方式，类似于<code>coffee</code>中的数组定义<code>[0..10]</code>来表示深度范围。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">s</span> <span class="o">=</span> node<span class="o">(</span>15<span class="o">)</span>, <span class="nv">snow</span> <span class="o">=</span> node<span class="o">(</span>14<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> s-<span class="o">[</span>r:knowns*1..2<span class="o">]</span>-&gt;snow <span class="k">return </span>r;
-</span><span class="line">+-------------------------------+
-</span><span class="line">| r                             |
-</span><span class="line">+-------------------------------+
-</span><span class="line">| <span class="o">[</span>:knowns<span class="o">[</span>6<span class="o">]</span> <span class="o">{}</span>,:knowns<span class="o">[</span>7<span class="o">]</span> <span class="o">{}]</span> |
-</span><span class="line">+-------------------------------+
-</span><span class="line">1 row
-</span><span class="line">1 ms
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>官网手册中还提供了一个深度为0的例子，表示指向自己的relationship。同样如果不需要赋值或者不需要指定类型，用[*1..2]代替。</p>
-
-<p>求最短路径在很多地方都会应用到,neo4j提供了<code>shortestpath</code>方法来提供两点间的最短路径</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>1<span class="o">)</span>, <span class="nv">jon</span> <span class="o">=</span> node<span class="o">(</span>2<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> shortestpath<span class="o">(</span>bran-<span class="o">[</span>*..2<span class="o">]</span>-&gt;jon<span class="o">)</span> <span class="k">return </span>p;
-</span><span class="line">+------------------------------------------------------------------------------------------------------+
-</span><span class="line">| p                                                                                                    |
-</span><span class="line">+------------------------------------------------------------------------------------------------------+
-</span><span class="line">| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span>,:islittlebrotherof<span class="o">[</span>0<span class="o">]</span> <span class="o">{</span>ctime:1359963465947<span class="o">}</span>,Node<span class="o">[</span>2<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}]</span> |
-</span><span class="line">+------------------------------------------------------------------------------------------------------+
-</span><span class="line">1 row
-</span><span class="line">1 ms
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>不过假如在<code>shortestpath</code>参数中指定最短长度值的话会报错(如<code>p = shortestpath(bran-[*0..2]-&gt;jon)</code>)，不过貌似没有<code>longestpath</code>来获得最长路径，可能一是因为应用场景较少，二是在算法上也会复杂很多，略显遗憾。</p>
-
-<h3 id="pattern">pattern</h3>
-<p>现在再记录pattern有点本末倒置的感觉，毕竟前面的match已经用到了很多种pattern，那么这里权作总结，将常用的pattern归归类。</p>
-
-<ul>
-  <li><code>a--&gt;b</code> 最简单的，由一个node到另一个node</li>
-  <li><code>a-[r]-&gt;b</code> 加上了relationship的path</li>
-  <li><code>()-[]-&gt;b</code> 如果都不想要标注变量，可用<code>()</code>表示一个node（或一个子pattern），用<code>[]</code>表示一个relationship</li>
-  <li><code>a-[r:TYPE1|TYPE2]-&gt;b</code> 指定relationship type，其中type可以指定多个，为或的关系。</li>
-  <li><code>a-[?*]-&gt;b</code> 得到node a到node b的所有路径，如果不存在路径则返回null。（假如没有<code>?</code>则返回空）</li>
-</ul>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">a</span> <span class="o">=</span> node<span class="o">(</span>1<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> a-<span class="o">[</span>*<span class="o">]</span>-&gt;b <span class="k">return </span>p;
-</span><span class="line">+----------------------------------------------------------------------------------------------------------------------+
-</span><span class="line">| p                                                                                                                    |
-</span><span class="line">+----------------------------------------------------------------------------------------------------------------------+
-</span><span class="line">| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span>,:islittlebrotherof<span class="o">[</span>0<span class="o">]</span> <span class="o">{</span>ctime:1359963465947<span class="o">}</span>,Node<span class="o">[</span>2<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}]</span>                 |
-</span><span class="line">| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span>,:isownerof<span class="o">[</span>1<span class="o">]</span> <span class="o">{}</span>,Node<span class="o">[</span>3<span class="o">]{</span>name:<span class="s2">&quot;summer&quot;</span>,age:4<span class="o">}]</span>                                          |
-</span><span class="line">| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span>,:isownerof<span class="o">[</span>1<span class="o">]</span> <span class="o">{}</span>,Node<span class="o">[</span>3<span class="o">]{</span>name:<span class="s2">&quot;summer&quot;</span>,age:4<span class="o">}</span>,:knowns<span class="o">[</span>5<span class="o">]</span> <span class="o">{}</span>,Node<span class="o">[</span>2<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}]</span> |
-</span><span class="line">+----------------------------------------------------------------------------------------------------------------------+
-</span><span class="line">3 rows
-</span><span class="line">1 ms
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<ul>
-  <li><code>a-[*3..5]-&gt;b</code> 指定path的深度，是可以是一个范围值。</li>
-  <li><code>me-[:KNOWS*1..2]-remote_friend</code> 将前面集中pattern整合一下，主要是注意其中各pattern的位置，不能搞乱。</li>
-</ul>
-
-<h3 id="index">index</h3>
-<p><code>neo4j</code>的索引是一个key=&gt;value对，基于lucene，据说也可以换其他的引擎，没试过。通过索引可以供<code>Cypher</code>或Rest api查找对应的node或relationship或任何想要的集合。</p>
-
-<p>索引分为两种，自动索引和手动索引，就目前的<code>Cypher</code>版本(1.9.M04)来说，还没有提供创建手动索引的功能，遗憾的是，在nodejs客户端中同样没有完善这一功能，所以我找到了一个ruby版本的客户端用于实验这一功能。</p>
-
-<p><a href="https://github.com/maxdemarzi/neography">neography</a>是官方推荐的一个ruby driver(其实官方推荐中排名更靠前的是<a href="https://github.com/andreasronge/neo4j">neo4j.rb</a>，但是基于jruby的，出于对java的不感冒，还是绕行了)，文档很详细，不赘述了</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;neography&#39;</span>
-</span><span class="line"><span class="vi">@neo</span> <span class="o">=</span> <span class="no">Neography</span><span class="o">::</span><span class="no">Rest</span><span class="o">.</span><span class="n">new</span>
-</span><span class="line"><span class="vi">@neo</span><span class="o">.</span><span class="n">create_node_index</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>                      <span class="c1">#新增一个索引，其中第一个参数是索引主键</span>
-</span><span class="line"><span class="vi">@neo</span><span class="o">.</span><span class="n">add_node_to_index</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;bran&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>   <span class="c1">#将一个node添加到索引，其中最后的`1`是node id，也可以是一个node对象，很神奇，很kiss</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>建好一个索引之后，就可以由<code>Cypher</code>出场了。<code>Cypher</code>中通过索引可以查到对应的node和relationship。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="c">#                       节点:索引主键(key=value)</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">n</span> <span class="o">=</span> node:name<span class="o">(</span><span class="nv">name</span><span class="o">=</span><span class="s2">&quot;bran&quot;</span><span class="o">)</span> <span class="k">return </span>n;
-</span><span class="line">+-----------------------------+
-</span><span class="line">| n                           |
-</span><span class="line">+-----------------------------+
-</span><span class="line">| Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span> |
-</span><span class="line">+-----------------------------+
-</span><span class="line">1 row
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>使用<code>Cypher</code>可以创建自动索引，前提是配置中打开了<code>node_auto_indexing</code>(针对node)或<code>relationship_auto_indexing</code>(针对relationship)这一项，而且这个索引是后写入的，也就是说假如之前已经存在的node，在没有改动的情况下，是不会加入到索引中的。</p>
-
-<p>自动索引可以设定需要的fields，在配置文件中用<code>node_keys_indexable</code>和<code>relationship_keys_indexable</code>表示</p>
-
-<p>创建索引的<code>Cypher</code>语句如下：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>index --create node_auto_index -t node
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>index --indexes
-</span><span class="line">Node indexes:
-</span><span class="line">  name
-</span><span class="line">  node_auto_index
-</span><span class="line">
-</span><span class="line">Relationship indexes:
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>自动索引默认是关闭的，可能是出于效率的考虑，毕竟在正常的应用中我们不需要对所有node进行索引。而且自动索引是只读的，就是说索引建立以后，除了清空数据库，木有别的方法删掉它啊~。</p>
-
-<h2 id="section-1">注意事项</h2>
-
-<ul>
-  <li><code>Cypher</code>中遇到某些查询条件中包含空格或别的非英文字符的，可以用`把字符串包起来。</li>
-</ul>
-
-<h2 id="section-2">参考资料</h2>
-<ul>
-  <li><a href="http://docs.neo4j.org/chunked/milestone/">v1.9手册</a></li>
-  <li><a href="https://github.com/maxdemarzi/neography/wiki">neography wiki</a></li>
-</ul>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-02-01T11:30:00+08:00" pubdate data-updated="true">2013.02.01</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/cypher/'>cypher</a>, <a class='category' href='/blog/blog/categories/neo4j/'>neo4j</a>, <a class='category' href='/blog/blog/categories/note/'>note</a>
 
 
 </div>

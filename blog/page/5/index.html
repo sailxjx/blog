@@ -7,11 +7,7 @@
 	<meta name="author" content="Xu Jingxin">
 
 	
-	<meta name="description" content="最近看了一些REST API设计的文章，被http中的四种请求类型搞的晕头转向，记录一下，以免忘记。 准备工具 Chrome插件REST Console 一个用于接收参数的php文件 1
-2
-&lt;?php
-print_r($_REQUEST); 开始
-在通常的lamp开发中， &hellip;">
+	<meta name="description" content="紧接前文初试图形数据库 neo4j初窥了这种语言的特性，几天使用下来，初期不适应的便秘感慢慢退去，渐入佳境，竟然觉得有些妙不可言鸟。就如同nodejs基于事件的特点和函数式语法对传统编程方法的改变，学习Cypher同样需要改改传统Sql的思路，下面记录一下最近的新发现。 版本号 &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -79,6 +75,270 @@ print_r($_REQUEST); 开始
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/02/01/cypher-query-language-xue-xi-bi-ji-1/">Cypher Query Language 学习笔记(1)</a></h1>
+	<div class="entry-content">
+		<p>紧接前文<a href="http://sailxjx.github.com/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j/">初试图形数据库 neo4j</a>初窥了这种语言的特性，几天使用下来，初期不适应的便秘感慢慢退去，渐入佳境，竟然觉得有些妙不可言鸟。就如同nodejs基于事件的特点和函数式语法对传统编程方法的改变，学习<code>Cypher</code>同样需要改改传统<code>Sql</code>的思路，下面记录一下最近的新发现。</p>
+
+<h3 id="section">版本号</h3>
+<p><code>dbinfo</code>可以用于查询一些与数据库状态相关的信息，查看版本号是其中一个应用。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>dbinfo -g Kernel
+</span><span class="line"><span class="o">{</span>
+</span><span class="line">  <span class="s2">&quot;KernelStartTime&quot;</span>: <span class="s2">&quot;Mon Feb 04 14:45:48 CST 2013&quot;</span>,
+</span><span class="line">  <span class="s2">&quot;KernelVersion&quot;</span>: <span class="s2">&quot;Neo4j - Graph Database Kernel 1.9.M04&quot;</span>,
+</span><span class="line">  <span class="s2">&quot;MBeanQuery&quot;</span>: <span class="s2">&quot;org.neo4j:instance=kernel#0,name=*&quot;</span>,
+</span><span class="line">  <span class="s2">&quot;ReadOnly&quot;</span>: <span class="nb">false</span>,
+</span><span class="line">  <span class="s2">&quot;StoreCreationDate&quot;</span>: <span class="s2">&quot;Thu Jan 31 16:42:31 CST 2013&quot;</span>,
+</span><span class="line">  <span class="s2">&quot;StoreDirectory&quot;</span>: <span class="s2">&quot;/usr/local/neo4j/data/graph.db&quot;</span>,
+</span><span class="line">  <span class="s2">&quot;StoreId&quot;</span>: <span class="s2">&quot;b9dcdac5ae2b9e82&quot;</span>,
+</span><span class="line">  <span class="s2">&quot;StoreLogVersion&quot;</span>: 1
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="match">match</h3>
+<p>说起这<code>match</code>真是个很神奇的东西，可以用<code>sql</code>中的<code>where</code>作类比，但是又不同于<code>where</code>，因为<code>Cypher</code>中有专门的<code>where</code>。</p>
+
+<p>这个<code>match</code>可以比作正则中的捕获组，还兼具了赋值的功能，如下面的例子</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>13<span class="o">)</span> match bran-<span class="o">[</span>r<span class="o">]</span>-&gt;b <span class="k">return </span>r, b;
+</span><span class="line">+--------------------------------------------------------------------------+
+</span><span class="line">| r                                         | b                            |
+</span><span class="line">+--------------------------------------------------------------------------+
+</span><span class="line">| :islittlebrotherof<span class="o">[</span>2<span class="o">]</span> <span class="o">{</span>age:1359622995523<span class="o">}</span> | Node<span class="o">[</span>14<span class="o">]{</span>name:<span class="s2">&quot;snow&quot;</span>,age:17<span class="o">}</span> |
+</span><span class="line">+--------------------------------------------------------------------------+
+</span><span class="line">1 row
+</span><span class="line">0 ms
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>上面的例子中通过<code>match</code>找出了节点bran出去的所有关系r和所有终点b，这在传统的<code>sql</code>中可以比较难办到的哦。</p>
+
+<p><code>match</code>一般需要和下面要提到的独有的模式(pattern)配合使用，比如下面这个很神奇的语句，能匹配出与节点summer和snow都有关系的中间节点，甚至你可以在中途添加一些表达式来获得沿途的关系对象。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">summer</span> <span class="o">=</span> node<span class="o">(</span>15<span class="o">)</span>, <span class="nv">snow</span> <span class="o">=</span> node<span class="o">(</span>14<span class="o">)</span> match summer-<span class="o">[</span>r<span class="o">]</span>-&gt;n&lt;--snow <span class="k">return </span>n, r;
+</span><span class="line">+--------------------------------------------------------+
+</span><span class="line">| n                            | r                       |
+</span><span class="line">+--------------------------------------------------------+
+</span><span class="line">| Node<span class="o">[</span>13<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span> | :isdogof<span class="o">[</span>3<span class="o">]</span> <span class="o">{</span>ctime:100<span class="o">}</span> |
+</span><span class="line">+--------------------------------------------------------+
+</span><span class="line">1 row
+</span><span class="line">1 ms
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>当你不想要将匹配结果赋值时，可以使用()来代替node，用[]来代替relationship，当然，relationship不填写也是可以的。</p>
+
+<p><code>match</code>中还有一种表示深度的方式，类似于<code>coffee</code>中的数组定义<code>[0..10]</code>来表示深度范围。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">s</span> <span class="o">=</span> node<span class="o">(</span>15<span class="o">)</span>, <span class="nv">snow</span> <span class="o">=</span> node<span class="o">(</span>14<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> s-<span class="o">[</span>r:knowns*1..2<span class="o">]</span>-&gt;snow <span class="k">return </span>r;
+</span><span class="line">+-------------------------------+
+</span><span class="line">| r                             |
+</span><span class="line">+-------------------------------+
+</span><span class="line">| <span class="o">[</span>:knowns<span class="o">[</span>6<span class="o">]</span> <span class="o">{}</span>,:knowns<span class="o">[</span>7<span class="o">]</span> <span class="o">{}]</span> |
+</span><span class="line">+-------------------------------+
+</span><span class="line">1 row
+</span><span class="line">1 ms
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>官网手册中还提供了一个深度为0的例子，表示指向自己的relationship。同样如果不需要赋值或者不需要指定类型，用[*1..2]代替。</p>
+
+<p>求最短路径在很多地方都会应用到,neo4j提供了<code>shortestpath</code>方法来提供两点间的最短路径</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">bran</span> <span class="o">=</span> node<span class="o">(</span>1<span class="o">)</span>, <span class="nv">jon</span> <span class="o">=</span> node<span class="o">(</span>2<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> shortestpath<span class="o">(</span>bran-<span class="o">[</span>*..2<span class="o">]</span>-&gt;jon<span class="o">)</span> <span class="k">return </span>p;
+</span><span class="line">+------------------------------------------------------------------------------------------------------+
+</span><span class="line">| p                                                                                                    |
+</span><span class="line">+------------------------------------------------------------------------------------------------------+
+</span><span class="line">| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span>,:islittlebrotherof<span class="o">[</span>0<span class="o">]</span> <span class="o">{</span>ctime:1359963465947<span class="o">}</span>,Node<span class="o">[</span>2<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}]</span> |
+</span><span class="line">+------------------------------------------------------------------------------------------------------+
+</span><span class="line">1 row
+</span><span class="line">1 ms
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>不过假如在<code>shortestpath</code>参数中指定最短长度值的话会报错(如<code>p = shortestpath(bran-[*0..2]-&gt;jon)</code>)，不过貌似没有<code>longestpath</code>来获得最长路径，可能一是因为应用场景较少，二是在算法上也会复杂很多，略显遗憾。</p>
+
+<h3 id="pattern">pattern</h3>
+<p>现在再记录pattern有点本末倒置的感觉，毕竟前面的match已经用到了很多种pattern，那么这里权作总结，将常用的pattern归归类。</p>
+
+<ul>
+  <li><code>a--&gt;b</code> 最简单的，由一个node到另一个node</li>
+  <li><code>a-[r]-&gt;b</code> 加上了relationship的path</li>
+  <li><code>()-[]-&gt;b</code> 如果都不想要标注变量，可用<code>()</code>表示一个node（或一个子pattern），用<code>[]</code>表示一个relationship</li>
+  <li><code>a-[r:TYPE1|TYPE2]-&gt;b</code> 指定relationship type，其中type可以指定多个，为或的关系。</li>
+  <li><code>a-[?*]-&gt;b</code> 得到node a到node b的所有路径，如果不存在路径则返回null。（假如没有<code>?</code>则返回空）</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">a</span> <span class="o">=</span> node<span class="o">(</span>1<span class="o">)</span> match <span class="nv">p</span> <span class="o">=</span> a-<span class="o">[</span>*<span class="o">]</span>-&gt;b <span class="k">return </span>p;
+</span><span class="line">+----------------------------------------------------------------------------------------------------------------------+
+</span><span class="line">| p                                                                                                                    |
+</span><span class="line">+----------------------------------------------------------------------------------------------------------------------+
+</span><span class="line">| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span>,:islittlebrotherof<span class="o">[</span>0<span class="o">]</span> <span class="o">{</span>ctime:1359963465947<span class="o">}</span>,Node<span class="o">[</span>2<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}]</span>                 |
+</span><span class="line">| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span>,:isownerof<span class="o">[</span>1<span class="o">]</span> <span class="o">{}</span>,Node<span class="o">[</span>3<span class="o">]{</span>name:<span class="s2">&quot;summer&quot;</span>,age:4<span class="o">}]</span>                                          |
+</span><span class="line">| <span class="o">[</span>Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span>,:isownerof<span class="o">[</span>1<span class="o">]</span> <span class="o">{}</span>,Node<span class="o">[</span>3<span class="o">]{</span>name:<span class="s2">&quot;summer&quot;</span>,age:4<span class="o">}</span>,:knowns<span class="o">[</span>5<span class="o">]</span> <span class="o">{}</span>,Node<span class="o">[</span>2<span class="o">]{</span>name:<span class="s2">&quot;jon&quot;</span>,age:17<span class="o">}]</span> |
+</span><span class="line">+----------------------------------------------------------------------------------------------------------------------+
+</span><span class="line">3 rows
+</span><span class="line">1 ms
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li><code>a-[*3..5]-&gt;b</code> 指定path的深度，是可以是一个范围值。</li>
+  <li><code>me-[:KNOWS*1..2]-remote_friend</code> 将前面集中pattern整合一下，主要是注意其中各pattern的位置，不能搞乱。</li>
+</ul>
+
+<h3 id="index">index</h3>
+<p><code>neo4j</code>的索引是一个key=&gt;value对，基于lucene，据说也可以换其他的引擎，没试过。通过索引可以供<code>Cypher</code>或Rest api查找对应的node或relationship或任何想要的集合。</p>
+
+<p>索引分为两种，自动索引和手动索引，就目前的<code>Cypher</code>版本(1.9.M04)来说，还没有提供创建手动索引的功能，遗憾的是，在nodejs客户端中同样没有完善这一功能，所以我找到了一个ruby版本的客户端用于实验这一功能。</p>
+
+<p><a href="https://github.com/maxdemarzi/neography">neography</a>是官方推荐的一个ruby driver(其实官方推荐中排名更靠前的是<a href="https://github.com/andreasronge/neo4j">neo4j.rb</a>，但是基于jruby的，出于对java的不感冒，还是绕行了)，文档很详细，不赘述了</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;neography&#39;</span>
+</span><span class="line"><span class="vi">@neo</span> <span class="o">=</span> <span class="no">Neography</span><span class="o">::</span><span class="no">Rest</span><span class="o">.</span><span class="n">new</span>
+</span><span class="line"><span class="vi">@neo</span><span class="o">.</span><span class="n">create_node_index</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>                      <span class="c1">#新增一个索引，其中第一个参数是索引主键</span>
+</span><span class="line"><span class="vi">@neo</span><span class="o">.</span><span class="n">add_node_to_index</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;bran&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>   <span class="c1">#将一个node添加到索引，其中最后的`1`是node id，也可以是一个node对象，很神奇，很kiss</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>建好一个索引之后，就可以由<code>Cypher</code>出场了。<code>Cypher</code>中通过索引可以查到对应的node和relationship。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="c">#                       节点:索引主键(key=value)</span>
+</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">n</span> <span class="o">=</span> node:name<span class="o">(</span><span class="nv">name</span><span class="o">=</span><span class="s2">&quot;bran&quot;</span><span class="o">)</span> <span class="k">return </span>n;
+</span><span class="line">+-----------------------------+
+</span><span class="line">| n                           |
+</span><span class="line">+-----------------------------+
+</span><span class="line">| Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span> |
+</span><span class="line">+-----------------------------+
+</span><span class="line">1 row
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>使用<code>Cypher</code>可以创建自动索引，前提是配置中打开了<code>node_auto_indexing</code>(针对node)或<code>relationship_auto_indexing</code>(针对relationship)这一项，而且这个索引是后写入的，也就是说假如之前已经存在的node，在没有改动的情况下，是不会加入到索引中的。</p>
+
+<p>自动索引可以设定需要的fields，在配置文件中用<code>node_keys_indexable</code>和<code>relationship_keys_indexable</code>表示</p>
+
+<p>创建索引的<code>Cypher</code>语句如下：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>index --create node_auto_index -t node
+</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>index --indexes
+</span><span class="line">Node indexes:
+</span><span class="line">  name
+</span><span class="line">  node_auto_index
+</span><span class="line">
+</span><span class="line">Relationship indexes:
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>自动索引默认是关闭的，可能是出于效率的考虑，毕竟在正常的应用中我们不需要对所有node进行索引。而且自动索引是只读的，就是说索引建立以后，除了清空数据库，木有别的方法删掉它啊~。</p>
+
+<h2 id="section-1">注意事项</h2>
+
+<ul>
+  <li><code>Cypher</code>中遇到某些查询条件中包含空格或别的非英文字符的，可以用`把字符串包起来。</li>
+</ul>
+
+<h2 id="section-2">参考资料</h2>
+<ul>
+  <li><a href="http://docs.neo4j.org/chunked/milestone/">v1.9手册</a></li>
+  <li><a href="https://github.com/maxdemarzi/neography/wiki">neography wiki</a></li>
+</ul>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-01T11:30:00+08:00" pubdate data-updated="true">2013.02.01</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/cypher/'>cypher</a>, <a class='category' href='/blog/blog/categories/neo4j/'>neo4j</a>, <a class='category' href='/blog/blog/categories/note/'>note</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1677,251 +1937,6 @@ url=http%3A%2F%2Fwww.google.com</p>
 
 <time datetime="2012-12-11T23:16:00+08:00" pubdate data-updated="true">2012.12.11</time></div>
 	<div class="tags">
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji/">Gitlabhq 部署小记</a></h1>
-	<div class="entry-content">
-		<p>冬天来了，不知github是不是也去冬眠了，速度慢的像在爬，没办法，屌丝买不起vps，只能自己内网部一套开源的。</p>
-
-<p>gitlabhq是github的一个开源版本，虽然不是官方的，但是已经做的有模有样，总之能想到的功能都已具备，放在国内随便改改UI就能上线建站的那种。安装文档那是写的相当滴详细，体现了码农罕有的耐性，查看文档请移步<a href="https://github.com/gitlabhq/gitlabhq/blob/master/doc/install/installation.md">gitlab文档</a></p>
-
-<p>以前部署中在ssh上碰到一些问题，这次在<a href="https://github.com/mk-qi">@mk-qi</a>童鞋的点拨下，进展是相当滴顺利，下面记录一些部署过程中的问题和解决方法。</p>
-
-<p>自动部署脚本如下，基本由文档转成，可以省掉很多事情(但是遇到问题要学会google哦)，假如使用的是ubuntu，官方以前也提供了一个一键安装脚本，后来不知怎么又去掉了，估计是计划赶不上变化吧</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>gitlabhq自动化部署脚本  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-<span class="line-number">29</span>
-<span class="line-number">30</span>
-<span class="line-number">31</span>
-<span class="line-number">32</span>
-<span class="line-number">33</span>
-<span class="line-number">34</span>
-<span class="line-number">35</span>
-<span class="line-number">36</span>
-<span class="line-number">37</span>
-<span class="line-number">38</span>
-<span class="line-number">39</span>
-<span class="line-number">40</span>
-<span class="line-number">41</span>
-<span class="line-number">42</span>
-<span class="line-number">43</span>
-<span class="line-number">44</span>
-<span class="line-number">45</span>
-<span class="line-number">46</span>
-<span class="line-number">47</span>
-<span class="line-number">48</span>
-<span class="line-number">49</span>
-<span class="line-number">50</span>
-<span class="line-number">51</span>
-<span class="line-number">52</span>
-<span class="line-number">53</span>
-<span class="line-number">54</span>
-<span class="line-number">55</span>
-<span class="line-number">56</span>
-<span class="line-number">57</span>
-<span class="line-number">58</span>
-<span class="line-number">59</span>
-<span class="line-number">60</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c">#!/bin/bash</span>
-</span><span class="line"><span class="c"># add user git</span>
-</span><span class="line">sudo adduser --system --shell /bin/bash --gecos <span class="s1">&#39;git version control&#39;</span> --group --disabled-password --home /home/git git
-</span><span class="line"><span class="c"># add user gitlab</span>
-</span><span class="line">sudo adduser --disabled-login --gecos <span class="s1">&#39;gitlab system&#39;</span> gitlab
-</span><span class="line"><span class="c"># move user gitlab to group git</span>
-</span><span class="line">sudo usermod -a -G git gitlab
-</span><span class="line">sudo usermod -a -G gitlab git
-</span><span class="line"><span class="c"># generate key</span>
-</span><span class="line">sudo -H -u gitlab ssh-keygen -q -N <span class="s1">&#39;&#39;</span> -t rsa -f /home/gitlab/.ssh/id_rsa
-</span><span class="line"><span class="c"># clone gitlab&#39;s fork to the gitolite source code</span>
-</span><span class="line"><span class="nb">cd</span> /home/git
-</span><span class="line">sudo -H -u git git clone -b gl-v304 https://github.com/gitlabhq/gitolite.git /home/git/gitolite
-</span><span class="line"><span class="c"># setup</span>
-</span><span class="line"><span class="nb">cd</span> /home/git
-</span><span class="line">sudo -u git -H mkdir bin
-</span><span class="line">sudo -u git sh -c <span class="s1">&#39;echo -e &quot;PATH=\$PATH:/home/git/bin\nexport PATH&quot; &gt;&gt; /home/git/.profile&#39;</span>
-</span><span class="line">sudo -u git sh -c <span class="s1">&#39;gitolite/install -ln /home/git/bin&#39;</span>
-</span><span class="line">sudo cp /home/gitlab/.ssh/id_rsa.pub /home/git/gitlab.pub
-</span><span class="line">sudo chmod 0444 /home/git/gitlab.pub
-</span><span class="line">sudo -u git -H sh -c <span class="s2">&quot;PATH=/home/git/bin:$PATH; gitolite setup -pk /home/git/gitlab.pub&quot;</span>
-</span><span class="line"><span class="c"># permissions</span>
-</span><span class="line">sudo chmod -R g+rwX /home/git/repositories/
-</span><span class="line">sudo chown -R git:git /home/git/repositories/
-</span><span class="line">sudo -u gitlab -H git clone git@localhost:gitolite-admin.git /tmp/gitolite-admin
-</span><span class="line">
-</span><span class="line"><span class="k">if</span> <span class="o">[[</span> <span class="nv">$?</span> !<span class="o">=</span> 0 <span class="o">]]</span>;<span class="k">then</span>
-</span><span class="line"><span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;error: gitolite is not installed correct, or the ssh key is not right&quot;</span>
-</span><span class="line">    <span class="nb">exit </span>1
-</span><span class="line"><span class="k">fi</span>
-</span><span class="line">
-</span><span class="line">sudo rm -rf /tmp/gitolite-admin
-</span><span class="line"><span class="c"># clone gitlab source and install prerequisites</span>
-</span><span class="line">sudo gem install charlock_holmes
-</span><span class="line">sudo pip install pygments
-</span><span class="line"><span class="nb">cd</span> /home/gitlab
-</span><span class="line">sudo -H -u gitlab git clone git://github.com/51fanli/gitlabhq.git gitlab
-</span><span class="line"><span class="nb">cd </span>gitlab
-</span><span class="line">sudo -u gitlab cp config/gitlab.yml.example config/gitlab.yml
-</span><span class="line"><span class="c"># mysql databases init</span>
-</span><span class="line"><span class="nb">echo</span> <span class="s2">&quot;connect to mysql&quot;</span>
-</span><span class="line">mysql -h127.0.0.1 -uroot -p
-</span><span class="line"><span class="c"># CREATE DATABASE IF NOT EXISTS `gitlabhq_production` DEFAULT CHARACTER SET `utf8` COLLATE `utf8_unicode_ci`;</span>
-</span><span class="line"><span class="c"># CREATE USER &#39;gitlab&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;123456&#39;;</span>
-</span><span class="line"><span class="c"># GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON `gitlabhq_production`.* TO &#39;gitlab&#39;@&#39;localhost&#39;;</span>
-</span><span class="line">sudo -u gitlab cp config/database.yml.example config/database.yml
-</span><span class="line">sudo -u gitlab -H bundle install --without development <span class="nb">test </span>sqlite postgres --deployment
-</span><span class="line">sudo -u gitlab -H git config --global user.email <span class="s2">&quot;gitlab@localhost&quot;</span>
-</span><span class="line">sudo -u gitlab -H git config --global user.name <span class="s2">&quot;Gitlab&quot;</span>
-</span><span class="line">sudo -u gitlab cp config/resque.yml.example config/resque.yml
-</span><span class="line">sudo -u gitlab cp config/unicorn.rb.example config/unicorn.rb
-</span><span class="line"><span class="c"># init tables</span>
-</span><span class="line">sudo -u gitlab bundle <span class="nb">exec </span>rake gitlab:app:setup <span class="nv">RAILS_ENV</span><span class="o">=</span>production
-</span><span class="line">sudo cp ./lib/hooks/post-receive /home/git/.gitolite/hooks/common/post-receive
-</span><span class="line">sudo chown git:git /home/git/.gitolite/hooks/common/post-receive
-</span><span class="line"><span class="c"># check status</span>
-</span><span class="line">sudo -u gitlab bundle <span class="nb">exec </span>rake gitlab:app:status <span class="nv">RAILS_ENV</span><span class="o">=</span>production
-</span><span class="line">sudo wget https://raw.github.com/gitlabhq/gitlab-recipes/master/init.d/gitlab -P /etc/init.d/
-</span><span class="line">sudo chmod +x /etc/init.d/gitlab
-</span><span class="line">sudo update-rc.d gitlab defaults 21
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>gitlabhq3.0后改用unicorn(紧跟github步伐)作为默认的启动server,要将它与nginx或apache一起使用请参考<a href="https://wiki.archlinux.org/index.php/Gitlab#Web_server_configuration">archwiki的gitlab手册</a>,下面是apache中的vhost配置(需要预先编译proxy模块)</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>apache vhost配置  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-<span class="line-number">29</span>
-<span class="line-number">30</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">&lt;VirtualHost *:80&gt;
-</span><span class="line">  ServerName gitlab.myserver.com
-</span><span class="line">  ServerAlias www.gitlab.myserver.com
-</span><span class="line">  DocumentRoot /home/gitlab/gitlab/public
-</span><span class="line">  ErrorLog /var/log/httpd/gitlab_error_log
-</span><span class="line">  CustomLog /var/log/httpd/gitlab_access_log combined
-</span><span class="line">
-</span><span class="line">  &lt;Proxy balancer://unicornservers&gt;
-</span><span class="line">      BalancerMember http://127.0.0.1:8080
-</span><span class="line">  &lt;/Proxy&gt;
-</span><span class="line">
-</span><span class="line">  &lt;Directory /home/gitlab/gitlab/public&gt;
-</span><span class="line">    AllowOverride All
-</span><span class="line">    Options -MultiViews
-</span><span class="line">  &lt;/Directory&gt;
-</span><span class="line">
-</span><span class="line">  RewriteEngine on
-</span><span class="line">  RewriteCond %<span class="o">{</span>DOCUMENT_ROOT<span class="o">}</span>/%<span class="o">{</span>REQUEST_FILENAME<span class="o">}</span> !-f
-</span><span class="line">  RewriteRule ^/<span class="o">(</span>.*<span class="o">)</span><span class="nv">$ </span>balancer://unicornservers%<span class="o">{</span>REQUEST_URI<span class="o">}</span> <span class="o">[</span>P,QSA,L<span class="o">]</span>
-</span><span class="line">
-</span><span class="line">  ProxyPass /uploads !
-</span><span class="line">  ProxyPass / balancer://unicornservers/
-</span><span class="line">  ProxyPassReverse / balancer://unicornservers/
-</span><span class="line">  ProxyPreserveHost on
-</span><span class="line">
-</span><span class="line">   &lt;Proxy *&gt;
-</span><span class="line">      Order deny,allow
-</span><span class="line">      Allow from all
-</span><span class="line">   &lt;/Proxy&gt;
-</span><span class="line">&lt;/VirtualHost&gt;
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>unicorn的配置文件在config/unicorn.rb，修改其中的 <code>listen="127.0.0.1:8080"</code>，然后重启apache，通过 <code>service gitlab start</code> 重启unicorn，访问一下gitlab.myserver.com吧，看到登录页面就说明大功告成啦。</p>
-
-<h2 id="qa">Q&amp;A</h2>
-<p>### Q: 在装完gitolite后尝试<code>git clone git@localhost:gitolite-admin.git /tmp/gitolite-admin</code>遇到’remote hang-up unexpected’(貌似是这么写，意会。。。)
-A: 我在centos6.2上遇到过这个问题，其他发行版上不知道有没有这个问题，修改</p>
-
-<p><code>sudo chmod 400 /home/git/.ssh/authorized_keys</code></p>
-
-<p>可以修复这个问题。貌似是centos的安全策略造成ssh私钥不生效</p>
-
-<h2 id="section">参考资料</h2>
-<ul>
-  <li><a href="https://github.com/gitlabhq/gitlabhq/blob/master/doc/install/installation.md">gitlab安装手册官方版</a></li>
-  <li><a href="https://wiki.archlinux.org/index.php/Gitlab">gitlab手册archwiki版</a></li>
-</ul>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-11-14T20:12:00+08:00" pubdate data-updated="true">2012.11.14</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/dev/'>dev</a>, <a class='category' href='/blog/blog/categories/git/'>git</a>, <a class='category' href='/blog/blog/categories/gitlab/'>gitlab</a>, <a class='category' href='/blog/blog/categories/software/'>software</a>
-
 
 </div>
 	

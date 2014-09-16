@@ -4,7 +4,7 @@
   <title><![CDATA[Category: nodejs | CodeBean]]></title>
   <link href="http://jingxin.me/blog/blog/categories/nodejs/atom.xml" rel="self"/>
   <link href="http://jingxin.me/blog/"/>
-  <updated>2014-08-31T18:38:02+08:00</updated>
+  <updated>2014-09-16T22:45:19+08:00</updated>
   <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[Xu Jingxin]]></name>
@@ -12,6 +12,38 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[一次神奇的 nodejs debug 经历]]></title>
+    <link href="http://jingxin.me/blog/blog/2014/09/13/yi-ci-shen-qi-de-nodejs-debug-jing-li/"/>
+    <updated>2014-09-13T18:09:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2014/09/13/yi-ci-shen-qi-de-nodejs-debug-jing-li</id>
+    <content type="html"><![CDATA[<p>中秋之后，服务器上老是出现 cpu 爆满的情况，难道服务器也闹情绪想休假。当然这种情况是很紧急的，所以马上就着手排查。</p>
+
+<p>还没找出问题，又有同学报测试机上也有这种情况，但是应用进程不同。想到有可能这两件事是有关联的，所以先从测试机开始排查。</p>
+
+<h2 id="settimeout--bug">问题一， setTimeout 的 bug</h2>
+
+<p>测试机上的问题很好排查，每次进程重启后立刻飙升到 100%，通过万能的 log 大法，很快就定位到问题。应用中使用了 <a href="https://github.com/visionmedia/axon">axon</a> 模块作为消息中间件，在连接不成功时会用 <code>setTimeout</code> 尝试重连，间隔由最初的 100ms 开始每次乘以 1.5，这样在三次之后间隔就变成了 337.5ms，nodejs 有<a href="https://github.com/joyent/node/issues/5796">一个 bug</a>，Timer 函数中出现小数时会导致死循环，我们用的是 0.10.30 版本，这个 bug 依然可以重现。所以解决办法也很简单了，直接 <a href="https://github.com/visionmedia/axon/commit/68a23cacd5fd94527b52738b0d43876187ee82e9#diff-595746af128d06d3cac45cb001ad2219R280">round 一下</a>就可以了。以后在使用 Timer 类函数时也需要注意不要出现小数哦。</p>
+
+<h2 id="section">问题二，正则表达式的效率问题</h2>
+
+<p>由于 axon 在生产环境中也有使用，我们就将所有的版本都进行了升级，以为万事大吉。结果却不遂人愿，生产环境中的几个进程在启动后，时不时会出现负载 100% 的情况，这种可能性分析起来就很复杂了。我们依次尝试了 node-inspector，node-heapdump 等工具，都没有找到原因（实话说，以前用这些 debug 内存问题时也是一无所获，nodejs 的 debug 工具实在鸡肋）。也没有重现线上的问题。</p>
+
+<p>一个有趣的现象是，我发现每次进程重启之后，飙升到 100% 的时间不定，但是每次都是瞬间从 0 到 100%。这种现象说明导致问题的原因可能不是程序内部产生，而是由外力产生，这个外力是什么呢，其实就是请求。再一次借助万能 log 大法，express 的 log 只能记录有响应的请求，如果一个请求在中途陷入了死循环，那么就得不到 express 的 log，所以我们自己写了一个中间件，在 express 的最前部引入，只打印出请求的链接。</p>
+
+<p>接下来问题就很明显了（其实也破费一番周折），每当出现某一请求时，程序就陷入了死循环，屡试不爽。一步步排查下来，发现问题出现在 <a href="https://github.com/leizongmin/js-xss">xss</a> 模块中，其中的一个正则表达式，在匹配某些字符串时出现了问题：</p>
+
+<ul>
+  <li>表达式：<code>/&lt;!--(.|\s)*?--&gt;/gm</code></li>
+  <li>测试字符串：<code>&lt;!--                                    </code></li>
+</ul>
+
+<p>当表达式未找到匹配内容时，效率指数级的下降，特别是在多个重复空格和子表达式时。这个原因解释起来就比较复杂了。<a href="http://swtch.com/~rsc/regexp/regexp1.html">大神的一篇文章</a>很好的解释了这个问题，有时间我要翻译一下，一定又有很多收获。</p>
+
+<p>解决的方法很简单，在<a href="https://github.com/leizongmin/js-xss/commit/161f9510aab78aba83cf75c54c0dafd3a0436a84#diff-666d669efc2fef279da605aba853e681L354">这个 Pull Request</a>中可以找到。看来以后使用正则表达式的时候得过留个心眼了。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[limbo: 简单访问远程数据库]]></title>
@@ -525,110 +557,6 @@ function showTypes(fn) {
 <h1 id="section-4">后记</h1>
 
 <p>假如让我在javascript和coffeescript两种语言之间选择，我仍然倾向于coffeescript，抛开上面的问题不说，它给人编码的时候带来的愉悦是无法衡量的。So just try it!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[node-neo4j 学习笔记]]></title>
-    <link href="http://jingxin.me/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji/"/>
-    <updated>2013-01-28T11:49:00+08:00</updated>
-    <id>http://jingxin.me/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji</id>
-    <content type="html"><![CDATA[<h2 id="node-neo4jhttpsgithubcomthingdomnode-neo4j"><a href="https://github.com/thingdom/node-neo4j">node-neo4j</a></h2>
-
-<h3 id="section">查找节点</h3>
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">neo4j = </span><span class="nx">require</span> <span class="err">‘</span><span class="nx">neo4j</span><span class="err">’</span>
-</span><span class='line'><span class="nv">db = </span><span class="k">new</span> <span class="nx">neo4j</span><span class="p">.</span><span class="nx">GraphDatabase</span><span class="p">(</span><span class="err">‘</span><span class="nx">http</span><span class="o">://</span><span class="nx">localhost</span><span class="o">:</span><span class="mi">7474</span><span class="err">’</span><span class="p">)</span>
-</span><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">if</span> <span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span>
-</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">err</span>
-</span><span class='line'>    <span class="k">else</span>
-</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">node</span><span class="p">.</span><span class="nx">data</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-查找节点的api设计的很有dom的风格，与大多数nodejs方法一样，node-neo4j提供的api都是异步的，回调函数中第一个参数都是错误流，第二个因方法而异，<code>getNodeById</code>中的第二个参数node是一个完整的json对象，在这个对象上可以使用node-neo4j针对node的所有方法，要取得或修改node中的成员则可以通过<code>node.data</code>获取。</p>
-
-<h3 id="section-1">创建关系</h3>
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="c1"># 创建节点</span>
-</span><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">n1</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>    <span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">n2</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>       <span class="c1">#当前节点                 目标节点 关系类型 关系结构</span>
-</span><span class='line'>        <span class="nx">n2</span><span class="p">.</span><span class="nx">createRelationshipTo</span> <span class="nx">n1</span><span class="p">,</span> <span class="err">‘</span><span class="nx">isdogof</span><span class="err">’</span><span class="p">,</span> <span class="p">{</span><span class="nv">ctime: </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()},</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">r</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">h1</span> <span class="nx">id</span><span class="o">=</span><span class="s">&quot;section-2&quot;</span><span class="o">&gt;</span><span class="err">查找节点</span><span class="o">&lt;/</span><span class="nx">h1</span><span class="o">&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">db</span><span class="p">.</span><span class="nx">getRelationshipById</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">rel</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span>          <span class="o">&lt;</span><span class="nx">br</span> <span class="o">/&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-目前通过<code>node-neo4j</code>创建关系只能在node上做文章，通过<code>createRelationshipFrom</code>和<code>createRelationshipTo</code>来创建点对点的关系。客户端的作者很坑爹的在Graphdatabase._coffee中声明了一个<code>createRelationship</code>方法，但是没有实现，调用这个方法是不会有任何效果的。</p>
-
-<h3 id="section-3">查询关系</h3>
-<p><code>node-neo4j</code>中声明了四种方式来获取关于某个节点的关系，分别是
-* node.getRelationships 获取与节点相关的所有关系
-* node.outgoing         获取以该节点为起点的关系
-* node.incoming         获取以该节点为终点的关系
-* node.all              同getRelationships
-这些方法最终都调用<code>_getRelationships</code>，虽然我们也能直接调用这个方法，不过既然人家已声明其为私有，那还是直接调用上面的方法比较好。下面举例：</p>
-
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">nBran</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>    <span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">nSnow</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>        <span class="nx">nSnow</span><span class="p">.</span><span class="nx">incoming</span> <span class="err">‘</span><span class="nx">islittlebrotherof</span><span class="err">’</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">rel</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">data</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>假如关系类型(type)不存在或者没有关联到这个节点的关系，getRelationships返回rel为一个空数组。否则返回节点在这个类型的所有关系数组，<code>rel[0].data</code>则是获取关系的属性。</p>
-
-<h3 id="section-4">根据关系种类查询</h3>
-<p>neo4j的关系中还有个比较重要的概念是种类(type)，在<code>Cypher</code>中可以通过<code>type()</code>方法来获取某个关系的种类
-<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">r</span> <span class="o">=</span> rel<span class="o">(</span>*<span class="o">)</span> <span class="k">return </span><span class="nb">type</span><span class="o">(</span>r<span class="o">)</span>;
-</span><span class='line'>+———————+
-</span><span class='line'>| <span class="nb">type</span><span class="o">(</span>r<span class="o">)</span>             |
-</span><span class='line'>+———————+
-</span><span class='line'>| “islittlebrotherof” |
-</span><span class='line'>+———————+
-</span><span class='line'>1 row
-</span><span class='line'>0 ms
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-在<code>node-neo4j</code>中，<code>getRelationships</code>可以获取某节点某个种类的关系，
-<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">getNodeById</span> <span class="mi">13</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">bran</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>    <span class="nx">bran</span><span class="p">.</span><span class="nx">getRelationships</span> <span class="err">‘</span><span class="nx">islittlebrotherof</span><span class="err">’</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">rel</span><span class="p">)</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">rel</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">data</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-callback中返回的是一个关系对象数组。</p>
-
-<h3 id="query">万能的query</h3>
-<p>db对象上有一个万能的<code>query</code>方法，就是直接通过<code>Cypher</code>语句得到查询结果啦，这个弥补了作者很多没有实现的方法。</p>
-
 ]]></content>
   </entry>
   
