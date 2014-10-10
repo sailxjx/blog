@@ -7,7 +7,7 @@
 	<meta name="author" content="Xu Jingxin">
 
 	
-	<meta name="description" content="中秋之后，服务器上老是出现 cpu 爆满的情况，难道服务器也闹情绪想休假。当然这种情况是很紧急的，所以马上就着手排查。 还没找出问题，又有同学报测试机上也有这种情况，但是应用进程不同。想到有可能这两件事是有关联的，所以先从测试机开始排查。 问题一， setTimeout 的 bug &hellip;">
+	<meta name="description" content="github 中很多项目都有一个 readme 文件，很多人喜欢在文件中添加自己的创作或封面图片，比如 substack 为他的每个项目绘制了一个 logo。这些图片在 github 中能直接在页面中显示出来，不过 url 被替换成了 github 自己的。比如在 browserify 项目中， &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -75,6 +75,169 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2014/10/10/li-yong-nginx-shi-xian-jing-tai-zi-yuan-de-fan-xiang-dai-li/">利用 Nginx 实现静态资源的反向代理</a></h1>
+	<div class="entry-content">
+		<p>github 中很多项目都有一个 readme 文件，很多人喜欢在文件中添加自己的创作或封面图片，比如 <a href="https://github.com/substack">substack</a> 为他的每个项目绘制了一个 logo。这些图片在 github 中能直接在页面中显示出来，不过 url 被替换成了 github 自己的。比如在 <a href="https://github.com/substack/node-browserify/blob/master/readme.markdown">browserify</a> 项目中，logo 的链接变成了</p>
+
+<blockquote>
+  <p>https://camo.githubusercontent.com/e19e230a9371a44a2eeb484b83ff4fcf8c824cf7/687474703a2f2f737562737461636b2e6e65742f696d616765732f62726f777365726966795f6c6f676f2e706e67</p>
+</blockquote>
+
+<p>而我们通过查看 <a href="https://raw.githubusercontent.com/substack/node-browserify/master/readme.markdown">raw</a> 能发现原 url 是</p>
+
+<blockquote>
+  <p>http://substack.net/images/browserify_logo.png</p>
+</blockquote>
+
+<p>这样做的一个好处是防止因为在 https 网站中出现 http 链接，否则在客户端会得到一个风险警告。github 在细节上真是考虑的十分周到。</p>
+
+<p>既然有需求，我们就来实现它。通常的做法是写一个应用去抓取远程的静态资源，然后反馈给前端，这就是一个简单地反向代理了。但是这样做比较繁琐，效率也未见得高，其实我们可以直接通过 nginx 来代理这些静态文件。</p>
+
+<p>nginx 的 <code>proxy_pass</code> 支持填写任意地址，并且支持 dns 解析。所以我的思路是，将原 url 加密转成网站自身的 url。比如上面的</p>
+
+<blockquote>
+  <p>http://substack.net/images/browserify_logo.png</p>
+</blockquote>
+
+<p>可以加密成</p>
+
+<blockquote>
+  <p>764feebffb1d3f877e9e0d0fadcf29b85e8fe84ae4ce52f7dc4ca4b3e05bf1718177870a996fe5804a232fcae5b893ea (加密和序列化算法网上有很多，在此就不赘述了)</p>
+</blockquote>
+
+<p>然后放在我们自己的域名下：</p>
+
+<blockquote>
+  <p>https://ssl.youdomain.com/camo/764feebffb1d3f877e9e0d0fadcf29b85e8fe84ae4ce52f7dc4ca4b3e05bf1718177870a996fe5804a232fcae5b893ea</p>
+</blockquote>
+
+<p>解密的步骤用 nginx 会比较难实现，所以当用户通过上述链接请求时，先讲请求传递给解密程序，这里有一个 coffeescript 版本的例子：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">express = </span><span class="nx">require</span> <span class="s">&#39;express&#39;</span>
+</span><span class="line"><span class="nv">app = </span><span class="nx">express</span><span class="p">()</span>
+</span><span class="line"><span class="nx">app</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;/camo/:eurl&#39;</span><span class="p">,</span> <span class="nf">(req, res) -&gt;</span>
+</span><span class="line">  <span class="p">{</span><span class="nx">eurl</span><span class="p">}</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span>
+</span><span class="line">  <span class="p">{</span><span class="nx">camoSecret</span><span class="p">}</span> <span class="o">=</span> <span class="nx">config</span>  <span class="c1"># 这里使用自己的密钥</span>
+</span><span class="line">  <span class="nv">rawUrl = </span><span class="nx">util</span><span class="p">.</span><span class="nx">decrypt</span> <span class="nx">eurl</span><span class="p">,</span> <span class="nx">camoSecret</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mi">403</span><span class="p">).</span><span class="nx">end</span><span class="p">(</span><span class="s">&#39;INVALID URL&#39;</span><span class="p">)</span> <span class="nx">unless</span> <span class="nx">rawUrl</span>
+</span><span class="line">  <span class="nx">res</span><span class="p">.</span><span class="nx">set</span> <span class="s">&#39;X-Origin-Url&#39;</span><span class="p">,</span> <span class="nx">rawUrl</span>
+</span><span class="line">  <span class="nx">res</span><span class="p">.</span><span class="nx">set</span> <span class="s">&#39;X-Accel-Redirect&#39;</span><span class="p">,</span> <span class="s">&#39;/remote&#39;</span>
+</span><span class="line">  <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">()</span>
+</span><span class="line"><span class="nx">app</span><span class="p">.</span><span class="nx">listen</span> <span class="mi">3000</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>然后写入 <code>X-Accel-Redirect</code> 响应头做内部跳转，下面的步骤就由 nginx 完成了。</p>
+
+<p>下面是一个完整的 nginx 配置文件例子：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+</pre></td><td class="code"><pre><code class="nginx"><span class="line"><span class="k">server</span> <span class="p">{</span>
+</span><span class="line">    <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
+</span><span class="line">    <span class="kn">server_name</span> <span class="s">ssl.youdomain.com</span><span class="p">;</span>
+</span><span class="line">    <span class="kn">location</span> <span class="s">/camo/</span> <span class="p">{</span>
+</span><span class="line">        <span class="kn">proxy_pass</span> <span class="s">http://localhost:3000</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_set_header</span> <span class="s">X-Real-IP</span> <span class="nv">$remote_addr</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_set_header</span> <span class="s">X-Forwarded-For</span> <span class="nv">$proxy_add_x_forwarded_for</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_set_header</span> <span class="s">Host</span> <span class="nv">$http_host</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_set_header</span> <span class="s">X-NginX-Proxy</span> <span class="s">true</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_http_version</span> <span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_set_header</span> <span class="s">Upgrade</span> <span class="nv">$http_upgrade</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_set_header</span> <span class="s">Connection</span> <span class="s">&quot;Upgrade&quot;</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_redirect</span> <span class="no">off</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">break</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">    <span class="kn">location</span> <span class="s">/remote</span> <span class="p">{</span>
+</span><span class="line">        <span class="kn">internal</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">resolver</span> <span class="mi">192</span><span class="s">.168.0.21</span><span class="p">;</span>  <span class="c1"># 必须加上 dns 服务器地址，否则 nginx 无法解析域名</span>
+</span><span class="line">        <span class="kn">set</span> <span class="nv">$origin_url</span> <span class="nv">$upstream_http_x_origin_url</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_pass</span> <span class="nv">$origin_url</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">add_header</span> <span class="s">Host</span> <span class="s">&quot;file.local.com&quot;</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">break</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>nginx 的 upstream 模块会把所有的响应头加上 <code>$upstream_http_</code> 前缀当成一个变量保存，所以在上面的例子中我们将原 url 放在 <code>X-Origin-Url</code> 响应头中，在 nginx 就变成了 <code>$upstream_http_x_origin_url</code> 变量，但是在 proxy_pass 中不能直接引用，非要通过 set 来设置才能引用，这个我不是很理解，希望有高手能解答。</p>
+
+<p>这样下来，每次当用户请求</p>
+
+<blockquote>
+  <p>https://ssl.youdomain.com/camo/764feebffb1d3f877e9e0d0fadcf29b85e8fe84ae4ce52f7dc4ca4b3e05bf1718177870a996fe5804a232fcae5b893ea</p>
+</blockquote>
+
+<p>时，nginx 就会去抓取</p>
+
+<blockquote>
+  <p>http://substack.net/images/browserify_logo.png</p>
+</blockquote>
+
+<p>的内容返回给用户。我们还可以在 nginx 之前加上 varnish，用以缓存静态文件的内容。这样就跟 githubusercontent 的做法更加一致了。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-10T16:52:00+08:00" pubdate data-updated="true">2014.10.10</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/nginx/'>nginx</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1079,131 +1242,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/code-style/'>code style</a>, <a class='category' href='/blog/blog/categories/coffee/'>coffee</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me/">一个例子验证 Do 在 Coffeescript 中干了什么</a></h1>
-	<div class="entry-content">
-		<p>使用jslint的时候有可能会见到这样的提示</p>
-
-<blockquote>
-  <p>Don’t make functions within a loop</p>
-</blockquote>
-
-<p>一直没有太在意这个警告，直到最近做项目的时候还真的碰到了因为这个问题产生的bug。</p>
-
-<p>那么下面就用一个例子来看看在循环中定义方法会产生什么样的后果吧。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">array = </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-</span><span class="line"><span class="k">for</span> <span class="nx">num</span> <span class="k">in</span> <span class="nx">array</span>
-</span><span class="line">  <span class="nx">setTimeout</span> <span class="p">(</span><span class="o">-&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">num</span><span class="p">),</span> <span class="mi">1</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>得到的结果是’3,3,3’，而不是预期的’1,2,3’，先不说为什么，我们来看看coffeescript给出的解决方案。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">array = </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-</span><span class="line"><span class="k">for</span> <span class="nx">num</span> <span class="k">in</span> <span class="nx">array</span>
-</span><span class="line">    <span class="nx">do</span> <span class="nf">(num) -&gt;</span>
-</span><span class="line">        <span class="nx">setTimeout</span> <span class="p">(</span><span class="o">-&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">num</span><span class="p">),</span> <span class="mi">1</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>在这里不得不佩服<a href="https://github.com/jashkenas">Jeremy Ashkenas</a>的无限创造力，短短一个<code>do</code>，就解决了这么让人纠结的问题。下面来看看编译成javascript之后的结果</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">  <span class="kd">var</span> <span class="nx">array</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="nx">_fn</span><span class="p">,</span> <span class="nx">_i</span><span class="p">,</span> <span class="nx">_len</span><span class="p">;</span>
-</span><span class="line">
-</span><span class="line">  <span class="nx">array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
-</span><span class="line">
-</span><span class="line">  <span class="nx">_fn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">    <span class="k">return</span> <span class="nx">setTimeout</span><span class="p">((</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">      <span class="k">return</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">num</span><span class="p">);</span>
-</span><span class="line">    <span class="p">}),</span> <span class="mi">1</span><span class="p">);</span>
-</span><span class="line">  <span class="p">};</span>
-</span><span class="line">  <span class="k">for</span> <span class="p">(</span><span class="nx">_i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">_len</span> <span class="o">=</span> <span class="nx">array</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">_i</span> <span class="o">&lt;</span> <span class="nx">_len</span><span class="p">;</span> <span class="nx">_i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">    <span class="nx">num</span> <span class="o">=</span> <span class="nx">array</span><span class="p">[</span><span class="nx">_i</span><span class="p">];</span>
-</span><span class="line">    <span class="nx">_fn</span><span class="p">(</span><span class="nx">num</span><span class="p">);</span>
-</span><span class="line">  <span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="p">}).</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>下面我们来解释一下为什么上面的代码会有问题，以及这个<code>do</code>为我们做了些啥。</p>
-
-<p>关于javascript的作用域，我们可以看一下<a href="http://rzrsharp.net/2011/06/27/what-does-coffeescripts-do-do.html">这篇文章的引用</a></p>
-
-<blockquote>
-  <p>JavaScript’s scopes are function-level, not block-level, and creating a closure just means that the enclosing scope gets added to the lexical environment of the enclosed function.</p>
-</blockquote>
-
-<p>大意是说</p>
-
-<blockquote>
-  <p>JavaScript的作用域是方法级别，而非块级的。创造一个闭包可以将作用域限定在这个封闭的方法中</p>
-</blockquote>
-
-<p>这里的<code>for..in</code>循环在其他语言中就是一个块级的作用域，但是Javascript并不买它的帐，于是最后在方法中调用的num就变成了整个作用域中最后的状态(3)。解决的办法就是在循环中创建闭包，让num当成参数传入闭包，那么它在方法作用域中就不会受外部的变化而改变(实际上完全可以当成一个新的变量，不信你传个object进去，在闭包中的任何修改，都不会对外部作用域的object产生影响的)。</p>
-
-<p>coffeescript用<code>do</code>关键字为我们将这种操作最简化，所以，尝试一下吧。</p>
-
-<h2 id="section">参考文档</h2>
-
-<ul>
-  <li><a href="http://stackoverflow.com/questions/10810815/variable-scope-in-coffeescript-for-loop">Variable scope in coffeescript for loop?</a></li>
-  <li><a href="http://rzrsharp.net/2011/06/27/what-does-coffeescripts-do-do.html">What Does Coffeescript’s “Do” Do?</a></li>
-</ul>
-
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-08-07T17:20:00+08:00" pubdate data-updated="true">2013.08.07</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/closure/'>closure</a>, <a class='category' href='/blog/blog/categories/coffee/'>coffee</a>, <a class='category' href='/blog/blog/categories/nodejs/'>nodejs</a>
 
 
 </div>

@@ -7,7 +7,7 @@
 	<meta name="author" content="Xu Jingxin">
 
 	
-	<meta name="description" content="前几天碰到一道有趣的面试题，见微知著，由此记录一下一些新的启发和发现。 题目很简单，给一个数组，其中有n个数字，求后面的数与前面的数的差值，将最大差值的两个数找出来。映射到生活中，就是一个股票何时买入何时卖出能达到最大收益的情况（前提是能预知未来的所有报价）。 一个测试用例是下面这样： 输入：[ &hellip;">
+	<meta name="description" content="Maurice一直很好奇，他所在的公司经常不经过测试就把新成员招进来。这样看起来是为了节省了公司的时间和金钱。人力资源部门新招的“IT系统专家”在他刚来的那几个礼拜轻而易举的让Maurice毁三观了。 这个奇葩专家很喜欢自吹自擂。无论谁在他附近都能听见他在吹牛。有一天， &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -75,6 +75,71 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi/">[TDWTF] 数据库大师</a></h1>
+	<div class="entry-content">
+		<p>Maurice一直很好奇，他所在的公司经常不经过测试就把新成员招进来。这样看起来是为了节省了公司的时间和金钱。人力资源部门新招的“IT系统专家”在他刚来的那几个礼拜轻而易举的让Maurice毁三观了。</p>
+
+<p>这个奇葩专家很喜欢自吹自擂。无论谁在他附近都能听见他在吹牛。有一天，他向Maurice吹嘘他最得意的事情，是在一个大电信企业的成功故事。这个时候电话铃响了：有个分公司部门没法进入Maurice和他的团队维护的系统了。于是他对Ben说：</p>
+
+<p>“试试你能不能ping到他们的机器 - hostname是RHODODENDRON ”</p>
+
+<p>Ben停止了吹嘘，眨了眨眼睛，仿佛从一个美好的梦中醒了过来。“我该怎么做？”</p>
+
+<p>Maurice很好奇他的“专家”到底是哪个地方没听懂。“你。。。你打开命令提示符，然后输入ping RHODODENDRON。”</p>
+
+<p>“我知道，”Ben说道。“但是。。。我上哪儿去找命令提示符？”</p>
+
+<p>Maurice恨不得自己上了，但是这个时候分公司又打了个电话来请求更新状态。他不得不去亲自去处理另一个问题 - 一个配置错误的客户端。</p>
+
+<p>当Maurice接管后，Ben继续吹他的故事。虽然Maurice心不在焉，他还是注意到在Ben的掌控下，一个通常需要跑整晚的报告只跑了一个小时。事实上，很多同事称Ben为“数据库大师”。</p>
+
+<p>“。。。既然你需要管理数据库，”Ben愉快的宣称，“我就是你要找的人！”</p>
+
+<p>决定不再让Ben在命令行间闲逛，Maurice接受了他这个新同事的建议，给他展示他们的生产数据库，一个有着四十G数据的Sql Server数据库。考虑到数据库的增长量，Maurice向他的“数据库大师”征询意见。</p>
+
+<p>“第一件事，”Ben说道，启动管理工具，“确认里面到底有多少条数据。我喜欢说这是为数据库把脉。我们需要先统计总条目数。”</p>
+
+<p>在Ben咕哝了一阵子之后，Maurice从他肩头看过去。控制台上显示着一条SQL语法错误，仿佛在嘲笑这位“数据库大师”：</p>
+
+<blockquote>
+  <p>select count() rowID</p>
+</blockquote>
+
+<p>虽然数据库的增长模式仍然是个迷，Maurice却开始认识到“数据库大师”的“专业模式”。不仅仅他语句有问题，他还选错了数据库：他选择了Sql Server的内建数据库。嗯，当然也叫大师（’master’）。</p>
+
+<p>原文链接：<a href="http://thedailywtf.com/Articles/The-Database-Master.aspx">The Database Master</a></p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-11T12:41:00+08:00" pubdate data-updated="true">2013.04.11</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/joke/'>joke</a>, <a class='category' href='/blog/blog/categories/translation/'>translation</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1291,126 +1356,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/cypher/'>cypher</a>, <a class='category' href='/blog/blog/categories/neo4j/'>neo4j</a>, <a class='category' href='/blog/blog/categories/note/'>note</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/02/06/vagrant-da-bao-yu-fa-bu/">Vagrant 打包与发布</a></h1>
-	<div class="entry-content">
-		<p>上次失败的<a href="/blog/blog/2012/12/11/vagrant-bi-ji/">vagrant尝试</a>之后，很久没有再去捣鼓这玩意儿，最近又想试一试，居然一举成功了，特别记录一下。</p>
-
-<h2 id="section">打包</h2>
-<p>上手第一件事就是制作自己的box，网上已经有了许多现成的<a href="http://www.vagrantbox.es/">各linux版本box</a></p>
-
-<p>首先用virtualbox安装好自己的linux，版本任选，我这里用的是ubuntu server 12.10，虚拟机名是<code>ubuntu_server_12.10</code>，装好后在其中添加<code>vagrant</code>账号。再用下面的命令就可以生成自己的box了。</p>
-
-<blockquote>
-  <p>vagrant package –base ubuntu_server_12.10 –output vagrant_ubuntu.box</p>
-</blockquote>
-
-<p>这样就在当前目录下生成了一个vagrant_ubuntu.box文件，压缩前原始vdi文件在1.4G左右，打包后的box是415M，压缩比还是不错的。</p>
-
-<h2 id="section-1">导入</h2>
-<p>下面就是导入box文件了。</p>
-
-<blockquote>
-  <p>vagrant box add vagrant_ubuntu vagrant_ubuntu.box</p>
-</blockquote>
-
-<p>vagrant的磁盘文件储存在<code>~/.vagrant.d/</code>文件夹中。导入之后用下面的命令生成一个’Vagrantfile’配置文件</p>
-
-<blockquote>
-  <p>vagrant init</p>
-</blockquote>
-
-<p>然后就可以通过<code>up</code>命令启动虚拟机了</p>
-
-<blockquote>
-  <p>vagrant up</p>
-</blockquote>
-
-<h2 id="ssh">ssh</h2>
-<p>如果不做任何修改，虚拟机默认使用的是NAT的连接方式，而且做了一个端口转发(22-&gt;2222)，这个时候直接通过<code>vagrant ssh</code>命令或22端口是登陆不了虚拟机的，需要在Vagrantfile中添加下面两项</p>
-
-<blockquote>
-  <p>config.ssh.port = 2222</p>
-</blockquote>
-
-<blockquote>
-  <p>config.ssh.private_key_path = “/Users/tristan/.ssh/id_rsa”</p>
-</blockquote>
-
-<p>其中第一项指定使用本机的2222作为ssh端口，其中第二项是指定使用的私钥路径，如果事先在虚拟机中加入了对应的公钥，这样连接时就可以免去输入密码的步骤。(还要注意的是网上大部分box都是使用vagrant用户名，密码也是vagrant，算是一个便于传播的约定)。现在可以看一下ssh配置。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">tristan@bran:vagrant<span class="nv">$ </span>vagrant ssh-config
-</span><span class="line">Host default
-</span><span class="line">  HostName 127.0.0.1
-</span><span class="line">  User vagrant
-</span><span class="line">  Port 2222
-</span><span class="line">  UserKnownHostsFile /dev/null
-</span><span class="line">  StrictHostKeyChecking no
-</span><span class="line">  PasswordAuthentication no
-</span><span class="line">  IdentityFile /Users/tristan/.ssh/id_rsa
-</span><span class="line">  IdentitiesOnly yes
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>然后使用下面的命令，就可以直接登录虚拟机了。</p>
-
-<blockquote>
-  <p>vagrant ssh</p>
-</blockquote>
-
-<p>包括下面的一系列命令，也均可以使用。</p>
-
-<ul>
-  <li><code>vagrant up</code> 启动</li>
-  <li><code>vagrant halt</code> 关机</li>
-  <li><code>vagrant reload</code> 重启</li>
-  <li><code>vagrant suspend</code> 休眠</li>
-</ul>
-
-<p>总而言之，搞定ssh，一切就很顺利鸟。</p>
-
-<h2 id="section-2">资源</h2>
-<p><a href="http://www.vagrantbox.es/">A list of base boxes for Vagrant - Vagrantbox.es</a></p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-02-06T14:31:00+08:00" pubdate data-updated="true">2013.02.06</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/vagrant/'>vagrant</a>, <a class='category' href='/blog/blog/categories/virtualbox/'>virtualbox</a>
 
 
 </div>

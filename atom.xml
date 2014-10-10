@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://jingxin.me/blog/atom.xml" rel="self"/>
   <link href="http://jingxin.me/blog/"/>
-  <updated>2014-09-16T22:45:19+08:00</updated>
+  <updated>2014-10-10T18:23:31+08:00</updated>
   <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[Xu Jingxin]]></name>
@@ -12,6 +12,143 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[利用 nginx 实现静态资源的反向代理]]></title>
+    <link href="http://jingxin.me/blog/blog/2014/10/10/li-yong-nginx-shi-xian-jing-tai-zi-yuan-de-fan-xiang-dai-li/"/>
+    <updated>2014-10-10T16:52:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2014/10/10/li-yong-nginx-shi-xian-jing-tai-zi-yuan-de-fan-xiang-dai-li</id>
+    <content type="html"><![CDATA[<p>github 中很多项目都有一个 readme 文件，很多人喜欢在文件中添加自己的创作或封面图片，比如 <a href="https://github.com/substack">substack</a> 为他的每个项目绘制了一个 logo。这些图片在 github 中能直接在页面中显示出来，不过 url 被替换成了 github 自己的。比如在 <a href="https://github.com/substack/node-browserify/blob/master/readme.markdown">browserify</a> 项目中，logo 的链接变成了</p>
+
+<blockquote>
+  <p>https://camo.githubusercontent.com/e19e230a9371a44a2eeb484b83ff4fcf8c824cf7/687474703a2f2f737562737461636b2e6e65742f696d616765732f62726f777365726966795f6c6f676f2e706e67</p>
+</blockquote>
+
+<p>而我们通过查看 <a href="https://raw.githubusercontent.com/substack/node-browserify/master/readme.markdown">raw</a> 能发现原 url 是</p>
+
+<blockquote>
+  <p>http://substack.net/images/browserify_logo.png</p>
+</blockquote>
+
+<p>这样做的一个好处是防止因为在 https 网站中出现 http 链接，否则在客户端会得到一个风险警告。github 在细节上真是考虑的十分周到。</p>
+
+<p>既然有需求，我们就来实现它。通常的做法是写一个应用去抓取远程的静态资源，然后反馈给前端，这就是一个简单地反向代理了。但是这样做比较繁琐，效率也未见得高，其实我们可以直接通过 nginx 来代理这些静态文件。</p>
+
+<p>nginx 的 <code>proxy_pass</code> 支持填写任意地址，并且支持 dns 解析。所以我的思路是，将原 url 加密转成网站自身的 url。比如上面的</p>
+
+<blockquote>
+  <p>http://substack.net/images/browserify_logo.png</p>
+</blockquote>
+
+<p>可以加密成</p>
+
+<blockquote>
+  <p>764feebffb1d3f877e9e0d0fadcf29b85e8fe84ae4ce52f7dc4ca4b3e05bf1718177870a996fe5804a232fcae5b893ea (加密和序列化算法网上有很多，在此就不赘述了)</p>
+</blockquote>
+
+<p>然后放在我们自己的域名下：</p>
+
+<blockquote>
+  <p>https://ssl.youdomain.com/camo/764feebffb1d3f877e9e0d0fadcf29b85e8fe84ae4ce52f7dc4ca4b3e05bf1718177870a996fe5804a232fcae5b893ea</p>
+</blockquote>
+
+<p>解密的步骤用 nginx 会比较难实现，所以当用户通过上述链接请求时，先讲请求传递给解密程序，这里有一个 coffeescript 版本的例子：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">express = </span><span class="nx">require</span> <span class="s">&#39;express&#39;</span>
+</span><span class="line"><span class="nv">app = </span><span class="nx">express</span><span class="p">()</span>
+</span><span class="line"><span class="nx">app</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;/camo/:eurl&#39;</span><span class="p">,</span> <span class="nf">(req, res) -&gt;</span>
+</span><span class="line">  <span class="p">{</span><span class="nx">eurl</span><span class="p">}</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span>
+</span><span class="line">  <span class="p">{</span><span class="nx">camoSecret</span><span class="p">}</span> <span class="o">=</span> <span class="nx">config</span>  <span class="c1"># 这里使用自己的密钥</span>
+</span><span class="line">  <span class="nv">rawUrl = </span><span class="nx">util</span><span class="p">.</span><span class="nx">decrypt</span> <span class="nx">eurl</span><span class="p">,</span> <span class="nx">camoSecret</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mi">403</span><span class="p">).</span><span class="nx">end</span><span class="p">(</span><span class="s">&#39;INVALID URL&#39;</span><span class="p">)</span> <span class="nx">unless</span> <span class="nx">rawUrl</span>
+</span><span class="line">  <span class="nx">res</span><span class="p">.</span><span class="nx">set</span> <span class="s">&#39;X-Origin-Url&#39;</span><span class="p">,</span> <span class="nx">rawUrl</span>
+</span><span class="line">  <span class="nx">res</span><span class="p">.</span><span class="nx">set</span> <span class="s">&#39;X-Accel-Redirect&#39;</span><span class="p">,</span> <span class="s">&#39;/remote&#39;</span>
+</span><span class="line">  <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">()</span>
+</span><span class="line"><span class="nx">app</span><span class="p">.</span><span class="nx">listen</span> <span class="mi">3000</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>然后写入 <code>X-Accel-Redirect</code> 响应头做内部跳转，下面的步骤就由 nginx 完成了。</p>
+
+<p>下面是一个完整的 nginx 配置文件例子：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+</pre></td><td class="code"><pre><code class="nginx"><span class="line"><span class="k">server</span> <span class="p">{</span>
+</span><span class="line">    <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
+</span><span class="line">    <span class="kn">server_name</span> <span class="s">ssl.youdomain.com</span><span class="p">;</span>
+</span><span class="line">    <span class="kn">location</span> <span class="s">/camo/</span> <span class="p">{</span>
+</span><span class="line">        <span class="kn">proxy_pass</span> <span class="s">http://localhost:3000</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_set_header</span> <span class="s">X-Real-IP</span> <span class="nv">$remote_addr</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_set_header</span> <span class="s">X-Forwarded-For</span> <span class="nv">$proxy_add_x_forwarded_for</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_set_header</span> <span class="s">Host</span> <span class="nv">$http_host</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_set_header</span> <span class="s">X-NginX-Proxy</span> <span class="s">true</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_http_version</span> <span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_set_header</span> <span class="s">Upgrade</span> <span class="nv">$http_upgrade</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_set_header</span> <span class="s">Connection</span> <span class="s">&quot;Upgrade&quot;</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_redirect</span> <span class="no">off</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">break</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">    <span class="kn">location</span> <span class="s">/remote</span> <span class="p">{</span>
+</span><span class="line">        <span class="kn">internal</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">resolver</span> <span class="mi">192</span><span class="s">.168.0.21</span><span class="p">;</span>  <span class="c1"># 必须加上 dns 服务器地址，否则 nginx 无法解析域名</span>
+</span><span class="line">        <span class="kn">set</span> <span class="nv">$origin_url</span> <span class="nv">$upstream_http_x_origin_url</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">proxy_pass</span> <span class="nv">$origin_url</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">add_header</span> <span class="s">Host</span> <span class="s">&quot;file.local.com&quot;</span><span class="p">;</span>
+</span><span class="line">        <span class="kn">break</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>nginx 的 upstream 模块会把所有的响应头加上 <code>$upstream_http_</code> 前缀当成一个变量保存，所以在上面的例子中我们将原 url 放在 <code>X-Origin-Url</code> 响应头中，在 nginx 就变成了 <code>$upstream_http_x_origin_url</code> 变量，但是在 proxy_pass 中不能直接引用，非要通过 set 来设置才能引用，这个我不是很理解，希望有高手能解答。</p>
+
+<p>这样下来，每次当用户请求</p>
+
+<blockquote>
+  <p>https://ssl.youdomain.com/camo/764feebffb1d3f877e9e0d0fadcf29b85e8fe84ae4ce52f7dc4ca4b3e05bf1718177870a996fe5804a232fcae5b893ea</p>
+</blockquote>
+
+<p>时，nginx 就会去抓取</p>
+
+<blockquote>
+  <p>http://substack.net/images/browserify_logo.png</p>
+</blockquote>
+
+<p>的内容返回给用户。我们还可以在 nginx 之前加上 varnish，用以缓存静态文件的内容。这样就跟 githubusercontent 的做法更加一致了。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[一次神奇的 nodejs debug 经历]]></title>
@@ -1777,255 +1914,6 @@
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>作为睿智的你，会选择哪一种呢。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[[nginx] if is evil]]></title>
-    <link href="http://jingxin.me/blog/blog/2013/05/15/nginx-if-is-evil/"/>
-    <updated>2013-05-15T17:36:00+08:00</updated>
-    <id>http://jingxin.me/blog/blog/2013/05/15/nginx-if-is-evil</id>
-    <content type="html"><![CDATA[<p>最近用nginx配置中使用if遇到一些问题，碰巧想起以前在wiki中看到的这个页面，虽然我的问题可能和wiki中提到的不同，但是if还是能避免就避免吧</p>
-
-<p>下面的内容翻译自<a href="http://wiki.nginx.org/IfIsEvil">IfIsEvil</a></p>
-
-<h1 id="ifisevil-">IfIsEvil (标题就不翻了，保持原汁原味的比较带感)</h1>
-
-<h2 id="section">简介</h2>
-
-<p><a href="http://wiki.nginx.org/NginxHttpRewriteModule#if"><code>if</code></a>指令在使用在<code>location</code>上下文中时有一些问题。有时候它不能如你所愿，而是做一些完全相反的事情。有时候甚至会引发分段错误。通常来说应该尽量避免使用<code>if</code>。</p>
-
-<p>唯一100%可以安全的在<code>location</code>上下文中使用<code>if</code>的场景是：</p>
-
-<ul>
-  <li><a href="http://wiki.nginx.org/NginxHttpRewriteModule#return">return</a> …;</li>
-  <li><a href="http://wiki.nginx.org/NginxHttpRewriteModule#rewrite">rewrite</a> … last;</li>
-</ul>
-
-<p>任何其他情况都可能引发不可预知的行为，包括潜在的分段错误。</p>
-
-<p>需要注意的是<code>if</code>的行为并不是始终如一的。两个相同的请求不会在其中一个上失败而在另一个上成功，通过完善的测试并且对<code>if</code>有深刻理解的话，它可以使用。但是仍然强烈建议使用其他指令来代替。</p>
-
-<p>这些情况下可能你不能轻易的避免使用<code>if</code>，比如说你想测试一个变量，就没有类似的指令可以替代。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="nginx"><span class="line"><span class="k">if</span> <span class="s">(</span><span class="nv">$request_method</span> <span class="p">=</span> <span class="s">POST</span> <span class="s">)</span> <span class="p">{</span>
-</span><span class="line">  <span class="kn">return</span> <span class="mi">405</span><span class="p">;</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line"><span class="k">if</span> <span class="s">(</span><span class="nv">$args</span> <span class="p">~</span> <span class="sr">post=140)</span><span class="p">{</span>
-</span><span class="line">  <span class="kn">rewrite</span> <span class="s">^</span> <span class="s">http://example.com/</span> <span class="s">permanent</span><span class="p">;</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h2 id="section-1">用什么替代</h2>
-
-<p>在符合你的需求前提下，可以用<a href="http://wiki.nginx.org/NginxHttpCoreModule#try_files"><code>try_files</code></a>代替。在其他情况下用”return …“或”rewrite … last”。在有些情况下可以将<code>if</code>移动到server级别（在这里它是安全的，只有其他重写模块指令允许写在它里面）。</p>
-
-<p>例如，下面的的用法在处理请求时可以安全的修改<code>location</code>。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-</pre></td><td class="code"><pre><code class="nginx"><span class="line"><span class="k">location</span> <span class="s">/</span> <span class="p">{</span>
-</span><span class="line">    <span class="kn">error_page</span> <span class="mi">418</span> <span class="p">=</span> <span class="s">@other</span><span class="p">;</span>
-</span><span class="line">    <span class="kn">recursive_error_pages</span> <span class="no">on</span><span class="p">;</span>
-</span><span class="line">
-</span><span class="line">    <span class="kn">if</span> <span class="s">(</span><span class="nv">$something</span><span class="s">)</span> <span class="p">{</span>
-</span><span class="line">        <span class="kn">return</span> <span class="mi">418</span><span class="p">;</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line">
-</span><span class="line">    <span class="c1"># 一些配置</span>
-</span><span class="line">    <span class="kn">...</span>
-</span><span class="line"><span class="err">}</span>
-</span><span class="line">
-</span><span class="line"><span class="s">location</span> <span class="s">@other</span> <span class="p">{</span>
-</span><span class="line">    <span class="c1"># 其他配置</span>
-</span><span class="line">    <span class="kn">...</span>
-</span><span class="line"><span class="err">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>有些情况下，使用嵌入式脚本模块（<a href="http://wiki.nginx.org/EmbeddedPerlModule">嵌入式perl</a>，或其他<a href="http://wiki.nginx.org/3rdPartyModules">第三方模块</a>）来写这些脚本。</p>
-
-<h2 id="section-2">例子</h2>
-
-<p>下面是一些例子用来解释为什么”if is evil”。不要在家里尝试这些，你被警告过了。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-<span class="line-number">29</span>
-<span class="line-number">30</span>
-<span class="line-number">31</span>
-<span class="line-number">32</span>
-<span class="line-number">33</span>
-<span class="line-number">34</span>
-<span class="line-number">35</span>
-<span class="line-number">36</span>
-<span class="line-number">37</span>
-<span class="line-number">38</span>
-<span class="line-number">39</span>
-<span class="line-number">40</span>
-<span class="line-number">41</span>
-<span class="line-number">42</span>
-<span class="line-number">43</span>
-<span class="line-number">44</span>
-<span class="line-number">45</span>
-<span class="line-number">46</span>
-<span class="line-number">47</span>
-<span class="line-number">48</span>
-<span class="line-number">49</span>
-<span class="line-number">50</span>
-<span class="line-number">51</span>
-<span class="line-number">52</span>
-<span class="line-number">53</span>
-<span class="line-number">54</span>
-<span class="line-number">55</span>
-<span class="line-number">56</span>
-<span class="line-number">57</span>
-<span class="line-number">58</span>
-<span class="line-number">59</span>
-<span class="line-number">60</span>
-<span class="line-number">61</span>
-<span class="line-number">62</span>
-<span class="line-number">63</span>
-<span class="line-number">64</span>
-<span class="line-number">65</span>
-<span class="line-number">66</span>
-<span class="line-number">67</span>
-<span class="line-number">68</span>
-</pre></td><td class="code"><pre><code class="nginx"><span class="line"><span class="c1"># 下面用一些意想不到的bug来说明在location块中if is evil</span>
-</span><span class="line"><span class="c1"># 只有第二个header会被输出到响应，这事实上不是bug，它就是这样工作的。</span>
-</span><span class="line">
-</span><span class="line"><span class="k">location</span> <span class="s">/only-one-if</span> <span class="p">{</span>
-</span><span class="line">    <span class="kn">set</span> <span class="nv">$true</span> <span class="mi">1</span><span class="p">;</span>
-</span><span class="line">
-</span><span class="line">    <span class="kn">if</span> <span class="s">(</span><span class="nv">$true</span><span class="s">)</span> <span class="p">{</span>
-</span><span class="line">        <span class="kn">add_header</span> <span class="s">X-First</span> <span class="mi">1</span><span class="p">;</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line">
-</span><span class="line">    <span class="kn">if</span> <span class="s">(</span><span class="nv">$true</span><span class="s">)</span> <span class="p">{</span>
-</span><span class="line">        <span class="kn">add_header</span> <span class="s">X-Second</span> <span class="mi">2</span><span class="p">;</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line">
-</span><span class="line">    <span class="kn">return</span> <span class="mi">204</span><span class="p">;</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="c1"># 请求会被发送到后端但是uri不会改变为&#39;/&#39;，这是if造成的</span>
-</span><span class="line">
-</span><span class="line"><span class="k">location</span> <span class="s">/proxy-pass-uri</span> <span class="p">{</span>
-</span><span class="line">    <span class="kn">proxy_pass</span> <span class="s">http://127.0.0.1:8080/</span><span class="p">;</span>
-</span><span class="line">
-</span><span class="line">    <span class="kn">set</span> <span class="nv">$true</span> <span class="mi">1</span><span class="p">;</span>
-</span><span class="line">
-</span><span class="line">    <span class="kn">if</span> <span class="s">(</span><span class="nv">$true</span><span class="s">)</span> <span class="p">{</span>
-</span><span class="line">        <span class="c1"># nothing</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="c1"># 因为if的问题，try_files不会起作用</span>
-</span><span class="line">
-</span><span class="line"><span class="k">location</span> <span class="s">/if-try-files</span> <span class="p">{</span>
-</span><span class="line">     <span class="kn">try_files</span>  <span class="s">/file</span>  <span class="s">@fallback</span><span class="p">;</span>
-</span><span class="line">
-</span><span class="line">     <span class="kn">set</span> <span class="nv">$true</span> <span class="mi">1</span><span class="p">;</span>
-</span><span class="line">
-</span><span class="line">     <span class="kn">if</span> <span class="s">(</span><span class="nv">$true</span><span class="s">)</span> <span class="p">{</span>
-</span><span class="line">         <span class="c1"># nothing</span>
-</span><span class="line">     <span class="p">}</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="c1"># nginx会引发段冲突</span>
-</span><span class="line">
-</span><span class="line"><span class="k">location</span> <span class="s">/crash</span> <span class="p">{</span>
-</span><span class="line">
-</span><span class="line">    <span class="kn">set</span> <span class="nv">$true</span> <span class="mi">1</span><span class="p">;</span>
-</span><span class="line">
-</span><span class="line">    <span class="kn">if</span> <span class="s">(</span><span class="nv">$true</span><span class="s">)</span> <span class="p">{</span>
-</span><span class="line">        <span class="c1"># fastcgi_pass here</span>
-</span><span class="line">        <span class="kn">fastcgi_pass</span>  <span class="n">127.0.0.1</span><span class="p">:</span><span class="mi">9000</span><span class="p">;</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line">
-</span><span class="line">    <span class="kn">if</span> <span class="s">(</span><span class="nv">$true</span><span class="s">)</span> <span class="p">{</span>
-</span><span class="line">        <span class="c1"># no handler here</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="c1"># 捕获的别名在if创造的嵌套location中不会被正确的继承</span>
-</span><span class="line">
-</span><span class="line"><span class="k">location</span> <span class="p">~</span><span class="sr">*</span> <span class="s">^/if-and-alias/(?&lt;file&gt;.*)</span> <span class="p">{</span>
-</span><span class="line">    <span class="kn">alias</span> <span class="s">/tmp/</span><span class="nv">$file</span><span class="p">;</span>
-</span><span class="line">
-</span><span class="line">    <span class="kn">set</span> <span class="nv">$true</span> <span class="mi">1</span><span class="p">;</span>
-</span><span class="line">
-</span><span class="line">    <span class="kn">if</span> <span class="s">(</span><span class="nv">$true</span><span class="s">)</span> <span class="p">{</span>
-</span><span class="line">        <span class="c1"># nothing</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>假如你发现了一个没有在上面列出来的例子 - 请将它报告给<a href="http://wiki.nginx.org/User:MaximDounin">MaximDounin</a>。</p>
-
-<h2 id="section-3">为什么这些问题存在但没有被修复</h2>
-
-<p><code>if</code>指令是重写模块的一部分而且是必须的。从另一方面说，nginx的配置通常来说是说明式的。有些用户希望尝试在<code>if</code>指令中使用非重写的指令，这造成了这种处境。它大部分时间是有效的，但是。。。瞧上面。</p>
-
-<p>看起来唯一正确的方式就是完全避免在<code>if</code>中使用非重写指令。这会破坏很多已存在的配置，所以这没有被实施。</p>
-
-<h2 id="if">假如你还是想用<code>if</code></h2>
-
-<p>假如你读了上面的内容仍然想用<code>if</code>：</p>
-
-<ul>
-  <li>请确保你知道它是怎么工作的。一些基础知识可以<a href="http://agentzh.blogspot.com/2011/03/how-nginx-location-if-works.html">看这里</a></li>
-  <li>做完整的测试</li>
-</ul>
-
-<p>你被警告过了。</p>
-
-<p><a href="http://wiki.nginx.org/IfIsEvil">原文链接</a></p>
 ]]></content>
   </entry>
   
