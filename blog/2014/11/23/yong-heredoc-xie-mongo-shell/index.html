@@ -1,0 +1,187 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>用 heredoc 写 mongo shell - CodeBean</title>
+	<meta name="author" content="Xu Jingxin">
+
+	
+	<meta name="description" content="mongo shell 给我们提供了很便捷的 mongodb 操作接口，很多人应该用过 mongo 命令执行 javascript 文件，或者通过 mongo --eval 执行脚本。两种方式各有千秋，使用 js 文件可编辑较复杂的代码逻辑，而且可以作为脚本储存以备重复使用。使用 mongo -- &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="CodeBean" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">CodeBean</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:jingxin.me/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/102588932744890343699?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:jingxin.me/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h1 class="title">用 Heredoc 写 Mongo Shell</h1>
+	<div class="entry-content"><p>mongo shell 给我们提供了很便捷的 mongodb 操作接口，很多人应该用过 <code>mongo</code> 命令执行 javascript 文件，或者通过 <code>mongo --eval</code> 执行脚本。两种方式各有千秋，使用 js 文件可编辑较复杂的代码逻辑，而且可以作为脚本储存以备重复使用。使用 <code>mongo --eval</code> 比较灵活，随取随用，但是当代码中有换行时，就蛋疼了。mongo <a href="http://docs.mongodb.org/v2.6/administration/scripting/">官方的文档</a> 并没有提到 eval 在处理多行代码时的解决方案，好在最近发现用 heredoc 可以完美的解决这个问题。</p>
+
+<h1 id="heredoc">heredoc</h1>
+
+<p>heredoc 在 <a href="http://en.wikipedia.org/wiki/Here_document">wiki</a> 上解释为一段可被当做独立文件的代码片段，一般表现为下面这种形式：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">tr a-z A-Z <span class="s">&lt;&lt;END_TEXT</span>
+</span><span class="line"><span class="s">one two three</span>
+</span><span class="line"><span class="s">uno dos tres</span>
+</span><span class="line"><span class="s">END_TEXT</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这里的 <code>&lt;&lt;END_TEXT</code> 到 <code>END_TEXT</code> 就是 heredoc 了，虽然语法简单，用处可就大了。在这里正好解决了在 <code>mongo --eval</code> 中遇到的问题，由于这段字符串可被当成文件来使用，所以直接跟在 <code>mongo</code> 命令后面就行</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">mongo localhost/test <span class="s">&lt;&lt;MONGO</span>
+</span><span class="line"><span class="s">db.users.save({name: &quot;mongo&quot;})</span>
+</span><span class="line"><span class="s">MONGO</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>在编写 <a href="https://github.com/sailxjx/mms">mms</a> 这个迁移模块的时候，如果没有 heredoc，则不免需要生成一些 js 临时文件来给 mongo 执行，现在，<a href="https://github.com/sailxjx/mms/blob/master/src/mongo.coffee">直接拼接成字符串就行</a>。</p>
+
+<p>最后，使用中不要忘了将一些字符转义掉，比如 ‘$’，以免被当成 shell 变量引用了。</p>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-11-23T12:24:00+08:00" pubdate data-updated="true">2014.11.23</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/heredoc/'>heredoc</a>, <a class='category' href='/blog/blog/categories/mongo/'>mongo</a>, <a class='category' href='/blog/blog/categories/shell/'>shell</a>
+
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2014
+
+    Xu Jingxin
+
+</footer>
+	<script src="/blog/javascripts/slash.js"></script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://jingxin.me/blog/blog/2014/11/23/yong-heredoc-xie-mongo-shell/';
+        var disqus_url = 'http://jingxin.me/blog/blog/2014/11/23/yong-heredoc-xie-mongo-shell/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+<script id="gta-main" src="/blog/javascripts/gta.js", data-baidu="43f786342ba0680af108248b28280fdb", data-google="UA-33186961-1", data-mixpanel="204d761f0c52d9ddcf031ec634f98772"></script>
+<!-- mixpanel pageview -->
+<script>
+  mixpanel.track("pageview: " + document.URL);
+</script>
+
+
+
+</body>
+</html>

@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://jingxin.me/blog/atom.xml" rel="self"/>
   <link href="http://jingxin.me/blog/"/>
-  <updated>2014-10-10T18:23:31+08:00</updated>
+  <updated>2014-11-23T13:08:36+08:00</updated>
   <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[Xu Jingxin]]></name>
@@ -12,6 +12,43 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[用 heredoc 写 mongo shell]]></title>
+    <link href="http://jingxin.me/blog/blog/2014/11/23/yong-heredoc-xie-mongo-shell/"/>
+    <updated>2014-11-23T12:24:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2014/11/23/yong-heredoc-xie-mongo-shell</id>
+    <content type="html"><![CDATA[<p>mongo shell 给我们提供了很便捷的 mongodb 操作接口，很多人应该用过 <code>mongo</code> 命令执行 javascript 文件，或者通过 <code>mongo --eval</code> 执行脚本。两种方式各有千秋，使用 js 文件可编辑较复杂的代码逻辑，而且可以作为脚本储存以备重复使用。使用 <code>mongo --eval</code> 比较灵活，随取随用，但是当代码中有换行时，就蛋疼了。mongo <a href="http://docs.mongodb.org/v2.6/administration/scripting/">官方的文档</a> 并没有提到 eval 在处理多行代码时的解决方案，好在最近发现用 heredoc 可以完美的解决这个问题。</p>
+
+<h1 id="heredoc">heredoc</h1>
+
+<p>heredoc 在 <a href="http://en.wikipedia.org/wiki/Here_document">wiki</a> 上解释为一段可被当做独立文件的代码片段，一般表现为下面这种形式：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">tr a-z A-Z <span class="s">&lt;&lt;END_TEXT</span>
+</span><span class="line"><span class="s">one two three</span>
+</span><span class="line"><span class="s">uno dos tres</span>
+</span><span class="line"><span class="s">END_TEXT</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这里的 <code>&lt;&lt;END_TEXT</code> 到 <code>END_TEXT</code> 就是 heredoc 了，虽然语法简单，用处可就大了。在这里正好解决了在 <code>mongo --eval</code> 中遇到的问题，由于这段字符串可被当成文件来使用，所以直接跟在 <code>mongo</code> 命令后面就行</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">mongo localhost/test <span class="s">&lt;&lt;MONGO</span>
+</span><span class="line"><span class="s">db.users.save({name: &quot;mongo&quot;})</span>
+</span><span class="line"><span class="s">MONGO</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>在编写 <a href="https://github.com/sailxjx/mms">mms</a> 这个迁移模块的时候，如果没有 heredoc，则不免需要生成一些 js 临时文件来给 mongo 执行，现在，<a href="https://github.com/sailxjx/mms/blob/master/src/mongo.coffee">直接拼接成字符串就行</a>。</p>
+
+<p>最后，使用中不要忘了将一些字符转义掉，比如 ‘$’，以免被当成 shell 变量引用了。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[利用 nginx 实现静态资源的反向代理]]></title>
@@ -1794,126 +1831,6 @@
 <p>总之，以不变应万变，使用’YYYY-MM-DD HH:mm:ss’格式总是不会错的。</p>
 
 <p>原文链接：<a href="http://dev.mysql.com/doc/refman/5.1/en/datetime.html">datetime</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[javascript 中使用 callback 控制流程]]></title>
-    <link href="http://jingxin.me/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng/"/>
-    <updated>2013-06-05T10:49:00+08:00</updated>
-    <id>http://jingxin.me/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng</id>
-    <content type="html"><![CDATA[<p>javascript中随处可见的callback对于流程控制来说是一场灾难，缺点显而易见：</p>
-
-<ul>
-  <li>没有显式的<code>return</code>，容易产生多余流程，以及由此引发的bug。</li>
-  <li>造成代码无限嵌套，难以阅读。</li>
-</ul>
-
-<p>下面就来说说怎么<del>解决</del>避免上述的问题。</p>
-
-<p>第一个问题是一个习惯问题，在使用callback的时候往往会让人忘了使用<code>return</code>，这种情况在使用coffee-script的时候尤甚（虽然它在编译成javascript时会自行收集最后的数据作为返回值，但是这个返回值并不一定代表你的初衷）。看看下面的例子。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">a = </span><span class="nf">(err, callback)-&gt;</span>
-</span><span class="line">  <span class="nx">callback</span><span class="p">()</span> <span class="k">if</span> <span class="nx">err</span><span class="o">?</span>
-</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;you will see me&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="nv">b = </span><span class="o">-&gt;</span>
-</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;I am a callback&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="nx">a</span><span class="p">(</span><span class="s">&#39;error&#39;</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>在这种所谓”error first”的代码风格中，显然我们不希望出错时方法<code>a</code>中的后续代码仍然被执行，但是又不希望用<code>throw</code>来让整个进程挂掉（要死也得优雅的死嘛~），那么上面的代码就会产生bug。</p>
-
-<p>一种解决方案就是老老实实的写<code>if...else...</code>，但是我更倾向于下面的做法：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">a = </span><span class="nf">(err, callback)-&gt;</span>
-</span><span class="line">  <span class="k">return</span> <span class="nx">callback</span><span class="p">()</span> <span class="k">if</span> <span class="nx">err</span><span class="o">?</span>
-</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;you will not see me&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="nv">b = </span><span class="o">-&gt;</span>
-</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;I am a callback&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="nx">a</span><span class="p">(</span><span class="s">&#39;error&#39;</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>javascript异步方法中的返回值大多没什么用处，所以这里用<code>return</code>充当一个流程控制的角色，比<code>if...else...</code>更少的代码，但是更加清晰。</p>
-
-<p>第二个问题是娘胎里带来的，很难根除。</p>
-
-<p>一种不错的方法是使用一些流程控制模块来将代码显得更加有条理，比如<a href="https://github.com/caolan/async">async</a>就是一个不错的模块，提供了一系列的接口，包括迭代，循环，和一些条件语句，甚至还包含了一个队列系统。下面的例子可以表名两种写法的优劣</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="c1">#normal</span>
-</span><span class="line">
-</span><span class="line"><span class="nv">first = </span><span class="nf">(callback)-&gt;</span>
-</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;I am the first function&#39;</span>
-</span><span class="line">  <span class="nx">callback</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line"><span class="nv">second = </span><span class="nf">(callback)-&gt;</span>
-</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;I am the second function&#39;</span>
-</span><span class="line">  <span class="nx">callback</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line"><span class="nv">third = </span><span class="nf">()-&gt;</span>
-</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;I am the third function&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="nx">first</span> <span class="o">-&gt;</span>
-</span><span class="line">  <span class="nx">second</span> <span class="o">-&gt;</span>
-</span><span class="line">    <span class="nx">third</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line"><span class="c1"># use async</span>
-</span><span class="line">
-</span><span class="line"><span class="nv">async = </span><span class="nx">require</span><span class="p">(</span><span class="s">&#39;async&#39;</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="nx">async</span><span class="p">.</span><span class="nx">waterfall</span> <span class="p">[</span>
-</span><span class="line">  <span class="nx">first</span><span class="p">,</span>
-</span><span class="line">  <span class="nx">second</span><span class="p">,</span>
-</span><span class="line">  <span class="nx">third</span>
-</span><span class="line"><span class="p">],</span> <span class="nf">(err)-&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>作为睿智的你，会选择哪一种呢。</p>
 ]]></content>
   </entry>
   
