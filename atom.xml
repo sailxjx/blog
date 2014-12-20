@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://jingxin.me/blog/atom.xml" rel="self"/>
   <link href="http://jingxin.me/blog/"/>
-  <updated>2014-11-23T13:08:36+08:00</updated>
+  <updated>2014-12-20T17:22:21+08:00</updated>
   <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[Xu Jingxin]]></name>
@@ -12,6 +12,55 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[sort 的错误用法]]></title>
+    <link href="http://jingxin.me/blog/blog/2014/11/27/sort-de-cuo-wu-yong-fa/"/>
+    <updated>2014-11-27T14:07:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2014/11/27/sort-de-cuo-wu-yong-fa</id>
+    <content type="html"><![CDATA[<p>前不久同事的代码中出了一个很神奇的问题，大致流程是对一个由对象组成的数组进行排序，其中属性 a 用于排序，属性 b 作为一个优选条件，当 b 等于 1 的时候无论 a 值是什么，都排在开头 。这本是一个很简单的问题，问题就在于他用两次 sort 实现在这次排序，先根据 a 的属性排序，然后再根据 b 的值来排序。问题就出在第二次排序中。</p>
+
+<p>我们想当然的会认为在第一次排序中，数组已经根据 a 的属性由大到小排序，在第二次中我们只要不去动原数组的顺序就行（一般在方法中写成返回0或-1），只考虑单独把 b 等于 1 的元素提到前面去。但是其实这与语言所选用的排序算法有关，javascript （和一起其他语言）内置的 sort 方法采用的是几种排序算法的集合，有时并不能保证相同元素的位置保持一致。</p>
+
+<p>下面是从 <a href="http://stackoverflow.com/questions/27071942/array-sort-is-producing-unexpected-results-when-elements-are-equal">stackoverflow</a> 上面找来的一个例子</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">arrayToSort</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class="line">  <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span>
+</span><span class="line">  <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span>
+</span><span class="line">  <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;j&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;l&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span>
+</span><span class="line">  <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span>
+</span><span class="line">  <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;q&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">}</span>
+</span><span class="line"><span class="p">];</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">arrayToSort</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">b</span><span class="p">.</span><span class="nx">strength</span> <span class="o">-</span> <span class="nx">a</span><span class="p">.</span><span class="nx">strength</span><span class="p">;</span>
+</span><span class="line"><span class="p">});</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">arrayToSort</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">element</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+</span><span class="line"><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>我们会以为最后元素的值还是从 a 到 t，但实际运行下来的结果却是乱序的，这是因为 sort 的算法并没有保留原数组的顺序，也即 <a href="http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.11">unstable</a>。</p>
+
+<p>那么我们就该尽量避免这种情况发生，就我同事的例子，将两次 sort 的逻辑合并在一次中应该是个可行的办法，如果必须分为多次 sort，那么就把原数组的顺序记录在元素的属性上把。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[用 heredoc 写 mongo shell]]></title>
@@ -1794,43 +1843,6 @@
 <h1 id="section-4">后记</h1>
 
 <p>假如让我在javascript和coffeescript两种语言之间选择，我仍然倾向于coffeescript，抛开上面的问题不说，它给人编码的时候带来的愉悦是无法衡量的。So just try it!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[mysql 中的 date datetime 和 timestamp]]></title>
-    <link href="http://jingxin.me/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp/"/>
-    <updated>2013-06-05T11:02:00+08:00</updated>
-    <id>http://jingxin.me/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp</id>
-    <content type="html"><![CDATA[<p>mysql中用于表示时间的三种类型date, datetime, timestamp (如果算上int的话，四种) 比较容易混淆，下面就比较一下这三种类型的异同</p>
-
-<h1 id="section">相同点</h1>
-
-<ul>
-  <li>都可以用于表示时间</li>
-  <li>都呈字符串显示</li>
-</ul>
-
-<h1 id="section-1">不同点</h1>
-
-<ul>
-  <li>顾名思义，date只表示’YYYY-MM-DD’形式的日期，datetime表示’YYYY-MM-DD HH:mm:ss’形式的日期加时间，timestamp与datetime显示形式一样。</li>
-  <li>date和datetime可表示的时间范围为’1000-01-01’到’9999-12-31’，timestamp由于受32位int型的限制，能表示’1970-01-01 00:00:01’到’2038-01-19 03:14:07’的UTC时间。</li>
-  <li>mysql在存储timestamp类型时会将时间转为UTC时间，然后读取的时候再恢复成当前时区。
-假如你存储了一个timestamp类型的值之后，修改了mysql的时区，当你再读取这个值时就会得到一个错误的时间。而这种情况在date和datetime中不会发生。</li>
-  <li>timestamp类型提供了自动更新的功能，你只需要将它的默认值设置为CURRENT_TIMESTAMP。</li>
-  <li>除了date是保留到天，datetime和timestamp都保留到秒，而忽略毫秒。</li>
-</ul>
-
-<h1 id="section-2">时间格式</h1>
-
-<p>mysql提供了一种比较宽松的时间字符串格式用于增删改查。参考<a href="http://wwp.greenwichmeantime.com/info/iso.htm">iso时间格式</a>，一般习惯于写成’2013-06-05 16:34:18’。但是你也可以简写成’13-6-5’，但是这样容易造成混淆，比如mysql也会把’13:6:5’也当做年月日处理，而当’13:16:5’这种形式，则被mysql认为是不正确的格式，会给出一个警告，然后存入数据库的值是’0000-00-00 00:00:00’。</p>
-
-<p>手册中还特意提到了一种情况，就是当年的值是0~69时，mysql认为是2000~2069，而70~99时则认为是1970~1999。我感觉是一种画蛇添足了。</p>
-
-<p>总之，以不变应万变，使用’YYYY-MM-DD HH:mm:ss’格式总是不会错的。</p>
-
-<p>原文链接：<a href="http://dev.mysql.com/doc/refman/5.1/en/datetime.html">datetime</a></p>
 ]]></content>
   </entry>
   

@@ -1,0 +1,235 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>CodeBean</title>
+	<meta name="author" content="Xu Jingxin">
+
+	
+	<meta name="description" content="花了一天时间（上班时不务正业。。。），总算把gitpage主页和这个blog搭起来了 写一些备忘，免得以后忘了。。。 gitpage octopress scss markdown gitpage github给用户提供了一个非常cool的方式来搭建自己的主页，简单几步，就能完成网站的部署。 1 &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="CodeBean" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">CodeBean</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:jingxin.me/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/102588932744890343699?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:jingxin.me/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2012/06/20/gitpage-and-octopress/">Gitpage and Octopress</a></h1>
+	<div class="entry-content">
+		<p>花了一天时间（上班时不务正业。。。），总算把gitpage主页和这个blog搭起来了</p>
+
+<p>写一些备忘，免得以后忘了。。。</p>
+
+<ul>
+  <li><a href="#gitpage">gitpage</a></li>
+  <li><a href="#octopress">octopress</a></li>
+  <li><a href="#scss">scss</a></li>
+  <li><a href="#markdown">markdown</a></li>
+</ul>
+
+<h2 id="gitpage">gitpage</h2>
+
+<p>github给用户提供了一个非常cool的方式来搭建自己的主页，简单几步，就能完成网站的部署。</p>
+
+<h4 id="section">1.建立分支</h4>
+
+<p>github给每个用户提供了一个形似{user}.github.com的二级域名，只要首先在自己的帐号下建立名为{user}.github.com的分支，就可以通过git来维护自己的主页啦。</p>
+
+<h4 id="clonecommit">2.clone和commit</h4>
+
+<p>分支建立好之后，将{user}.github.com分支clone到本地，以方便编辑。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>本地gitpage  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>git clone git@github.com:<span class="o">{</span>user<span class="o">}</span>/<span class="o">{</span>user<span class="o">}</span>.github.com <span class="o">{</span>your <span class="nb">local </span>dir<span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>然后就是建立自己的index啦，gitpage使用纯静态的方式来管理页面，可以通过本地程序预先将这些静态页面生成好再丢给github嘛。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>编辑提交首页  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;hello git-page&quot;</span> &gt; index.html
+</span><span class="line"><span class="nv">$ </span>git add .
+</span><span class="line"><span class="nv">$ </span>git commit -am <span class="s1">&#39;init&#39;</span>
+</span><span class="line"><span class="nv">$ </span>git push origin master
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>提交以后可以在github的通知中心和邮箱中收到页面建立的通知。第一次提交可能需要10多分钟才能看到效果，以后的提交基本都是立即生效的。</p>
+
+<p>现在访问<a href="http://sailxjx.github.com">{user}.github.com</a>看一下效果吧。</p>
+
+<h4 id="section-1">3.建立项目页面</h4>
+
+<p>除了首页，github还为用户的每一个项目提供了一个展示的平台，只需要在需要展示的项目下建立一个名为gh-pages的分支并push到github，剩余的操作就和首页如出一辙了。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>项目主页  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span><span class="nb">cd</span> <span class="o">{</span>project<span class="o">}</span>
+</span><span class="line"><span class="nv">$ </span>git branch gh-pages
+</span><span class="line"><span class="nv">$ </span>git checkout gh-pages
+</span><span class="line"><span class="nv">$ </span>git push origin gh-pages
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>提交以后会在github产生一个类似{user}.github.com/{project}的域名，访问的其实是<a href="https://github.com/sailxjx/blog/tree/gh-pages">gh-pages</a>分支下的index文件，这个<a href="http://sailxjx.github.com/blog">blog</a>就是托管给gitpage的项目页面的。</p>
+
+<h4 id="gitpage">4.使用gitpage模板</h4>
+
+<p>github提供了一种最快捷的方式来建立pages</p>
+
+<ul>
+  <li>进入你的<a href="https://github.com/{user}/{project}/admin">项目管理页</a></li>
+  <li>点击右下角的<a href="https://github.com/{user}/{project}/generated_pages/new">Automatic Page Generator</a></li>
+  <li>编辑内容并选择自己喜欢的模板</li>
+  <li>done</li>
+</ul>
+
+<p>然后就可以将gitpage clone到本地进行编辑并提交了</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>编辑项目主页  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span><span class="nb">cd</span> <span class="o">{</span>project<span class="o">}</span>
+</span><span class="line"><span class="nv">$ </span>git fetch origin
+</span><span class="line"><span class="nv">$ </span>git checkout gh-pages
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+
+		
+		<a href="/blog/blog/2012/06/20/gitpage-and-octopress/" class="more-link">Read on &rarr;</a>
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-20T20:45:00+08:00" pubdate data-updated="true">2012.06.20</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/gitpage/'>gitpage</a>, <a class='category' href='/blog/blog/categories/markdown/'>markdown</a>, <a class='category' href='/blog/blog/categories/octopress/'>octopress</a>, <a class='category' href='/blog/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/blog/categories/scss/'>scss</a>
+
+
+</div>
+	
+</div></article>
+
+<nav id="pagenavi">
+    
+        <a href="/blog/blog/page/6/" class="prev">Prev</a>
+    
+    
+    <div class="center"><a href="/blog/blog/archives">Blog Archives</a></div>
+</nav></div>
+	<footer id="footer" class="inner">Copyright &copy; 2014
+
+    Xu Jingxin
+
+</footer>
+	<script src="/blog/javascripts/slash.js"></script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+<script id="gta-main" src="/blog/javascripts/gta.js", data-baidu="43f786342ba0680af108248b28280fdb", data-google="UA-33186961-1", data-mixpanel="204d761f0c52d9ddcf031ec634f98772"></script>
+<!-- mixpanel pageview -->
+<script>
+  mixpanel.track("pageview: " + document.URL);
+</script>
+
+
+
+</body>
+</html>
