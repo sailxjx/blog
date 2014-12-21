@@ -7,7 +7,7 @@
 	<meta name="author" content="Xu Jingxin">
 
 	
-	<meta name="description" content="前不久同事的代码中出了一个很神奇的问题，大致流程是对一个由对象组成的数组进行排序，其中属性 a 用于排序，属性 b 作为一个优选条件，当 b 等于 1 的时候无论 a 值是什么，都排在开头 。这本是一个很简单的问题，问题就在于他用两次 sort 实现在这次排序，先根据 a 的属性排序，然后再根据 &hellip;">
+	<meta name="description" content="在 POST 请求中，常见的几种请求头有 ‘application/x-www-form-urlencoded’， ‘application/json’，这些都很容易理解，唯独 ‘multipart/form-data’ 这种请求挺让我费解，下面就来详细说明一下，以作笔记备查。 在 GET &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -75,6 +75,83 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2014/12/21/multipart-dao-di-shi-ge-sha-wan-yi-er/">Multipart 到底是个啥玩意儿</a></h1>
+	<div class="entry-content">
+		<p>在 POST 请求中，常见的几种请求头有 ‘application/x-www-form-urlencoded’， ‘application/json’，这些都很容易理解，唯独 ‘multipart/form-data’ 这种请求挺让我费解，下面就来详细说明一下，以作笔记备查。</p>
+
+<p>在 GET 请求中，参数一般会以 ‘&amp;’ 为分割符号，比如 ‘http://api.example.com?name=tom&amp;friend=jerry’，在 ‘application/x-www-form-urlencoded’ 类的 POST 请求中，参数形式与此类似，只不过参数被写在了 body 中，以突破 url 中 2k 字节的限制。</p>
+
+<p>而当我们想上传文件或其他二进制数据时，根据 form 标准，非字符串会被替换成 ‘%HH’，其中的 ‘HH’ 是两个十六进制数来表示当前这位的二进制数据。在上传大文件的时候，这种做法就显得非常浪费了。于是，我们经常会把 ‘multipart/form-data’ 来用在文件上传中。</p>
+
+<p>我们来看一个完整的 ‘multipart/form-data’ 请求：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">Content-Type: multipart/form-data; boundary=AaB03x
+</span><span class="line">
+</span><span class="line">--AaB03x
+</span><span class="line">Content-Disposition: form-data; name="submit-name"
+</span><span class="line">
+</span><span class="line">Larry
+</span><span class="line">--AaB03x
+</span><span class="line">Content-Disposition: form-data; name="files"; filename="file1.txt"
+</span><span class="line">Content-Type: text/plain
+</span><span class="line">
+</span><span class="line">... contents of file1.txt ...
+</span><span class="line">--AaB03x--</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>上面 ‘boundary’ 的值，就与常见的 ‘application/x-www-form-urlencoded’ 中 ‘&amp;’ 的作用差不多了，在接收请求的服务器中，会将 body 以 ‘–AaB03x’ 分割出一个个 part，就能正常解析出参数类型，名称，文件名等等内容了。</p>
+
+<h1 id="section">参考资料</h1>
+
+<ul>
+  <li><a href="http://www.w3.org/Protocols/rfc1341/7_2_Multipart.html">The Multipart Content-Type</a></li>
+  <li><a href="http://www.w3.org/TR/html401/interact/forms.html">Forms</a></li>
+  <li><a href="http://stackoverflow.com/questions/4007969/application-x-www-form-urlencoded-or-multipart-form-data">application/x-www-form-urlencoded or multipart/form-data?</a></li>
+</ul>
+
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-12-21T11:16:00+08:00" pubdate data-updated="true">2014.12.21</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/http/'>http</a>, <a class='category' href='/blog/blog/categories/multipart/'>multipart</a>, <a class='category' href='/blog/blog/categories/restful/'>restful</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1141,98 +1218,6 @@
 
 
 <time datetime="2013-12-11T17:14:00+08:00" pubdate data-updated="true">2013.12.11</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/opensource/'>opensource</a>, <a class='category' href='/blog/blog/categories/translation/'>translation</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part1/">金钱与开源(part1)</a></h1>
-	<div class="entry-content">
-		<blockquote>
-  <p>注：本文作者是npm的作者<a href="http://blog.izs.me/">Isaac Z. Schlueter</a>，也是nodejs的主要作者之一</p>
-</blockquote>
-
-<p>“我们需要找到更好的方法来为开源软件筹资”，这是我近几年反复思考的一个问题，下面我要说的或许是一种解决方案。</p>
-
-<p>大部分开发者在传统的合作方式下都干得不错。激励方式也很简单：努力工作，改善产品，帮助团队完成产品，然后取得共赢。当一切正常时，这种方式很好。你会发现自己很有归属感，而且在不断的自我提高。</p>
-
-<p>但这并不适用于所有人。出于愚蠢的安全性考虑，你可能需要牺牲一些灵活性和创造力。至少，它会限制你的软件的适用范围，因此它能提供的价值也仅止于此。</p>
-
-<p>自从我开始全身心投入编写开源软件，我感觉非常愉快，而且更有创造力了。事实上，我不会接受一份要求我放弃编写开源软件的工作，我也很有幸能有足够的资本来避免做出这种荒唐的决定。当然，这也可能导致很坏的结果，但是我很幸运的用这些时间来写了<a href="https://npmjs.org/">npm</a>，然后<a href="http://www.joyent.com/">Joyent</a>和<a href="http://nodejs.org/">Node.js</a>开始迅速发展起来，现在我在干的正是这些。</p>
-
-<h2 id="section">艺术家和浪客</h2>
-
-<p>可悲的是，很多有望成为开源软件界超级明星的人并没有我这么幸运。没有钱是万万不能的，而最实际的赚钱方式就是找一个工作。</p>
-
-<p>很多雇主希望“让”雇员用“私人的”时间来处理自己的项目，或者至少能贡献给公司的项目（通着这些项目会带有一份公司的保密条款）。这并不是很明智，“自由(free)”时间并不“免费(free)”，将精力全花在工作上会让你失去应有的生活。</p>
-
-<p>有些人则放弃了在公司工作的机会，成为了一个自由职业者，换句话说，一个挨着饿的艺术家。他们用最少的时间来接一些活，然后将剩余的时间和创造力花在开发开源软件上。但这是一种很窘迫的生活方式，特别是需要供孩子上学的时候，甚至连抚养孩子都有困难。</p>
-
-<p>这就是我们和社会面临的困境。开源软件给软件工业带来了巨大的好处，也就意味着，给所有工业领域提供了巨大的帮助。假如专注于开源软件的都是一些幸运和热情的人，那么这里面就存在很多未经发掘的潜力股。</p>
-
-<p>假如我们想继续从开源软件中得到好处，特别是想让这种好处最大化的话，我们就得找出一种为它买单的方式。除了能让开源软件开发者吃饱喝足以外，付款也能将他们的努力与现实世界联系在一起。</p>
-
-<p>下面我会提到一些这个领域的开发现状。每一个都一些致命的缺点，而且我还能找到解决这些问题的办法。我不认为这会让我们觉得悲观，这些需要解决的问题反而让我们觉得正朝着正确的方向前进。</p>
-
-<h2 id="section-1">合同，训练，咨询……</h2>
-
-<p>许多开发者通过签订短期合同来为喜欢的项目工作。虽然这有时是一个不错的赚钱养家的方式。但是我并不认为它从根源上解决了开源软件筹资的问题。</p>
-
-<p>这与成为一个传统雇员，然后用空余时间来处理开源项目没什么不同。这并不能让开发者直接通过他们的开源项目来盈利。就像做培训和别的一些活一样，这并没有真正的为开源软件筹资，这只不过是你通过开源软件找到了一份工作而已。</p>
-
-<p>话虽如此，合同当然可以资助一个人其他的开源活动，同样提供临时援助也能帮助创业者步入正轨。</p>
-
-<h2 id="section-2">专职员工</h2>
-
-<p>一种为开源软件筹资的方式是让雇员在工作时间为开源项目做贡献。这正是Node核心项目的运作方式。Joyent，StrongLoop, Voxer, Mozilla, LearnBoost, 和Microsoft的雇员都会将他们的部分工作时间花在Node上面。</p>
-
-<p>（注：我没有在这里囊括那些用私人时间开发项目的人。这当然也很重要，但是“动用你的私人时间来做项目”正是这里遇到的问题。）</p>
-
-<p>这样的效果相当好，事实上带来的好处是，能让软件更符合他们大部分用户的需求。当公司付给你薪水的时候，你就会觉得有必要为自己的代码负责。假如一个团队完全不考虑用户需求的开发软件，这会显得相当的不靠谱。</p>
-
-<p>任何能给开源软件生态系统带来益处的方法都值得鼓励。
-但是这种方式也存在一些问题。</p>
-
-<p>当一个社区项目由现实中的企业驱动时，往往企业会利用它的优势地位，来做出一些符合自己利益的改变。从长远来看，这会损害项目的可靠性和预期目标。Joyent的高级副总裁Bryan Cantrill对这些事情可能导致的严重后果有一个很精彩的演讲：<a href="http://smartos.org/2012/07/27/corporate-open-source-anti-patterns-doing-it-wrong/">企业反开源模式：大错特错</a></p>
-
-<p>就算企业能考虑尽量避免上面的情况发生（这样做得很少），表面上（对企业）的优待条件也会给社区带来损害。开源社区的很多人认为企业的利益本质上就是邪恶的。这样说并不客观，但是考虑到这些企业的反开源模式，这样说也并不是毫无道理。</p>
-
-<p>此外，这种解决方案的可能性微乎其微，作为企业雇员，开源项目完全符合企业利益的情况是微乎其微的。当然，大多数使用Node的公司可能不能让Nodejs核心开发者雇员做出一个像样的商业应用，嗯~，可能是运气的问题吧。</p>
-
-<blockquote>
-  <p>实在太长了，未完待续… :)</p>
-</blockquote>
-
-<h1 id="section-3">参考</h1>
-
-<p><a href="https://medium.com/building-gittip/d44a1953749c">Money and Open Source</a></p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-12-08T14:24:00+08:00" pubdate data-updated="true">2013.12.08</time></div>
 	<div class="tags">
 
 
