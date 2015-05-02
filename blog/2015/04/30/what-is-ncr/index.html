@@ -1,0 +1,226 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>NCR 是什么 - CodeBean</title>
+	<meta name="author" content="Xu Jingxin">
+
+	
+	<meta name="description" content="一直以来，对爬虫抓取的某些内容感到很费解，比如形似 &amp;#x4e2d;&amp;#x56fd; 的字符串，最初以为是经过编码的 unicode 字符，但是尝试了各种手段都无法解开。最近开始关注起这个问题，机缘巧合在知乎上搜到了一个回答，原来这些是叫做 numeric character &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="CodeBean" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">CodeBean</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:jingxin.me/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/102588932744890343699?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:jingxin.me/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h1 class="title">NCR 是什么</h1>
+	<div class="entry-content"><p>一直以来，对爬虫抓取的某些内容感到很费解，比如形似 <code>&amp;#x4e2d;&amp;#x56fd;</code> 的字符串，最初以为是经过编码的 unicode 字符，但是尝试了各种手段都无法解开。最近开始关注起这个问题，机缘巧合在知乎上搜到了<a href="http://www.zhihu.com/question/21390312">一个回答</a>，原来这些是叫做 <a href="http://en.wikipedia.org/wiki/Numeric_character_reference">numeric character reference (NCR)</a> 的转义序列，在这里记录一下，权作备忘。</p>
+
+<p>以下一段引用自知乎梁海的<a href="http://www.zhihu.com/question/21390312/answer/18091465">回答</a>：</p>
+
+<blockquote>
+  <p>形如 ——</p>
+
+  <p><code>&amp;#dddd;</code></p>
+
+  <p><code>&amp;#xhhhh;</code></p>
+
+  <p><code>&amp;#name;</code></p>
+
+  <p>—— 的一串字符是 HTML、XML 等 SGML 类语言的转义序列（escape sequence）。它们不是「编码」。</p>
+
+  <p>以 HTML 为例，这三种转义序列都称作 character reference：</p>
+
+  <p>前两种是 numeric character reference（NCR），数字取值为目标字符的 Unicode code point；以「&amp;#」开头的后接十进制数字，以「&amp;#x」开头的后接十六进制数字。
+后一种是 character entity reference，后接预先定义的 entity 名称，而 entity 声明了自身指代的字符。</p>
+
+  <p>从 HTML 4 开始，NCR 以 Unicode 为准，与文档编码无关。</p>
+
+  <p>「中国」二字分别是 Unicode 字符 U+4E2D 和 U+56FD，十六进制表示的 code point 数值「4E2D」和「56FD」就是十进制的「20013」和「22269」。所以 ——</p>
+
+  <p><code>&amp;#x4e2d;&amp;#x56fd;</code></p>
+
+  <p><code>&amp;#20013;&amp;#22269;</code></p>
+
+  <p>—— 这两种 NCR 写法都会在显示时转换为「中国」二字。</p>
+</blockquote>
+
+<p>至于怎么去 <code>encode/decode</code> 这些字符，在网上找到了一个简单的 <a href="http://snipplr.com/view/772/encode-numeric-character-reference/"><code>Javascript</code> 版本</a>：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nb">String</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">ncr2c</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="k">this</span>
+</span><span class="line">    <span class="p">.</span><span class="nx">replace</span><span class="p">(</span> <span class="sr">/&amp;#x([\da-f]{2,4});/gi</span><span class="p">,</span>
+</span><span class="line">    <span class="kd">function</span><span class="p">(</span> <span class="nx">$0</span><span class="p">,</span> <span class="nx">$1</span> <span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">String</span><span class="p">.</span><span class="nx">fromCharCode</span><span class="p">(</span> <span class="s2">&quot;0x&quot;</span> <span class="o">+</span> <span class="nx">$1</span> <span class="p">)</span> <span class="p">}</span> <span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nb">String</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">c2ncr</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="k">this</span> <span class="p">.</span><span class="nx">ncr2c</span><span class="p">(</span> <span class="p">).</span><span class="nx">replace</span><span class="p">(</span> <span class="sr">/./g</span><span class="p">,</span>
+</span><span class="line">    <span class="kd">function</span><span class="p">(</span> <span class="nx">$0</span> <span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="s2">&quot;&amp;#x&quot;</span> <span class="o">+</span> <span class="nx">$0</span><span class="p">.</span><span class="nx">charCodeAt</span><span class="p">(</span> <span class="p">).</span><span class="nx">toString</span><span class="p">(</span> <span class="mi">16</span> <span class="p">).</span><span class="nx">toUpperCase</span><span class="p">(</span> <span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;;&quot;</span> <span class="p">}</span> <span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">alert</span><span class="p">(</span> <span class="s2">&quot;&amp;#x61;&amp;#x6A;&amp;#x61;&amp;#x78;&quot;</span><span class="p">.</span><span class="nx">ncr2c</span><span class="p">(</span> <span class="p">)</span> <span class="p">);</span>
+</span><span class="line"><span class="c1">//ajax</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">alert</span><span class="p">(</span> <span class="s2">&quot;a&amp;#x6A;ax&quot;</span><span class="p">.</span><span class="nx">c2ncr</span><span class="p">(</span> <span class="p">)</span> <span class="p">);</span>
+</span><span class="line"><span class="c1">//&amp;#x61;&amp;#x6A;&amp;#x61;&amp;#x78;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>由于上面的方案是以修改 String 原型来实现的（一般不认为这是一个好做法），使用的时候可以改成两个方法。</p>
+
+<p>而另一种更 robust 的方案则是使用第三方库，例如 <a href="https://github.com/mathiasbynens/he"><code>he</code> 模块</a>，轻松实现对很多转义序列的支持。</p>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-04-30T09:45:00+08:00" pubdate data-updated="true">2015.04.30</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/html/'>html</a>, <a class='category' href='/blog/blog/categories/ncr/'>ncr</a>
+
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Xu Jingxin
+
+</footer>
+	<script src="/blog/javascripts/slash.js"></script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://jingxin.me/blog/blog/2015/04/30/what-is-ncr/';
+        var disqus_url = 'http://jingxin.me/blog/blog/2015/04/30/what-is-ncr/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+<script id="gta-main" src="/blog/javascripts/gta.js", data-baidu="43f786342ba0680af108248b28280fdb", data-google="UA-33186961-1", data-mixpanel="204d761f0c52d9ddcf031ec634f98772"></script>
+<!-- mixpanel pageview -->
+<script>
+  mixpanel.track("pageview: " + document.URL);
+</script>
+
+
+
+</body>
+</html>

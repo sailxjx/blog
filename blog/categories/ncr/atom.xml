@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ncr | CodeBean]]></title>
+  <link href="http://jingxin.me/blog/blog/categories/ncr/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2015-05-02T13:07:38+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
+  <author>
+    <name><![CDATA[Xu Jingxin]]></name>
+    <email><![CDATA[sailxjx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[NCR 是什么]]></title>
+    <link href="http://jingxin.me/blog/blog/2015/04/30/what-is-ncr/"/>
+    <updated>2015-04-30T09:45:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2015/04/30/what-is-ncr</id>
+    <content type="html"><![CDATA[<p>一直以来，对爬虫抓取的某些内容感到很费解，比如形似 <code>&amp;#x4e2d;&amp;#x56fd;</code> 的字符串，最初以为是经过编码的 unicode 字符，但是尝试了各种手段都无法解开。最近开始关注起这个问题，机缘巧合在知乎上搜到了<a href="http://www.zhihu.com/question/21390312">一个回答</a>，原来这些是叫做 <a href="http://en.wikipedia.org/wiki/Numeric_character_reference">numeric character reference (NCR)</a> 的转义序列，在这里记录一下，权作备忘。</p>
+
+<p>以下一段引用自知乎梁海的<a href="http://www.zhihu.com/question/21390312/answer/18091465">回答</a>：</p>
+
+<blockquote>
+  <p>形如 ——</p>
+
+  <p><code>&amp;#dddd;</code></p>
+
+  <p><code>&amp;#xhhhh;</code></p>
+
+  <p><code>&amp;#name;</code></p>
+
+  <p>—— 的一串字符是 HTML、XML 等 SGML 类语言的转义序列（escape sequence）。它们不是「编码」。</p>
+
+  <p>以 HTML 为例，这三种转义序列都称作 character reference：</p>
+
+  <p>前两种是 numeric character reference（NCR），数字取值为目标字符的 Unicode code point；以「&amp;#」开头的后接十进制数字，以「&amp;#x」开头的后接十六进制数字。
+后一种是 character entity reference，后接预先定义的 entity 名称，而 entity 声明了自身指代的字符。</p>
+
+  <p>从 HTML 4 开始，NCR 以 Unicode 为准，与文档编码无关。</p>
+
+  <p>「中国」二字分别是 Unicode 字符 U+4E2D 和 U+56FD，十六进制表示的 code point 数值「4E2D」和「56FD」就是十进制的「20013」和「22269」。所以 ——</p>
+
+  <p><code>&amp;#x4e2d;&amp;#x56fd;</code></p>
+
+  <p><code>&amp;#20013;&amp;#22269;</code></p>
+
+  <p>—— 这两种 NCR 写法都会在显示时转换为「中国」二字。</p>
+</blockquote>
+
+<p>至于怎么去 <code>encode/decode</code> 这些字符，在网上找到了一个简单的 <a href="http://snipplr.com/view/772/encode-numeric-character-reference/"><code>Javascript</code> 版本</a>：</p>
+
+<p>```javascript
+String.prototype.ncr2c = function( ) {
+  return this
+    .replace( /&amp;#x([\da-f]{2,4});/gi,
+    function( $0, $1 ) { return String.fromCharCode( “0x” + $1 ) } )
+}
+String.prototype.c2ncr = function( ) {
+  return this .ncr2c( ).replace( /./g,
+    function( $0 ) { return “&amp;#x” + $0.charCodeAt( ).toString( 16 ).toUpperCase( ) + “;” } )
+}</p>
+
+<p>alert( “ajax“.ncr2c( ) );
+//ajax</p>
+
+<p>alert( “ajax”.c2ncr( ) );
+//ajax
+```</p>
+
+<p>由于上面的方案是以修改 String 原型来实现的（一般不认为这是一个好做法），使用的时候可以改成两个方法。</p>
+
+<p>而另一种更 robust 的方案则是使用第三方库，例如 <a href="https://github.com/mathiasbynens/he"><code>he</code> 模块</a>，轻松实现对很多转义序列的支持。</p>
+]]></content>
+  </entry>
+  
+</feed>
