@@ -4,7 +4,7 @@
   <title><![CDATA[Category: nodejs | CodeBean]]></title>
   <link href="http://jingxin.me/blog/blog/categories/nodejs/atom.xml" rel="self"/>
   <link href="http://jingxin.me/blog/"/>
-  <updated>2015-05-02T13:07:38+08:00</updated>
+  <updated>2015-06-19T10:26:06+08:00</updated>
   <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[Xu Jingxin]]></name>
@@ -12,6 +12,88 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Node.js 沙盒]]></title>
+    <link href="http://jingxin.me/blog/blog/2015/06/18/node-dot-js-sha-he/"/>
+    <updated>2015-06-18T16:36:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2015/06/18/node-dot-js-sha-he</id>
+    <content type="html"><![CDATA[<h2 id="section">为什么要使用沙盒</h2>
+
+<p>eval 在很多语言中都是一个很有用的方法，合理利用它可以编写出很多让人拍案叫绝的功能。但是由于它实在过于开放和危险，很多人给它冠上了 <strong>evil</strong> 的称号。</p>
+
+<p>使用沙盒可以给 eval 类的功能增加一些条件限制，让它变得更加安全，而不丢失其灵活性。</p>
+
+<p>Node.js 中提供的 vm 模块可以轻松实现沙盒的功能。</p>
+
+<h2 id="vm-">如何使用 vm 模块</h2>
+
+<h3 id="vmruninthiscontext"><code>vm.runInThisContext</code></h3>
+
+<p><code>vm.runInThisContext</code> 可以执行代码并得到它的返回值，被执行的代码没有权限访问本地对象，但是可以访问全局对象。相比之下， eval 则有权限访问上下文中的对象。</p>
+
+<p>```javascript
+var localVar = ‘initial value’;</p>
+
+<p>var vmResult = vm.runInThisContext(‘localVar = “vm”;’);
+console.log(‘vmResult: ‘, vmResult);
+console.log(‘localVar: ‘, localVar);</p>
+
+<p>var evalResult = eval(‘localVar = “eval”;’);
+console.log(‘evalResult: ‘, evalResult);
+console.log(‘localVar: ‘, localVar);</p>
+
+<p>// vmResult: ‘vm’, localVar: ‘initial value’
+// evalResult: ‘eval’, localVar: ‘eval’
+```</p>
+
+<h3 id="vmcreatecontext--vmrunincontext"><code>vm.createContext</code> 与 <code>vm.runInContext</code></h3>
+
+<p><code>vm.createContext</code> 则是真正创造了一个沙盒对象，使用 <code>vm.runInContext</code> 可以完全让代码在这个沙盒环境中运行。</p>
+
+<p>```javascript
+var util = require(‘util’);
+var vm = require(‘vm’);</p>
+
+<p>sandbox = vm.createContext({ globalVar: 1 });</p>
+
+<p>for (var i = 0; i &lt; 10; ++i) {
+    vm.runInContext(‘globalVar *= 2;’, sandbox);
+}</p>
+
+<p>console.log(util.inspect(sandbox));
+console.log(global.globalVar);</p>
+
+<p>// { globalVar: 1024 }
+// undefined
+```</p>
+
+<h2 id="vm--1">vm 的具体应用</h2>
+
+<p><a href="https://github.com/teambition/configd"><code>configd</code></a> 是我为公司部署流程开发的一个小工具，功能是将各种来源的配置文件合并成一个 json 文件。由于它支持 <code>ssh</code>, <code>git</code>, <code>http</code> 等多种来源的配置或代码，所以需要在工具内部来执行这些代码以实现和本地 <code>require</code> 类似的效果。如果用 <code>eval</code>，那么除却风险问题，<code>module.exports</code> 也不能生效了。所以在工具中使用了 vm 模块来执行这些代码。</p>
+
+<p>```coffeescript
+_eval = (js, options = {}) -&gt;
+  sandbox = vm.createContext()
+  sandbox.exports = exports
+  sandbox.module = exports: exports
+  sandbox.global = sandbox
+  sandbox.require = require
+  sandbox.__filename = options.filename or ‘eval’
+  sandbox.__dirname = path.dirname sandbox.__filename</p>
+
+<p>vm.runInContext js, sandbox</p>
+
+<p>sandbox.module.exports</p>
+
+<p>data = _eval js
+```</p>
+
+<h2 id="section-1">参考资料</h2>
+
+<p><a href="https://nodejs.org/api/vm.html">Executing JavaScript</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[一次神奇的 nodejs debug 经历]]></title>
@@ -420,143 +502,6 @@ function showTypes(fn) {
   <li><a href="http://rzrsharp.net/2011/06/27/what-does-coffeescripts-do-do.html">What Does Coffeescript’s “Do” Do?</a></li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[使用 coffeescript 的注意点]]></title>
-    <link href="http://jingxin.me/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian/"/>
-    <updated>2013-06-13T14:48:00+08:00</updated>
-    <id>http://jingxin.me/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian</id>
-    <content type="html"><![CDATA[<p><a href="https://github.com/jashkenas/coffee-script">coffeescript</a>是javascript的一个方言，随着javascript在前后端的流行，它在<a href="https://github.com/languages">github</a>的排名也扶摇直上，最近终于挤掉高帅富<a href="https://github.com/languages/Objective-C">Objective-C</a>跻身前十，可喜可贺。</p>
-
-<p>虽然coffeescript号称”It’s just javascript”，但是相比较而言，仍然是添加了很多有趣的特性，大部分特性都是去粗取精，去伪存真，让js玩家喜闻乐见，让旁观路人不明觉厉，但是也随之带来了一些容易忽视的问题，不得不提一下，以免以后碰到后不知所措。</p>
-
-<h1 id="section">重载的符号</h1>
-
-<p>coffeescript重载了javascript中的一些符号和语法结构，最常用的就是<code>==</code>和<code>in</code>。</p>
-
-<h2 id="section-1"><code>==</code></h2>
-<p>在js中最为人诟病的就是<code>==</code>符号表意不明，所以很多严谨的js开发者就强迫自己在比较时尽可能的使用<code>===</code>，coffeescript在这一点上做的更绝，你不能使用<code>===</code>，因为它将所有的<code>==</code>都转化成了<code>===</code>。这样对于一些经常需要在两种语言之间切换的码农来说，就是一种考验了。</p>
-
-<h2 id="in"><code>in</code></h2>
-<p>在js中，遍历一个数组或hash对象可以使用<code>for(var i in arr)</code>的语言结构，这个时候遍历得到的<code>i</code>其实是数组的下标或者hash的key。coffeescript对<code>in</code>做了重载，使其更符合自然语义，遍历出的是数组的值和hash的value。同时引入<code>of</code>操作符，可以用它来代替原生的<code>in</code>，遍历出数组的下标，如<code>for i of arr</code>。</p>
-
-<h1 id="class">class</h1>
-
-<p>原生的js中是没有class的概念的，但是有经验的码农会用prototype模型来将方法打包成class，以实现代码的重复利用。coffeescript中提供了class关键词，让类的实现和继承更加简单，但是也由此引发一些问题。假如说上面的问题只是人所共知的新特性的话，下面这些就是需要在编码时注意绕行的坑了。</p>
-
-<h2 id="section-2">变量名与类名</h2>
-
-<p>coffeescript对于类型和变量名并没有强制性的格式要求，这在其他语言中也不会出现问题，因为可以通过类型检查来区分两者，但是在coffeescript中，其实类和变量都是通过<code>var</code>关键词生成的变量，而在coffeescript语法中又禁用了<code>var</code>（这样就无法人为的指定变量的作用域，虽然coffeescript会比较智能的分配的作用域）。这在一般情况下也没有问题，直到碰到了下面的代码：</p>
-
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="k">class</span> <span class="nx">demo</span>
-</span><span class='line'>  <span class="nv">foo1: </span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">demo</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">@</span>
-</span><span class='line'>  <span class="nv">foo2: </span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>    <span class="nv">demo = </span><span class="p">[]</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">@</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="k">new</span> <span class="nx">demo</span><span class="p">().</span><span class="nx">foo1</span><span class="p">().</span><span class="nx">foo2</span><span class="p">().</span><span class="nx">foo1</span><span class="p">()</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;==&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="p">[</span><span class="nb">Function</span><span class="o">:</span> <span class="nx">demo</span><span class="p">]</span>
-</span><span class='line'><span class="o">==&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="p">[]</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>同样的两次调用foo1方法，得到的结果却是不同的，这是因为foo2中的变量与类名冲突了，而且他们处于同一个作用域，这样foo2方法就变成了一个隐藏的地雷，踩到就爆炸。避免这种情况的一种做法是在命名上做区分，比如类命名必须以大字母开头，变量必须以小写字母开头，这样就不会造成这两者的混淆。</p>
-
-<h2 id="section-3">类成员变量</h2>
-
-<p>使用类的一个好处就是可以初始化一些变量，让这个类的所有方法共享，而又不会影响外层作用域。但是需要注意的是，javascript中对于数组和对象是引用传递，在coffeescript类中使用这两种类型作为成员变量时，就会产生一些不曾期待的后果。</p>
-
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="k">class</span> <span class="nx">Demo</span>
-</span><span class='line'>  <span class="nv">member: </span><span class="p">[]</span>
-</span><span class='line'>  <span class="nv">setMember: </span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>    <span class="nx">@member</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">a = </span><span class="k">new</span> <span class="nx">Demo</span>
-</span><span class='line'><span class="nx">a</span><span class="p">.</span><span class="nx">setMember</span><span class="p">(</span><span class="err">‘</span><span class="nx">a</span><span class="err">’</span><span class="p">)</span>
-</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">a</span><span class="p">.</span><span class="nx">member</span>  <span class="c1"># [‘a’]</span>
-</span><span class='line'><span class="nv">b = </span><span class="k">new</span> <span class="nx">Demo</span>
-</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">b</span><span class="p">.</span><span class="nx">member</span>  <span class="c1"># [‘a’]</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>当我们使用<code>new</code>关键词的时候，希望得到的是一个干干净净的对象，可是在初始化b的时候我们发现他的成员变量member已经变成了<code>['a']</code>，这是我们不希望看到的。究其原因就是member是一个数组。解决办法是将这些变量的初始化放在coffeescript的构造方法<code>constructor</code>中。</p>
-
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="k">class</span> <span class="nx">Demo</span>
-</span><span class='line'>  <span class="nv">constructor: </span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>    <span class="vi">@member = </span><span class="p">[]</span>
-</span><span class='line'>  <span class="nv">setMember: </span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span><span class='line'>    <span class="nx">@member</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">a = </span><span class="k">new</span> <span class="nx">Demo</span>
-</span><span class='line'><span class="nx">a</span><span class="p">.</span><span class="nx">setMember</span><span class="p">(</span><span class="err">‘</span><span class="nx">a</span><span class="err">’</span><span class="p">)</span>
-</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">a</span><span class="p">.</span><span class="nx">member</span>  <span class="c1"># [‘a’]</span>
-</span><span class='line'><span class="nv">b = </span><span class="k">new</span> <span class="nx">Demo</span>
-</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">b</span><span class="p">.</span><span class="nx">member</span>  <span class="c1"># []</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>至于为什么这两种写法会产生不一样的效果，可以将coffeescript编译成js来分析。</p>
-
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'>    <span class="p">(</span><span class="nx">use</span> <span class="nx">constructor</span><span class="p">)</span>                                             <span class="o">|</span>    <span class="p">(</span><span class="nx">not</span> <span class="nx">use</span> <span class="nx">constructor</span><span class="p">)</span>
-</span><span class='line'>    <span class="mi">5</span>   <span class="nx">Demo</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>                                      <span class="o">|</span>    <span class="mi">5</span>   <span class="nx">Demo</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="mi">6</span>     <span class="kd">function</span> <span class="nx">Demo</span><span class="p">()</span> <span class="p">{</span>                                       <span class="o">|</span>    <span class="mi">6</span>     <span class="kd">function</span> <span class="nx">Demo</span><span class="p">()</span> <span class="p">{}</span>                                   <span class="o">&lt;</span><span class="nx">br</span> <span class="o">/&gt;</span>
-</span><span class='line'>    <span class="mi">7</span>       <span class="k">this</span><span class="p">.</span><span class="nx">member</span> <span class="o">=</span> <span class="p">[];</span>                                     <span class="o">|</span>    <span class="mi">7</span>                                                          <span class="o">&lt;</span><span class="nx">br</span> <span class="o">/&gt;</span>
-</span><span class='line'>    <span class="mi">8</span>     <span class="p">}</span>                                                       <span class="o">|</span>    <span class="mi">8</span>     <span class="nx">Demo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">member</span> <span class="o">=</span> <span class="p">[];</span>                          <span class="o">&lt;</span><span class="nx">br</span> <span class="o">/&gt;</span>
-</span><span class='line'>    <span class="mi">9</span>                                                             <span class="o">|</span>    <span class="mi">9</span>
-</span><span class='line'>   <span class="mi">10</span>     <span class="nx">Demo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setMember</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>              <span class="o">|</span>   <span class="mi">10</span>     <span class="nx">Demo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">setMember</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>   <span class="mi">11</span>       <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">member</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">str</span><span class="p">);</span>                         <span class="o">|</span>   <span class="mi">11</span>       <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">member</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">str</span><span class="p">);</span>
-</span><span class='line'>   <span class="mi">12</span>     <span class="p">};</span>                                                      <span class="o">|</span>   <span class="mi">12</span>     <span class="p">};</span>                   <span class="o">&lt;</span><span class="nx">br</span> <span class="o">/&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>上面是vimdiff对比出的两种不同写法，第一种是使用构造方法<code>constructor</code>的，可以看到member作为Demo方法的私有变量，在没有用<code>new</code>实例化的时候，这个<code>member</code>是不存在的，所以每一次实例化我们都能得到一个全新未开箱的<code>member</code>。但是第二种写法则不同，在没有实例化Demo类的时候，<code>member</code>对象就已经存在，所有无论你实例化Demo多少次，调用的都是同一个<code>member</code>，也就造成了在多个Demo实例中共用一个<code>member</code>的结果。</p>
-
-<h1 id="section-4">后记</h1>
-
-<p>假如让我在javascript和coffeescript两种语言之间选择，我仍然倾向于coffeescript，抛开上面的问题不说，它给人编码的时候带来的愉悦是无法衡量的。So just try it!</p>
 ]]></content>
   </entry>
   

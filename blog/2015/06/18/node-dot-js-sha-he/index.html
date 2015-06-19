@@ -1,0 +1,269 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Node.js 沙盒 - CodeBean</title>
+	<meta name="author" content="Xu Jingxin">
+
+	
+	<meta name="description" content="为什么要使用沙盒 eval 在很多语言中都是一个很有用的方法，合理利用它可以编写出很多让人拍案叫绝的功能。但是由于它实在过于开放和危险，很多人给它冠上了 evil 的称号。 使用沙盒可以给 eval 类的功能增加一些条件限制，让它变得更加安全，而不丢失其灵活性。 Node.js 中提供的 vm &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="CodeBean" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">CodeBean</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:jingxin.me/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/102588932744890343699?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:jingxin.me/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h1 class="title">Node.js 沙盒</h1>
+	<div class="entry-content"><h2 id="section">为什么要使用沙盒</h2>
+
+<p>eval 在很多语言中都是一个很有用的方法，合理利用它可以编写出很多让人拍案叫绝的功能。但是由于它实在过于开放和危险，很多人给它冠上了 <strong>evil</strong> 的称号。</p>
+
+<p>使用沙盒可以给 eval 类的功能增加一些条件限制，让它变得更加安全，而不丢失其灵活性。</p>
+
+<p>Node.js 中提供的 vm 模块可以轻松实现沙盒的功能。</p>
+
+<h2 id="vm-">如何使用 vm 模块</h2>
+
+<h3 id="vmruninthiscontext"><code>vm.runInThisContext</code></h3>
+
+<p><code>vm.runInThisContext</code> 可以执行代码并得到它的返回值，被执行的代码没有权限访问本地对象，但是可以访问全局对象。相比之下， eval 则有权限访问上下文中的对象。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">localVar</span> <span class="o">=</span> <span class="s1">&#39;initial value&#39;</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">var</span> <span class="nx">vmResult</span> <span class="o">=</span> <span class="nx">vm</span><span class="p">.</span><span class="nx">runInThisContext</span><span class="p">(</span><span class="s1">&#39;localVar = &quot;vm&quot;;&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;vmResult: &#39;</span><span class="p">,</span> <span class="nx">vmResult</span><span class="p">);</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;localVar: &#39;</span><span class="p">,</span> <span class="nx">localVar</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">var</span> <span class="nx">evalResult</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="s1">&#39;localVar = &quot;eval&quot;;&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;evalResult: &#39;</span><span class="p">,</span> <span class="nx">evalResult</span><span class="p">);</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;localVar: &#39;</span><span class="p">,</span> <span class="nx">localVar</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// vmResult: &#39;vm&#39;, localVar: &#39;initial value&#39;</span>
+</span><span class="line"><span class="c1">// evalResult: &#39;eval&#39;, localVar: &#39;eval&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="vmcreatecontext--vmrunincontext"><code>vm.createContext</code> 与 <code>vm.runInContext</code></h3>
+
+<p><code>vm.createContext</code> 则是真正创造了一个沙盒对象，使用 <code>vm.runInContext</code> 可以完全让代码在这个沙盒环境中运行。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;util&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="kd">var</span> <span class="nx">vm</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;vm&#39;</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">sandbox</span> <span class="o">=</span> <span class="nx">vm</span><span class="p">.</span><span class="nx">createContext</span><span class="p">({</span> <span class="nx">globalVar</span><span class="o">:</span> <span class="mi">1</span> <span class="p">});</span>
+</span><span class="line">
+</span><span class="line"><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">vm</span><span class="p">.</span><span class="nx">runInContext</span><span class="p">(</span><span class="s1">&#39;globalVar *= 2;&#39;</span><span class="p">,</span> <span class="nx">sandbox</span><span class="p">);</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">inspect</span><span class="p">(</span><span class="nx">sandbox</span><span class="p">));</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">global</span><span class="p">.</span><span class="nx">globalVar</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// { globalVar: 1024 }</span>
+</span><span class="line"><span class="c1">// undefined</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="vm--1">vm 的具体应用</h2>
+
+<p><a href="https://github.com/teambition/configd"><code>configd</code></a> 是我为公司部署流程开发的一个小工具，功能是将各种来源的配置文件合并成一个 json 文件。由于它支持 <code>ssh</code>, <code>git</code>, <code>http</code> 等多种来源的配置或代码，所以需要在工具内部来执行这些代码以实现和本地 <code>require</code> 类似的效果。如果用 <code>eval</code>，那么除却风险问题，<code>module.exports</code> 也不能生效了。所以在工具中使用了 vm 模块来执行这些代码。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">_eval = </span><span class="nf">(js, options = {}) -&gt;</span>
+</span><span class="line">  <span class="nv">sandbox = </span><span class="nx">vm</span><span class="p">.</span><span class="nx">createContext</span><span class="p">()</span>
+</span><span class="line">  <span class="nv">sandbox.exports = </span><span class="nx">exports</span>
+</span><span class="line">  <span class="nv">sandbox.module = exports: </span><span class="nx">exports</span>
+</span><span class="line">  <span class="nv">sandbox.global = </span><span class="nx">sandbox</span>
+</span><span class="line">  <span class="nv">sandbox.require = </span><span class="nx">require</span>
+</span><span class="line">  <span class="nv">sandbox.__filename = </span><span class="nx">options</span><span class="p">.</span><span class="nx">filename</span> <span class="o">or</span> <span class="s">&#39;eval&#39;</span>
+</span><span class="line">  <span class="nv">sandbox.__dirname = </span><span class="nx">path</span><span class="p">.</span><span class="nx">dirname</span> <span class="nx">sandbox</span><span class="p">.</span><span class="nx">__filename</span>
+</span><span class="line">
+</span><span class="line">  <span class="nx">vm</span><span class="p">.</span><span class="nx">runInContext</span> <span class="nx">js</span><span class="p">,</span> <span class="nx">sandbox</span>
+</span><span class="line">
+</span><span class="line">  <span class="nx">sandbox</span><span class="p">.</span><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">data = </span><span class="nx">_eval</span> <span class="nx">js</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="section-1">参考资料</h2>
+
+<p><a href="https://nodejs.org/api/vm.html">Executing JavaScript</a></p>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-06-18T16:36:00+08:00" pubdate data-updated="true">2015.06.18</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/nodejs/'>nodejs</a>, <a class='category' href='/blog/blog/categories/sandbox/'>sandbox</a>
+
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Xu Jingxin
+
+</footer>
+	<script src="/blog/javascripts/slash.js"></script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://jingxin.me/blog/blog/2015/06/18/node-dot-js-sha-he/';
+        var disqus_url = 'http://jingxin.me/blog/blog/2015/06/18/node-dot-js-sha-he/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+<script id="gta-main" src="/blog/javascripts/gta.js", data-baidu="43f786342ba0680af108248b28280fdb", data-google="UA-33186961-1", data-mixpanel="204d761f0c52d9ddcf031ec634f98772"></script>
+<!-- mixpanel pageview -->
+<script>
+  mixpanel.track("pageview: " + document.URL);
+</script>
+
+
+
+</body>
+</html>

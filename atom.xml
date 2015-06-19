@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://jingxin.me/blog/atom.xml" rel="self"/>
   <link href="http://jingxin.me/blog/"/>
-  <updated>2015-05-02T13:07:38+08:00</updated>
+  <updated>2015-06-19T10:26:06+08:00</updated>
   <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[Xu Jingxin]]></name>
@@ -12,6 +12,125 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Node.js 沙盒]]></title>
+    <link href="http://jingxin.me/blog/blog/2015/06/18/node-dot-js-sha-he/"/>
+    <updated>2015-06-18T16:36:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2015/06/18/node-dot-js-sha-he</id>
+    <content type="html"><![CDATA[<h2 id="section">为什么要使用沙盒</h2>
+
+<p>eval 在很多语言中都是一个很有用的方法，合理利用它可以编写出很多让人拍案叫绝的功能。但是由于它实在过于开放和危险，很多人给它冠上了 <strong>evil</strong> 的称号。</p>
+
+<p>使用沙盒可以给 eval 类的功能增加一些条件限制，让它变得更加安全，而不丢失其灵活性。</p>
+
+<p>Node.js 中提供的 vm 模块可以轻松实现沙盒的功能。</p>
+
+<h2 id="vm-">如何使用 vm 模块</h2>
+
+<h3 id="vmruninthiscontext"><code>vm.runInThisContext</code></h3>
+
+<p><code>vm.runInThisContext</code> 可以执行代码并得到它的返回值，被执行的代码没有权限访问本地对象，但是可以访问全局对象。相比之下， eval 则有权限访问上下文中的对象。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">localVar</span> <span class="o">=</span> <span class="s1">&#39;initial value&#39;</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">var</span> <span class="nx">vmResult</span> <span class="o">=</span> <span class="nx">vm</span><span class="p">.</span><span class="nx">runInThisContext</span><span class="p">(</span><span class="s1">&#39;localVar = &quot;vm&quot;;&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;vmResult: &#39;</span><span class="p">,</span> <span class="nx">vmResult</span><span class="p">);</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;localVar: &#39;</span><span class="p">,</span> <span class="nx">localVar</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">var</span> <span class="nx">evalResult</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="s1">&#39;localVar = &quot;eval&quot;;&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;evalResult: &#39;</span><span class="p">,</span> <span class="nx">evalResult</span><span class="p">);</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;localVar: &#39;</span><span class="p">,</span> <span class="nx">localVar</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// vmResult: &#39;vm&#39;, localVar: &#39;initial value&#39;</span>
+</span><span class="line"><span class="c1">// evalResult: &#39;eval&#39;, localVar: &#39;eval&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="vmcreatecontext--vmrunincontext"><code>vm.createContext</code> 与 <code>vm.runInContext</code></h3>
+
+<p><code>vm.createContext</code> 则是真正创造了一个沙盒对象，使用 <code>vm.runInContext</code> 可以完全让代码在这个沙盒环境中运行。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;util&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="kd">var</span> <span class="nx">vm</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;vm&#39;</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">sandbox</span> <span class="o">=</span> <span class="nx">vm</span><span class="p">.</span><span class="nx">createContext</span><span class="p">({</span> <span class="nx">globalVar</span><span class="o">:</span> <span class="mi">1</span> <span class="p">});</span>
+</span><span class="line">
+</span><span class="line"><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">vm</span><span class="p">.</span><span class="nx">runInContext</span><span class="p">(</span><span class="s1">&#39;globalVar *= 2;&#39;</span><span class="p">,</span> <span class="nx">sandbox</span><span class="p">);</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">inspect</span><span class="p">(</span><span class="nx">sandbox</span><span class="p">));</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">global</span><span class="p">.</span><span class="nx">globalVar</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// { globalVar: 1024 }</span>
+</span><span class="line"><span class="c1">// undefined</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="vm--1">vm 的具体应用</h2>
+
+<p><a href="https://github.com/teambition/configd"><code>configd</code></a> 是我为公司部署流程开发的一个小工具，功能是将各种来源的配置文件合并成一个 json 文件。由于它支持 <code>ssh</code>, <code>git</code>, <code>http</code> 等多种来源的配置或代码，所以需要在工具内部来执行这些代码以实现和本地 <code>require</code> 类似的效果。如果用 <code>eval</code>，那么除却风险问题，<code>module.exports</code> 也不能生效了。所以在工具中使用了 vm 模块来执行这些代码。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">_eval = </span><span class="nf">(js, options = {}) -&gt;</span>
+</span><span class="line">  <span class="nv">sandbox = </span><span class="nx">vm</span><span class="p">.</span><span class="nx">createContext</span><span class="p">()</span>
+</span><span class="line">  <span class="nv">sandbox.exports = </span><span class="nx">exports</span>
+</span><span class="line">  <span class="nv">sandbox.module = exports: </span><span class="nx">exports</span>
+</span><span class="line">  <span class="nv">sandbox.global = </span><span class="nx">sandbox</span>
+</span><span class="line">  <span class="nv">sandbox.require = </span><span class="nx">require</span>
+</span><span class="line">  <span class="nv">sandbox.__filename = </span><span class="nx">options</span><span class="p">.</span><span class="nx">filename</span> <span class="o">or</span> <span class="s">&#39;eval&#39;</span>
+</span><span class="line">  <span class="nv">sandbox.__dirname = </span><span class="nx">path</span><span class="p">.</span><span class="nx">dirname</span> <span class="nx">sandbox</span><span class="p">.</span><span class="nx">__filename</span>
+</span><span class="line">
+</span><span class="line">  <span class="nx">vm</span><span class="p">.</span><span class="nx">runInContext</span> <span class="nx">js</span><span class="p">,</span> <span class="nx">sandbox</span>
+</span><span class="line">
+</span><span class="line">  <span class="nx">sandbox</span><span class="p">.</span><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">data = </span><span class="nx">_eval</span> <span class="nx">js</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="section-1">参考资料</h2>
+
+<p><a href="https://nodejs.org/api/vm.html">Executing JavaScript</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[NCR 是什么]]></title>
@@ -1682,57 +1801,6 @@
 <p>顺便再提一下php5.5中新增的Generator，其中的yield支持运行时自定义方法，这显然又是从隔壁python借鉴来的，调用方式同样不是很自然，foreach承担了迭代的责任，相比于ruby中yield的强大功能，更是差之千里了。</p>
 
 <p>不过有总比没有要好，将来一定有创意丰富的人能玩出更多花样，哦，貌似又多了一种编程风格。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[[TDWTF] 我们相信傻瓜]]></title>
-    <link href="http://jingxin.me/blog/blog/2013/06/20/tdwtf-wo-men-xiang-xin-sha-gua/"/>
-    <updated>2013-06-20T16:06:00+08:00</updated>
-    <id>http://jingxin.me/blog/blog/2013/06/20/tdwtf-wo-men-xiang-xin-sha-gua</id>
-    <content type="html"><![CDATA[<p>一天早上，Stan去找他的上级Monty，他正在疯狂地的敲着键盘。这意味着两件事：明天他会收到一封讨厌的设计文档，而且那个设计中会用到一个从没用过的数据库。Monty是一个数据库“砖家”，没什么问题是他不能搞定的。Stan在这家公司的第一年，照做了Monty描述的每个设想，因为他不知道有哪些更好的办法。现在他对公司系统有了更多的了解，他渴望有个机会来做一些正确的事。</p>
-
-<p>Stan在邮箱里找到了一份客户发给Monty的需求副本，要求两个ASP.NET应用之间能互相通信。Stan喜上心头，这是一个简单的web服务，既然他们用.NET，那么只要用<a href="http://en.wikipedia.org/wiki/Windows_Communication_Foundation">WCF</a>就行了。</p>
-
-<p>Monty的介入绝对不可能玷污这个方案，他连.NET的基础都不懂。自从入职的第一天起，Stan就想着能对系统的设计有些话语权，这样才像一个“真正的开发”。最后，这个机会来了！</p>
-
-<p>第二天，Monty的设计发到了Stan的邮箱。Stan心不在焉的打开它，就像一个验尸官掀开一张裹尸布。他翻开这份足足45页的“可扩展性数据库驱动进程内通讯框架”。这有点难理解，而且看起来有点像是重复造轮子。里面几乎没有提及客户的应用，因为它看起来想要将任意应用连接在一起。</p>
-
-<p>这个设计需要用到11张数据表来传递元数据（发送，接收，时间戳，用户id，等等）和应用数据（统统被转成字符串并且储存在类似列1，列2等等的字段中）。当一个应用想要给另一个发送消息，它需要发送所有的会话/消息数据给一个存储过程。这个存储过程接收75个参数，大部分是可选的。另一个类似的存储过程允许发送者附加特殊的应用数据。而对于一个接收者，它需要调用<code>SP_CHECK_FOR_MESSAGES_POLLING_PROCEDURE</code>存储过程并传入它的<code>PK_INT_APPLICATION_IDENTIFIER</code>标识。当它消费完这条消息，还要调用<code>SP_MESSAGE_TRANSACTION_COMPLETE_PROCEDURE</code>存储过程来从“收件箱”中清除消息。Monty的系统会将这个事务中的所有数据移到一个结构相同的log表中，但是没有任何完整性可言。</p>
-
-<p>在Stan砸碎屏幕之前，他听到Monty得意洋洋的说：“我对这事很兴奋，我希望这个能用在任何事上！”</p>
-
-<p>“任何事？”Stan抑制住汹涌而来的恶心感。是时候让他坚持自己的原则，来表明他不再是那个毫无主见的职场新人了。“这个实现。。。很有趣，但是没必要用数据库来实现它”。</p>
-
-<p>Monty一笑置之。</p>
-
-<p>“.NET有个叫WCF的框架可以来帮助我们实现这个功能，”Stan继续说，“我们只需要写很少-”</p>
-
-<p>“不行，”Monty不容置疑的说，虽然Stan知道假如他问Monty什么是“WCF”，Monty肯定会顾左右而言他。“我们在调试系统时会碰到一堆的问题。我们需要知道应用和应用之间是怎么通信的，谁，在什么时候，发送了消息。而且我们会将它储存在一个安全的地方。”</p>
-
-<p>“但是，有一大堆的工具可以用来调试WC-”</p>
-
-<p>“请实现我设计的系统。”Monty不留余地的走开了，以防Stan再有什么说辞。</p>
-
-<p>Stan在与内心抗争中，花了几个礼拜的时间来实现这个冒牌的规范。错误不断的冒出来，而且没有什么好办法来解决强数据类型和同步性的问题。加入这种预防措施会让这庞然大物跑的更慢，虽然它已经够慢的了，而且仍然没法保证它按照预期工作。同时，Monty与客户的沟通不畅导致需求不断的变化。他的设计一天天的变化，最后成了一个64页的设计文档，需要14个数据表。</p>
-
-<p>Stan受够了。他最后只能求助Monty的老板David。David实行开门迎客政策。Stan向David描述了现状。</p>
-
-<p>“这不仅仅走了弯路，而且也不是客户想要的。用WCF的话我本来可以在几个礼拜前就完工，但是Monty不想这么干。”Stan总结到，“我觉得现在改正还为时不晚，但是Monty不赞成这样做。您能向他解释一下吗？”</p>
-
-<p>David叹息道：“我知道了”。</p>
-
-<p>终于！Stan兴奋地想他的建议成功了。</p>
-
-<p>David停顿了一小会儿，然后像一个先知布道一样说，“你叫Stan是吧？Monty。。。有一些怪癖，有时候他会让你做一些毫无意义的事。我需要你继续下去并且相信一切都会好起来。他从公司成立时就在这儿了，我们的系统就像他的孩子一样，所以他知道哪种方式最合适。”</p>
-
-<p>Stan明白现在最理智的是什么事情，他一言不发的回到自己的座位，经过一个小时的沉思，永远的离开了这个办公室。</p>
-
-<h2 id="section">后记</h2>
-
-<p>故事归故事，但很多公司的现状如此，如果不能在工作中提高自己，那么就想办法提高工作。后面的的<a href="http://thedailywtf.com/Comments/In-Fool-We-Trust.aspx">评论</a>也很有意思，可以看一下。</p>
-
-<p>原文链接：<a href="http://thedailywtf.com/Articles/In-Fool-We-Trust.aspx">In Fool We Trust</a></p>
 ]]></content>
   </entry>
   

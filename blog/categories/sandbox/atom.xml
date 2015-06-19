@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: sandbox | CodeBean]]></title>
+  <link href="http://jingxin.me/blog/blog/categories/sandbox/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2015-06-19T10:26:06+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
+  <author>
+    <name><![CDATA[Xu Jingxin]]></name>
+    <email><![CDATA[sailxjx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Node.js 沙盒]]></title>
+    <link href="http://jingxin.me/blog/blog/2015/06/18/node-dot-js-sha-he/"/>
+    <updated>2015-06-18T16:36:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2015/06/18/node-dot-js-sha-he</id>
+    <content type="html"><![CDATA[<h2 id="section">为什么要使用沙盒</h2>
+
+<p>eval 在很多语言中都是一个很有用的方法，合理利用它可以编写出很多让人拍案叫绝的功能。但是由于它实在过于开放和危险，很多人给它冠上了 <strong>evil</strong> 的称号。</p>
+
+<p>使用沙盒可以给 eval 类的功能增加一些条件限制，让它变得更加安全，而不丢失其灵活性。</p>
+
+<p>Node.js 中提供的 vm 模块可以轻松实现沙盒的功能。</p>
+
+<h2 id="vm-">如何使用 vm 模块</h2>
+
+<h3 id="vmruninthiscontext"><code>vm.runInThisContext</code></h3>
+
+<p><code>vm.runInThisContext</code> 可以执行代码并得到它的返回值，被执行的代码没有权限访问本地对象，但是可以访问全局对象。相比之下， eval 则有权限访问上下文中的对象。</p>
+
+<p>```javascript
+var localVar = ‘initial value’;</p>
+
+<p>var vmResult = vm.runInThisContext(‘localVar = “vm”;’);
+console.log(‘vmResult: ‘, vmResult);
+console.log(‘localVar: ‘, localVar);</p>
+
+<p>var evalResult = eval(‘localVar = “eval”;’);
+console.log(‘evalResult: ‘, evalResult);
+console.log(‘localVar: ‘, localVar);</p>
+
+<p>// vmResult: ‘vm’, localVar: ‘initial value’
+// evalResult: ‘eval’, localVar: ‘eval’
+```</p>
+
+<h3 id="vmcreatecontext--vmrunincontext"><code>vm.createContext</code> 与 <code>vm.runInContext</code></h3>
+
+<p><code>vm.createContext</code> 则是真正创造了一个沙盒对象，使用 <code>vm.runInContext</code> 可以完全让代码在这个沙盒环境中运行。</p>
+
+<p>```javascript
+var util = require(‘util’);
+var vm = require(‘vm’);</p>
+
+<p>sandbox = vm.createContext({ globalVar: 1 });</p>
+
+<p>for (var i = 0; i &lt; 10; ++i) {
+    vm.runInContext(‘globalVar *= 2;’, sandbox);
+}</p>
+
+<p>console.log(util.inspect(sandbox));
+console.log(global.globalVar);</p>
+
+<p>// { globalVar: 1024 }
+// undefined
+```</p>
+
+<h2 id="vm--1">vm 的具体应用</h2>
+
+<p><a href="https://github.com/teambition/configd"><code>configd</code></a> 是我为公司部署流程开发的一个小工具，功能是将各种来源的配置文件合并成一个 json 文件。由于它支持 <code>ssh</code>, <code>git</code>, <code>http</code> 等多种来源的配置或代码，所以需要在工具内部来执行这些代码以实现和本地 <code>require</code> 类似的效果。如果用 <code>eval</code>，那么除却风险问题，<code>module.exports</code> 也不能生效了。所以在工具中使用了 vm 模块来执行这些代码。</p>
+
+<p>```coffeescript
+_eval = (js, options = {}) -&gt;
+  sandbox = vm.createContext()
+  sandbox.exports = exports
+  sandbox.module = exports: exports
+  sandbox.global = sandbox
+  sandbox.require = require
+  sandbox.__filename = options.filename or ‘eval’
+  sandbox.__dirname = path.dirname sandbox.__filename</p>
+
+<p>vm.runInContext js, sandbox</p>
+
+<p>sandbox.module.exports</p>
+
+<p>data = _eval js
+```</p>
+
+<h2 id="section-1">参考资料</h2>
+
+<p><a href="https://nodejs.org/api/vm.html">Executing JavaScript</a></p>
+]]></content>
+  </entry>
+  
+</feed>
