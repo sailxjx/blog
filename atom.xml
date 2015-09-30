@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://jingxin.me/blog/atom.xml" rel="self"/>
   <link href="http://jingxin.me/blog/"/>
-  <updated>2015-07-26T18:37:58+08:00</updated>
+  <updated>2015-09-30T10:38:08+08:00</updated>
   <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[Xu Jingxin]]></name>
@@ -12,6 +12,31 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[CEO 的坏习惯]]></title>
+    <link href="http://jingxin.me/blog/blog/2015/09/30/ceo-de-pi-xi-guan/"/>
+    <updated>2015-09-30T09:34:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2015/09/30/ceo-de-pi-xi-guan</id>
+    <content type="html"><![CDATA[<h2 id="section">不计后果的答应客户</h2>
+
+<p>在签约或谈合作时为了取得订单，不考虑现有能力和需要投入的成本，盲目的满足客户的要求，这样的做法，和乡下金属加工厂的老板没有任何区别，订单来了，增加机器和工人，加班加点，就能满足需求了。软件行业不是劳动力密集型产业，一步考虑不周，就需要投入更大的成本去弥补。国内那么多员工众多的软件公司，却开发不出好用的软件，UI 和交互都停留在上个世纪，很大一部分原因，都是由急功近利的老板造成的。</p>
+
+<h2 id="section-1">无法保持专注</h2>
+
+<p>很多 CEO 觉得自己的学习能力比别人强，还兴趣广泛，对公司里的所有工作都喜欢亲自参与。这本无可厚非，问题就出在他是 CEO。到了任何一个部门，都是公认的 Leader，员工很难在这样的关系下保持“有自己的意见”，创新更无从谈起。在 CEO 亲身投入到这个部门的时期，员工可能会斗志满满，一旦离开这个部门，立刻就会回到六神无主的状态。做任何工作，都需要保持专注，在很长的一段时间，Leader 都要和大家共进退，浅尝辄止不如放任自流。不管在哪个时期，这些工作，都有比 CEO 更合适的人或团队存在。</p>
+
+<p>这一点同样体现在产品上，CEO 会比员工体验到更多的竞争对手压力，而这个时候如果忙于追赶竞争对手，而不再从产品自身的实用性和设计理念出发，那么员工就变成了竞争的牺牲品，心力憔悴的复制着对手的功能。我们常说“好产品不愁没市场”，不忘初心，保持专注，才是打造好产品的前提啊。</p>
+
+<h2 id="section-2">屏蔽不感兴趣的声音</h2>
+
+<p>每个人都有自己的兴趣点，甚至在不同的年龄和时间，兴趣也不一样。CEO 就像一个公布在社交网络上的收件箱，每时每刻都有不同的声音到来。我们常说兼听则明，偏信则暗。上文提到要常对客户的需求说不，但是对于员工的声音，则要时时去鼓励。员工的声音，与公司息息相关，一个建议可能挽救一个产品，一个创意可能占领一个市场，CEO 如果不能从内部的建议中博采众长，那么难免陷入到一意孤行的境地。</p>
+
+<h2 id="section-3">不能知人善用</h2>
+
+<p>创业公司常常出现的一种情况就是一人需要干几个人的事，在创业萌芽期，这样做只能说是万不得已，而且因为功能少，事情也不显得复杂，一个人干多件事情也是一种磨练。到了公司业务走上正轨，产品越来越庞杂，再让一个人干几个人的事情，就不是那么合理了。我想每个人都希望成为某个领域的专家，这样不仅是为了个人前途考虑，对公司也有好处，如果能将员工培养成某一方向的专家，那么遇到问题自然不愁没人解决。业务拓展了，资金充裕了，公司就更应该给员工创造培养提高的环境。这个时候让与系统架构息息相关的运维去给客户装机部署，让开发去做社区运营，就不再是一个有远见的 CEO 干的事了。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[关于吃饭]]></title>
@@ -1593,66 +1618,6 @@
   <li><a href="http://robertnyman.com/2010/03/25/using-html5-web-workers-to-have-background-computational-power/">Using HTML5 Web Workers To Have Background Computational Power</a></li>
   <li><a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/workers.html#creating-a-dedicated-worker">9 Web workers</a></li>
 </ul>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[几款压力测试工具]]></title>
-    <link href="http://jingxin.me/blog/blog/2013/07/05/ji-kuan-ya-li-ce-shi-gong-ju/"/>
-    <updated>2013-07-05T16:45:00+08:00</updated>
-    <id>http://jingxin.me/blog/blog/2013/07/05/ji-kuan-ya-li-ce-shi-gong-ju</id>
-    <content type="html"><![CDATA[<p>压力测试工具林林总总，数不胜数，这里只列举几个命令行下常用的工具，来看看那种用的比较顺手，纯粹个人意见。</p>
-
-<ul>
-  <li>ab (apache benchmark，因为是apache自带的工具，所以用的人比较多)</li>
-  <li>siege (一个不错的开源压力测试工具，简单，好用)</li>
-  <li>httperf (据说很强大，但参数实在繁琐，不考虑)</li>
-</ul>
-
-<h1 id="ab">ab</h1>
-<p>ab是apache自带的测试工具，很多情况下我们要测试一个网站在并发100下的响应速度，用下面的命令就行</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">ab -n1000 -c100 http://domain.com/</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>可不要少了最后的那个’/’，ab接受的url必须是schema, domain, path一个不少的。</p>
-
-<p>其他像添加header，post参数等等的，man一下ab的手册吧。</p>
-
-<p>长久以来我一直以ab作为webserver性能的一个指标，因为使用确实简单，直到遇见了siege。</p>
-
-<h1 id="siege">siege</h1>
-
-<p>siege应该也有些年头了，2000年的时候就已经有这个软件了，直到最近更新了3.0.1版本。在第一次使用的时候，需要用siege.config在主目录下面生成一个配置文件.siegerc。这类文件常用linux的人应该很清楚了，里面每个选项都有明确的注释。需要注意的是delay这个值，做一般测试的时候会按照这个设定的时间间隔停顿，那么这样压力测试出来的结果就不准了，所以在做压测的时候需要加上’-b’参数，或者直接将这个参数设置为0。下面是一个100并发测试10秒钟的例子。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">siege -b -c100 -t10S http://domain.com/</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>siege的一个缺点是没法设置总请求数，但是可以通过重复数和并发数组合来求出总请求数，例如我们要在100并发下发送1000个请求，就用下面的命令，当然这个时候就不能用’-t’参数了</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">siege -b -c100 -r10 http://domain.com/</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>结果与ab差不多，但是他会将历次测试的结果保存在一个文件中供以后比较。</p>
-
-<h1 id="section">测试</h1>
-
-<p>这里我分别用nodejs和php写了两个server脚本，响应值都是’hello world’，都用单一进程作为web server。（php5.4之后用-S参数来启动服务）。</p>
-
-<p>测试结果:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">(request/second)        php     nodejs
-</span><span class="line">siege                   2500    2000
-</span><span class="line">ab                      4880    3480</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>测试软件的评判标准不一样，所以测试结果有差距也比较合理，不能由此说明谁比谁更准确。但是在测试中nodejs的性能比php要慢20%这个倒是让我觉得比较惊讶，看来nodejs在运算效率上并不占优势。但是在复杂的web应用中，更多的时间开销在io中，nodejs合理的将这部分等待时间利用了起来，才会让人感觉比较快吧。</p>
-
-<p>很早就有人对这几款测试软件做了<a href="http://lionet.livejournal.com/99984.html">横向的对比</a>，有兴趣可以看一下，其中keepalive和no-keepalive的效率差距比较大，我自己测试时觉得并不明显，可能是写的例子比较单一吧。</p>
-
-<p>今后假如需要做简单的压力测试，我还是比较倾向于使用siege。</p>
 ]]></content>
   </entry>
   
