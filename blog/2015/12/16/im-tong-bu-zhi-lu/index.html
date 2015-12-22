@@ -1,0 +1,227 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>IM 同步之路 - CodeBean</title>
+	<meta name="author" content="Xu Jingxin">
+
+	
+	<meta name="description" content="关于 IM 的同步，首先需要提的应当是协议，选择一个好的协议，对系统的扩展性，稳定性都有帮助。我们先来说一说协议的事。 公有协议 vs 私有协议 几乎所有 IM 开发起初都会考虑一下公有协议，即使最后没有选用，也会先对比一下各种协议的优劣。选用公有协议的好处显而易见，开发简单，兼容性好， &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="CodeBean" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">CodeBean</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:jingxin.me/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/102588932744890343699?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:jingxin.me/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h1 class="title">IM 同步之路</h1>
+	<div class="entry-content"><p>关于 IM 的同步，首先需要提的应当是协议，选择一个好的协议，对系统的扩展性，稳定性都有帮助。我们先来说一说协议的事。</p>
+
+<h2 id="vs-">公有协议 vs 私有协议</h2>
+
+<p>几乎所有 IM 开发起初都会考虑一下公有协议，即使最后没有选用，也会先对比一下各种协议的优劣。选用公有协议的好处显而易见，开发简单，兼容性好，很多协议也考虑了安全性。下面是两个比较流行的 IM 协议：</p>
+
+<ol>
+  <li>XMPP，实现多，体积大，对移动端不友好</li>
+  <li>MQTT，轻量级，移动端友好，消息送达率高</li>
+</ol>
+
+<p>然而，选择了一个公有协议，也意味着更多的掣肘，协议的臃肿会让你的应用被迫实现很多不必要的接口。另外，扩展上面也不能随性所欲。所以，很多开发者或应用在积累了一定的基础之后，转而制定自己的私有协议。</p>
+
+<p>反观私有协议，可以让应用更轻量，传输更少的数据，但是同时它也增加了开发的难度。我们粗略的看一下实现一个私有协议需要考虑哪些点。</p>
+
+<h3 id="section">连接协议</h3>
+
+<p>首先，选择使用什么连接协议，是你的私有协议的基石，QQ 在互联网萌芽时代选择了 UDP 连接，以支持大规模用户在线，而现代 IM 协议基本被 TCP 协议一统江湖，而且现在各类语言对应的 TCP 库也非常丰富。</p>
+
+<h3 id="section-1">信息载体</h3>
+
+<p>在信息的编码格式上有二进制和纯文本两种选择，序列化方式则有 xml, json, msgpack 等，综合下来，我认为使用纯文本+json，可读性和消息体积上面都比较理想。</p>
+
+<h3 id="section-2">连接/订阅/广播/断线</h3>
+
+<p>这四个步骤是一个 IM 协议最基础的功能，也是一个会话从开始到结束的最简单流程，协议中需要明确定义这四个步骤的接口</p>
+
+<h3 id="section-3">其他需要考虑的问题</h3>
+
+<ol>
+  <li>QOS(quality of service)，一个好的 IM 协议应该可以为消息设定不同的等级，以便在效率和送达率上面找到一个平衡点，开发者也可以根据实际需求为消息选择是必须确认送达还是可容忍一定的丢失率</li>
+  <li>安全性，消息是否需要加密，使用什么加密算法，也是可以在协议中约定的，不过加密必然导致效率降低，如果消息重要程度不高，则可以不为消息加密，据说 QQ 多年以来一直使用明文传输消息（未考证哦）</li>
+</ol>
+
+<h2 id="restful-vs-">Restful vs 消息队列</h2>
+
+<p>从前后端分离的架构上来看，Restful 是一种理想的方式，接口相对标准化，有规律可循。但是从节约流量的角度看，这并不是一种很理想的方案。</p>
+
+<p>IM 应用对数据同步的实时性要求较高，如果使用 Restful 接口，就会存在需要反复查询同一接口，得到的结果重复率较高的问题。例如简聊的用户信息接口 <code>https://jianliao.com/v2/users/me</code>，在每次进入应用的时候都会查询这个接口，每次得到的数据几乎 99% 都是和上次请求的时候相同的，而为了这 1% 的区别，又不得不反复查询。</p>
+
+<p>而如果将数据离线存储，通过消息队列的方式来更新，则会让请求数量大大减少，加载效率就会得到大幅提升。</p>
+
+<p>简聊在 3.0 的更新中同时也改变了以往 Restful 同步数据的方式，将每次最新的数据对象保存在队列中，客户端则通过队列去同步本地数据，从目前的实现方案来说，改善了频繁抓取热数据的情况，但是仍然有一些遗留问题值得优化和解决：</p>
+
+<ol>
+  <li>队列中保存的数据为完整对象，而不是操作记录，这样做是因为保存完整数据可以避免客户端在同步状态异常时出现无法恢复的脏数据，然而这样在流量上面开销就大得多了。</li>
+  <li>队列只追加不更新，这样的一个结果就是导致在队列内部也会出现重复数据，增加了服务端存储的空间，也增加了流量的开销。</li>
+</ol>
+
+<h2 id="section-4">数据库同步</h2>
+
+<p>最近研究同步的问题，还发现了另一种很有意思的方案，我感觉在未来会成为一种趋势，值得关注。</p>
+
+<p>同步存在于我们开发中的方方面面，在服务端，我们使用数据库集群，以达到横向扩展的需求。做版本控制，我们选择 git，push 和 pull 也是在做同步。是通过版本管理和操作记录，客户端实现增量的同步服务端数据，最后达到保存镜像的目的。</p>
+
+<p>其实做 IM 应用，客户端和服务端的同步，也同样可以借鉴这种思想。现在的移动客户端都使用本地数据库，Web 也有 LocalStorage 可用，所以在离线存储上面不存在问题。于是有人想到了一个方法，来使客户端和服务端保持数据同步，那么在业务上面，前后端就分离的更加清楚了，这就是 <a href="http://pouchdb.com/">PouchDB</a>。</p>
+
+<p>PouchDB 借鉴了 CouchDB 的分布式思想，是一个 JavaScript 版本的实现，以便能在客户端利用和 CouchDB 一模一样的接口，由于在数据层进行同步，与业务逻辑无关，双方只需要协商好需要的数据表结构，就可以安心的去做自己平台的事了。</p>
+
+<p>但是同时也留下值得思考的问题：</p>
+
+<ol>
+  <li>怎样将服务端的多用户关系表转换成客户端的单用户数据</li>
+  <li>因为同步是双向的，怎样将客户端的单用户数据转换为服务端的多用户关系表</li>
+  <li>当服务端数据结构升级时，怎样解决兼容性问题</li>
+  <li>大数据量时，diff 的效率非常低下，大量的 diff 会拖慢应用的速度</li>
+</ol>
+
+<h2 id="section-5">拓展</h2>
+
+<ul>
+  <li><a href="http://blog.yld.io/2015/11/30/building-realtime-collaborative-offline-first-apps-with-react-redux-pouchdb-and-web-sockets/">Building realtime collaborative offline-first apps with React, Redux, PouchDB and WebSockets</a></li>
+</ul>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-12-16T16:01:00+08:00" pubdate data-updated="true">2015.12.16</time></div>
+	<div class="tags">
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Xu Jingxin
+
+</footer>
+	<script src="/blog/javascripts/jquery-2.1.1.min.js"></script>
+<script src="/blog/javascripts/slash.js"></script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://jingxin.me/blog/blog/2015/12/16/im-tong-bu-zhi-lu/';
+        var disqus_url = 'http://jingxin.me/blog/blog/2015/12/16/im-tong-bu-zhi-lu/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+<script id="gta-main" src="/blog/javascripts/gta.js", data-baidu="43f786342ba0680af108248b28280fdb", data-google="UA-33186961-1", data-mixpanel="204d761f0c52d9ddcf031ec634f98772"></script>
+<!-- mixpanel pageview -->
+<script>
+  mixpanel.track("pageview: " + document.URL);
+</script>
+
+
+
+</body>
+</html>
