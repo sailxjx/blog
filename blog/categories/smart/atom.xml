@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: SMART | CodeBean]]></title>
+  <link href="http://jingxin.me/blog/blog/categories/smart/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2016-04-11T18:56:00+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
+  <author>
+    <name><![CDATA[Xu Jingxin]]></name>
+    <email><![CDATA[sailxjx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[OKR 解读]]></title>
+    <link href="http://jingxin.me/blog/blog/2016/04/11/okr-jie-du/"/>
+    <updated>2016-04-11T18:10:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2016/04/11/okr-jie-du</id>
+    <content type="html"><![CDATA[<h1 id="okr">什么是 OKR</h1>
+
+<p>关于 OKR（Objectives and Key Results）是什么，网上的资料实在是太多了，为了节省时间，在这里简短的概括一下：</p>
+
+<ol>
+  <li>目标（Objectives），为未来的某个节点（通常为三个月）设定几个目标，这些目标需要可量化，有相关性，并且有一定的挑战性</li>
+  <li>关键成果（Key Results），为了达成和量化这些目标，为每个目标设置一些关键成果，例如为了完成早晨起床出门的目标，需要完成穿衣，刷牙，洗脸等关键成果。</li>
+</ol>
+
+<p>从我的了解来看，一个好的 OKR 必须具备的三个特征：周期，创新，关联性</p>
+
+<h2 id="section">周期</h2>
+
+<p>周期是指目标需要在有效的时间内达成，之所以把时间放在第一位考虑，因为任何人面对一个没有明确时间的计划是没有执行力可言的。</p>
+
+<p>一个长久的愿景，适合作为理想，而目标则要求我们只争朝夕。</p>
+
+<p>明确的结束时间可以很好的帮助你回顾和开启下一轮任务，形成一个良好的任务周期能让你的工作习惯更为健康。</p>
+
+<h2 id="section-1">创新</h2>
+
+<p>好的目标应该能激发你的动力，所以必须有一定的挑战性，而创新则能鼓励你走出自己的舒适区，去挑战陌生的领域，激发自己的潜能。</p>
+
+<h2 id="section-2">关联性</h2>
+
+<p>目标要有关联性，团队中各人的目标都是可见的，在制定目标时，不妨与其他人交流一下，看看自己的目标是否与团队的战略方向一致，是否目标与他人有重合的地方。如果自己的目标与任何人都无法重合，则很有可能是自己跑偏了方向。</p>
+
+<p>一般而言，上级的 Key Results 很可能会与下属的 Objectives 一致，由此在公司中可以形成一个瀑布式的目标关系链，源头就是公司的总体战略。</p>
+
+<h1 id="okr-upon-smart">OKR upon SMART</h1>
+
+<p>SMART 是八十年代提出的一种任务制定方式，OKR 也是源自于此。它要求制定任务时参考下面五个指标：</p>
+
+<ol>
+  <li>明确性（Specific）</li>
+  <li>可量化（Measurable）</li>
+  <li>可实现性（Attainable）</li>
+  <li>相关性（Relevant）</li>
+  <li>有时间限制（Time-bound）</li>
+</ol>
+
+<p>可以看到 OKR 对于目标的大部分要求都与上述条件契合，但是弱化了”可实现性”，提升了”挑战性”的比重，以激发成员对任务目标的追求。因为 OKR 强调与绩效考核分离，成员在制定更有挑战性的目标时也会少一些顾忌。</p>
+
+<blockquote>
+  <p>然而我却觉得绩效仍然是不可缺少的一环，如果 OKR 不能作为绩效的评估依据，则需要寻找其他的方式来评估绩效，例如 Peer Review 或 Focal Review。但是这又增加了成员的负担和时间成本。而且，无关绩效的目标，实现的动力也将大打折扣了。</p>
+</blockquote>
+
+<h1 id="okr-vs-kpi">OKR vs KPI</h1>
+
+<p>OKR 和 KPI 最大的区别就在于 OKR 分离了绩效考核的部分，而 KPI 则使用更突出的量化标准将目标与绩效严格挂钩。这也是 KPI 最为人诟病的一个地方，会导致成员只关注绩效而忽略了本该有的创造性工作，甚至出现绩效造假的情况。</p>
+
+<p>不管 OKR 还是 KPI，让每个成员各尽所长才是制度的目的，而且，找到合适的人，比任何制度更有效。</p>
+]]></content>
+  </entry>
+  
+</feed>

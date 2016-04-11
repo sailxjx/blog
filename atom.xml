@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://jingxin.me/blog/atom.xml" rel="self"/>
   <link href="http://jingxin.me/blog/"/>
-  <updated>2016-04-06T11:52:22+08:00</updated>
+  <updated>2016-04-11T18:56:00+08:00</updated>
   <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[Xu Jingxin]]></name>
@@ -12,6 +12,66 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[OKR 解读]]></title>
+    <link href="http://jingxin.me/blog/blog/2016/04/11/okr-jie-du/"/>
+    <updated>2016-04-11T18:10:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2016/04/11/okr-jie-du</id>
+    <content type="html"><![CDATA[<h1 id="okr">什么是 OKR</h1>
+
+<p>关于 OKR（Objectives and Key Results）是什么，网上的资料实在是太多了，为了节省时间，在这里简短的概括一下：</p>
+
+<ol>
+  <li>目标（Objectives），为未来的某个节点（通常为三个月）设定几个目标，这些目标需要可量化，有相关性，并且有一定的挑战性</li>
+  <li>关键成果（Key Results），为了达成和量化这些目标，为每个目标设置一些关键成果，例如为了完成早晨起床出门的目标，需要完成穿衣，刷牙，洗脸等关键成果。</li>
+</ol>
+
+<p>从我的了解来看，一个好的 OKR 必须具备的三个特征：周期，创新，关联性</p>
+
+<h2 id="section">周期</h2>
+
+<p>周期是指目标需要在有效的时间内达成，之所以把时间放在第一位考虑，因为任何人面对一个没有明确时间的计划是没有执行力可言的。</p>
+
+<p>一个长久的愿景，适合作为理想，而目标则要求我们只争朝夕。</p>
+
+<p>明确的结束时间可以很好的帮助你回顾和开启下一轮任务，形成一个良好的任务周期能让你的工作习惯更为健康。</p>
+
+<h2 id="section-1">创新</h2>
+
+<p>好的目标应该能激发你的动力，所以必须有一定的挑战性，而创新则能鼓励你走出自己的舒适区，去挑战陌生的领域，激发自己的潜能。</p>
+
+<h2 id="section-2">关联性</h2>
+
+<p>目标要有关联性，团队中各人的目标都是可见的，在制定目标时，不妨与其他人交流一下，看看自己的目标是否与团队的战略方向一致，是否目标与他人有重合的地方。如果自己的目标与任何人都无法重合，则很有可能是自己跑偏了方向。</p>
+
+<p>一般而言，上级的 Key Results 很可能会与下属的 Objectives 一致，由此在公司中可以形成一个瀑布式的目标关系链，源头就是公司的总体战略。</p>
+
+<h1 id="okr-upon-smart">OKR upon SMART</h1>
+
+<p>SMART 是八十年代提出的一种任务制定方式，OKR 也是源自于此。它要求制定任务时参考下面五个指标：</p>
+
+<ol>
+  <li>明确性（Specific）</li>
+  <li>可量化（Measurable）</li>
+  <li>可实现性（Attainable）</li>
+  <li>相关性（Relevant）</li>
+  <li>有时间限制（Time-bound）</li>
+</ol>
+
+<p>可以看到 OKR 对于目标的大部分要求都与上述条件契合，但是弱化了”可实现性”，提升了”挑战性”的比重，以激发成员对任务目标的追求。因为 OKR 强调与绩效考核分离，成员在制定更有挑战性的目标时也会少一些顾忌。</p>
+
+<blockquote>
+  <p>然而我却觉得绩效仍然是不可缺少的一环，如果 OKR 不能作为绩效的评估依据，则需要寻找其他的方式来评估绩效，例如 Peer Review 或 Focal Review。但是这又增加了成员的负担和时间成本。而且，无关绩效的目标，实现的动力也将大打折扣了。</p>
+</blockquote>
+
+<h1 id="okr-vs-kpi">OKR vs KPI</h1>
+
+<p>OKR 和 KPI 最大的区别就在于 OKR 分离了绩效考核的部分，而 KPI 则使用更突出的量化标准将目标与绩效严格挂钩。这也是 KPI 最为人诟病的一个地方，会导致成员只关注绩效而忽略了本该有的创造性工作，甚至出现绩效造假的情况。</p>
+
+<p>不管 OKR 还是 KPI，让每个成员各尽所长才是制度的目的，而且，找到合适的人，比任何制度更有效。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[IM 同步之路]]></title>
@@ -1471,105 +1531,6 @@
 <ul>
   <li><a href="http://userinexperience.com/?p=753">CoffeeScript Object Comprehensions </a></li>
 </ul>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[一个例子验证 do 在 coffeescript 中干了什么]]></title>
-    <link href="http://jingxin.me/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me/"/>
-    <updated>2013-08-07T17:20:00+08:00</updated>
-    <id>http://jingxin.me/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me</id>
-    <content type="html"><![CDATA[<p>使用jslint的时候有可能会见到这样的提示</p>
-
-<blockquote>
-  <p>Don’t make functions within a loop</p>
-</blockquote>
-
-<p>一直没有太在意这个警告，直到最近做项目的时候还真的碰到了因为这个问题产生的bug。</p>
-
-<p>那么下面就用一个例子来看看在循环中定义方法会产生什么样的后果吧。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">array = </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-</span><span class="line"><span class="k">for</span> <span class="nx">num</span> <span class="k">in</span> <span class="nx">array</span>
-</span><span class="line">  <span class="nx">setTimeout</span> <span class="p">(</span><span class="o">-&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">num</span><span class="p">),</span> <span class="mi">1</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>得到的结果是’3,3,3’，而不是预期的’1,2,3’，先不说为什么，我们来看看coffeescript给出的解决方案。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">array = </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-</span><span class="line"><span class="k">for</span> <span class="nx">num</span> <span class="k">in</span> <span class="nx">array</span>
-</span><span class="line">    <span class="nx">do</span> <span class="nf">(num) -&gt;</span>
-</span><span class="line">        <span class="nx">setTimeout</span> <span class="p">(</span><span class="o">-&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">num</span><span class="p">),</span> <span class="mi">1</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>在这里不得不佩服<a href="https://github.com/jashkenas">Jeremy Ashkenas</a>的无限创造力，短短一个<code>do</code>，就解决了这么让人纠结的问题。下面来看看编译成javascript之后的结果</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">  <span class="kd">var</span> <span class="nx">array</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="nx">_fn</span><span class="p">,</span> <span class="nx">_i</span><span class="p">,</span> <span class="nx">_len</span><span class="p">;</span>
-</span><span class="line">
-</span><span class="line">  <span class="nx">array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
-</span><span class="line">
-</span><span class="line">  <span class="nx">_fn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">    <span class="k">return</span> <span class="nx">setTimeout</span><span class="p">((</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">      <span class="k">return</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">num</span><span class="p">);</span>
-</span><span class="line">    <span class="p">}),</span> <span class="mi">1</span><span class="p">);</span>
-</span><span class="line">  <span class="p">};</span>
-</span><span class="line">  <span class="k">for</span> <span class="p">(</span><span class="nx">_i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">_len</span> <span class="o">=</span> <span class="nx">array</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">_i</span> <span class="o">&lt;</span> <span class="nx">_len</span><span class="p">;</span> <span class="nx">_i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">    <span class="nx">num</span> <span class="o">=</span> <span class="nx">array</span><span class="p">[</span><span class="nx">_i</span><span class="p">];</span>
-</span><span class="line">    <span class="nx">_fn</span><span class="p">(</span><span class="nx">num</span><span class="p">);</span>
-</span><span class="line">  <span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="p">}).</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>下面我们来解释一下为什么上面的代码会有问题，以及这个<code>do</code>为我们做了些啥。</p>
-
-<p>关于javascript的作用域，我们可以看一下<a href="http://rzrsharp.net/2011/06/27/what-does-coffeescripts-do-do.html">这篇文章的引用</a></p>
-
-<blockquote>
-  <p>JavaScript’s scopes are function-level, not block-level, and creating a closure just means that the enclosing scope gets added to the lexical environment of the enclosed function.</p>
-</blockquote>
-
-<p>大意是说</p>
-
-<blockquote>
-  <p>JavaScript的作用域是方法级别，而非块级的。创造一个闭包可以将作用域限定在这个封闭的方法中</p>
-</blockquote>
-
-<p>这里的<code>for..in</code>循环在其他语言中就是一个块级的作用域，但是Javascript并不买它的帐，于是最后在方法中调用的num就变成了整个作用域中最后的状态(3)。解决的办法就是在循环中创建闭包，让num当成参数传入闭包，那么它在方法作用域中就不会受外部的变化而改变(实际上完全可以当成一个新的变量，不信你传个object进去，在闭包中的任何修改，都不会对外部作用域的object产生影响的)。</p>
-
-<p>coffeescript用<code>do</code>关键字为我们将这种操作最简化，所以，尝试一下吧。</p>
-
-<h2 id="section">参考文档</h2>
-
-<ul>
-  <li><a href="http://stackoverflow.com/questions/10810815/variable-scope-in-coffeescript-for-loop">Variable scope in coffeescript for loop?</a></li>
-  <li><a href="http://rzrsharp.net/2011/06/27/what-does-coffeescripts-do-do.html">What Does Coffeescript’s “Do” Do?</a></li>
-</ul>
-
 ]]></content>
   </entry>
   
