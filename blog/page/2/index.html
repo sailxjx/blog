@@ -7,7 +7,7 @@
 	<meta name="author" content="Xu Jingxin">
 
 	
-	<meta name="description" content="github 中很多项目都有一个 readme 文件，很多人喜欢在文件中添加自己的创作或封面图片，比如 substack 为他的每个项目绘制了一个 logo。这些图片在 github 中能直接在页面中显示出来，不过 url 被替换成了 github 自己的。比如在 browserify 项目中， &hellip;">
+	<meta name="description" content="mongo shell 给我们提供了很便捷的 mongodb 操作接口，很多人应该用过 mongo 命令执行 javascript 文件，或者通过 mongo --eval 执行脚本。两种方式各有千秋，使用 js 文件可编辑较复杂的代码逻辑，而且可以作为脚本储存以备重复使用。使用 mongo &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -74,6 +74,69 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2014/11/23/yong-heredoc-xie-mongo-shell/">用 Heredoc 写 Mongo Shell</a></h1>
+	<div class="entry-content">
+		<p>mongo shell 给我们提供了很便捷的 mongodb 操作接口，很多人应该用过 <code>mongo</code> 命令执行 javascript 文件，或者通过 <code>mongo --eval</code> 执行脚本。两种方式各有千秋，使用 js 文件可编辑较复杂的代码逻辑，而且可以作为脚本储存以备重复使用。使用 <code>mongo --eval</code> 比较灵活，随取随用，但是当代码中有换行时，就蛋疼了。mongo <a href="http://docs.mongodb.org/v2.6/administration/scripting/">官方的文档</a> 并没有提到 eval 在处理多行代码时的解决方案，好在最近发现用 heredoc 可以完美的解决这个问题。</p>
+
+<h1 id="heredoc">heredoc</h1>
+
+<p>heredoc 在 <a href="http://en.wikipedia.org/wiki/Here_document">wiki</a> 上解释为一段可被当做独立文件的代码片段，一般表现为下面这种形式：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">tr a-z A-Z <span class="s">&lt;&lt;END_TEXT</span>
+</span><span class="line"><span class="s">one two three</span>
+</span><span class="line"><span class="s">uno dos tres</span>
+</span><span class="line"><span class="s">END_TEXT</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这里的 <code>&lt;&lt;END_TEXT</code> 到 <code>END_TEXT</code> 就是 heredoc 了，虽然语法简单，用处可就大了。在这里正好解决了在 <code>mongo --eval</code> 中遇到的问题，由于这段字符串可被当成文件来使用，所以直接跟在 <code>mongo</code> 命令后面就行</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">mongo localhost/test <span class="s">&lt;&lt;MONGO</span>
+</span><span class="line"><span class="s">db.users.save({name: &quot;mongo&quot;})</span>
+</span><span class="line"><span class="s">MONGO</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>在编写 <a href="https://github.com/sailxjx/mms">mms</a> 这个迁移模块的时候，如果没有 heredoc，则不免需要生成一些 js 临时文件来给 mongo 执行，现在，<a href="https://github.com/sailxjx/mms/blob/master/src/mongo.coffee">直接拼接成字符串就行</a>。</p>
+
+<p>最后，使用中不要忘了将一些字符转义掉，比如 ‘$’，以免被当成 shell 变量引用了。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-11-23T12:24:00+08:00" pubdate data-updated="true">2014.11.23</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/heredoc/'>heredoc</a>, <a class='category' href='/blog/blog/categories/mongo/'>mongo</a>, <a class='category' href='/blog/blog/categories/shell/'>shell</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1165,85 +1228,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/caprice/'>caprice</a>, <a class='category' href='/blog/blog/categories/software/'>software</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi/">介绍 Coffeescript 中的列表推导式</a></h1>
-	<div class="entry-content">
-		<p><a href="http://en.wikipedia.org/wiki/List_comprehension">列表推导式</a>是一个很著名的语法结构，它的特点是能让代码更简短，优雅，而且易于阅读。捎带些函数式编程特点的语言都支持这种语法结构，例如lisp家族和python。coffeescript作为一门年轻的语言，自然而然的继承了这个特点。</p>
-
-<p>我们先看看这种语法和普通循环的区别：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">arr = </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line"><span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">v</span> <span class="k">of</span> <span class="nx">arr</span>  <span class="c1"># use for..of loop</span>
-</span><span class="line">    <span class="nx">arr1</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span> <span class="o">*</span> <span class="mi">2</span>
-</span><span class="line">
-</span><span class="line"><span class="nv">arr2 = </span><span class="p">(</span><span class="nx">v</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">v</span> <span class="k">of</span> <span class="nx">arr</span><span class="p">)</span>  <span class="c1"># use list comprehension</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>可以看到本来需要两行的代码变成了一行，这对于略有装逼犯情结的码农来说，心理上的满足感自然是无与伦比的。优点也是显而易见的，就是可读。在有些语言中，这种语法还会产生一个新的作用域，不会污染外界的变量，比方说ruby。</p>
-
-<p>我们再来看看一些进阶用法，下面是带上<code>if</code>条件的列表推导式：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">arr = </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-</span><span class="line"><span class="nv">arr1 = </span><span class="p">(</span><span class="nx">v</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">v</span> <span class="k">of</span> <span class="nx">arr</span><span class="p">)</span> <span class="k">if</span> <span class="nx">arr</span><span class="o">?</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>一般的列表推导式返回的结果是一个一维数组，这在我们需要对某个<code>object</code>中的值做转换时会产生不便（<code>key</code>会丢失），这个时候我们可以采用一种变通的方法：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">obj = </span><span class="p">{</span><span class="nv">a: </span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="nv">b: </span><span class="s">&#39;b&#39;</span><span class="p">}</span>
-</span><span class="line"><span class="nx">obj1</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span> <span class="o">+</span> <span class="nx">v</span> <span class="k">for</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="k">of</span> <span class="nx">obj1</span> <span class="k">if</span> <span class="nx">obj1</span><span class="o">?</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>没加两边的括号和加了括号是有区别的，像上面这种结构，可以理解为将<code>for..of</code>结构中的第二行搬到了等号左边，其中的临时变量<code>k, v</code>当然也是可以直接使用的，而且后面<code>if</code>条件是对整个循环生效的，而不是单独加在每个循环中的，比较好理解吧。</p>
-
-<p>熟练掌握了列表推导式之后，编写代码的时候会更加得心应手，对于代码重构，想必也是极好的。</p>
-
-<h2 id="section">相关文档</h2>
-
-<ul>
-  <li><a href="http://userinexperience.com/?p=753">CoffeeScript Object Comprehensions </a></li>
-</ul>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-08-17T16:58:00+08:00" pubdate data-updated="true">2013.08.17</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/code-style/'>code style</a>, <a class='category' href='/blog/blog/categories/coffee/'>coffee</a>
 
 
 </div>

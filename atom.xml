@@ -4,7 +4,7 @@
   <title><![CDATA[CodeBean]]></title>
   <link href="http://jingxin.me/blog/atom.xml" rel="self"/>
   <link href="http://jingxin.me/blog/"/>
-  <updated>2016-04-11T18:56:00+08:00</updated>
+  <updated>2016-06-18T17:56:44+08:00</updated>
   <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[Xu Jingxin]]></name>
@@ -12,6 +12,25 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[竞技的乐趣]]></title>
+    <link href="http://jingxin.me/blog/blog/2016/06/16/jing-ji-de-le-qu/"/>
+    <updated>2016-06-16T13:51:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2016/06/16/jing-ji-de-le-qu</id>
+    <content type="html"><![CDATA[<p>这本是在 <a href="http://jingxin.me/blog/blog/2012/07/29/jing-ji-de-le-qu/">2012 年的时候准备写的一篇文章</a>，当时写了个标题就没下文了，现在想来，应该是忙着「竞技」去了，哪有这功夫来写文章嘛。</p>
+
+<p>时过三年，最近开始常玩星际2，于是又想起这个主题，终于可以补全这篇文章。</p>
+
+<p><a href="https://www.zhihu.com/question/39789792">打星际你快乐吗</a>，这是知乎上面的一个提问，回答的都是星际爱好者，答案自然是一边倒。如果是半年前，我的答案是模棱两可，因为水平实在是菜，被虐是常有的事情，自然也就很难体会到游戏的快乐。好在一段之后之后，总算入了门，也能和同一分组的人打的有来有回，并且开始思考战术，运营，操作，这个时候仿佛才真正感受到这个游戏的魅力，这种快乐不来自于游戏本身，来自和你对战的人，而最终则是来自自己的满足。</p>
+
+<p>RTS 中你的对手是电脑和人，是两种截然不同的体验，电脑循规蹈矩，打的多了，你就会对什么时候会发生什么事情一清二楚，好比是参与考试，努力总能获得回报。而一旦对手换成了真人，变数就增加了很多，总能在一些比赛中出现意想不到的战术，也就是俗称的大招，将每场游戏的体验都变得不同，就好比是工作中遇到难解的问题，很多无法从书中找到答案，以往的知识解决不了，就要强迫你去思考和尝试。</p>
+
+<p>星际2不是一个适合放松休闲的游戏，一场十分钟的游戏就包含了早中晚三个阶段，必须时时刻刻洞察局势调整战略。当战局陷入僵局时，又需要足够的耐心来等待胜利的时机，有无数次我的对手因为耐不住性子强冲而全军覆没，反之亦是如此。我本是一个不服输的人，然而在游戏过程中，却是胜负各半才能让人真正感受到竞技的挑战和乐趣。现在的游戏阶段中，我学到了耐心，尝到了胜利的喜悦，希望以后还能从游戏中得到更多。</p>
+
+<p>最后推荐一个歌单，在上班时听着<a href="http://music.163.com/#/playlist?id=125968298">这张专辑</a>写代码，感觉真是爽到飞起呀。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[OKR 解读]]></title>
@@ -1478,59 +1497,6 @@
 
 <h2 id="section-1">不是结束的结语</h2>
 <p>软件的设计日新月异，将来肯定会接触到更多优秀的软件，也许哪天我想法变了，也许哪天遇到了更神奇的方案，可能我会补充在这里。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[介绍 coffeescript 中的列表推导式]]></title>
-    <link href="http://jingxin.me/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi/"/>
-    <updated>2013-08-17T16:58:00+08:00</updated>
-    <id>http://jingxin.me/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi</id>
-    <content type="html"><![CDATA[<p><a href="http://en.wikipedia.org/wiki/List_comprehension">列表推导式</a>是一个很著名的语法结构，它的特点是能让代码更简短，优雅，而且易于阅读。捎带些函数式编程特点的语言都支持这种语法结构，例如lisp家族和python。coffeescript作为一门年轻的语言，自然而然的继承了这个特点。</p>
-
-<p>我们先看看这种语法和普通循环的区别：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">arr = </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-</span><span class="line">
-</span><span class="line"><span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">v</span> <span class="k">of</span> <span class="nx">arr</span>  <span class="c1"># use for..of loop</span>
-</span><span class="line">    <span class="nx">arr1</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span> <span class="o">*</span> <span class="mi">2</span>
-</span><span class="line">
-</span><span class="line"><span class="nv">arr2 = </span><span class="p">(</span><span class="nx">v</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">v</span> <span class="k">of</span> <span class="nx">arr</span><span class="p">)</span>  <span class="c1"># use list comprehension</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>可以看到本来需要两行的代码变成了一行，这对于略有装逼犯情结的码农来说，心理上的满足感自然是无与伦比的。优点也是显而易见的，就是可读。在有些语言中，这种语法还会产生一个新的作用域，不会污染外界的变量，比方说ruby。</p>
-
-<p>我们再来看看一些进阶用法，下面是带上<code>if</code>条件的列表推导式：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">arr = </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-</span><span class="line"><span class="nv">arr1 = </span><span class="p">(</span><span class="nx">v</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">v</span> <span class="k">of</span> <span class="nx">arr</span><span class="p">)</span> <span class="k">if</span> <span class="nx">arr</span><span class="o">?</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>一般的列表推导式返回的结果是一个一维数组，这在我们需要对某个<code>object</code>中的值做转换时会产生不便（<code>key</code>会丢失），这个时候我们可以采用一种变通的方法：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">obj = </span><span class="p">{</span><span class="nv">a: </span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="nv">b: </span><span class="s">&#39;b&#39;</span><span class="p">}</span>
-</span><span class="line"><span class="nx">obj1</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span> <span class="o">+</span> <span class="nx">v</span> <span class="k">for</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="k">of</span> <span class="nx">obj1</span> <span class="k">if</span> <span class="nx">obj1</span><span class="o">?</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>没加两边的括号和加了括号是有区别的，像上面这种结构，可以理解为将<code>for..of</code>结构中的第二行搬到了等号左边，其中的临时变量<code>k, v</code>当然也是可以直接使用的，而且后面<code>if</code>条件是对整个循环生效的，而不是单独加在每个循环中的，比较好理解吧。</p>
-
-<p>熟练掌握了列表推导式之后，编写代码的时候会更加得心应手，对于代码重构，想必也是极好的。</p>
-
-<h2 id="section">相关文档</h2>
-
-<ul>
-  <li><a href="http://userinexperience.com/?p=753">CoffeeScript Object Comprehensions </a></li>
-</ul>
 ]]></content>
   </entry>
   

@@ -7,7 +7,7 @@
 	<meta name="author" content="Xu Jingxin">
 
 	
-	<meta name="description" content="最近用nginx配置中使用if遇到一些问题，碰巧想起以前在wiki中看到的这个页面，虽然我的问题可能和wiki中提到的不同，但是if还是能避免就避免吧 下面的内容翻译自IfIsEvil IfIsEvil (标题就不翻了，保持原汁原味的比较带感) 简介 &hellip;">
+	<meta name="description" content="javascript中随处可见的callback对于流程控制来说是一场灾难，缺点显而易见： 没有显式的return，容易产生多余流程，以及由此引发的bug。 造成代码无限嵌套，难以阅读。 下面就来说说怎么解决避免上述的问题。 第一个问题是一个习惯问题， &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -74,6 +74,152 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng/">Javascript 中使用 Callback 控制流程</a></h1>
+	<div class="entry-content">
+		<p>javascript中随处可见的callback对于流程控制来说是一场灾难，缺点显而易见：</p>
+
+<ul>
+  <li>没有显式的<code>return</code>，容易产生多余流程，以及由此引发的bug。</li>
+  <li>造成代码无限嵌套，难以阅读。</li>
+</ul>
+
+<p>下面就来说说怎么<del>解决</del>避免上述的问题。</p>
+
+<p>第一个问题是一个习惯问题，在使用callback的时候往往会让人忘了使用<code>return</code>，这种情况在使用coffee-script的时候尤甚（虽然它在编译成javascript时会自行收集最后的数据作为返回值，但是这个返回值并不一定代表你的初衷）。看看下面的例子。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">a = </span><span class="nf">(err, callback)-&gt;</span>
+</span><span class="line">  <span class="nx">callback</span><span class="p">()</span> <span class="k">if</span> <span class="nx">err</span><span class="o">?</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;you will see me&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">b = </span><span class="o">-&gt;</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;I am a callback&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">a</span><span class="p">(</span><span class="s">&#39;error&#39;</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>在这种所谓”error first”的代码风格中，显然我们不希望出错时方法<code>a</code>中的后续代码仍然被执行，但是又不希望用<code>throw</code>来让整个进程挂掉（要死也得优雅的死嘛~），那么上面的代码就会产生bug。</p>
+
+<p>一种解决方案就是老老实实的写<code>if...else...</code>，但是我更倾向于下面的做法：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">a = </span><span class="nf">(err, callback)-&gt;</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">callback</span><span class="p">()</span> <span class="k">if</span> <span class="nx">err</span><span class="o">?</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;you will not see me&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">b = </span><span class="o">-&gt;</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;I am a callback&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">a</span><span class="p">(</span><span class="s">&#39;error&#39;</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>javascript异步方法中的返回值大多没什么用处，所以这里用<code>return</code>充当一个流程控制的角色，比<code>if...else...</code>更少的代码，但是更加清晰。</p>
+
+<p>第二个问题是娘胎里带来的，很难根除。</p>
+
+<p>一种不错的方法是使用一些流程控制模块来将代码显得更加有条理，比如<a href="https://github.com/caolan/async">async</a>就是一个不错的模块，提供了一系列的接口，包括迭代，循环，和一些条件语句，甚至还包含了一个队列系统。下面的例子可以表名两种写法的优劣</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="c1">#normal</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">first = </span><span class="nf">(callback)-&gt;</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;I am the first function&#39;</span>
+</span><span class="line">  <span class="nx">callback</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">second = </span><span class="nf">(callback)-&gt;</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;I am the second function&#39;</span>
+</span><span class="line">  <span class="nx">callback</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">third = </span><span class="nf">()-&gt;</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;I am the third function&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">first</span> <span class="o">-&gt;</span>
+</span><span class="line">  <span class="nx">second</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="nx">third</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># use async</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">async = </span><span class="nx">require</span><span class="p">(</span><span class="s">&#39;async&#39;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">async</span><span class="p">.</span><span class="nx">waterfall</span> <span class="p">[</span>
+</span><span class="line">  <span class="nx">first</span><span class="p">,</span>
+</span><span class="line">  <span class="nx">second</span><span class="p">,</span>
+</span><span class="line">  <span class="nx">third</span>
+</span><span class="line"><span class="p">],</span> <span class="nf">(err)-&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>作为睿智的你，会选择哪一种呢。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-05T10:49:00+08:00" pubdate data-updated="true">2013.06.05</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/async/'>async</a>, <a class='category' href='/blog/blog/categories/javascript/'>javascript</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1322,126 +1468,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/awk/'>awk</a>, <a class='category' href='/blog/blog/categories/note/'>note</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/04/15/dan-teng-de-shua-ping-suan-fa-wen-ti/">蛋疼的刷屏算法问题</a></h1>
-	<div class="entry-content">
-		<p>最近在v2ex的看到一道有趣而蛋疼的<a href="http://www.v2ex.com/t/65703">求助帖</a>，搜了一下，原题刊登在神人matrix67的<a href="http://www.matrix67.com/blog/archives/4092">博客</a>上。先看看题目：</p>
-
-<p>你有一个特殊的键盘，只有四个键：</p>
-
-<ul>
-  <li><code>a</code>, 输入字符a</li>
-  <li><code>ctrl+a</code>, 全选</li>
-  <li><code>ctrl+c</code>, 复制</li>
-  <li><code>ctrl+v</code>, 粘贴</li>
-</ul>
-
-<p>还需要说明一下的是，上面的<code>ctrl+x</code>都只算一个按键，而且全选之后的第一次复制粘贴，是不会增加字符长度的，（也就是只覆盖了已有字符，这个在现实生活中应该有体会）。</p>
-
-<p>这是一个不着边际的题目，乍看非常简单，但是细想一下脑子就打结了。牛逼的matrix67大神，用两个公式，三下五除二就搞定了这个问题：</p>
-
-<ul>
-  <li>f(n) = f(n-1) + 1</li>
-  <li>f(n) = f(n/k) + k + 2</li>
-</ul>
-
-<p>然后在以上两种情况下取最小值，再用递推法，递推的层数就是所走的步数了。</p>
-
-<p>具体的计算情况在博客里有介绍，这里不再赘述，我感兴趣的是上面这两个公式，是否能涵盖所有情况，已经怎么推导出这两个公式，这才是真正神奇的地方，而且matrix67也没有给出详细的推导过程。</p>
-
-<h2 id="section">倒推法</h2>
-
-<p>要推导出递推公式，顺着题目的意思思考是不行的（事实上，我认为所有最大值n不确定的问题，都需要逆向思维，否则很容易就陷入无底深渊了）。我们可以看到问题结束的几种情况：</p>
-
-<ul>
-  <li>最后一个按键是<code>a</code>，则这种情况最简单，f(n) = f(n) + 1。</li>
-  <li>最后一个按键是<code>cv</code>，则这种情况下，最后第二个按键只能是<code>cc</code>或者<code>cv</code>，最后第三个按键只能是<code>ca</code>，<code>cc</code>或<code>cv</code>，整个按键流程可以归纳为<code>x-&gt;ca-&gt;cc-&gt;cv...cv-&gt;y</code>，其中<code>x</code>是在全选前的字符数，<code>y</code>表示总字符数，那么设按键<code>cv</code>的次数为<code>k</code>，全选复制阶段的按键次数就是<code>k+2</code>，而且值得一提的是，这个<code>k</code>必须大于或等于2，否则复制就是多余的。然后<code>y</code>是由<code>x</code>复制<code>k</code>次而来，所以就不难推导出公式f(n) = f(n/k) + k + 2，其中<code>k</code>为大于等于2的<code>n</code>的约数。</li>
-</ul>
-
-<p>由此，两个公式都被推导出来了，但这就结束了吗？是否所有的情况都涵盖到了？根据计算结果可以得出f(n)并非单调函数，也就是说f(n-2)有可能小于f(n-1)，那么会不会有f(n-2)到f(n)比f(n-1)到f(n)快的情况呢，这个还需要证明一下：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">f(n) = f(n-1) + 1 &lt;=&gt; f(n-2) + 2</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>f(n-2)到f(n-1)最快的路径应该就是<code>f(n-2) + 1</code>了吧，所以不可能是这种情况，那么还剩下一种情况：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">f(n) = f(n-2) + k + 2 &lt;=&gt; f(n-1) + 1  # n = (n-2) * k</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>那么这里又回到了之前预设的第二种情况，其本身就是需要参与递归的比较的，所以这种情况也是已涵盖了的。</p>
-
-<p>这样看了是我多虑了，下面要做的就是将这个递归程序写出来。</p>
-
-<h2 id="section-1">实现</h2>
-
-<p>从程序的角度看，其实算法中还有一些值得优化的地方：</p>
-
-<ul>
-  <li>1到100之间(这个范围甚至可以再扩大些)的素数的最小步数可以事先计算出来作为常数数组保存，这些数字是递归的终点，预处理可以让递归的最后一步变成O(1)，而不是O(n)</li>
-  <li>上面提到的，k是从2到n，但事实上范围可以更小。在<code>f(n) = f(n/k) + k +2</code>中，随着n的增加，步数的增加并不是线性的，步数的增速的是逐渐放缓的，但是<code>k</code>对于步数的增长变化却是线性的。对公式求导，<code>f(n/k)' &lt; 1</code>而<code>k' = 1</code>，所以我们有理由相信，<code>k</code>的范围只需要从2到√n（包含）就可以了。</li>
-</ul>
-
-<p>实际上，第二点对于代码的效率优化是显而易见的，差不多是省了50%的时间。而第一点对于效率的提升是相当惊人的，以n=200为例，有素数索引和没有素数索引的情况下执行时间如下：</p>
-
-<ul>
-  <li>4.05s user 0.06s system 99% cpu 4.129 total  # no index</li>
-  <li>0.05s user 0.01s system 92% cpu 0.067 total  # have index</li>
-</ul>
-
-<p>提升了整整60倍，而且随着n的提高，这个差距会更加明显，100以内的索引可以涵盖n等于0到10000的情况，当n大于10000时，提升这个素数索引即可，代码中提供了很方便的实现索引生成的方法。</p>
-
-<h2 id="section-2">代码</h2>
-
-<p>我做了一个ruby版本的demo，放在<a href="https://gist.github.com/sailxjx/5388648">gist</a>上。</p>
-
-<h2 id="section-3">扩展</h2>
-
-<p>这个命题其实还可以扩展，比方说还是这四个键，但是<code>ctrl+a</code>, <code>ctrl+c</code>, <code>ctrl+v</code>均算作两次按键，那么情况又复杂了，因为不光增加了按键的不确定性，而且复制时候增加了一种情况，在不松开<code>ctrl</code>的情况下，可以多次按<code>v</code>来实现复制。<del>这个扩展命题只有等将来有时间再思考了。</del></p>
-
-<p>这个命题仍然套用倒推法，只需要对第二个公式做一些修改即可：</p>
-
-<ul>
-  <li>f(n) = f(n-1) + 1</li>
-  <li>f(n) = f(n/k) + k + 5</li>
-</ul>
-
-<p>下面的事情就跟之前一模一样啦，这里也有一个<a href="https://gist.github.com/sailxjx/5393701">demo版本</a>，在不算两次按键的时候，最少在n=9时出现了复制，算作两次按键的时候，到n=15才出现复制。</p>
-
-<h2 id="section-4">来源及参考资料</h2>
-<ul>
-  <li><a href="http://www.matrix67.com/blog/archives/4092">matrix67的蛋疼问题</a></li>
-</ul>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-15T11:15:00+08:00" pubdate data-updated="true">2013.04.15</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/algorithm/'>algorithm</a>, <a class='category' href='/blog/blog/categories/code/'>code</a>
 
 
 </div>

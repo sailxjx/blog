@@ -2,312 +2,316 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://jingxin.me/blog/blog/2012/06/20/gitpage-and-octopress/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2012/06/28/thunderbird-and-davmail/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2012/07/12/ti-yan-gollum/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2012/07/19/redis-hashes-shi-jian/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2012/07/29/jing-ji-de-le-qu/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2012/08/13/mysql-duo-shi-li-qi-dong/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2012/08/30/zshzi-dong-bu-quan/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2012/12/11/vagrant-bi-ji/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2012/12/19/linux-deng-lu-yong-hu-guan-li/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2012/12/24/nginx-plus-php-fpm-pei-zhi-ji-lu/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/01/13/php-yan-zheng-ma/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/01/16/awk-xue-xi-bi-ji-1/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/01/21/awk-xue-xi-bi-ji-2/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/01/28/node-neo4j-xue-xi-bi-ji/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://jingxin.me/blog/blog/2013/01/30/get-post-put-delete-sha-sha-fen-bu-qing-chu/
         </loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/02/01/cypher-query-language-xue-xi-bi-ji-1/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/02/06/vagrant-da-bao-yu-fa-bu/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/02/06/cypher-query-language-xue-xi-bi-ji-2/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/02/18/virtualbox-hates-sendfile/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/03/04/php-de-namespace/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/03/05/react-dot-php-zhong-de-yi-bu-shi-xian/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/03/08/cheng-xu-yuan-yu-zang-hua/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://jingxin.me/blog/blog/2013/03/12/css-transition-and-transform-and-animation/
         </loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/03/21/tdwtf-kai-fa-zhang-hao/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/04/07/tdwtf-sheng-ji-windows7/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://jingxin.me/blog/blog/2013/04/08/dong-tai-gui-hua-qiu-jie-shu-zu-zui-da-chai-zhi/
         </loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/04/11/tdwtf-shu-ju-ku-da-shi/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/04/15/dan-teng-de-shua-ping-suan-fa-wen-ti/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/04/17/awk-xue-xi-bi-ji-3/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/04/18/tdwtf-su-ge-lan-zao-can/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://jingxin.me/blog/blog/2013/05/02/zhi-xing-javascript-fang-fa-de-ji-chong-fang-shi/
         </loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://jingxin.me/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian/
         </loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/05/10/xi-shu-php-zhong-de-na-xie-keng/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/05/15/nginx-if-is-evil/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://jingxin.me/blog/blog/2013/06/05/javascript-zhong-shi-yong-callback-kong-zhi-liu-cheng/
         </loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://jingxin.me/blog/blog/2013/06/05/mysql-zhong-de-date-datetime-he-timestamp/
         </loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/06/13/shi-yong-coffeescript-de-zhu-yi-dian/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/06/19/start-stop-daemon/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/06/20/tdwtf-wo-men-xiang-xin-sha-gua/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://jingxin.me/blog/blog/2013/07/05/php-bi-bao-bing-bu-xiang-kan-shang-qu-na-me-mei-hao/
         </loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/07/05/ji-kuan-ya-li-ce-shi-gong-ju/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://jingxin.me/blog/blog/2013/07/12/guan-yu-gong-si-jia-gou-de-yi-xie-tu-cao/
         </loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://jingxin.me/blog/blog/2013/08/07/yi-ge-li-zi-yan-zheng-do-zai-coffeescript-zhong-gan-li-shen-me/
         </loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://jingxin.me/blog/blog/2013/08/17/jie-shao-coffeescript-zhong-de-lie-biao-tui-dao-shi/
         </loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/12/08/jin-qian-yu-kai-yuan-part1/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2013/12/11/jin-qian-yu-kai-yuan-part2/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2014/02/28/ruan-jian-yu-pei-zhi/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2014/04/19/hui-diao-vs-xie-tong-cheng-xu/</loc>
-        <lastmod>2016-04-06T11:51:02+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2014/08/09/gei-github-page-she-zhi-yu-ming/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://jingxin.me/blog/blog/2014/08/28/limbo-jian-dan-fang-wen-yuan-cheng-shu-ju-ku/
         </loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2014/09/13/yi-ci-shen-qi-de-nodejs-debug-jing-li/</loc>
-        <lastmod>2014-09-21T15:08:12+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://jingxin.me/blog/blog/2014/10/10/li-yong-nginx-shi-xian-jing-tai-zi-yuan-de-fan-xiang-dai-li/
         </loc>
-        <lastmod>2014-10-10T18:22:29+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2014/11/23/yong-heredoc-xie-mongo-shell/</loc>
-        <lastmod>2014-11-23T13:05:22+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2014/11/27/sort-de-cuo-wu-yong-fa/</loc>
-        <lastmod>2014-12-20T17:21:00+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2014/12/21/multipart-dao-di-shi-ge-sha-wan-yi-er/</loc>
-        <lastmod>2014-12-21T13:39:32+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2015/04/30/what-is-ncr/</loc>
-        <lastmod>2015-05-02T13:06:53+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2015/06/18/node-dot-js-sha-he/</loc>
-        <lastmod>2015-06-19T10:25:19+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2015/07/26/guan-yu-chi-fan/</loc>
-        <lastmod>2015-07-26T18:35:42+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2015/09/30/ceo-de-pi-xi-guan/</loc>
-        <lastmod>2015-09-30T10:37:05+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2015/12/07/ru-he-xie-chu-hao-pa-chong/</loc>
-        <lastmod>2015-12-07T20:22:39+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2015/12/16/im-tong-bu-zhi-lu/</loc>
-        <lastmod>2016-03-24T12:11:41+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/2016/04/11/okr-jie-du/</loc>
-        <lastmod>2016-04-11T18:54:34+08:00</lastmod>
+        <lastmod>2016-04-12T14:04:39+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://jingxin.me/blog/blog/2016/06/16/jing-ji-de-le-qu/</loc>
+        <lastmod>2016-06-18T17:55:36+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/blog/archives/</loc>
-        <lastmod>2016-04-11T18:54:34+08:00</lastmod>
+        <lastmod>2016-06-18T17:55:36+08:00</lastmod>
     </url>
     <url>
         <loc>http://jingxin.me/blog/</loc>
-        <lastmod>2016-04-11T18:54:34+08:00</lastmod>
+        <lastmod>2016-06-18T17:55:36+08:00</lastmod>
     </url>
 </urlset>
