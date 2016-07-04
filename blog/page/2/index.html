@@ -7,7 +7,7 @@
 	<meta name="author" content="Xu Jingxin">
 
 	
-	<meta name="description" content="mongo shell 给我们提供了很便捷的 mongodb 操作接口，很多人应该用过 mongo 命令执行 javascript 文件，或者通过 mongo --eval 执行脚本。两种方式各有千秋，使用 js 文件可编辑较复杂的代码逻辑，而且可以作为脚本储存以备重复使用。使用 mongo &hellip;">
+	<meta name="description" content="前不久同事的代码中出了一个很神奇的问题，大致流程是对一个由对象组成的数组进行排序，其中属性 a 用于排序，属性 b 作为一个优选条件，当 b 等于 1 的时候无论 a 值是什么，都排在开头 。这本是一个很简单的问题，问题就在于他用两次 sort 实现在这次排序，先根据 a 的属性排序，然后再根据 &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -74,6 +74,81 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2014/11/27/sort-de-cuo-wu-yong-fa/">Sort 的错误用法</a></h1>
+	<div class="entry-content">
+		<p>前不久同事的代码中出了一个很神奇的问题，大致流程是对一个由对象组成的数组进行排序，其中属性 a 用于排序，属性 b 作为一个优选条件，当 b 等于 1 的时候无论 a 值是什么，都排在开头 。这本是一个很简单的问题，问题就在于他用两次 sort 实现在这次排序，先根据 a 的属性排序，然后再根据 b 的值来排序。问题就出在第二次排序中。</p>
+
+<p>我们想当然的会认为在第一次排序中，数组已经根据 a 的属性由大到小排序，在第二次中我们只要不去动原数组的顺序就行（一般在方法中写成返回0或-1），只考虑单独把 b 等于 1 的元素提到前面去。但是其实这与语言所选用的排序算法有关，javascript （和一起其他语言）内置的 sort 方法采用的是几种排序算法的集合，有时并不能保证相同元素的位置保持一致。</p>
+
+<p>下面是从 <a href="http://stackoverflow.com/questions/27071942/array-sort-is-producing-unexpected-results-when-elements-are-equal">stackoverflow</a> 上面找来的一个例子</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">arrayToSort</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class="line">  <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span>
+</span><span class="line">  <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span>
+</span><span class="line">  <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;j&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;l&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span>
+</span><span class="line">  <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span>
+</span><span class="line">  <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;q&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="nx">strength</span><span class="o">:</span> <span class="mi">1</span><span class="p">}</span>
+</span><span class="line"><span class="p">];</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">arrayToSort</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">b</span><span class="p">.</span><span class="nx">strength</span> <span class="o">-</span> <span class="nx">a</span><span class="p">.</span><span class="nx">strength</span><span class="p">;</span>
+</span><span class="line"><span class="p">});</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">arrayToSort</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">element</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+</span><span class="line"><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>我们会以为最后元素的值还是从 a 到 t，但实际运行下来的结果却是乱序的，这是因为 sort 的算法并没有保留原数组的顺序，也即 <a href="http://www.ecma-international.org/ecma-262/5.1/#sec-15.4.4.11">unstable</a>。</p>
+
+<p>那么我们就该尽量避免这种情况发生，就我同事的例子，将两次 sort 的逻辑合并在一次中应该是个可行的办法，如果必须分为多次 sort，那么就把原数组的顺序记录在元素的属性上把。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-11-27T14:07:00+08:00" pubdate data-updated="true">2014.11.27</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/blog/categories/sort/'>sort</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1164,70 +1239,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/opensource/'>opensource</a>, <a class='category' href='/blog/blog/categories/translation/'>translation</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/09/17/ruan-jian-ji-jian-zhu-yi/">软件极简主义</a></h1>
-	<div class="entry-content">
-		<p>今天回家的路上，竟然刮起了大风，虽然骑行艰难，但是想想公交中的闷热，倒是觉得凉爽多了。</p>
-
-<p>在路上的时间是无聊的，于是就喜欢胡思乱想，很多自以为很棒的点子其实都是在这种不经意间想到的，办公室里的久坐反而显得效率低下了。回味一下最近做的几个项目，高屋建瓴的想想当初的设计，突然很想写一些关于软件设计的文章。就着饮料和巧克力（来点酒么？），今天就来写写软件极简主义吧。</p>
-
-<p>Google了一圈，也没找到对“软件极简主义”的定义，姑且当做是我的独创吧。一般认为“极简主义”是设计界的一种风潮，但是软件发展至今，好像也渐渐有了这样的趋势，甚至我认为这是未来的必然，我们经常听人说“flexible”这个词，字面上来看就是“灵活的”，但是具体到这个软件是否灵活，就不太好判断了。但是，简单的软件，一定是灵活的。</p>
-
-<h2 id="section">极简主义的的大敌</h2>
-
-<p>软件极简主义的三个大敌：配置文件，冗余的参数，和大量复杂的接口。</p>
-
-<p>很多人热爱配置，迷恋配置，认为越多的配置项意味着软件越强大，适用范围越广，但这是九十年代的事了。实际我们仔细翻翻常用的软件，90%的配置都是多余，没有人明白他是做什么的，也没有人希望去改变他。比方很多软件的configure文件，常常能列出上百个配置项，但是我们真的需要这么多吗？不，我们需要默认的那些值就行了。何谓默认？因为软件的设计者觉得这些是最优化也最有可能被选择的配置，那么既然是最优配置，我们又有什么理由去改变他们？</p>
-
-<p>再说说冗余的参数，linux中有一个非常强大的命令’tar’，从man文件看来他起码有二十来个参数，但是我真的需要这么多参数吗？其实我只要记住压缩是<code>-c</code>，解压是<code>-x</code>就可以了，那么何必为了1%的功能而去加上这99%的参数呢。</p>
-
-<p>最后是复杂的接口，举个栗子，全文搜索引擎solr非常强大，能满足我们对于文档索引的各种需求。但是他使用起来可不简单，原因我想就是因为他那种sql式的查询接口，把一件很单纯的事情搞复杂了。我们来设想一下，需要找出包含某几个关键词的文章，必要的条件是什么？关键词，文档，没了。而文档是存储在服务器的，为什么我们提供了关键词之后，仍需加上各种条件，他才能告诉我们想要的答案呢？我想软件发展到一定的智能，他就应该像一部能说话的百科全书，提问，然后告诉我们答案即可。</p>
-
-<p>凡事都要对比着看，所以我们找点软件来对比一下。</p>
-
-<h2 id="redis--sql">redis 与 sql</h2>
-
-<p>redis很灵巧，所有源代码加起来不满5M，但是他很强大，hash结构能取代我们80%对于sql的需求。他也有配置文件，但是选项很少，而且每一项都有详尽的注释，并且使用默认配置就可以应对大部分的情况。唯一值得诟病的就是他的接口种类繁多，但好在这些接口很有规律可循，你只需了解了redis的基础数据结构，那么跟着官网的文档就很容易搞懂所有接口的用途，而且大部分的接口都只接受3个以内的参数，这可好记多了。我刚接触redis的时候，只花了半个小时就能玩得起来，我想面对sql恐怕没人能这么轻松的掌握吧。</p>
-
-<h2 id="cake--grunt">cake 与 grunt</h2>
-<p><a href="https://github.com/jashkenas/coffee-script/blob/master/src/cake.coffee">cake</a>和<a href="https://github.com/gruntjs/grunt">grunt</a>是nodejs中两个管理任务的模块，后者的名声更大一些，前者甚至不能说是一个模块，他只是coffeescript中附带的一个小工具。我曾尝试使用grunt来做任务管理，但是当我看到grunt官网那长长的一段initConfig时，就望而却步了。就像是我希望在墙里敲个钉子，你却给了我一台破城锤。我只不过想要给每个任务起个名字方便我以后调用和查阅而已，所以cake的一行命令足矣。</p>
-
-<h2 id="zmq--rabbitmq">zmq 与 rabbitmq</h2>
-<p>zmq是我见过的最具有极简主义风格的软件（组件）。一方面他要面对的任务非常繁杂，在异步通信中所有我们可能遇到的情况，他都为我们考虑到了，但是他又将底层的复杂问题掩盖起来，让我们看到一个光滑的表面，深藏功与名。同样来看看他的同行rabbitmq，关键词：中心服务，多线程，模式单一，最后一个特点，慢！而仅有1.7M的zmq，快是最直观的感觉，而分布式和扩展性则是锦上添花。有人说zmq就像乐高积木，每个人都能搭出他想要的形状，这话一点都不错。</p>
-
-<h2 id="section-1">不是结束的结语</h2>
-<p>软件的设计日新月异，将来肯定会接触到更多优秀的软件，也许哪天我想法变了，也许哪天遇到了更神奇的方案，可能我会补充在这里。</p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-09-17T21:03:00+08:00" pubdate data-updated="true">2013.09.17</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/caprice/'>caprice</a>, <a class='category' href='/blog/blog/categories/software/'>software</a>
 
 
 </div>
