@@ -40,6 +40,6 @@ categories:
 
 在软件这个行业，每天都能看到很多很棒的点子，希望这些点子能尽早变成现实，而不是像我这样的拖延症患者，挖了[一堆][2]的[坑][3]，离完成却遥遥无期。
 
-[1]:	2016-08-08-gong-ju-ruan-jian-de-kun-jing "工具软件的困境"
+[1]:	/blog/2016/08/08/gong-ju-ruan-jian-de-kun-jing/ "工具软件的困境"
 [2]:	https://github.com/sailxjx/Cycle "Cycle"
 [3]:	https://github.com/sailxjx/storyship "Storyship"
