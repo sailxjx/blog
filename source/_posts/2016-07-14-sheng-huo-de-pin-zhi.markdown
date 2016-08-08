@@ -4,7 +4,7 @@ title: "生活的品质"
 date: 2016-07-14 11:13
 comments: true
 categories: 
-  - twitter
+  - tweet
   - life
 ---
 
