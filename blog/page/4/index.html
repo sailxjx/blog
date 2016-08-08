@@ -7,7 +7,7 @@
 	<meta name="author" content="Xu Jingxin">
 
 	
-	<meta name="description" content="coffeescript是javascript的一个方言，随着javascript在前后端的流行，它在github的排名也扶摇直上，最近终于挤掉高帅富Objective-C跻身前十，可喜可贺。 虽然coffeescript号称”It’s just javascript”，但是相比较而言， &hellip;">
+	<meta name="description" content="一天早上，Stan去找他的上级Monty，他正在疯狂地的敲着键盘。这意味着两件事：明天他会收到一封讨厌的设计文档，而且那个设计中会用到一个从没用过的数据库。Monty是一个数据库“砖家”，没什么问题是他不能搞定的。Stan在这家公司的第一年，照做了Monty描述的每个设想， &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -74,6 +74,209 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/06/20/tdwtf-wo-men-xiang-xin-sha-gua/">[TDWTF] 我们相信傻瓜</a></h1>
+	<div class="entry-content">
+		<p>一天早上，Stan去找他的上级Monty，他正在疯狂地的敲着键盘。这意味着两件事：明天他会收到一封讨厌的设计文档，而且那个设计中会用到一个从没用过的数据库。Monty是一个数据库“砖家”，没什么问题是他不能搞定的。Stan在这家公司的第一年，照做了Monty描述的每个设想，因为他不知道有哪些更好的办法。现在他对公司系统有了更多的了解，他渴望有个机会来做一些正确的事。</p>
+
+<p>Stan在邮箱里找到了一份客户发给Monty的需求副本，要求两个ASP.NET应用之间能互相通信。Stan喜上心头，这是一个简单的web服务，既然他们用.NET，那么只要用<a href="http://en.wikipedia.org/wiki/Windows_Communication_Foundation">WCF</a>就行了。</p>
+
+<p>Monty的介入绝对不可能玷污这个方案，他连.NET的基础都不懂。自从入职的第一天起，Stan就想着能对系统的设计有些话语权，这样才像一个“真正的开发”。最后，这个机会来了！</p>
+
+<p>第二天，Monty的设计发到了Stan的邮箱。Stan心不在焉的打开它，就像一个验尸官掀开一张裹尸布。他翻开这份足足45页的“可扩展性数据库驱动进程内通讯框架”。这有点难理解，而且看起来有点像是重复造轮子。里面几乎没有提及客户的应用，因为它看起来想要将任意应用连接在一起。</p>
+
+<p>这个设计需要用到11张数据表来传递元数据（发送，接收，时间戳，用户id，等等）和应用数据（统统被转成字符串并且储存在类似列1，列2等等的字段中）。当一个应用想要给另一个发送消息，它需要发送所有的会话/消息数据给一个存储过程。这个存储过程接收75个参数，大部分是可选的。另一个类似的存储过程允许发送者附加特殊的应用数据。而对于一个接收者，它需要调用<code>SP_CHECK_FOR_MESSAGES_POLLING_PROCEDURE</code>存储过程并传入它的<code>PK_INT_APPLICATION_IDENTIFIER</code>标识。当它消费完这条消息，还要调用<code>SP_MESSAGE_TRANSACTION_COMPLETE_PROCEDURE</code>存储过程来从“收件箱”中清除消息。Monty的系统会将这个事务中的所有数据移到一个结构相同的log表中，但是没有任何完整性可言。</p>
+
+<p>在Stan砸碎屏幕之前，他听到Monty得意洋洋的说：“我对这事很兴奋，我希望这个能用在任何事上！”</p>
+
+<p>“任何事？”Stan抑制住汹涌而来的恶心感。是时候让他坚持自己的原则，来表明他不再是那个毫无主见的职场新人了。“这个实现。。。很有趣，但是没必要用数据库来实现它”。</p>
+
+<p>Monty一笑置之。</p>
+
+<p>“.NET有个叫WCF的框架可以来帮助我们实现这个功能，”Stan继续说，“我们只需要写很少-”</p>
+
+<p>“不行，”Monty不容置疑的说，虽然Stan知道假如他问Monty什么是“WCF”，Monty肯定会顾左右而言他。“我们在调试系统时会碰到一堆的问题。我们需要知道应用和应用之间是怎么通信的，谁，在什么时候，发送了消息。而且我们会将它储存在一个安全的地方。”</p>
+
+<p>“但是，有一大堆的工具可以用来调试WC-”</p>
+
+<p>“请实现我设计的系统。”Monty不留余地的走开了，以防Stan再有什么说辞。</p>
+
+<p>Stan在与内心抗争中，花了几个礼拜的时间来实现这个冒牌的规范。错误不断的冒出来，而且没有什么好办法来解决强数据类型和同步性的问题。加入这种预防措施会让这庞然大物跑的更慢，虽然它已经够慢的了，而且仍然没法保证它按照预期工作。同时，Monty与客户的沟通不畅导致需求不断的变化。他的设计一天天的变化，最后成了一个64页的设计文档，需要14个数据表。</p>
+
+<p>Stan受够了。他最后只能求助Monty的老板David。David实行开门迎客政策。Stan向David描述了现状。</p>
+
+<p>“这不仅仅走了弯路，而且也不是客户想要的。用WCF的话我本来可以在几个礼拜前就完工，但是Monty不想这么干。”Stan总结到，“我觉得现在改正还为时不晚，但是Monty不赞成这样做。您能向他解释一下吗？”</p>
+
+<p>David叹息道：“我知道了”。</p>
+
+<p>终于！Stan兴奋地想他的建议成功了。</p>
+
+<p>David停顿了一小会儿，然后像一个先知布道一样说，“你叫Stan是吧？Monty。。。有一些怪癖，有时候他会让你做一些毫无意义的事。我需要你继续下去并且相信一切都会好起来。他从公司成立时就在这儿了，我们的系统就像他的孩子一样，所以他知道哪种方式最合适。”</p>
+
+<p>Stan明白现在最理智的是什么事情，他一言不发的回到自己的座位，经过一个小时的沉思，永远的离开了这个办公室。</p>
+
+<h2 id="section">后记</h2>
+
+<p>故事归故事，但很多公司的现状如此，如果不能在工作中提高自己，那么就想办法提高工作。后面的的<a href="http://thedailywtf.com/Comments/In-Fool-We-Trust.aspx">评论</a>也很有意思，可以看一下。</p>
+
+<p>原文链接：<a href="http://thedailywtf.com/Articles/In-Fool-We-Trust.aspx">In Fool We Trust</a></p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-20T16:06:00+08:00" pubdate data-updated="true">2013.06.20</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/joke/'>joke</a>, <a class='category' href='/blog/blog/categories/translation/'>translation</a>
+
+
+</div>
+	
+</div></article>
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/06/19/start-stop-daemon/">Start-stop-daemon</a></h1>
+	<div class="entry-content">
+		<p>很多软件不提供init脚本，或者提供的脚本不合胃口，难免要自己动手丰衣足食。下面就推荐一个用来启动守护进程的神器。</p>
+
+<p><code>start-stop-daemon</code>是<a href="http://www.gentoo.org/proj/en/base/openrc/">OpenRC</a>计划的一部分，这个程序最先出现在Debian系的Linux发行版中，这里有个比较古老的<a href="http://man.he.net/man8/start-stop-daemon">手册</a>页面，更详细更直观的办法当然是通过<code>man start-stop-daemon</code>来查看手册了。我使用的是”start-stop-daemon (OpenRC) 0.10 (Funtoo Linux)”版本，大部分功能是差不多的。</p>
+
+<p><code>start-stop-daemon</code>最基本的两个功能就是<code>--start</code>和<code>--stop</code>，简写为<code>-S</code>和<code>-K</code>，然后再加上一个<code>-s|--signal</code>来给进程发送信号，功德圆满。</p>
+
+<p>至于其中比较常用的一些参数，我列出来参考一下，以免忘了：</p>
+
+<ul>
+  <li><code>-x, --exec daemon</code>，daemon就是真正要执行的进程脚本，比方说启动nginx，那么就是<code>start-stop-daemon -x nginx</code>。</li>
+  <li><code>-p, --pidfile pidfile</code>，指定pid文件，至于pid文件的用途就多了，stop,status都少不了它。</li>
+  <li><code>-n, --name</code>，如果没有指定pid文件，那么就要通过指定name来停止进程了。</li>
+  <li><code>-u, --user user[:group]</code>，指定脚本用哪个用户或用户组执行，init脚本是必须使用<code>root</code>权限来执行的，但是它fork出来的子进程我们一般会选择一个权限较低的用户。</li>
+  <li><code>-b, --background</code>，强制脚本在后台执行。</li>
+  <li><code>-m, --make-pidfile</code>，这个一般和<code>-b</code>配合，用于生成pid文件</li>
+  <li><code>-d, --chdir path</code>，切换进程的主目录，这个在构建守护进程的时候是很常用的。</li>
+  <li><code>-r, --chroot path</code>，在某些安全性要求较高的情况下，我们就需要用到<code>chroot</code>将进程工作环境与物理环境完全隔离开来。</li>
+  <li><code>-1, --stdout logfile</code>，将标准输出记录到log文件，与之相对应的就是<code>-2, --stderr</code>标准错误流。</li>
+  <li><code>-w, --wait milliseconds</code>，进程启动后，有这个参数会等待几毫秒来检测进程是否仍然存活。</li>
+</ul>
+
+<p>参数说完，下面就是一些需要注意的地方了。</p>
+
+<h2 id="b"><code>-b</code>与守护进程</h2>
+
+<p><code>-b</code>是一个很常用的参数，我们使用<code>start-stop-daemon</code>的目的就是为了实现守护进程。但是有些程序自身也实现了守护进程的功能，比方说mongodb中有一个fork选项就是将自己在后台执行，这个时候假如搭配的<code>-b</code>参数，是得不到正确的pid的，因为<code>start-stop-daemon</code>只能得到最初启动的父进程pid，而父进程在fork完之后就自动退出了，那么<code>start-stop-daemon</code>就永远找不到正确的pid来结束进程了。所以使用<code>-b</code>的时候，一定要保证程序是在前台运行的。</p>
+
+<h2 id="section">其他参数</h2>
+
+<p><code>-x daemon</code>后面跟的执行脚本必须只能是一个文件名，有些程序运行时还需要指定一些参数，比如<code>nginx -c file</code>来指定nginx的配置文件，使用<code>start-stop-daemon -x "nginx -c file"</code>是会报错的，这些程序内的参数以另一种方式加载，<code>start-stop-daemon -x daemon -- $ARGV</code>，这里的双横线<code>--</code>后面跟的所有参数就会被带到程序中了，比如<code>start-stop-daemon -x nginx -c /etc/nginx.conf</code>。</p>
+
+<p>下面是mongodb的一个init脚本，用<code>start-stop-daemon</code>是非常简单的。（貌似源代码中没有提供init脚本，只能自己动手了）。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c">#!/sbin/runscript</span>
+</span><span class="line"><span class="c"># Distributed under the terms of the GNU General Public License v2</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">MONGO_HOME</span><span class="o">=</span>/usr/local/mongo
+</span><span class="line"><span class="nv">MONGO_USER</span><span class="o">=</span>mongo
+</span><span class="line"><span class="nv">MONGO_PID_FILE</span><span class="o">=</span>/var/run/mongo/mongo.pid
+</span><span class="line">
+</span><span class="line">depend<span class="o">()</span> <span class="o">{</span>
+</span><span class="line">    need net
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line">start<span class="o">()</span> <span class="o">{</span>
+</span><span class="line">    ebegin <span class="s2">&quot;Starting Mongodb&quot;</span>
+</span><span class="line">    start-stop-daemon --start       <span class="se">\ </span>
+</span><span class="line">        --chdir  <span class="s2">&quot;${MONGO_HOME}&quot;</span>    <span class="se">\ </span>
+</span><span class="line">        --user <span class="s2">&quot;${MONGO_USER}&quot;</span>      <span class="se">\ </span>
+</span><span class="line">        -m -p <span class="s2">&quot;${MONGO_PID_FILE}&quot;</span>   <span class="se">\ </span>
+</span><span class="line">        -b --exec <span class="s2">&quot;${MONGO_HOME}/bin/mongod&quot;</span> -- --config<span class="o">=</span>/etc/mongodb.conf
+</span><span class="line">    eend <span class="nv">$?</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line">stop<span class="o">()</span> <span class="o">{</span>
+</span><span class="line">    ebegin <span class="s2">&quot;Stopping Mongodb&quot;</span>
+</span><span class="line">    start-stop-daemon --stop        <span class="se">\ </span>
+</span><span class="line">        --chdir <span class="s2">&quot;${MONGO_HOME}&quot;</span>     <span class="se">\ </span>
+</span><span class="line">        --user <span class="s2">&quot;${MONGO_USER}&quot;</span>      <span class="se">\ </span>
+</span><span class="line">        -p <span class="s2">&quot;${MONGO_PID_FILE}&quot;</span>      <span class="se">\ </span>
+</span><span class="line">    eend <span class="nv">$?</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-19T13:44:00+08:00" pubdate data-updated="true">2013.06.19</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/blog/categories/shell/'>shell</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1417,138 +1620,6 @@
 	
 </div></article>
 
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine/">在 Mac 中安装 Wine</a></h1>
-	<div class="entry-content">
-		<p>公司用奇葩的imo，由于没有mac版本，只能用web版。最近imo web版升级之后老是不稳定，又不想装一个笨重的windows虚拟机，于是曲线救国，找找mac上的<a href="http://www.winehq.org/">wine</a>该怎么用。</p>
-
-<p>在mac上安装wine需要备齐三样神器：</p>
-
-<ul>
-  <li><a href="http://xquartz.macosforge.org/landing/">xquartz</a>，在mac上提供对x11的支持，由于mountain lion之后不在预装x11，所以这个需要手动下载。</li>
-  <li><a href="http://winebottler.kronenberg.org/">winebottler</a>，这个包里两个软件，wine和winebottler，winebottler算是一个wine的管理器，里面预设了一些各种wine应用下需要的类库模板。</li>
-</ul>
-
-<p>安装顺序是xquartz-&gt;winebottler-&gt;wine，后面两个从包中直接拖到Application中就行了。安装完后需要先启动xquartz，然后启动wine之后在上面的panel中会有一个酒杯的图标，里面可以打开资源管理器等等，第一次打开时会在用户目录里生成一个Wine Files文件夹，这个就是winebottler中所谓的prefix，里面模拟了一套windows下面的环境。可以通过在winebottler中安装不同的prefix来切换不同应用环境。不过每个prefix都是一个完整的windows环境，非常占空间，没有必要的话，用默认的就行。然后增加类库可以点击wine图标，选择wine trick来安装，还是比较方便的。</p>
-
-<p>youtube上有个<a href="http://www.youtube.com/watch?v=m0BBkISOcEA">视频</a>介绍了如何在mac上安装wine，按照上面说的一步步来，基本不会出错。</p>
-
-<p>但是wine的种种缺点还是很明显的，一个是字体界面都很丑，在mac下更甚，即使想各种办法优化也无济于事。第二个就是很多库都没有，这是最致命的，imo最后还是没有安装成功，按照错误提示装了.net和vcrun2008等等之后还是不能正常启动，也是预料之中的事。wine还是只能算是一个玩具，给喜欢折腾的geek玩玩而已，真要用来跑wow之类的应用，那肯定是闲的蛋疼了。</p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-28T12:39:00+08:00" pubdate data-updated="true">2013.04.28</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/mac/'>mac</a>, <a class='category' href='/blog/blog/categories/osx/'>osx</a>, <a class='category' href='/blog/blog/categories/software/'>software</a>, <a class='category' href='/blog/blog/categories/wine/'>wine</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/04/25/tdwtf-nai-xin-ce-shi/">[TDWTF] 耐心测试</a></h1>
-	<div class="entry-content">
-		<p>在Eric的公司，发布流程中代码从来就没有经过正规的测试。不是说没有这些流程，当然得有。毕竟哪有公司会不经过测试就将代码发布给用户。但是“严格测试”和“健壮度检验”跟他们的公司从来不沾边。甚至连“成功的演示”和“满足用户”这些原则都没有，但这又是另一回事了。</p>
-
-<p>其中一个原因是公司认为为了测试付出大量金钱没什么好处。难道开发人员不应该保证代码不出问题？这有什么难的？</p>
-
-<p>虽然如此，公司里仍有一些谨慎的人认为需要在发布新的应用之前做一些测试。所以他们指派了一些测试人员。然而，这些测试人员仅仅是一些半吊子。除了测试外他们还干一些别的事情。比如 Mark，就是一个客户支持人员-特别一线客户支持。一个任何人都轻视或者想摆脱的家伙。</p>
-
-<p>Mark 接到一个任务是测试 Eric 写的新应用。所以当 Eric 收到一个由 Mark 提交到跟踪系统的新 bug 时，并不感到奇怪。由于距离交付日期只剩下一个礼拜，Eric 赶快读了一遍描述。</p>
-
-<blockquote>
-  <p>概要：粘贴不起作用<br />
-描述：我在记事本中选择了一些文本。然后到软件中去粘贴这些文本，但是不起作用。而且我发现粘贴菜单是灰的。</p>
-</blockquote>
-
-<p>Eric 有一点迷惑，也仅有“一点儿”。这已经不是他第一次忘了在剪贴板中有内容时开启粘贴功能了。他启动软件，然后照着 Mark 的步骤做。但是没用，他不能重现这个问题。他粗略的过了一遍代码发现粘贴功能是被启用了。所以他给 bug 加了个注释然后重新指派给 Mark。</p>
-
-<blockquote>
-  <p>我尝试重现你说的问题，但是没有效果。你还做了些别的操作吗？</p>
-</blockquote>
-
-<p>两天以后，这个问题被加了条注释，重新指派给 Eric</p>
-
-<blockquote>
-  <p>我可能忘了一个步骤，当我复制文本之后，我把软件关了。这对你有帮助吗？</p>
-</blockquote>
-
-<p>这消息可能有用，Eric 想。然后他回过头去 debug。他尝试关闭记事本，关闭并重启他的软件。他关闭 Visual Studio。他甚至想关闭当地的核电站。但是粘贴功能始终可用。即使他一行行的看代码也没找出问题在哪里。不得已，他在 bug 后加了另一条注释并重新指派给 Mark</p>
-
-<blockquote>
-  <p>我尝试了各种关闭的组合，仍然不能重现这个问题。你再想想还有别的操作忘了提吗？</p>
-</blockquote>
-
-<p>这次只用了两个小时就收到了回复</p>
-
-<blockquote>
-  <p>恐怕我忘了提一件事，在我关闭你的软件之后，我重启了我的电脑。希望这能对你有所帮助。:)</p>
-</blockquote>
-
-<p>Eric 愣住了。脑中呈现中一堆难以名状的复杂感情。他对这个公司没有合格和测试人员而感到愤怒，对于 Mark 而言，只是一个重要的 bug 被修复了。风平浪静之后，是剩下疲倦。Mark 慢吞吞的将 bug 的状态改为“关闭-设计如此”。</p>
-
-<p><a href="http://thedailywtf.com/Articles/Testing-Patience.aspx">原文链接</a></p>
-
-<h2 id="section">后记</h2>
-
-<p>这篇文章有些句子不太好翻译，例如最后一段的</p>
-
-<blockquote>
-  <p>Rage at the company for not having competent testers. Pity for Mark because…well… Relief that a significant bug had been put to rest.</p>
-</blockquote>
-
-<p>只能靠上下文来猜个大概。心理描写这种虚幻的东西还是不太好直译啊。</p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-25T12:09:00+08:00" pubdate data-updated="true">2013.04.25</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/joke/'>joke</a>, <a class='category' href='/blog/blog/categories/translation/'>translation</a>
-
-
-</div>
-	
-</div></article>
-
 <nav id="pagenavi">
     
         <a href="/blog/blog/page/3/" class="prev">Prev</a>
@@ -1580,12 +1651,6 @@
     }());
 </script>
 
-
-<script id="gta-main" src="/blog/javascripts/gta.js", data-baidu="43f786342ba0680af108248b28280fdb", data-google="UA-33186961-1", data-mixpanel="204d761f0c52d9ddcf031ec634f98772"></script>
-<!-- mixpanel pageview -->
-<script>
-  mixpanel.track("pageview: " + document.URL);
-</script>
 
 
 

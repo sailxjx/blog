@@ -4,7 +4,7 @@
   <title><![CDATA[Category: software | CodeBean]]></title>
   <link href="http://jingxin.me/blog/blog/categories/software/atom.xml" rel="self"/>
   <link href="http://jingxin.me/blog/"/>
-  <updated>2016-07-14T21:04:02+08:00</updated>
+  <updated>2016-08-08T18:27:51+08:00</updated>
   <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[Xu Jingxin]]></name>
@@ -12,6 +12,82 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[工具软件的未来]]></title>
+    <link href="http://jingxin.me/blog/blog/2016/08/08/gong-ju-ruan-jian-de-wei-lai/"/>
+    <updated>2016-08-08T16:25:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2016/08/08/gong-ju-ruan-jian-de-wei-lai</id>
+    <content type="html"><![CDATA[<p>上一篇<a href="/blog/2016/08/08/gong-ju-ruan-jian-de-kun-jing/" title="工具软件的困境">工具软件的困境</a>分析了我对工具软件现状的看法，归纳一下就是两个问题：1. 使用体验难创新。2. 用户需求难覆盖。下面说一下我的解法。</p>
+
+<h1 id="section">新的平台</h1>
+
+<p>颠覆性的创新更容易出现在新的平台上，移动设备的普及让人们习惯了手势操作。但在今天，移动设备上做交互创新已然不是一个明智的选择，而新的平台其实就在我们身边。</p>
+
+<p>一个叫 Pokemon GO 的游戏火遍了全世界，其最大的特点就是利用了增强现实技术，让人们在现实世界中寻找游戏的乐趣。</p>
+
+<p>增强现实和虚拟现实之所以有吸引力，是因为他能给人带来新奇的同时又不感到陌生，天然的容易上手。工具软件在这个领域大有作为，例如，如今许多人喜欢用电子名片，或者把自己的信息发布在互联网上，如果软件能通过摄像头识别出对方并且显示信息的话，对于我这种永远记不住陌生人名字的人来说，实在算是一种福音。同样适用这种技术还有地图，视频，社交，以及很多意想不到的地方，充斥着生活的方方面面。</p>
+
+<p>如果觉得新的平台实验性太强，那么在旧的平台上，也可以用新的方式来创新。在我看来，语音在移动平台上还没有完全发挥出应有的作用，目前的技术对于语音识别的准确率已经完全没有问题，难点在于对语义的分析和揣测用户的目的。Siri 大家都觉得好玩，但是不好用，问题就在于人们不知道能用它干什么，Siri 也「听」不懂你想干什么。而这在目标比较单一的工具软件中就能得到很好的应用。如果有一款应用是用来推荐餐馆的，那么我更乐于通过自然语言的方式让他为我推荐附近好吃的餐馆，而不是每次想好了关键词再写在输入框里。</p>
+
+<h1 id="section-1">海纳百川</h1>
+
+<p>工具软件需要应对用户提出的各种需求，这些需求零散，独立，无法整合在一个应用中，然而对于留住用户又必不可少。传统软件的做法是自己开发，然后发行一款配置无限繁琐的软件，或者针对大客户做定制化开发。这种做法在工具匮乏的时代可以在市场中站稳脚跟，如今成本这么高的做法是走不通了。</p>
+
+<p>于是就出现了开放 API，各个软件将自己的 API 开放出来，供其他软件接入。这在工具类软件中尤其鲜明。一款好用的软件，只需要做好自己的核心功能，并接入其他优秀软件。</p>
+
+<p>仔细想一想，这其实就是各种软件在做的「应用平台」。但是我不愿意将它称作「平台」，而更乐意称作「协议」。「平台」意味着大家只能加入到我的软件生态中来，「协议」则表明了一种开放的态度，大家可以自由的选择与我的协议对接，或选择其他应用的协议，甚至利用我的协议，和其他第三方应用对接。</p>
+
+<h1 id="section-2">服务至上</h1>
+
+<p>软件作为一种看不见摸不着的产品，天然的隔绝了用户和开发者，用户看不到开发软件背后的付出，于是很容易低估软件的成本。现实的软件发行方式也增强了用户的这种观念，大部分软件都以免费的方式发行，软件变得和说明书一样，成为了「载体」的附庸。</p>
+
+<p>而在其他领域，用户的付费意愿则比软件高得多，用户拿到一台相机，很容易通过做工和质感估算出这台相机的成本，而其附带的软件则看起来一文不值。甚至改变了世界的 iPhone，大部分用户还是直接将它和手里的手机划上等号，而很少有人去了解 iOS 的成本。</p>
+
+<p>这种观念根深蒂固，那么工具软件该从另一个角度出发，找到自己的「载体」。如果工具软件没有对应的硬件，可以将与软件配套的服务作为「载体」来出售。例如给用户的咨询，培训，发展线下的社区，一方面可以给开发者带来直接的收益，同时也大大提高了用户粘性。一款软件能否和竞争者拉开差距，更多的是看与软件配套的服务，我想这也是「软件即服务」的定义。</p>
+
+<h1 id="section-3">写在最后</h1>
+
+<p>在软件这个行业，每天都能看到很多很棒的点子，希望这些点子能尽早变成现实，而不是像我这样的拖延症患者，挖了<a href="https://github.com/sailxjx/Cycle" title="Cycle">一堆</a>的<a href="https://github.com/sailxjx/storyship" title="Storyship">坑</a>，离完成却遥遥无期。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[工具软件的困境]]></title>
+    <link href="http://jingxin.me/blog/blog/2016/08/08/gong-ju-ruan-jian-de-kun-jing/"/>
+    <updated>2016-08-08T14:07:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2016/08/08/gong-ju-ruan-jian-de-kun-jing</id>
+    <content type="html"><![CDATA[<p>这个话题改成「软件的困境」，我觉得也没什么不妥，但是船小好调头，从一个领域说起，总能更有说服力。平时写的最多，用的最多的就是工具软件，现在来分析一下工具软件的困境。</p>
+
+<p>工欲善其事，必先利其器。随着互联网的普及，软件从一个专业领域的工具，飞入寻常百姓家，成为了人们生活的一部分。软件界的摩尔定律依然有效，曾经动辄上百万的解决方案，如今也能找到免费的替代品。而这些成熟的软件背后，是几百人在键盘面前的敲敲打打，软件的人力成本节节攀升，盈利就成了一个很大的问题。</p>
+
+<h1 id="section">匮乏的盈利模式</h1>
+
+<p>软件的收费模式基本可分两类，一类贩售软件本身的价值，给软件一个定价，由人去下载，例如 App store 上的一票收费软件。另一类是贩售软件附带的服务，例如依靠购买会员，道具等虚拟物品盈利的网站。</p>
+
+<p>上面这两类盈利方式都有局限性，第一类本身造就了一个很高的门槛，大部分人不肯为素未谋面的软件买单，而且这类软件如果能在自己的行业内做到占有量第一，也就意味着触到了天花板，难以发展新用户，老用户也不再买单，这时的出路就只有推出新产品或进行大版本升级，接下来造就的产品，要么华而不实，要么臃肿不堪。</p>
+
+<p>第二类收费模式通常会带一个免费版，满足 80% 用户的需求，然后让另外 20% 用户为软件买单，养活所有的用户和开发者自己。这就很容易造成需求的失衡，为了追求「转化率」，开发者肯定优先考虑付费端的需求，对于大部分用户需要的功能则被「列入计划」迟迟得不到开发。开发者大部分时间在做的都是给需求排优先级，而忘了考虑软件本身的定位。这也是为什么很多软件刚面世时非常惊艳，迭代了几个版本之后却变得平庸。</p>
+
+<h1 id="section-1">固化的使用体验</h1>
+
+<p>工具软件如何从一并同僚中脱颖而出，使用体验起到了相当重要的作用。软件的发展过程就是一个去繁化简的过程，早期糟糕的软件培养了糟糕的用户习惯，例如常见的顶部菜单就是一个错误的存在，懒惰的开发者将所有的功能藏在菜单里面，让用户通过反复点击去寻找。如果当初的工具设计者能够合理的布置空间，用户使用软件的效率必能得到一个极大的提升。因为用户已经习惯了这种操作，往后的所有桌面端软件都沿袭了顶部菜单的模式，因为改变习惯需要冒较大的风险，体验好坏很难说的清楚，于是用户继续忍耐着打开一个文件需要点击 4 次的操作。</p>
+
+<p>好在如今的移动端应用已经很少用到菜单模式，工具软件很容易在一个新的平台上面找到创新点，例如 Clear 就靠着方便的手势操作获得了大批拥趸。而到了今天，经过了大量 App 的锻炼之后，用户在移动端的使用习惯也已经固化，新的软件将很难再依赖使用体验来吸引用户。</p>
+
+<h1 id="section-2">难以满足的需求</h1>
+
+<p>关于工具软件应该是大而全还是专注于一个功能，一直难下定论。有意思的是，这个问题在国内外呈现出完全不同的两派做法，在国外我们发现了很多小而美的工具软件，例如前面提到的 Clear, sunrise, paper 等，在国内知名的软件都是功能完备的，例如做支付的微信和做社交的支付宝，似乎每家都觉得能把自家的软件做成操作系统。</p>
+
+<p>一个软件获得了一批种子用户，证明了这个软件的价值，也带来了各种稀奇古怪的需求。工具应用本身的目标是提高用户效率，而如果每个软件只能满足一个需求，用户就不得不在一大堆的软件中频繁切换来满足日常所需，这本身就非常低效。所以我认为工具软件迭代了几个周期之后，免不了加入很多不曾计划的功能，以至于同质化越来越重，竞争对手越来越多，想要脱颖而出，光靠软件自身的素质是非常难的了。</p>
+
+<h1 id="section-3">写在最后</h1>
+
+<p>如今想要盈利，开发工具软件实在不能算是一门好生意。固化的使用习惯，难以满足的个性化需求，都会让开发者入不敷出。然而市场依然在，需求依然强烈，仔细思考一下<a href="/blog/2016/08/08/gong-ju-ruan-jian-de-wei-lai/" title="工具软件的未来">工具软件的未来</a>，成为这个领域的黑马也未可知。</p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[软件与配置]]></title>
@@ -116,225 +192,6 @@
 <p>youtube上有个<a href="http://www.youtube.com/watch?v=m0BBkISOcEA">视频</a>介绍了如何在mac上安装wine，按照上面说的一步步来，基本不会出错。</p>
 
 <p>但是wine的种种缺点还是很明显的，一个是字体界面都很丑，在mac下更甚，即使想各种办法优化也无济于事。第二个就是很多库都没有，这是最致命的，imo最后还是没有安装成功，按照错误提示装了.net和vcrun2008等等之后还是不能正常启动，也是预料之中的事。wine还是只能算是一个玩具，给喜欢折腾的geek玩玩而已，真要用来跑wow之类的应用，那肯定是闲的蛋疼了。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[gitlabhq 部署小记]]></title>
-    <link href="http://jingxin.me/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji/"/>
-    <updated>2012-11-14T20:12:00+08:00</updated>
-    <id>http://jingxin.me/blog/blog/2012/11/14/gitlabhq-bu-shu-xiao-ji</id>
-    <content type="html"><![CDATA[<p>冬天来了，不知github是不是也去冬眠了，速度慢的像在爬，没办法，屌丝买不起vps，只能自己内网部一套开源的。</p>
-
-<p>gitlabhq是github的一个开源版本，虽然不是官方的，但是已经做的有模有样，总之能想到的功能都已具备，放在国内随便改改UI就能上线建站的那种。安装文档那是写的相当滴详细，体现了码农罕有的耐性，查看文档请移步<a href="https://github.com/gitlabhq/gitlabhq/blob/master/doc/install/installation.md">gitlab文档</a></p>
-
-<p>以前部署中在ssh上碰到一些问题，这次在<a href="https://github.com/mk-qi">@mk-qi</a>童鞋的点拨下，进展是相当滴顺利，下面记录一些部署过程中的问题和解决方法。</p>
-
-<p>自动部署脚本如下，基本由文档转成，可以省掉很多事情(但是遇到问题要学会google哦)，假如使用的是ubuntu，官方以前也提供了一个一键安装脚本，后来不知怎么又去掉了，估计是计划赶不上变化吧</p>
-
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>gitlabhq自动化部署脚本  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/bash</span>
-</span><span class='line'><span class="c"># add user git</span>
-</span><span class='line'>sudo adduser –system –shell /bin/bash –gecos ‘git version control’ –group –disabled-password –home /home/git git
-</span><span class='line'><span class="c"># add user gitlab</span>
-</span><span class='line'>sudo adduser –disabled-login –gecos ‘gitlab system’ gitlab
-</span><span class='line'><span class="c"># move user gitlab to group git</span>
-</span><span class='line'>sudo usermod -a -G git gitlab
-</span><span class='line'>sudo usermod -a -G gitlab git
-</span><span class='line'><span class="c"># generate key</span>
-</span><span class='line'>sudo -H -u gitlab ssh-keygen -q -N ‘’ -t rsa -f /home/gitlab/.ssh/id_rsa
-</span><span class='line'><span class="c"># clone gitlab’s fork to the gitolite source code</span>
-</span><span class='line'><span class="nb">cd</span> /home/git
-</span><span class='line'>sudo -H -u git git clone -b gl-v304 https://github.com/gitlabhq/gitolite.git /home/git/gitolite
-</span><span class='line'><span class="c"># setup</span>
-</span><span class='line'><span class="nb">cd</span> /home/git
-</span><span class='line'>sudo -u git -H mkdir bin
-</span><span class='line'>sudo -u git sh -c ‘echo -e “PATH<span class="o">=</span><span class="nv">$PATH</span>:/home/git/bin<span class="se">\n</span>export PATH” » /home/git/.profile’
-</span><span class='line'>sudo -u git sh -c ‘gitolite/install -ln /home/git/bin’
-</span><span class='line'>sudo cp /home/gitlab/.ssh/id_rsa.pub /home/git/gitlab.pub
-</span><span class='line'>sudo chmod 0444 /home/git/gitlab.pub
-</span><span class='line'>sudo -u git -H sh -c “PATH<span class="o">=</span>/home/git/bin:<span class="nv">$PATH</span>; gitolite setup -pk /home/git/gitlab.pub”
-</span><span class='line'><span class="c"># permissions</span>
-</span><span class='line'>sudo chmod -R g+rwX /home/git/repositories/
-</span><span class='line'>sudo chown -R git:git /home/git/repositories/
-</span><span class='line'>sudo -u gitlab -H git clone git@localhost:gitolite-admin.git /tmp/gitolite-admin&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;if <span class="o">[[</span> <span class="nv">$?</span> !<span class="o">=</span> 0 <span class="o">]]</span>;<span class="k">then</span>
-</span><span class='line'><span class="k">    </span><span class="nb">echo</span> “error: gitolite is not installed correct, or the ssh key is not right”
-</span><span class='line'>    <span class="nb">exit </span>1
-</span><span class='line'><span class="k">fi</span>&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;sudo rm -rf /tmp/gitolite-admin
-</span><span class='line'><span class="c"># clone gitlab source and install prerequisites</span>
-</span><span class='line'>sudo gem install charlock_holmes
-</span><span class='line'>sudo pip install pygments
-</span><span class='line'><span class="nb">cd</span> /home/gitlab
-</span><span class='line'>sudo -H -u gitlab git clone git://github.com/51fanli/gitlabhq.git gitlab
-</span><span class='line'><span class="nb">cd </span>gitlab
-</span><span class='line'>sudo -u gitlab cp config/gitlab.yml.example config/gitlab.yml
-</span><span class='line'><span class="c"># mysql databases init</span>
-</span><span class='line'><span class="nb">echo</span> “connect to mysql”
-</span><span class='line'>mysql -h127.0.0.1 -uroot -p
-</span><span class='line'><span class="c"># CREATE DATABASE IF NOT EXISTS &lt;code&gt;gitlabhq_production&lt;/code&gt; DEFAULT CHARACTER SET &lt;code&gt;utf8&lt;/code&gt; COLLATE &lt;code&gt;utf8_unicode_ci&lt;/code&gt;;</span>
-</span><span class='line'><span class="c"># CREATE USER ‘gitlab’@’localhost’ IDENTIFIED BY ‘123456’;</span>
-</span><span class='line'><span class="c"># GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON &lt;code&gt;gitlabhq_production&lt;/code&gt;.* TO ‘gitlab’@’localhost’;</span>
-</span><span class='line'>sudo -u gitlab cp config/database.yml.example config/database.yml
-</span><span class='line'>sudo -u gitlab -H bundle install –without development <span class="nb">test </span>sqlite postgres –deployment
-</span><span class='line'>sudo -u gitlab -H git config –global user.email “gitlab@localhost”
-</span><span class='line'>sudo -u gitlab -H git config –global user.name “Gitlab”
-</span><span class='line'>sudo -u gitlab cp config/resque.yml.example config/resque.yml
-</span><span class='line'>sudo -u gitlab cp config/unicorn.rb.example config/unicorn.rb
-</span><span class='line'><span class="c"># init tables</span>
-</span><span class='line'>sudo -u gitlab bundle <span class="nb">exec </span>rake gitlab:app:setup <span class="nv">RAILS_ENV</span><span class="o">=</span>production
-</span><span class='line'>sudo cp ./lib/hooks/post-receive /home/git/.gitolite/hooks/common/post-receive
-</span><span class='line'>sudo chown git:git /home/git/.gitolite/hooks/common/post-receive
-</span><span class='line'><span class="c"># check status</span>
-</span><span class='line'>sudo -u gitlab bundle <span class="nb">exec </span>rake gitlab:app:status <span class="nv">RAILS_ENV</span><span class="o">=</span>production
-</span><span class='line'>sudo wget https://raw.github.com/gitlabhq/gitlab-recipes/master/init.d/gitlab -P /etc/init.d/
-</span><span class='line'>sudo chmod +x /etc/init.d/gitlab
-</span><span class='line'>sudo update-rc.d gitlab defaults 21
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>gitlabhq3.0后改用unicorn(紧跟github步伐)作为默认的启动server,要将它与nginx或apache一起使用请参考<a href="https://wiki.archlinux.org/index.php/Gitlab#Web_server_configuration">archwiki的gitlab手册</a>,下面是apache中的vhost配置(需要预先编译proxy模块)</p>
-
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>apache vhost配置  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>&amp;lt;VirtualHost *:80&amp;gt;
-</span><span class='line'>  ServerName gitlab.myserver.com
-</span><span class='line'>  ServerAlias www.gitlab.myserver.com
-</span><span class='line'>  DocumentRoot /home/gitlab/gitlab/public
-</span><span class='line'>  ErrorLog /var/log/httpd/gitlab_error_log
-</span><span class='line'>  CustomLog /var/log/httpd/gitlab_access_log combined&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;&amp;lt;Proxy balancer://unicornservers&amp;gt;
-</span><span class='line'>      BalancerMember http://127.0.0.1:8080
-</span><span class='line'>  &amp;lt;/Proxy&amp;gt;&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;&amp;lt;Directory /home/gitlab/gitlab/public&amp;gt;
-</span><span class='line'>    AllowOverride All
-</span><span class='line'>    Options -MultiViews
-</span><span class='line'>  &amp;lt;/Directory&amp;gt;&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;RewriteEngine on
-</span><span class='line'>  RewriteCond %<span class="o">{</span>DOCUMENT_ROOT<span class="o">}</span>/%<span class="o">{</span>REQUEST_FILENAME<span class="o">}</span> !-f
-</span><span class='line'>  RewriteRule ^/<span class="o">(</span>.*<span class="o">)</span><span class="nv">$ </span>balancer://unicornservers%<span class="o">{</span>REQUEST_URI<span class="o">}</span> <span class="o">[</span>P,QSA,L<span class="o">]</span>&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;ProxyPass /uploads !
-</span><span class='line'>  ProxyPass / balancer://unicornservers/
-</span><span class='line'>  ProxyPassReverse / balancer://unicornservers/
-</span><span class='line'>  ProxyPreserveHost on&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;&amp;lt;Proxy *&amp;gt;
-</span><span class='line'>      Order deny,allow
-</span><span class='line'>      Allow from all
-</span><span class='line'>   &amp;lt;/Proxy&amp;gt;
-</span><span class='line'>&amp;lt;/VirtualHost&amp;gt;
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>unicorn的配置文件在config/unicorn.rb，修改其中的 <code>listen="127.0.0.1:8080"</code>，然后重启apache，通过 <code>service gitlab start</code> 重启unicorn，访问一下gitlab.myserver.com吧，看到登录页面就说明大功告成啦。</p>
-
-<h2 id="qa">Q&amp;A</h2>
-<p>### Q: 在装完gitolite后尝试<code>git clone git@localhost:gitolite-admin.git /tmp/gitolite-admin</code>遇到’remote hang-up unexpected’(貌似是这么写，意会。。。)
-A: 我在centos6.2上遇到过这个问题，其他发行版上不知道有没有这个问题，修改</p>
-
-<p><code>sudo chmod 400 /home/git/.ssh/authorized_keys</code></p>
-
-<p>可以修复这个问题。貌似是centos的安全策略造成ssh私钥不生效</p>
-
-<h2 id="section">参考资料</h2>
-<ul>
-  <li><a href="https://github.com/gitlabhq/gitlabhq/blob/master/doc/install/installation.md">gitlab安装手册官方版</a></li>
-  <li><a href="https://wiki.archlinux.org/index.php/Gitlab">gitlab手册archwiki版</a></li>
-</ul>
 ]]></content>
   </entry>
   
