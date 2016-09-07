@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: design | CodeBean]]></title>
+  <link href="http://jingxin.me/blog/blog/categories/design/atom.xml" rel="self"/>
+  <link href="http://jingxin.me/blog/"/>
+  <updated>2016-09-07T16:56:44+08:00</updated>
+  <id>http://jingxin.me/blog/</id>
+  <author>
+    <name><![CDATA[Xu Jingxin]]></name>
+    <email><![CDATA[sailxjx@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[纯粹的 API]]></title>
+    <link href="http://jingxin.me/blog/blog/2016/09/06/chun-cui-de-api/"/>
+    <updated>2016-09-06T09:38:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2016/09/06/chun-cui-de-api</id>
+    <content type="html"><![CDATA[<p>前不久有同事和我谈论起现下 API 维护的困难，抱怨诸多，总结起来大概就是两点，一是需求考虑不完善，很多地方需要在开发中补充条件，二是向前兼容困难，很多历史遗留无法修改，代码臃肿。</p>
+
+<p>在我看来，这些问题的产生，都只有一个原因，就是现有 API 的设计和开发理念，不够「纯粹」。API 的设计就好比凿山开路，必须沿着最短的途径到达目标。有些人为了「Flexible」，喜欢在开发中「留一手」，假象出很多未来可能出现的情况，用额外的代码来做兼容。例如设计一套简单的权限系统，本来简单的 ACL 就能实现，非要觉得以后可能会增加更多的管理员类型，而去赋予各种角色，关系，权限表，这是需求上的多余。再比如设计一套 CURD API，在刚起步的时候就考虑缓存，异步，Job 等等，这是架构上的多余。</p>
+
+<p>如今的 Web 设计趋势是去芜存菁，去掉繁复的视觉效果，注重排版，留白，突出内容，因为 Web 最重要的功能还是让用户获取信息。API 设计有相通之处，一个「纯粹」的 API，应始终保持单纯与直观，一个叫「Create user」的 API，目的就只有一个，创建这条用户信息。至于是否要给这个人发邮件，要帮他初始化哪些业务资料，这些统统都拆分到 Service 中去做，如果需求中没提到这些，那么这个 Service 更没必要存在。这样简单设计的代码将具有更长的生命力，在历经无数次需求修改之后，这些代码能像水中冲刷的基石一样，屹立不倒。</p>
+
+<p>现实已经如此复杂，API 还是让它单纯一些吧。</p>
+]]></content>
+  </entry>
+  
+</feed>

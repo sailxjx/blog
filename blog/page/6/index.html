@@ -7,7 +7,7 @@
 	<meta name="author" content="Xu Jingxin">
 
 	
-	<meta name="description" content="俗话说林子大了什么鸟都有，在程序猿这个群体中，脏话和吹牛是两大显著特征。脏话的种类也是花样百出，下面就来归归类 第一类，加强语气型 常见的有damn,f**k，shit等等，往往后面还跟着些动词与形容词，像stupid啦，idiot啦，没啥创意但是足够醒目。 第二类，表达不满型 &hellip;">
+	<meta name="description" content="小时候没花功夫学英语（悔之莫及啊~），以至于经常将css中的transition和transform搞混，再加上一个强大而复杂的animation，就更是一头雾水了，今天整理一下，做个笔记。 transition 将style的变化用动画的方式来过渡 transform style的一些高级变换 &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -74,6 +74,269 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/03/12/css-transition-and-transform-and-animation/">Css Transition &amp; Transform &amp; Animation</a></h1>
+	<div class="entry-content">
+		<link rel="stylesheet" href="/blog/u/css/trans.css" />
+
+<p>小时候没花功夫学英语（悔之莫及啊~），以至于经常将css中的transition和transform搞混，再加上一个强大而复杂的animation，就更是一头雾水了，今天整理一下，做个笔记。</p>
+
+<ul>
+  <li><code>transition</code> 将style的变化用动画的方式来过渡</li>
+  <li><code>transform</code> style的一些高级变换，像拉伸，旋转，缩放之类</li>
+  <li><code>animation</code> css自定义动画，功能强大，并且由于是浏览器内置，流畅度会比javascript动画高</li>
+</ul>
+
+<p>注意咯，以上css属性都不支持IE浏览器，其中，IE9以上支持<code>transform</code>，需要加’-ms-‘前缀。</p>
+
+<h2 id="transition">transition</h2>
+<p>transition可以在同一dom元素的两种不同样式之间添加平滑的动画切换效果，下面是一个简单的例子，可以看出在没transition和有transition的情况下的区别。</p>
+
+<div>
+<div class="color-transition color-demo">color<br />transition</div>
+<div class="color-notransition color-demo">color<br />notransition</div>
+</div>
+
+<p>transition是一种比较好的用户体验，不会让用户对于style的切换感到突兀，要实现上面的效果，只需要在css中添加一行代码：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="nc">.color-transition</span> <span class="p">{</span>
+</span><span class="line">    <span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span><span class="p">;</span>
+</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span><span class="p">;</span>
+</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span><span class="p">;</span>
+</span><span class="line">    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>你可能在心里暗暗骂我SB（嗯，对的，我也讨厌不会数数的淫），上面明明有四行代码，这个也没办法啦，谁让各个浏览器对于css3标准的支持都不一样，添加不同的prefix只是为了兼容一些较低版本的浏览器，在目前的主流中，一行transition就可以走遍天下。（当然，IE是没救了）。</p>
+
+<p>transition中支持的参数是比较容易理解的，第一个是css中的属性(默认的all可以决定所有style的切换都显示成动画)，第一个表示过渡时间，还有第三个参数表示切换的动画类型，有ease(类似正弦曲线的先慢后快再慢)，linear(匀速)等等，第四个参数表示渐变开始的延时。而且可以用逗号分割多个属性，不嫌麻烦的话可以将它们都写上，就像下面这样。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="nc">.color-ratate-transition</span> <span class="p">{</span>
+</span><span class="line">    <span class="n">transition</span><span class="o">:</span> <span class="k">background</span> <span class="m">0.7s</span> <span class="n">ease</span><span class="o">-</span><span class="n">in</span><span class="o">-</span><span class="n">out</span><span class="o">,</span> <span class="n">rotate</span> <span class="m">3s</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>上面既然已经用到了rotate，这是一个transform属性，下面就解释一下transform。</p>
+
+<h2 id="transform">transform</h2>
+
+<p>transform是对dom样式的一种变性，一般的样式中，我们可以定义宽高位置，甚至包括圆角。但是要实现旋转，缩放甚至一些3D效果，就需要用到transform了。下面还是先看一个例子：</p>
+
+<div>
+<div class="transform-rotate transform-demo">rotate</div>
+<div class="transform-scale transform-demo">scale</div>
+</div>
+
+<p>rotate可以在很多场景中得到应用，一个比较取巧的方法是用来做输入框的提示箭头，像下面这样.</p>
+
+<div>
+    <div class="rotate-arrow"></div>
+    <div class="input-tip">your messages</div>
+</div>
+
+<p>而scale的作用是在不调整宽高的情况下实现放大与缩小，灵活利用，也能实现一些有趣的功能，比如放大镜，异形字体等。</p>
+
+<p>transform的语法是非常简单的，它只有一个参数，但是形式的是很多变的，详细的列表可见于<a href="http://www.w3schools.com/cssref/css3_pr_transform.asp">w3school的页面</a>。</p>
+
+<h2 id="animation">animation</h2>
+
+<p>下面是重点要介绍的animation了。用css做动画是意见非常geek的事情，相比于js动画，css动画需要更少的代码以及更直观的语法。在做css动画之前，需要先了解keyframes属性，这是css3中新增的一个规则类，实现的方法类似于一些语言中的mixin，而在设计理念上又类似flash中的关键帧，在keyframes中需要定义几个关键帧中dom元素的样式，这几个关键帧可以用百分比来表示，也可以用from,to等一些词汇来表示起点和终点。下面的keyframes表示让一个元素从左向右移动，并加上一些旋转效果。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="k">@keyframes</span> <span class="nt">move</span> <span class="p">{</span>
+</span><span class="line">  <span class="nt">0</span><span class="o">%,</span> <span class="nt">100</span><span class="o">%</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">left</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+</span><span class="line">    <span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="nt">50</span><span class="o">%</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">left</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
+</span><span class="line">    <span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">180</span><span class="n">deg</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">180</span><span class="n">deg</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">180</span><span class="n">deg</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">180</span><span class="n">deg</span><span class="p">);</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>keyframes是一个预定义的方法，将它与animation结合，就能实现有趣的css动画，例如上面名叫move的keyframes，放到下面的代码中，就可以看到完整的动画演示了。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="nc">.animate-move</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">position</span><span class="o">:</span> <span class="k">relative</span><span class="p">;</span>
+</span><span class="line">  <span class="n">animation</span><span class="o">:</span> <span class="n">move</span> <span class="m">5s</span> <span class="n">infinite</span><span class="p">;</span>
+</span><span class="line">  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">move</span> <span class="m">5s</span> <span class="n">infinite</span><span class="p">;</span>
+</span><span class="line">  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">move</span> <span class="m">5s</span> <span class="n">infinite</span><span class="p">;</span>
+</span><span class="line">  <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">move</span> <span class="m">5s</span> <span class="n">infinite</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div>
+    <div class="animate-move animate-demo">animate<br />move</div>
+</div>
+
+<p>上面的例子中包含了animation中的三个参数：keyframes方法名，一次动画持续时间，循环次数。其中无限循环用infinite表示。animation还包含不少有用的参数，比如延迟时间，动画效果等等，在<a href="http://www.w3schools.com/cssref/css3_pr_animation.asp">w3school手册</a>中有详细的记载。</p>
+
+<p>国内音乐网站<a href="http://jing.fm/">jing.fm</a>在交互方面一直很前卫，播放音乐时，专辑封面会像真的在cd中一样打转，模仿一种收听cd的感觉。这个效果就是用animation实现的，下面我们也可以山寨一个玩玩。</p>
+
+<h3 id="section">第一步，打磨圆角</h3>
+
+<p>首先需要的是将正方形的专辑封面变成cd的形状，也就是圆形啦。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="nc">.album</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">width</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
+</span><span class="line">  <span class="k">height</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
+</span><span class="line">  <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">150px</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>专辑封面我们选择300像素的正方形，然后使用150像素的圆角，可以正好变成一个正圆形。</p>
+
+<h3 id="keyframes">第二步，keyframes</h3>
+
+<p>下面就要定义我们的keyframes了，这个动画很简单，在开头设置成rotate(0)，结尾设置成rotate(360deg)。这样我们比较容易计算循环的时间。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="k">@keyframes</span> <span class="nt">dj</span> <span class="p">{</span>
+</span><span class="line">  <span class="nt">0</span><span class="o">%</span> <span class="p">{</span>
+</span><span class="line">    <span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="nt">100</span><span class="o">%</span> <span class="p">{</span>
+</span><span class="line">    <span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">360</span><span class="n">deg</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">360</span><span class="n">deg</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">transform</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">360</span><span class="n">deg</span><span class="p">);</span>
+</span><span class="line">    <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">transition</span><span class="o">:</span> <span class="n">rotate</span><span class="p">(</span><span class="m">360</span><span class="n">deg</span><span class="p">);</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section-1">第三步，转起来</h3>
+
+<p>将我们的dj keyframes加入animation，选择匀速(linear)，下面就看效果吧。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="css"><span class="line"><span class="nc">.album</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">width</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
+</span><span class="line">  <span class="k">height</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
+</span><span class="line">  <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">150px</span><span class="p">;</span>
+</span><span class="line">  <span class="n">animation</span><span class="o">:</span> <span class="n">dj</span> <span class="m">10s</span> <span class="n">infinite</span> <span class="n">linear</span><span class="p">;</span>
+</span><span class="line">  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">dj</span> <span class="m">10s</span> <span class="n">infinite</span> <span class="n">linear</span><span class="p">;</span>
+</span><span class="line">  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">dj</span> <span class="m">10s</span> <span class="n">infinite</span> <span class="n">linear</span><span class="p">;</span>
+</span><span class="line">  <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">dj</span> <span class="m">10s</span> <span class="n">infinite</span> <span class="n">linear</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>
+    <img src="/blog/u/image/album-milk.jpg" alt="album-milk" class="album" />
+</p>
+
+<embed src="http://www.xiami.com/widget/0_1771372335/singlePlayer.swf" type="application/x-shockwave-flash" width="257" height="33" wmode="transparent" />
+
+<h2 id="section-2">后记</h2>
+
+<p>上面的效果没有用到一行js。css真是将技术与艺术完美结合的产物，这些动画无疑需要激发人无限的创意，随着浏览器的支持度提高，在web上的应用也会越来越广，应用的明天会非常美好。</p>
+
+<h2 id="section-3">代码</h2>
+
+<p>在自己的项目中，我会使用scss来书写css，省却了很多重复的工作。这个页面的scss文件放到这里保存一下。</p>
+
+<p><a href="/blog/u/scss/trans.scss">trans.scss</a></p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-12T16:41:00+08:00" pubdate data-updated="true">2013.03.12</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/css/'>css</a>, <a class='category' href='/blog/blog/categories/web/'>web</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1341,277 +1604,6 @@ url=http%3A%2F%2Fwww.google.com</p>
 
 
 	<a class='category' href='/blog/blog/categories/neo4j/'>neo4j</a>, <a class='category' href='/blog/blog/categories/nodejs/'>nodejs</a>, <a class='category' href='/blog/blog/categories/note/'>note</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/01/23/chu-shi-tu-xing-shu-ju-ku-neo4j/">初试图形数据库 Neo4j</a></h1>
-	<div class="entry-content">
-		<h2 id="section">安装</h2>
-
-<p>作为一个java软件，就得充分发挥它<code>Write Once, Run Anywhere</code>的精神。直接下载tarball，解压后运行即可。官方还很贴心的提供了一个init脚本(./bin/neo4j)，链接到init.d下就可以开搞啦。</p>
-
-<p>默认的服务实例在localhost:7474，其余配置还是值得好好研究一番的。</p>
-
-<h2 id="neo4j-shell">neo4j shell</h2>
-<p>neo4j提供了一种叫做<code>Cypher Query Language</code>的查询方言，可以看做是图形数据库的sql，neo4j还提供了一个<code>neo4j-shell</code>用于做查询交互，在命令行下可以使用<code>./bin/neo4j-shell</code>来开启，web中也有一个tab叫做<code>power-tool console</code>可以使用neo4j-shell。</p>
-
-<h3 id="section-1">增删改节点</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="c"># 创建节点</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>CREATE <span class="nv">n</span> <span class="o">=</span> <span class="o">{</span> name : <span class="s1">&#39;Andres&#39;</span>, title : <span class="s1">&#39;Developer&#39;</span> <span class="o">}</span> RETURN n;
-</span><span class="line">+-------------------------------------------+
-</span><span class="line">| n                                         |
-</span><span class="line">+-------------------------------------------+
-</span><span class="line">| Node<span class="o">[</span>37<span class="o">]{</span>name:<span class="s2">&quot;Andres&quot;</span>,title:<span class="s2">&quot;Developer&quot;</span><span class="o">}</span> |
-</span><span class="line">+-------------------------------------------+
-</span><span class="line">1 row
-</span><span class="line">Nodes created: 1
-</span><span class="line">Properties <span class="nb">set</span>: 2
-</span><span class="line">8 ms
-</span><span class="line"><span class="c"># 修改节点</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">n</span> <span class="o">=</span> node<span class="o">(</span>37<span class="o">)</span> SET n.surname <span class="o">=</span> <span class="s1">&#39;Taylor&#39;</span> RETURN n;
-</span><span class="line">+------------------------------------------------------------+
-</span><span class="line">| n                                                          |
-</span><span class="line">+------------------------------------------------------------+
-</span><span class="line">| Node<span class="o">[</span>37<span class="o">]{</span>name:<span class="s2">&quot;Andres&quot;</span>,title:<span class="s2">&quot;Developer&quot;</span>,surname:<span class="s2">&quot;Taylor&quot;</span><span class="o">}</span> |
-</span><span class="line">+------------------------------------------------------------+
-</span><span class="line">1 row
-</span><span class="line">Properties <span class="nb">set</span>: 1
-</span><span class="line">15 ms
-</span><span class="line"><span class="c"># 删除节点</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">n</span> <span class="o">=</span> node<span class="o">(</span>37<span class="o">)</span> DELETE n;
-</span><span class="line">+-------------------+
-</span><span class="line">| No data returned. |
-</span><span class="line">+-------------------+
-</span><span class="line">Nodes deleted: 1
-</span><span class="line">4 ms
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section-2">创建关系</h3>
-<p>图形数据库最重要的一个概念就是关系(relationship)，各个节点直接通过双向或单向的关系连接在一起，这样才能从一个节点查找到其他的节点，这种设计在某些场景下会让查询变得更加高效而灵活，例如社交网络中的好友关系，人立方中查找任意两人之间的亲友，假如使用传统的关系数据库，查找朋友的朋友就会变得非常的困难，其耗时也是指数型的增长，而使用图形数据库，则可以保持线性的效率。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-<span class="line-number">29</span>
-<span class="line-number">30</span>
-<span class="line-number">31</span>
-<span class="line-number">32</span>
-<span class="line-number">33</span>
-<span class="line-number">34</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="c"># 创建两个节点的关系</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">a</span> <span class="o">=</span> node<span class="o">(</span>34<span class="o">)</span>, <span class="nv">b</span> <span class="o">=</span> node<span class="o">(</span>36<span class="o">)</span> CREATE a-<span class="o">[</span>r:knowns<span class="o">]</span>-&gt;b RETURN r;
-</span><span class="line">+---------------+
-</span><span class="line">| r             |
-</span><span class="line">+---------------+
-</span><span class="line">| :knowns<span class="o">[</span>0<span class="o">]</span> <span class="o">{}</span> |
-</span><span class="line">+---------------+
-</span><span class="line">1 row
-</span><span class="line">Relationships created: 1
-</span><span class="line">20 ms
-</span><span class="line"><span class="c"># 查找关系</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">r</span> <span class="o">=</span> rel<span class="o">(</span>0<span class="o">)</span> <span class="k">return </span>r;
-</span><span class="line">+-----------------------------------+
-</span><span class="line">| r                                 |
-</span><span class="line">+-----------------------------------+
-</span><span class="line">| :isdogof<span class="o">[</span>0<span class="o">]</span> <span class="o">{</span>ctime:1359365331933<span class="o">}</span> |
-</span><span class="line">+-----------------------------------+
-</span><span class="line">1 row
-</span><span class="line">1 ms
-</span><span class="line"><span class="c"># 删除某节点和它的所有关系</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>START <span class="nv">n</span> <span class="o">=</span> node<span class="o">(</span>34<span class="o">)</span> MATCH n-<span class="o">[</span>r<span class="o">]</span>-<span class="o">()</span> DELETE n, r;
-</span><span class="line">+-------------------+
-</span><span class="line">| No data returned. |
-</span><span class="line">+-------------------+
-</span><span class="line">Nodes deleted: 1
-</span><span class="line">Relationships deleted: 3
-</span><span class="line">3 ms
-</span><span class="line"><span class="c"># 查找节点的关系</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">a</span> <span class="o">=</span> node<span class="o">(</span>2<span class="o">)</span> match a&lt;-<span class="o">[</span>r:isfamilyof<span class="o">]</span>-&gt;b RETURN a,r,b;
-</span><span class="line">+----------------------------------------------------------------------------------------+
-</span><span class="line">| a                           | r                          | b                           |
-</span><span class="line">+----------------------------------------------------------------------------------------+
-</span><span class="line">| Node<span class="o">[</span>2<span class="o">]{</span>name:<span class="s2">&quot;bran&quot;</span>,age:10<span class="o">}</span> | :isfamilyof<span class="o">[</span>2<span class="o">]</span> <span class="o">{</span>ctime:200<span class="o">}</span> | Node<span class="o">[</span>1<span class="o">]{</span>name:<span class="s2">&quot;snow&quot;</span>,age:17<span class="o">}</span> |
-</span><span class="line">+----------------------------------------------------------------------------------------+
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>有意思的是注意其中<code>CREATE a-[r:knowns]-&gt;b</code>中的箭头走向表示这种关系的指向，我们可以通过<code>CREATE a&lt;-[r:knowns]-b</code>来创建一个b到a的关系，但是当我想用<code>CREATE a&lt;-[r:knowns]-&gt;b</code>来创建一个双向关系时却没有成功，仍然只创建了从a到b的关系。而在查找某个节点的关系时，双向箭头确是起作用的，应该算做一个bug。</p>
-
-<h3 id="section-3">删除所有节点和关系</h3>
-<p><code>Cypher</code>中可以使用通配符<code>*</code>来找出所有的节点或者关系，那么假如我们需要删除所有节点，语句如下</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="c"># 如果节点上还有对应的关系，该节点是无法删除的，所以需要先删除所有关系</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">r</span> <span class="o">=</span> rel<span class="o">(</span>*<span class="o">)</span> delete r;
-</span><span class="line">+--------------------------------------------+
-</span><span class="line">| No data returned, and nothing was changed. |
-</span><span class="line">+--------------------------------------------+
-</span><span class="line">0 ms
-</span><span class="line"><span class="c"># 删除节点</span>
-</span><span class="line">neo4j-sh <span class="o">(</span>?<span class="o">)</span><span class="nv">$ </span>start <span class="nv">n</span> <span class="o">=</span> node<span class="o">(</span>*<span class="o">)</span> delete n;
-</span><span class="line">+-------------------+
-</span><span class="line">| No data returned. |
-</span><span class="line">+-------------------+
-</span><span class="line">Nodes deleted: 2
-</span><span class="line">4 ms
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>删除所有节点后，在web端显示的节点数和关系数可能会对不上真实的数据，这些数量官方叫做”Primitive count”，其实在<code>neo4j-shell</code>下可以用下面的命令得到，按字面意思应该表示一个估算值，并不准确。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="sh"><span class="line">neo4j-sh <span class="o">(</span>0<span class="o">)</span><span class="nv">$ </span>dbinfo -g <span class="s2">&quot;Primitive count&quot;</span>
-</span><span class="line"><span class="o">{</span>
-</span><span class="line">  <span class="s2">&quot;NumberOfNodeIdsInUse&quot;</span>: 1,
-</span><span class="line">  <span class="s2">&quot;NumberOfPropertyIdsInUse&quot;</span>: 0,
-</span><span class="line">  <span class="s2">&quot;NumberOfRelationshipIdsInUse&quot;</span>: 0,
-</span><span class="line">  <span class="s2">&quot;NumberOfRelationshipTypeIdsInUse&quot;</span>: 0
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>在自己看来，<code>Cypher Query Language</code>的增删改语句还是比较直观的，但是一旦牵涉到关系就有点没节操了，一句查询中一半的操作符，真是让人看花眼，相较之下还是sql发展的比较成熟，也更易为人所接受了。<a href="http://docs.neo4j.org/chunked/milestone/cypher-query-lang.html">更多的操作符和更多的语法</a></p>
-
-<p>不过，各种neo4j的客户端都将晦涩的<code>Cypher</code>语言封装起来，提供了可读性更高的接口方法，下面就找个客户端来试用一下。</p>
-
-<h2 id="nodejs-bundle">nodejs bundle</h2>
-<p>官网上给出了java和python版本的实例，我等屌丝玩点轻量级的，这里找了一个<a href="https://github.com/thingdom/node-neo4j">nodejs的客户端</a>，初窥图形数据库的魅力。</p>
-
-<h3 id="section-4">创建及修改节点</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">neo4j = </span><span class="nx">require</span> <span class="s">&#39;neo4j&#39;</span>     <span class="c1">#使用coffee-script，那就尽量写的更coffee一点儿吧</span>
-</span><span class="line"><span class="nv">db = </span><span class="k">new</span> <span class="nx">neo4j</span><span class="p">.</span><span class="nx">GraphDatabase</span><span class="p">(</span><span class="s">&#39;http://localhost:7474&#39;</span><span class="p">)</span> <span class="c1">#连接默认的REST端口</span>
-</span><span class="line"><span class="nx">node</span><span class="p">.</span><span class="nx">createNode</span> <span class="p">{</span>             <span class="c1">#初始化一个节点</span>
-</span><span class="line">    <span class="nv">username: </span><span class="s">&#39;bran&#39;</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line"><span class="nx">node</span><span class="p">.</span><span class="nx">save</span> <span class="nf">(err, node)-&gt;</span>       <span class="c1">#需要save才能真正的保存这个节点到数据库</span>
-</span><span class="line">    <span class="nv">node.data = </span><span class="p">{</span>           <span class="c1">#可以通过直接修改node的data属性来修改node值</span>
-</span><span class="line">        <span class="nv">username: </span><span class="s">&#39;bran&#39;</span>
-</span><span class="line">        <span class="nv">nickname: </span><span class="s">&#39;bird man&#39;</span>
-</span><span class="line">        <span class="nv">email: </span><span class="s">&#39;bran@gmail.com&#39;</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line">    <span class="nx">node</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>             <span class="c1">#不要忘了再次保存</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h2 id="section-5">备份数据库</h2>
-<p>之前造出了那么多的脏数据，有点洁癖的人都想要把数据清理一下吧。网上找了找，发现只有’enterprise’版才有export的功能，这不是明摆着鄙视我等屌丝么。在<a href="http://www.mail-archive.com/user@lists.neo4j.org/msg08932.html">这里</a>(翻墙可入)有兄台说了一个很暴力的办法，直接删除<code>data/graph.db</code>文件夹，我试了一下，确实可行，重启后世界干干净净，只剩下了0号node，果断再用<code>start n = node(0) delete n;</code>删除之。这大概也是nosql的好处，数据就是文件，取消了维护索引，关系等等的麻烦，随去随用，冷备份和迁移的时候也简单，直接copy文件夹即可。</p>
-
-<h2 id="section-6">参考文档</h2>
-<ul>
-  <li><a href="http://docs.neo4j.org/chunked/milestone/">v1.9手册</a></li>
-  <li><a href="http://docs.neo4j.org.cn/">v1.8中文开发文档</a></li>
-  <li><a href="http://coffeedoc.info/github/thingdom/node-neo4j/master/">node-neo4j文档</a></li>
-</ul>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-01-23T11:25:00+08:00" pubdate data-updated="true">2013.01.23</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/coffee/'>coffee</a>, <a class='category' href='/blog/blog/categories/database/'>database</a>, <a class='category' href='/blog/blog/categories/neo4j/'>neo4j</a>, <a class='category' href='/blog/blog/categories/nodejs/'>nodejs</a>
 
 
 </div>

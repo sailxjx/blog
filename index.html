@@ -7,7 +7,7 @@
 	<meta name="author" content="Xu Jingxin">
 
 	
-	<meta name="description" content="上一篇工具软件的困境分析了我对工具软件现状的看法，归纳一下就是两个问题：1. 使用体验难创新。2. 用户需求难覆盖。下面说一下我的解法。 新的平台 颠覆性的创新更容易出现在新的平台上，移动设备的普及让人们习惯了手势操作。但在今天，移动设备上做交互创新已然不是一个明智的选择， &hellip;">
+	<meta name="description" content="前不久有同事和我谈论起现下 API 维护的困难，抱怨诸多，总结起来大概就是两点，一是需求考虑不完善，很多地方需要在开发中补充条件，二是向前兼容困难，很多历史遗留无法修改，代码臃肿。 在我看来，这些问题的产生，都只有一个原因，就是现有 API 的设计和开发理念，不够「纯粹」。API &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -74,6 +74,47 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2016/09/06/chun-cui-de-api/">纯粹的 API</a></h1>
+	<div class="entry-content">
+		<p>前不久有同事和我谈论起现下 API 维护的困难，抱怨诸多，总结起来大概就是两点，一是需求考虑不完善，很多地方需要在开发中补充条件，二是向前兼容困难，很多历史遗留无法修改，代码臃肿。</p>
+
+<p>在我看来，这些问题的产生，都只有一个原因，就是现有 API 的设计和开发理念，不够「纯粹」。API 的设计就好比凿山开路，必须沿着最短的途径到达目标。有些人为了「Flexible」，喜欢在开发中「留一手」，假象出很多未来可能出现的情况，用额外的代码来做兼容。例如设计一套简单的权限系统，本来简单的 ACL 就能实现，非要觉得以后可能会增加更多的管理员类型，而去赋予各种角色，关系，权限表，这是需求上的多余。再比如设计一套 CURD API，在刚起步的时候就考虑缓存，异步，Job 等等，这是架构上的多余。</p>
+
+<p>如今的 Web 设计趋势是去芜存菁，去掉繁复的视觉效果，注重排版，留白，突出内容，因为 Web 最重要的功能还是让用户获取信息。API 设计有相通之处，一个「纯粹」的 API，应始终保持单纯与直观，一个叫「Create user」的 API，目的就只有一个，创建这条用户信息。至于是否要给这个人发邮件，要帮他初始化哪些业务资料，这些统统都拆分到 Service 中去做，如果需求中没提到这些，那么这个 Service 更没必要存在。这样简单设计的代码将具有更长的生命力，在历经无数次需求修改之后，这些代码能像水中冲刷的基石一样，屹立不倒。</p>
+
+<p>现实已经如此复杂，API 还是让它单纯一些吧。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-09-06T09:38:00+08:00" pubdate data-updated="true">2016.09.06</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/design/'>design</a>, <a class='category' href='/blog/blog/categories/software/'>software</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -701,55 +742,6 @@
 
 
 <time datetime="2015-09-30T09:34:00+08:00" pubdate data-updated="true">2015.09.30</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/caprice/'>caprice</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2015/07/26/guan-yu-chi-fan/">关于吃饭</a></h1>
-	<div class="entry-content">
-		<p>最近好像有款叫 Soylent 的食物（？）突然在网上流行起来，到哪儿都能看到有人推荐这款产品。保守如我，在心理上实在接受不了每天就靠喝这种芝麻糊过日子。</p>
-
-<h2 id="section">什么时候吃饭变成了一件麻烦事</h2>
-
-<p>生活节奏越来越快，我已经不记得上次做饭是什么时候了。我倒是不太排斥烧菜的过程，真正的麻烦都在准备食材的阶段，如果手边有现成洗净的食材，我是很愿意煎炒蒸煮一下的。在身体健康的年纪，吃遍天下美食应该是一种美好的享受吧，食物和调料带来的快乐可不是一大杯蛋白质糊可以比拟的。</p>
-
-<p>就算在快节奏的工作日，吃一顿饭也占用不了太多的时间。Soylent 貌似并不比去路边吃顿饭更省事，如果专为懒人设计，我建议他们将冲泡壶设计成一次性的，吃完就丢，岂不更方便。</p>
-
-<h2 id="section-1">吃饭真的只是为了饱腹吗</h2>
-
-<p>吃饭也是一种社交活动，吃饭的时候和别人聊聊热门话题，开拓一下视野，转移一下注意力，既是休息，也是增进了解的一种方式。大家围成一桌喝着芝麻糊聊天的场景，画面太美，实在不敢想想。</p>
-
-<p>不过这年头新产品和新概念层出不穷，不断刷新人们的世界观，出现 Soylent，也算是科技和互联网发展的一种副产品。也许以后该转换一下思路，能保持独立思考，同时接受新事物。</p>
-
-<p>为了这个写一篇文章确实慢蛋疼的，晚饭加个蛋压压惊。</p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-07-26T18:00:00+08:00" pubdate data-updated="true">2015.07.26</time></div>
 	<div class="tags">
 
 

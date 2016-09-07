@@ -4,7 +4,7 @@
   <title><![CDATA[Category: software | CodeBean]]></title>
   <link href="http://jingxin.me/blog/blog/categories/software/atom.xml" rel="self"/>
   <link href="http://jingxin.me/blog/"/>
-  <updated>2016-08-22T22:04:53+08:00</updated>
+  <updated>2016-09-07T16:56:44+08:00</updated>
   <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[Xu Jingxin]]></name>
@@ -12,6 +12,21 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[纯粹的 API]]></title>
+    <link href="http://jingxin.me/blog/blog/2016/09/06/chun-cui-de-api/"/>
+    <updated>2016-09-06T09:38:00+08:00</updated>
+    <id>http://jingxin.me/blog/blog/2016/09/06/chun-cui-de-api</id>
+    <content type="html"><![CDATA[<p>前不久有同事和我谈论起现下 API 维护的困难，抱怨诸多，总结起来大概就是两点，一是需求考虑不完善，很多地方需要在开发中补充条件，二是向前兼容困难，很多历史遗留无法修改，代码臃肿。</p>
+
+<p>在我看来，这些问题的产生，都只有一个原因，就是现有 API 的设计和开发理念，不够「纯粹」。API 的设计就好比凿山开路，必须沿着最短的途径到达目标。有些人为了「Flexible」，喜欢在开发中「留一手」，假象出很多未来可能出现的情况，用额外的代码来做兼容。例如设计一套简单的权限系统，本来简单的 ACL 就能实现，非要觉得以后可能会增加更多的管理员类型，而去赋予各种角色，关系，权限表，这是需求上的多余。再比如设计一套 CURD API，在刚起步的时候就考虑缓存，异步，Job 等等，这是架构上的多余。</p>
+
+<p>如今的 Web 设计趋势是去芜存菁，去掉繁复的视觉效果，注重排版，留白，突出内容，因为 Web 最重要的功能还是让用户获取信息。API 设计有相通之处，一个「纯粹」的 API，应始终保持单纯与直观，一个叫「Create user」的 API，目的就只有一个，创建这条用户信息。至于是否要给这个人发邮件，要帮他初始化哪些业务资料，这些统统都拆分到 Service 中去做，如果需求中没提到这些，那么这个 Service 更没必要存在。这样简单设计的代码将具有更长的生命力，在历经无数次需求修改之后，这些代码能像水中冲刷的基石一样，屹立不倒。</p>
+
+<p>现实已经如此复杂，API 还是让它单纯一些吧。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[工具软件的未来]]></title>
@@ -170,28 +185,6 @@
 
 <h2 id="section-1">不是结束的结语</h2>
 <p>软件的设计日新月异，将来肯定会接触到更多优秀的软件，也许哪天我想法变了，也许哪天遇到了更神奇的方案，可能我会补充在这里。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[在 mac 中安装 wine]]></title>
-    <link href="http://jingxin.me/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine/"/>
-    <updated>2013-04-28T12:39:00+08:00</updated>
-    <id>http://jingxin.me/blog/blog/2013/04/28/zai-mac-zhong-an-zhuang-wine</id>
-    <content type="html"><![CDATA[<p>公司用奇葩的imo，由于没有mac版本，只能用web版。最近imo web版升级之后老是不稳定，又不想装一个笨重的windows虚拟机，于是曲线救国，找找mac上的<a href="http://www.winehq.org/">wine</a>该怎么用。</p>
-
-<p>在mac上安装wine需要备齐三样神器：</p>
-
-<ul>
-  <li><a href="http://xquartz.macosforge.org/landing/">xquartz</a>，在mac上提供对x11的支持，由于mountain lion之后不在预装x11，所以这个需要手动下载。</li>
-  <li><a href="http://winebottler.kronenberg.org/">winebottler</a>，这个包里两个软件，wine和winebottler，winebottler算是一个wine的管理器，里面预设了一些各种wine应用下需要的类库模板。</li>
-</ul>
-
-<p>安装顺序是xquartz-&gt;winebottler-&gt;wine，后面两个从包中直接拖到Application中就行了。安装完后需要先启动xquartz，然后启动wine之后在上面的panel中会有一个酒杯的图标，里面可以打开资源管理器等等，第一次打开时会在用户目录里生成一个Wine Files文件夹，这个就是winebottler中所谓的prefix，里面模拟了一套windows下面的环境。可以通过在winebottler中安装不同的prefix来切换不同应用环境。不过每个prefix都是一个完整的windows环境，非常占空间，没有必要的话，用默认的就行。然后增加类库可以点击wine图标，选择wine trick来安装，还是比较方便的。</p>
-
-<p>youtube上有个<a href="http://www.youtube.com/watch?v=m0BBkISOcEA">视频</a>介绍了如何在mac上安装wine，按照上面说的一步步来，基本不会出错。</p>
-
-<p>但是wine的种种缺点还是很明显的，一个是字体界面都很丑，在mac下更甚，即使想各种办法优化也无济于事。第二个就是很多库都没有，这是最致命的，imo最后还是没有安装成功，按照错误提示装了.net和vcrun2008等等之后还是不能正常启动，也是预料之中的事。wine还是只能算是一个玩具，给喜欢折腾的geek玩玩而已，真要用来跑wow之类的应用，那肯定是闲的蛋疼了。</p>
 ]]></content>
   </entry>
   
