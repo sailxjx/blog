@@ -7,15 +7,7 @@
 	<meta name="author" content="Xu Jingxin">
 
 	
-	<meta name="description" content="最近一个叫laravel的php框架在社区讨论的风生水起，号称php界的rails，试用了一下，确实非常新鲜，但是又有种似曾相识的感觉。 例如路由中的一段代码： 1
-2
-3
-4
-5
-6
-&lt;?php
-Route::get(&#39;/&#39;, function()
-{ return &hellip;">
+	<meta name="description" content="压力测试工具林林总总，数不胜数，这里只列举几个命令行下常用的工具，来看看那种用的比较顺手，纯粹个人意见。 ab (apache benchmark，因为是apache自带的工具，所以用的人比较多) siege (一个不错的开源压力测试工具，简单，好用) httperf (据说很强大， &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -82,6 +74,92 @@ Route::get(&#39;/&#39;, function()
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/07/05/ji-kuan-ya-li-ce-shi-gong-ju/">几款压力测试工具</a></h1>
+	<div class="entry-content">
+		<p>压力测试工具林林总总，数不胜数，这里只列举几个命令行下常用的工具，来看看那种用的比较顺手，纯粹个人意见。</p>
+
+<ul>
+  <li>ab (apache benchmark，因为是apache自带的工具，所以用的人比较多)</li>
+  <li>siege (一个不错的开源压力测试工具，简单，好用)</li>
+  <li>httperf (据说很强大，但参数实在繁琐，不考虑)</li>
+</ul>
+
+<h1 id="ab">ab</h1>
+<p>ab是apache自带的测试工具，很多情况下我们要测试一个网站在并发100下的响应速度，用下面的命令就行</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">ab -n1000 -c100 http://domain.com/</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>可不要少了最后的那个’/’，ab接受的url必须是schema, domain, path一个不少的。</p>
+
+<p>其他像添加header，post参数等等的，man一下ab的手册吧。</p>
+
+<p>长久以来我一直以ab作为webserver性能的一个指标，因为使用确实简单，直到遇见了siege。</p>
+
+<h1 id="siege">siege</h1>
+
+<p>siege应该也有些年头了，2000年的时候就已经有这个软件了，直到最近更新了3.0.1版本。在第一次使用的时候，需要用siege.config在主目录下面生成一个配置文件.siegerc。这类文件常用linux的人应该很清楚了，里面每个选项都有明确的注释。需要注意的是delay这个值，做一般测试的时候会按照这个设定的时间间隔停顿，那么这样压力测试出来的结果就不准了，所以在做压测的时候需要加上’-b’参数，或者直接将这个参数设置为0。下面是一个100并发测试10秒钟的例子。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">siege -b -c100 -t10S http://domain.com/</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>siege的一个缺点是没法设置总请求数，但是可以通过重复数和并发数组合来求出总请求数，例如我们要在100并发下发送1000个请求，就用下面的命令，当然这个时候就不能用’-t’参数了</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">siege -b -c100 -r10 http://domain.com/</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>结果与ab差不多，但是他会将历次测试的结果保存在一个文件中供以后比较。</p>
+
+<h1 id="section">测试</h1>
+
+<p>这里我分别用nodejs和php写了两个server脚本，响应值都是’hello world’，都用单一进程作为web server。（php5.4之后用-S参数来启动服务）。</p>
+
+<p>测试结果:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">(request/second)        php     nodejs
+</span><span class="line">siege                   2500    2000
+</span><span class="line">ab                      4880    3480</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>测试软件的评判标准不一样，所以测试结果有差距也比较合理，不能由此说明谁比谁更准确。但是在测试中nodejs的性能比php要慢20%这个倒是让我觉得比较惊讶，看来nodejs在运算效率上并不占优势。但是在复杂的web应用中，更多的时间开销在io中，nodejs合理的将这部分等待时间利用了起来，才会让人感觉比较快吧。</p>
+
+<p>很早就有人对这几款测试软件做了<a href="http://lionet.livejournal.com/99984.html">横向的对比</a>，有兴趣可以看一下，其中keepalive和no-keepalive的效率差距比较大，我自己测试时觉得并不明显，可能是写的例子比较单一吧。</p>
+
+<p>今后假如需要做简单的压力测试，我还是比较倾向于使用siege。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-05T16:45:00+08:00" pubdate data-updated="true">2013.07.05</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/ab/'>ab</a>, <a class='category' href='/blog/blog/categories/httperf/'>httperf</a>, <a class='category' href='/blog/blog/categories/siege/'>siege</a>, <a class='category' href='/blog/blog/categories/test/'>test</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1487,162 +1565,6 @@ Route::get(&#39;/&#39;, function()
 
 
 	<a class='category' href='/blog/blog/categories/mysql/'>mysql</a>, <a class='category' href='/blog/blog/categories/translation/'>translation</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/05/03/zhui-qiu-geng-kuai-jquery-dot-ready-ru-he-shi-xian/">追求更快: jQuery.ready 如何实现</a></h1>
-	<div class="entry-content">
-		<p>jQuery从1.0版本就提供了一个叫做<code>ready</code>的方法，最常见的调用场景是<code>$(document).ready(handler)</code>，表示当dom树下载完成后触发事件，也可以简写成<code>$(handler)</code>。</p>
-
-<p>以前一直以为这个方法和javascript自己提供的<code>window.onload</code>事件是一回事，直到最近在做一个chrome小插件时搜索了一下，才发现这俩区别还是挺大的。</p>
-
-<h2 id="windowonload">window.onload</h2>
-
-<p><code>window.onload</code>是javascript自身提供的一个方法，表示当dom树中所有元素，包括img，js，css等等资源文件都加载完毕时触发的事件。最直观的就是在浏览器加载过程中标签栏上会有一个转动的loading图标，当这个图标消失或停止转动，就是onload时间触发的时候。这个方法还有另一种绑定的方式<code>window.addEventListener('load', handler)</code>。</p>
-
-<p>这样就可以理解，假如页面中某个图片的加载时间特别长，那么<code>window.onload</code>是不可能触发的，但是大多数时候，我们想要的只是等dom结构完整加载之后，就可以绑定一些js事件了，假如我们把js代码都写在<code>window.onload</code>中，显然会有很长一段时间用户的操作得不到响应。</p>
-
-<p>所以<code>jquery</code>提供了<code>ready</code>方法。</p>
-
-<h2 id="documentreadyhandler">$(document).ready(handler)</h2>
-
-<p>根据<a href="http://api.jquery.com/ready/">官方文档</a>，<code>ready</code>方法与<code>&lt;body onload=""&gt;</code>属性不兼容，不过后者现在也不是很常见了。下面一段代码放到浏览器中跑一下可以实验<code>ready</code>与<code>window.onload</code>谁先触发。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
-</span><span class="line"><span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
-</span><span class="line">    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;window onload&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="p">};</span>
-</span><span class="line"><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
-</span><span class="line">    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;document ready&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="p">});</span>
-</span><span class="line"><span class="o">&lt;</span><span class="err">/script&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>这个方法又是如何实现的呢？其实是利用了javascript中的<code>DOMContentLoaded</code>事件，至于这个事件为什么没有得到广泛的利用，可能是出于兼容性的考虑，至少在IE9以下，这个事件没有得到支持，所以jquery中使用了IE事件模型中的<code>onreadystatechange</code>来取代此方法。通过查找jquery源代码可以看到下面几行：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>jquery-1.9.1.js  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="c1">// Catch cases where $(document).ready() is called after the browser event has already occurred.</span>
-</span><span class="line"><span class="c1">// we once tried to use readyState &quot;interactive&quot; here, but it caused issues like the one</span>
-</span><span class="line"><span class="c1">// discovered by ChrisS here: http://bugs.jquery.com/ticket/12282#comment:15</span>
-</span><span class="line"><span class="k">if</span> <span class="p">(</span> <span class="nb">document</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">===</span> <span class="s2">&quot;complete&quot;</span> <span class="p">)</span> <span class="p">{</span>
-</span><span class="line">    <span class="c1">// Handle it asynchronously to allow scripts the opportunity to delay ready</span>
-</span><span class="line">    <span class="nx">setTimeout</span><span class="p">(</span> <span class="nx">jQuery</span><span class="p">.</span><span class="nx">ready</span> <span class="p">);</span>
-</span><span class="line">
-</span><span class="line"><span class="c1">// Standards-based browsers support DOMContentLoaded</span>
-</span><span class="line"><span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span> <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="p">)</span> <span class="p">{</span>
-</span><span class="line">    <span class="c1">// Use the handy event callback</span>
-</span><span class="line">    <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span> <span class="s2">&quot;DOMContentLoaded&quot;</span><span class="p">,</span> <span class="nx">completed</span><span class="p">,</span> <span class="kc">false</span> <span class="p">);</span>
-</span><span class="line">
-</span><span class="line">    <span class="c1">// A fallback to window.onload, that will always work</span>
-</span><span class="line">    <span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span> <span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="nx">completed</span><span class="p">,</span> <span class="kc">false</span> <span class="p">);</span>
-</span><span class="line">
-</span><span class="line"><span class="c1">// If IE event model is used</span>
-</span><span class="line"><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class="line">    <span class="c1">// Ensure firing before onload, maybe late but safe also for iframes</span>
-</span><span class="line">    <span class="nb">document</span><span class="p">.</span><span class="nx">attachEvent</span><span class="p">(</span> <span class="s2">&quot;onreadystatechange&quot;</span><span class="p">,</span> <span class="nx">completed</span> <span class="p">);</span>
-</span><span class="line">
-</span><span class="line">    <span class="c1">// A fallback to window.onload, that will always work</span>
-</span><span class="line">    <span class="nb">window</span><span class="p">.</span><span class="nx">attachEvent</span><span class="p">(</span> <span class="s2">&quot;onload&quot;</span><span class="p">,</span> <span class="nx">completed</span> <span class="p">);</span>
-</span><span class="line">
-</span><span class="line">    <span class="c1">// If IE and not a frame</span>
-</span><span class="line">    <span class="c1">// continually check to see if the document is ready</span>
-</span><span class="line">    <span class="kd">var</span> <span class="nx">top</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-</span><span class="line"><span class="p">......</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>这是jquery中<code>ready</code>方法实现的一个片段，可以通过检测<code>document.readyState == "complete"</code>来判断<code>DOMContentLoaded</code>事件是否触发。</p>
-
-<h2 id="chrome">在chrome扩展中</h2>
-
-<p>在chrome扩展的content_scripts中，使用<code>DOMContentLoaded</code>有时候并不能得到想要的结果，这是content_scripts往往在页面加载后再插入页面，就不能响应这个事件了。解决办法是在manifest.json中加入<code>"run_at":"document_start"</code>一行：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="json"><span class="line">  <span class="s2">&quot;content_scripts&quot;</span><span class="err">:</span> <span class="p">[</span>
-</span><span class="line">    <span class="p">{</span>
-</span><span class="line">      <span class="nt">&quot;matches&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://*/*&quot;</span><span class="p">],</span>
-</span><span class="line">      <span class="nt">&quot;js&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ghost.js&quot;</span><span class="p">],</span>
-</span><span class="line">      <span class="nt">&quot;run_at&quot;</span><span class="p">:</span> <span class="s2">&quot;document_start&quot;</span>  <span class="err">//</span> <span class="err">add</span> <span class="err">run_at</span> <span class="err">document_start</span>
-</span><span class="line">    <span class="p">}</span>
-</span><span class="line">  <span class="p">]</span><span class="err">,</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h1 id="section">参考资料</h1>
-<ul>
-  <li><a href="http://api.jquery.com/ready/">api.jquery.ready</a></li>
-  <li><a href="http://stackoverflow.com/questions/5959194/how-does-jquerys-document-ready-function-work">how-does-jquerys-document-ready-function-work</a></li>
-  <li><a href="http://stackoverflow.com/questions/5082094/register-domcontentloaded-in-google-chrome">register-domcontentloaded-in-google-chrome</a></li>
-  <li><a href="https://developer.mozilla.org/en-US/docs/DOM/Mozilla_event_reference/DOMContentLoaded">DOMContentLoaded</a></li>
-</ul>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-03T13:30:00+08:00" pubdate data-updated="true">2013.05.03</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/blog/categories/jquery/'>jquery</a>
 
 
 </div>
