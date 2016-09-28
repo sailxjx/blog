@@ -7,7 +7,7 @@
 	<meta name="author" content="Xu Jingxin">
 
 	
-	<meta name="description" content="不计后果的答应客户 在签约或谈合作时为了取得订单，不考虑现有能力和需要投入的成本，盲目的满足客户的要求，这样的做法，和乡下金属加工厂的老板没有任何区别，订单来了，增加机器和工人，加班加点，就能满足需求了。软件行业不是劳动力密集型产业，一步考虑不周，就需要投入更大的成本去弥补。 &hellip;">
+	<meta name="description" content="写爬虫可以说是一个程序员必修课，因为上手简单，成效明显，深受各大培训机构和教学材料的青睐。于是无数新手也加入了造轮子的队列，写的爬虫满天飞。 说爬虫上手简单，是有原因的，只要了解了 http 请求和 html/xml 结构，谁都能做出一个可用的爬虫，再辅以一个好用的请求库和解析库， &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -74,6 +74,117 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2015/12/07/ru-he-xie-chu-hao-pa-chong/">如何写出好爬虫</a></h1>
+	<div class="entry-content">
+		<p>写爬虫可以说是一个程序员必修课，因为上手简单，成效明显，深受各大培训机构和教学材料的青睐。于是无数新手也加入了造轮子的队列，写的爬虫满天飞。</p>
+
+<p>说爬虫上手简单，是有原因的，只要了解了 http 请求和 html/xml 结构，谁都能做出一个可用的爬虫，再辅以一个好用的请求库和解析库，完成老板的任务简直就是分分钟的事情，老婆孩子再也不用担心我加班了有木有？</p>
+
+<p>———————- 下面是转折的分割线 ———————-</p>
+
+<p>但是，这样写出来的爬虫真的达到了生产级别吗，答案是否定的。码农界常说的一个词是 Robust，来看看怎样让我们的爬虫变得更加 Robust</p>
+
+<h2 id="section">编码问题</h2>
+
+<p>互联网上存在各种各样的编码，虽然现代的浏览器都能智能的识别编码，但是对于爬虫来说它们却是需要跨过的第一道坎。</p>
+
+<p>多数网站都会在响应头中给出本站编码，我们只需要检测响应头中 content-type encoding 就能准确的得到站点的编码。再不济也会在 html meta 中标识出编码内容，检测 meta 中的 charset 属性就行了，例如 <code>&lt;meta http-equiv="Content-Type" content="text/html" charset="utf-8"&gt;</code> 就表示该网页使用的是 utf8 编码。</p>
+
+<p>如果站长丧心病狂到什么提示都不给，那么我们就只能靠猜了，iconv 是一个不错的库，可以检测文本内容的编码，而且准确率比较高，在各种语言中也能找到对应的 iconv 模块。</p>
+
+<p>如果最后还是检测不出对应的编码，那就默认当做目前最常见的 utf8 编码吧，<a href="https://github.com/danmactough/node-feedparser/blob/master/examples/iconv.js">这段简单的代码片段</a>可以说明检测编码的过程。</p>
+
+<h2 id="section-1">压缩问题</h2>
+
+<p>某些网站会在响应内容是使用 gzip 压缩以便节约流量（例如整天被爬的知乎同学），遇到这种站点，爬虫也需要做特殊的解析才能得到最后的纯文本内容。</p>
+
+<p>解析的过程与检测编码类似，先通过响应头检测网站使用的是什么压缩编码，然后使用对应的解压缩方法解压内容即可，使用压缩的网站会在响应头 Content-Encoding 中加上压缩编码，例如 Content-Type: gzip 就表示该网页使用的是 gzip 压缩，<a href="https://github.com/danmactough/node-feedparser/blob/master/examples/compressed.js">这段代码</a>可以说明检测压缩编码的过程</p>
+
+<h2 id="user-agent">添加 User-Agent</h2>
+
+<p>下面的问题就是与内容提供者斗智斗勇的过程了，有些站点会识别爬虫行为然后屏蔽掉一些爬虫的请求。我们要做的就是尽量让我们的爬虫看起来，像个人。</p>
+
+<p>首先请求头中必须添加 User-Agent，如果你还不知道 user-agent 是什么，出门左转看了wiki再回来。由于 ip 轻易无法修改，但是 user-agent 却是可以任意修改的，如果内容网站条件较宽，只使用 user-agent 识别爬虫的话，那么我们就乖乖的写上一些常用浏览器的 user-agent，如果你不知道有哪些，<a href="http://www.useragentstring.com/pages/All/">去这里</a>可以查到所有的 ua。</p>
+
+<p>至于专业的搜索引擎，内容网站欢迎还来不及，怎么会屏蔽呢。所以它们一般都会使用自己的特定 ua 标识，例如 Baidu spider，Google spider 等，普通野生的爬虫就不要参考了。</p>
+
+<h2 id="section-2">合并相同请求</h2>
+
+<p>如果我们的内容提供者地址是由用户添加的，难免碰到会有重复地址的情况，这时最好就是将这些链接给合并掉，以免重复请求。例如 A 和 B 同时添加了链接 abc，那么我们的爬虫只需请求一次 abc 然后将内容分别返回给 A 和 B 就行了，或者请求 abc 之后缓存一段时间，当其他用户添加这个链接时，返回缓存内容就行了。我们的宗旨就是用最少的请求干最多的事。</p>
+
+<h2 id="section-3">错误</h2>
+
+<p>有的时候爬虫在请求网站时会碰到一些错误，这些有的是由于内容网站的错误，有些是由于权限或受到了屏蔽，在大多数情况下面这些错误都可以通过 http status code 来分辨（如果不知道什么是 http status code，再出门去看一遍 wiki）。</p>
+
+<p>如果区分每个 http status code 太麻烦，有一个基本的原则就是看 code 前缀，例如：</p>
+
+<ul>
+  <li>3xx 开头的表示这个地址被跳转到其他地址了，爬虫可以根据响应头跟进，很多库自动做了跳转跟进，返回最终网址的内容，所以找到合适的请求库最重要，例如<a href="https://github.com/request/request">request</a></li>
+  <li>4xx 表示内容网站拒绝了你的请求，有可能是你的 ip 被屏蔽，或者这个地址需要验证。遇到这种情况，可以等待一段时间再次请求，并逐渐增加请求间隔，直到返回的响应头为 2xx。一般的屏蔽会在一段时间后解除。</li>
+  <li>5xx 表示内容网站挂了或你的服务器网络挂了，遇到这种情况，我们能做的就只能等，等内容网站修复错误。</li>
+</ul>
+
+<p>连续错误次数过多的网站就不要再爬取了，以便节约带宽资源</p>
+
+<h2 id="section-4">请求频率</h2>
+
+<p>上面提到了错误重试的问题，这一节我们聊一下调整请求频率以防止被屏蔽。</p>
+
+<p>如果你的爬虫现在可以正常访问内容网站，不要玩的太 high，尽量约束一下自己的请求频率，一分钟一次已经是很多网站能够忍耐的底线了，如果内容更新不频繁，可以设置为 20 分钟一次。</p>
+
+<p>此外，还能制定一些比较聪明的策略，例如发现网站内容较上次没有更新，那么下次请求间隔设置为 1.5 倍，依次递增，直到你设定的请求间隔上限。如果内容有了更新，再把请求间隔重置为最小值。这样既不影响及时得到网站的更新，也会尽量减小被屏蔽的风险。</p>
+
+<p>如果你的爬虫 ip 已经被屏蔽了（怎样判断被屏蔽请参考上文），那么就消停一会儿，设定一个较长的请求间隔再尝试，直至解除屏蔽。</p>
+
+<h2 id="section-5">分布式</h2>
+
+<p>爬虫受制于单台服务器的带宽和请求数限制，往往在高配置的机器中也无法发挥最大的效能。所以将爬虫分布在多台低配高带宽的服务器上是比较合理的做法。至于如果分布式，这个话题聊起来就没完了，可以使用最基础的消息队列（例如 zmq, rabbitmq 或 redis）和经典的 master/worker 结构，来实现多台机器协同工作。</p>
+
+<h2 id="section-6">大数据</h2>
+
+<p>大数据没有以前那么火了，但是为了提高这篇文章的逼格，仍然是一个值得一提的话题。</p>
+
+<p>我们知道互联网的世界是开放的，很多内容其实不需要我们亲自去爬取，搜索引擎已经帮我们收录了这些网站内容，合理利用搜索引擎的 site: 命令，有时候可以得到比亲自爬取更满意的结果。</p>
+
+<h2 id="dont-be-evil">Don’t be evil</h2>
+
+<p>大部分网站会在站点根目录下包含一个 robots.txt 文件，可以通过 http://域名/robots.txt 来访问，里面的内容表明了站长对于爬虫的限定，如果发现某些内容是站长不希望你爬取的，那么还是乖乖绕过吧。如果不知道 robots.txt 是什么，再去一次 wiki。</p>
+
+<h2 id="section-7">结语</h2>
+
+<p>以上简单介绍了一下我多年以来作为一名非大数据非分布式非社区明星开发的经验，抛砖引玉，希望能对读者有所帮助。</p>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-12-07T18:21:00+08:00" pubdate data-updated="true">2015.12.07</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/nodejs/'>nodejs</a>, <a class='category' href='/blog/blog/categories/spider/'>spider</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -852,143 +963,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/debug/'>debug</a>, <a class='category' href='/blog/blog/categories/nodejs/'>nodejs</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2014/08/28/limbo-jian-dan-fang-wen-yuan-cheng-shu-ju-ku/">Limbo: 简单访问远程数据库</a></h1>
-	<div class="entry-content">
-		<p><img src="https://dn-talk.oss.aliyuncs.com/site/images/workspace-c16d9d49.jpg" alt="简聊一下 轻松协作" /></p>
-
-<p>对于 nodejs 生态来说，使用 mongoose 作为 Model 模块是再好不过的一件事，其一大特点就是简洁优雅的 Schema 定义，提供了每个键值的类型验证，数据验证，索引声明，虚拟键，并自带实例化方法的扩展，大大节省了开发的成本。但是在考虑开放数据的时候，一切就显得不那么美好了。</p>
-
-<p>在打造<a href="https://talk.ai/">简聊</a>这款应用的过程中，我们就实实在在的遇到了这样的问题。由于需要使用 <a href="https://www.teambition.com/">Teambition</a> 的用户和团队数据，并且当<a href="https://talk.ai/">简聊</a>更新了用户数据之后，在 <a href="https://www.teambition.com/">Teambition</a> 中能实时的将这些更新推送到用户那里。按照惯例，我们最初使用的是 restful 接口。</p>
-
-<h2 id="restful-">第一阶段，使用 restful 接口</h2>
-
-<p>restful 接口的应用面最广，但是仍然存在很多不足，比如接口在参数和结构上限制较多，在考虑修改接口 api 的时候，往往会顾虑客户端的兼容性，而一旦客户端程序有新的需求，则需等待接口的更新。另一个麻烦的地方是需要做签名校验，对于内部的应用来说，我们完全可以通过防火墙来控制特定 ip 对端口的访问，签名在此处就显得有点多余。</p>
-
-<h2 id="schema">第二阶段，单独拆封 Schema</h2>
-
-<p>然后我们想到了将 Schema 拆封成一个单独的仓库，nodejs 有良好的模块管理，在不同的应用中，我们只需要将这些模块引入进来，既做到同步更新，又做到 DRY。相对于 restful 接口的缺点就是，对于数据的调用入口过多，而且应用之间互相是不知情的。例如在<a href="https://talk.ai/">简聊</a>中有更新用户数据，在 <a href="https://www.teambition.com">Teambition</a> 中就无法得知，并推送给其他客户端。</p>
-
-<h2 id="rpc">第三阶段，远程过程调用（rpc）</h2>
-
-<p>这个阶段和 restful 接口其实类似，我们在 <a href="https://www.teambition.com">Teambition</a>  的后端进程中将一些接口方法暴露出来，这样我们的客户端程序就能通过简单的 rpc 方式调用这些接口。例如我们导出了 <code>user.update</code> 方法，在客户端代码中使用 <code>rpc.call('user.update', params, callback)</code> 即可调用相应的过程。这样的调用行为与使用本地代码无异，可能是目前能找到的最简单直接的方式了。</p>
-
-<h2 id="rpc--mongoose-">第四阶段，rpc 与 mongoose 的结合</h2>
-
-<p>事情可以变得更简单，由于目的主要是为了操作数据库，所以我们开发了一个模块 <a href="https://github.com/teambition/limbo">limbo</a>，将 mongoose model 中所有方法暴露出来，以命名空间来划分，实现了在客户端与服务端程序一致的使用体验。</p>
-
-<p>例如我们在服务端程序中使用 limbo 连接 mongodb，只需要做如下声明：（以下的代码都以 coffeescript 作为示例）</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">limbo = </span><span class="nx">require</span> <span class="s">&#39;limbo&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="c1"># 定义 Schema</span>
-</span><span class="line"><span class="nv">UserSchame = </span><span class="nf">(Schema) -&gt;</span>
-</span><span class="line">  <span class="c1"># 这里的 Schema 即 mongoose.Schema</span>
-</span><span class="line">  <span class="k">new</span> <span class="nx">Schema</span>
-</span><span class="line">    <span class="nv">name: </span><span class="nb">String</span>
-</span><span class="line">    <span class="nv">email: </span><span class="nb">String</span>
-</span><span class="line">
-</span><span class="line"><span class="c1"># use 方法用作区分不同数据库连接的命名空间，一般参数选择数据库名就行</span>
-</span><span class="line"><span class="nv">db = </span><span class="nx">limbo</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">).</span><span class="nx">connect</span><span class="p">(</span><span class="s">&#39;mongodb://localhost:27017/test&#39;</span><span class="p">).</span><span class="nx">load</span> <span class="s">&#39;User&#39;</span><span class="p">,</span> <span class="nx">UserSchema</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>使用方式就与 mongoose 一致了</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nv">user = </span><span class="nx">db</span><span class="p">.</span><span class="nx">user</span>
-</span><span class="line"><span class="c1"># user 是一个 limbo 中用于封装 model 的一个对象，你可以直接使用 user.model 来直接调用 mongoose model</span>
-</span><span class="line"><span class="nx">user</span><span class="p">.</span><span class="nx">findOne</span> <span class="nv">_id: </span><span class="s">&#39;xxxx&#39;</span>
-</span><span class="line"><span class="nx">user</span><span class="p">.</span><span class="nx">create</span> <span class="nv">name: </span><span class="s">&#39;xxx&#39;</span><span class="p">,</span> <span class="nv">email: </span><span class="s">&#39;yyy&#39;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>下面是 limbo 中最激动人心的地方，你可以导出一个 collection 中的所有方法到 rpc server 中，只需要通过一个简单的声明</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nx">limbo</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="mi">7001</span><span class="p">).</span><span class="nx">enableRpc</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>下面我们就要提到如何在客户端程序中调用这些方法</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="c1"># 在客户端也需要初始化一个 limbo 命名空间，需要与服务端一致，链接改为服务端的域名和端口号</span>
-</span><span class="line"><span class="nv">db = </span><span class="nx">limbo</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">).</span><span class="nx">connect</span><span class="p">(</span><span class="s">&#39;tcp://localhost:7001&#39;</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="c1"># 下面有两种方式来使用 rpc</span>
-</span><span class="line"><span class="c1"># 1. 使用 call 方法</span>
-</span><span class="line"><span class="nx">db</span><span class="p">.</span><span class="nx">call</span> <span class="s">&#39;user.findOne&#39;</span><span class="p">,</span> <span class="nv">_id: </span><span class="s">&#39;xxxx&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
-</span><span class="line"><span class="c1"># 2. 使用方法链</span>
-</span><span class="line"><span class="nx">db</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">findOne</span> <span class="nv">_id: </span><span class="s">&#39;xxxx&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
-</span><span class="line"><span class="c1"># 第二种方式存在一个延迟，必须要在 limbo 与服务端程序握手成功之后才可以使用，</span>
-</span><span class="line"><span class="c1"># 否则会抛出一个对象不存在的异常，不过在一般的应用中，</span>
-</span><span class="line"><span class="c1"># 初始化所需的时间都会长于这个链接所需时间，所以延迟可以忽略不计了</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>可以看出，上面的第二种方式与服务端在本地使用 mongoose 的方式一模一样，这种黑魔法式的调用方式应该是广大码农喜闻乐见的。</p>
-
-<p>limbo 另一个值得称道的功能是可以在服务端程序监听这些远程调用的事件，这得益于 nodejs 的 event 对象，limbo 本身就继承于 EventEmitter 对象，所以我们在每次远程调用后会触发一个事件给服务端程序，而在服务端只需要简单的监听这个事件即可</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="coffeescript"><span class="line"><span class="nx">limbo</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;test.user.findOne&#39;</span><span class="p">,</span> <span class="nf">(user) -&gt;</span> <span class="p">...</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>正是这种 rpc 加事件反馈的机制，让<a href="https://talk.ai/">简聊</a>和 <a href="https://www.teambition.com">Teambition</a> 可以实现简单实时的数据交换。我们将 <a href="https://github.com/teambition/limbo">limbo</a> 托管在 github 上开源，是深知它还存在很多可以改进的地方，所以不免庸俗的说一句，欢迎 issue 和 pr~</p>
-
-<p>最后，欢迎访问我们的新产品<a href="https://talk.ai">简聊</a>，一款基于话题的轻量级协作应用。</p>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-08-28T17:41:00+08:00" pubdate data-updated="true">2014.08.28</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/database/'>database</a>, <a class='category' href='/blog/blog/categories/mongodb/'>mongodb</a>, <a class='category' href='/blog/blog/categories/mongoose/'>mongoose</a>, <a class='category' href='/blog/blog/categories/nodejs/'>nodejs</a>
 
 
 </div>

@@ -7,7 +7,11 @@
 	<meta name="author" content="Xu Jingxin">
 
 	
-	<meta name="description" content="压力测试工具林林总总，数不胜数，这里只列举几个命令行下常用的工具，来看看那种用的比较顺手，纯粹个人意见。 ab (apache benchmark，因为是apache自带的工具，所以用的人比较多) siege (一个不错的开源压力测试工具，简单，好用) httperf (据说很强大， &hellip;">
+	<meta name="description" content="最近发现了chrome下面的一个奇特现象，像下面这样的一段代码： 1
+2
+3
+setInterval(function() { document.title = document.title.substr(1) + document.title.substr(0, 1);
+}, 300); &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -74,6 +78,183 @@
 		
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+	<h1 class="title"><a href="/blog/blog/2013/07/10/javascript-bing-xing-ji-suan-web-worker/">Javascript并行计算： Web Worker</a></h1>
+	<div class="entry-content">
+		<p>最近发现了chrome下面的一个奇特现象，像下面这样的一段代码：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">  <span class="nb">document</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">document</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class="line"><span class="p">},</span> <span class="mi">300</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这段代码本来是为了让标签栏内容出现滚动的效果，每300毫秒变化一次，这本来没什么问题，但是偶然切换的其他标签时，这个滚动的速度就会变慢，网上查了一下，原来<a href="https://codereview.chromium.org/6577021">chrome设计如此</a>，当标签页不活动时，chrome会将所有定时任务的最小间隔设置为1秒，这样来减轻浏览器的压力，会影响所有带有timer的方法，如<code>setInterval</code>和<code>setTimeout</code>。像上面这样的任务，间隔就被提高到了1秒。</p>
+
+<p>由此引发的思考是，假如这个任务实时性要求很高，不容许这种时间机器的出现怎么办。stackoverflow也有人给出了<a href="http://stackoverflow.com/questions/5927284/how-can-i-make-setinterval-also-work-when-a-tab-is-inactive-in-chrome">一种解答</a>，不使用内置的timer，而是在代码中主动计算时间差，来模拟<code>setInterval</code>的行为。这种方法能解决问题，但是总觉得不够“优雅”。更好的方法是使用html5的<a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/workers.html">web worker</a>。</p>
+
+<p>web worker目前支持的浏览器包括Firefox 3.5+，Chrome和Safari 4+。你用IE6？那自求多福吧。</p>
+
+<p>搞过消息队列和异步计算的人对worker这个词应该不陌生，html5为我们提供了web worker这样一个优秀的特性，旨在将后台任务和前台交互分开，worker中的任务不会阻塞页面事件。我们先来解决上面提出的问题。</p>
+
+<p>由于不隶属于任意页面，所以chrome不会将worker中的进程timer也改成1秒。所以我们可以对上面的代码稍作修改，拆分成worker和main两部分。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>main.js  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">worker</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Worker</span><span class="p">(</span><span class="s1">&#39;worker.js&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="nx">worker</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="nb">document</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">document</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class="line"><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>worker.js  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">self</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">();</span>
+</span><span class="line"><span class="p">},</span> <span class="mi">300</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这样触发更新title的任务就由worker来完成了。</p>
+
+<p>上面只是一个粗浅的demo，worker真正的意义应该还是在并行计算，不过目前的web应用中前端基本没有大运算量的任务，所以worker在这里就没用武之地了。我们可以设想下面一种情况。</p>
+
+<p>md5是很多网站用于保存密码的方式，由此也产生了很多md5解码的工具，由于md5是一种不可逆的加密算法，解密的方法除了使用字典以外，还有一种简单粗暴的方法，就是暴力破解，而这是非常耗时间的。我们拿到了一个加密过的字符串’77b3e6926e7295494dd3be91c6934899’，而且知道明文是一个六位的数字，那么可以用数字循环来制造碰撞(里面的md5方法是引入外部库，这里及不贴出来了)：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>main.js  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">cipher</span> <span class="o">=</span> <span class="s1">&#39;77b3e6926e7295494dd3be91c6934899&#39;</span><span class="p">;</span>
+</span><span class="line"><span class="kd">var</span> <span class="nx">start</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+</span><span class="line"><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">999999</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">if</span> <span class="p">(</span><span class="nx">md5</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">===</span> <span class="nx">cipher</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;plain text: &#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">);</span>
+</span><span class="line">    <span class="k">break</span><span class="p">;</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;time cost: &#39;</span> <span class="o">+</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()</span> <span class="o">-</span> <span class="nx">start</span><span class="p">));</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>跑下来时间大概是12330毫秒。下面我们用十个worker来分担任务，实现相同的功能。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>main.js  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="kd">var</span> <span class="nx">cipher</span> <span class="o">=</span> <span class="s1">&#39;77b3e6926e7295494dd3be91c6934899&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">workerList</span> <span class="o">=</span> <span class="p">[],</span>
+</span><span class="line">    <span class="nx">start</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+</span><span class="line"><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// init 10 workers</span>
+</span><span class="line">  <span class="nx">workerList</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">new</span> <span class="nx">Worker</span><span class="p">(</span><span class="s1">&#39;worker.js&#39;</span><span class="p">));</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nx">workerList</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">worker</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// send task to each worker</span>
+</span><span class="line">  <span class="nx">worker</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;plain text: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+</span><span class="line">    <span class="nx">workerList</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_worker</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">      <span class="nx">_worker</span><span class="p">.</span><span class="nx">terminate</span><span class="p">();</span>  <span class="c1">// terminate all workers after task finished</span>
+</span><span class="line">    <span class="p">});</span>
+</span><span class="line">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;time cost: &#39;</span> <span class="o">+</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()</span> <span class="o">-</span> <span class="nx">start</span><span class="p">));</span>
+</span><span class="line">  <span class="p">});</span>
+</span><span class="line">  <span class="nx">worker</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
+</span><span class="line">    <span class="nx">start</span><span class="o">:</span> <span class="nx">index</span> <span class="o">*</span> <span class="mi">100000</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">end</span><span class="o">:</span> <span class="nx">index</span> <span class="o">*</span> <span class="mi">100000</span> <span class="o">+</span> <span class="mi">99999</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">cipher</span><span class="o">:</span> <span class="nx">cipher</span>
+</span><span class="line">  <span class="p">});</span>
+</span><span class="line"><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>worker.js  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="nx">self</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">start</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">end</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">if</span> <span class="p">(</span><span class="nx">md5</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">===</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">cipher</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">      <span class="nx">self</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+</span><span class="line">      <span class="k">break</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line"><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>最佳期望是总时间的十分之一，实际执行下来用了2792毫秒，这与给worker分配任务的方式有关，假如我们给worker随机指派计算值，那么得到的结果会更平均，而不会因为密文的变化而有大的波动。</p>
+
+<p>web worker对于javascript全局对象的访问也是有一些限制的，比如window，document，parent对象，这也是不能用worker取代所有页面script的一个原因。</p>
+
+<p>关于worker的具体介绍，<a href="http://www.html5rocks.com/en/tutorials/workers/basics/">这篇文章</a>讲的很好，里面还提供了几个现实的例子，非常详细。</p>
+
+<h2 id="section">参考文档</h2>
+<ul>
+  <li><a href="http://www.html5rocks.com/en/tutorials/workers/basics/">The Basics of Web Workers</a></li>
+  <li><a href="http://robertnyman.com/2010/03/25/using-html5-web-workers-to-have-background-computational-power/">Using HTML5 Web Workers To Have Background Computational Power</a></li>
+  <li><a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/workers.html#creating-a-dedicated-worker">9 Web workers</a></li>
+</ul>
+
+		
+		
+	</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-10T12:09:00+08:00" pubdate data-updated="true">2013.07.10</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/html5/'>html5</a>, <a class='category' href='/blog/blog/categories/javascript/'>javascript</a>
+
+
+</div>
+	
+</div></article>
 
 
     <article class="post">
@@ -1429,142 +1610,6 @@
 
 
 	<a class='category' href='/blog/blog/categories/php/'>php</a>
-
-
-</div>
-	
-</div></article>
-
-
-    <article class="post">
-	<h1 class="title"><a href="/blog/blog/2013/05/07/mysql-btree-yu-hash-suo-yin-bi-jiao/">Mysql Btree 与 Hash 索引比较</a></h1>
-	<div class="entry-content">
-		<p>mysql最常用的索引结构是btree(<code>O(log(n))</code>)，但是总有一些情况下我们为了更好的性能希望能使用别的类型的索引。hash就是其中一种选择，例如我们在通过用户名检索用户id的时候，他们总是一对一的关系，用到的操作符只是<code>=</code>而已，假如使用hash作为索引数据结构的话，时间复杂度可以降到<code>O(1)</code>。不幸的是，目前的mysql版本(5.6)中，hash只支持MEMORY和NDB两种引擎，而我们最常用的INNODB和MYISAM都不支持hash类型的索引。</p>
-
-<p>不管怎样，还是要了解一下这两种索引的区别，下面翻译自<a href="http://dev.mysql.com/doc/refman/5.6/en/index-btree-hash.html">mysql官网文档</a>中对这两者的解释。</p>
-
-<h2 id="b-tree-">B-Tree 索引特征</h2>
-<p>B-Tree索引可以被用在像<code>=</code>,<code>&gt;</code>,<code>&gt;=</code>,<code>&lt;</code>,<code>&lt;=</code>和<code>BETWEEN</code>这些比较操作符上。而且还可以用于<code>LIKE</code>操作符，只要它的查询条件是一个不以通配符开头的常量。像下面的语句就可以使用索引：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">tbl_name</span> <span class="k">WHERE</span> <span class="n">key_col</span> <span class="k">LIKE</span> <span class="s1">&#39;Patrick%&#39;</span><span class="p">;</span>
-</span><span class="line"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">tbl_name</span> <span class="k">WHERE</span> <span class="n">key_col</span> <span class="k">LIKE</span> <span class="s1">&#39;Pat%_ck%&#39;</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>下面这两种情况不会使用索引：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">tbl_name</span> <span class="k">WHERE</span> <span class="n">key_col</span> <span class="k">LIKE</span> <span class="s1">&#39;%Patrick%&#39;</span><span class="p">;</span>
-</span><span class="line"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">tbl_name</span> <span class="k">WHERE</span> <span class="n">key_col</span> <span class="k">LIKE</span> <span class="n">other_col</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>第一条是因为它以通配符开头，第二条是因为没有使用常量。</p>
-
-<p>假如你使用<code>... LIKE '%string%'</code>而且<code>string</code>超过三个字符，MYSQL使用<code>Turbo Boyer-Moore algorithm</code>算法来初始化查询表达式，然后用这个表达式来让查询更迅速。</p>
-
-<p>一个这样的查询<code>col_name IS NULL</code>是可以使用<code>col_name</code>的索引的。</p>
-
-<p>任何一个没有覆盖所有<code>WHERE</code>中<code>AND</code>级别条件的索引是不会被使用的。也就是说，要使用一个索引，这个索引中的第一列需要在每个<code>AND</code>组中出现。</p>
-
-<p>下面的<code>WHERE</code>条件会使用索引：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="p">...</span> <span class="k">WHERE</span> <span class="n">index_part1</span><span class="o">=</span><span class="mi">1</span> <span class="k">AND</span> <span class="n">index_part2</span><span class="o">=</span><span class="mi">2</span> <span class="k">AND</span> <span class="n">other_column</span><span class="o">=</span><span class="mi">3</span>
-</span><span class="line">    <span class="cm">/* index = 1 OR index = 2 */</span>
-</span><span class="line"><span class="p">...</span> <span class="k">WHERE</span> <span class="k">index</span><span class="o">=</span><span class="mi">1</span> <span class="k">OR</span> <span class="n">A</span><span class="o">=</span><span class="mi">10</span> <span class="k">AND</span> <span class="k">index</span><span class="o">=</span><span class="mi">2</span>
-</span><span class="line">    <span class="cm">/* 优化成 &quot;index_part1=&#39;hello&#39;&quot; */</span>
-</span><span class="line"><span class="p">...</span> <span class="k">WHERE</span> <span class="n">index_part1</span><span class="o">=</span><span class="s1">&#39;hello&#39;</span> <span class="k">AND</span> <span class="n">index_part3</span><span class="o">=</span><span class="mi">5</span>
-</span><span class="line">    <span class="cm">/* 可以使用 index1 的索引但是不会使用 index2 和 index3 */</span>
-</span><span class="line"><span class="p">...</span> <span class="k">WHERE</span> <span class="n">index1</span><span class="o">=</span><span class="mi">1</span> <span class="k">AND</span> <span class="n">index2</span><span class="o">=</span><span class="mi">2</span> <span class="k">OR</span> <span class="n">index1</span><span class="o">=</span><span class="mi">3</span> <span class="k">AND</span> <span class="n">index3</span><span class="o">=</span><span class="mi">3</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>下面的<code>WHERE</code>条件不会使用索引：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="sql"><span class="line">    <span class="cm">/* index_part1 没有被使用到 */</span>
-</span><span class="line"><span class="p">...</span> <span class="k">WHERE</span> <span class="n">index_part2</span><span class="o">=</span><span class="mi">1</span> <span class="k">AND</span> <span class="n">index_part3</span><span class="o">=</span><span class="mi">2</span>
-</span><span class="line">
-</span><span class="line">    <span class="cm">/* 索引 index 没有出现在每个 where 子句中 */</span>
-</span><span class="line"><span class="p">...</span> <span class="k">WHERE</span> <span class="k">index</span><span class="o">=</span><span class="mi">1</span> <span class="k">OR</span> <span class="n">A</span><span class="o">=</span><span class="mi">10</span>
-</span><span class="line">
-</span><span class="line">    <span class="cm">/* 没有索引覆盖所有列 */</span>
-</span><span class="line"><span class="p">...</span> <span class="k">WHERE</span> <span class="n">index_part1</span><span class="o">=</span><span class="mi">1</span> <span class="k">OR</span> <span class="n">index_part2</span><span class="o">=</span><span class="mi">10</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>有时候mysql不会使用索引，即使这个在可用的情况下。例如当mysql预估使用索引会读取大部分的行数据时。（在这种情况下，一次全表扫描可能比使用索引更快，因为它需要更少的检索）。然而，假如语句中使用<code>LIMIT</code>来限定返回的行数，mysql则会使用索引。因为当结果行数较少的情况下使用索引的效率会更高。</p>
-
-<h2 id="hash-">Hash 索引特征</h2>
-
-<p>Hash类型的索引有一些区别于以上所述的特征：</p>
-
-<ul>
-  <li>
-    <p>它们只能用于对等比较，例如<code>=</code>和<code>&lt;=&gt;</code>操作符（但是快很多）。它们不能被用于像<code>&lt;</code>这样的范围查询条件。假如系统只需要使用像“键值对”的这样的存储结构，尽量使用hash类型索引。</p>
-  </li>
-  <li>
-    <p>优化器不能用hash索引来为<code>ORDER BY</code>操作符加速。（这类索引不能被用于搜索下一个次序的值）</p>
-  </li>
-  <li>
-    <p>mysql不能判断出两个值之间有多少条数据（这需要使用范围查询操作符来决定使用哪个索引）。假如你将一个<code>MyISAM</code>表转为一个依靠hash索引的<code>MEMORY</code>表，可能会影响一些语句（的性能）。</p>
-  </li>
-  <li>
-    <p>只有完整的键才能被用于搜索一行数据。（假如用B-tree索引，任何一个键的片段都可以用于查找。我觉得可能意味着带通配符<code>LIKE</code>操作符会不起作用）。</p>
-  </li>
-</ul>
-
-<h1 id="section">后记</h1>
-
-<p>顺便记录一下在使用mysql过程中碰到的一些问题：</p>
-
-<ul>
-  <li>有时候使用脚本迁移数据时会碰到乱码的问题，即使将表字符集设置成<code>utf8</code>也无济于事，这个时候在执行sql之前加一句<code>set names utf8</code>即可。</li>
-</ul>
-
-<h1 id="section-1">参考文档</h1>
-
-<ul>
-  <li><a href="http://dev.mysql.com/doc/refman/5.6/en/index-btree-hash.html">index-btree-hash</a></li>
-  <li><a href="http://dba.stackexchange.com/questions/2817/why-does-mysql-not-have-hash-indices-on-myisam-or-innodb">why-does-mysql-not-have-hash-indices-on-myisam-or-innodb</a></li>
-</ul>
-
-		
-		
-	</div>
-
-
-<div class="meta">
-	<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-07T11:45:00+08:00" pubdate data-updated="true">2013.05.07</time></div>
-	<div class="tags">
-
-
-	<a class='category' href='/blog/blog/categories/mysql/'>mysql</a>, <a class='category' href='/blog/blog/categories/translation/'>translation</a>
 
 
 </div>
