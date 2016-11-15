@@ -1,0 +1,303 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>使用 GitLab + Docker 搭建持续交付系统 - CodeBean</title>
+	<meta name="author" content="Xu Jingxin">
+
+	
+	<meta name="description" content="环境要求 GitLab CE &gt; 8.0 Docker &gt; 1.0 步骤一，开启 Runner Runner 是 GitLab CI 的任务执行单位，GitLab 以服务发现的方式来将 Runner 分布在不同的主机上。根据官方文档的说明，你可以选择任何系统的主机来部署 Runner。 &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/blog/atom.xml" rel="alternate" title="CodeBean" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/blog/favicon.ico" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/blog/">CodeBean</a></h1>
+<nav id="main-nav"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main">
+	<li><a href="/blog/">Blog</a></li>
+	<li><a href="/blog/blog/archives">Archives</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:jingxin.me/blog">
+			</form>
+		</div>
+	</div>
+</nav>
+<nav id="sub-nav" class="alignright">
+	<div class="social">
+		
+		
+		<a class="google" href="https://plus.google.com/102588932744890343699?rel=author" title="Google+">Google+</a>
+		
+		
+		
+		<a class="github" href="https://github.com/sailxjx" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		<a class="rss" href="/blog/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+	<form class="search" action="http://google.com/search" method="get">
+		<input class="alignright" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:jingxin.me/blog">
+	</form>
+</nav>
+
+</header>
+	
+		
+	
+	<div id="content" class="inner"><article class="post">
+	<h1 class="title">使用 GitLab + Docker 搭建持续交付系统</h1>
+	<div class="entry-content"><h1 id="section">环境要求</h1>
+
+<ul>
+  <li>GitLab CE &gt; 8.0</li>
+  <li>Docker &gt; 1.0</li>
+</ul>
+
+<h1 id="runner">步骤一，开启 Runner</h1>
+
+<p>Runner 是 GitLab CI 的任务执行单位，GitLab 以服务发现的方式来将 Runner 分布在不同的主机上。根据<a href="https://docs.gitlab.com/runner/install/">官方文档的说明</a>，你可以选择任何系统的主机来部署 Runner。这里我为了图方便就直接采用 Debian 源来安装了。</p>
+
+<p>由于我们需要让 Runner 在 Docker 中运行，所有首先安装 Docker</p>
+
+<p><code>curl -sSL https://get.docker.com/ | sh</code></p>
+
+<p>然后安装 Runner</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-ci-multi-runner/script.deb.sh | sudo bash
+</span><span class="line">sudo apt-get install gitlab-ci-multi-runner</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>然后我们需要启动 Runner 并提交它的服务信息给自己的 GitLab 站点</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">sudo gitlab-ci-multi-runner register
+</span><span class="line">
+</span><span class="line">Please enter the gitlab-ci coordinator URL (e.g. https://gitlab.com ) （如果是私有部署的 GitLab，填写自己的域名地址）
+</span><span class="line">https://gitlab.com
+</span><span class="line">Please enter the gitlab-ci token for this runner （在 http://{your.gitlab.domain}/admin/runners 下可以找到共享 token，这样注册的 Runner 可以给所有项目共享，你也可以在项目配置中找个每个项目专属的 token，这样注册的 Runner 就只能由这个项目独享了）
+</span><span class="line">xxx
+</span><span class="line">Please enter the gitlab-ci description for this runner （描述）
+</span><span class="line">my-runner
+</span><span class="line">INFO[0034] fcf5c619 Registering runner... succeeded
+</span><span class="line">Please enter the executor: shell, docker, docker-ssh, ssh? （我们用 docker）
+</span><span class="line">docker
+</span><span class="line">Please enter the Docker image (eg. ruby:2.1): （Docker 镜像，也是该 Runner 的运行环境，如果你有一些特殊的需求，例如添加 ssh 访问私钥，配置预安装软件等，可以自己做一个镜像提交到 docker hub 上面）
+</span><span class="line">ruby:2.1
+</span><span class="line">INFO[0037] Runner registered successfully. Feel free to start it, but if it's
+</span><span class="line">running already the config should be automatically reloaded!</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h1 id="runner-1">步骤二，分配 Runner</h1>
+
+<p>然后下一步我们就可以在 <code>http://{your.gitlab.domain}/admin/runners</code> 下找到刚刚注册的 Runner 了，这时候 Runner 处于共享状态，我们可以通过编辑来指派 Runner 的特定项目，或者给 Runner 加标签来方便以后更灵活的分配这些 Runner。</p>
+
+<p>然后再看一下项目的配置，将 Build 选项开启，这样每次提交时 GitLab 机会自动调用 Runner 来执行任务了。</p>
+
+<h1 id="gitlab-ciyml">步骤三，编写 .gitlab-ci.yml</h1>
+
+<p><a href="https://docs.gitlab.com/ce/ci/yaml/README.html">.gitlab-ci.yml</a> 是 GitLab 提供的一种配置文件，对于熟悉 travis 这类 SaaS 型持续集成服务的开发者来说这种配置是相当亲切的了，而且文件跟着代码库，编辑起来非常方便。</p>
+
+<p>下面就这个简单的配置文件说明一下各部分的作用</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">before_script:  # 在所有任务之前执行下面的脚本
+</span><span class="line">  - node -v &amp;&amp; npm -v
+</span><span class="line">
+</span><span class="line">services:  # 使用 docker 时，runner 会自动下载这些镜像并以 link 的方式将它们连接进来
+</span><span class="line">  - elasticsearch:1.6.2
+</span><span class="line">  - mongo:3.4
+</span><span class="line">  - redis
+</span><span class="line">
+</span><span class="line">stages:  # 指定任务阶段，在一个阶段中可以配置多个任务，各阶段按顺序依次执行
+</span><span class="line">  - test
+</span><span class="line">  - deploy
+</span><span class="line">
+</span><span class="line">cache:  # 在各任务间缓存文件
+</span><span class="line">  paths:
+</span><span class="line">  - node_modules/
+</span><span class="line">
+</span><span class="line"># 一下非关键词开头的配置就代表各个任务了
+</span><span class="line">test:
+</span><span class="line">  stage: test  # 任务可以通过阶段来决定执行顺序
+</span><span class="line">  script:      # 任务的执行脚本
+</span><span class="line">    - npm prune &amp;&amp; npm install &amp;&amp; npm run test-gitlab
+</span><span class="line">  tags:        # 通过 tag 可以指定由相应的 runner 来执行这个任务
+</span><span class="line">    - docker
+</span><span class="line">
+</span><span class="line"># 由于是为了搭建持续交付系统，所以我配置了两个任务阶段，测试阶段结束后进入到发布阶段。
+</span><span class="line"># 因各人发布环境的不同可以选择不同的命令发布代码，填写在 script 中即可
+</span><span class="line">deploy:
+</span><span class="line">  stage: deploy
+</span><span class="line">  script:  
+</span><span class="line">    - env &amp;&amp; pwd &amp;&amp; ls -a
+</span><span class="line">  tags:
+</span><span class="line">    - docker</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这样，我们就实现了在每次代码提交时自动测试，通过后将代码发布到服务器环境的目的。</p>
+
+<h1 id="section-1">遇到的问题</h1>
+
+<ol>
+  <li>使用 Docker runner 时，<code>git clone</code> 或 <code>npm install</code> 有时候会遇到「检测到未知的 host key」提示，而中断 build 进程</li>
+</ol>
+
+<p>这个问题有两种方法可以解决，一种是用 <code>ssh -o "StrictHostKeyChecking no" user@host</code> 关闭指定用户和域名的检测。另一种是 <code>ssh-keyscan host &gt;&gt; /root/.ssh/known_hosts</code> 将检测结果写入。上面在 Dockerfile 中用了第二种方式：</p>
+
+<p><code>RUN ssh-keyscan github.com &gt;&gt; /root/.ssh/known_hosts</code></p>
+
+<ol>
+  <li>Container 遇到 <code>Couldn't resolve host</code> 问题</li>
+</ol>
+
+<p>这个问题我没有找到真正的解决办法，因为它是个偶发的问题，可能你什么都没干，过段时间再试试它就自己恢复了，可能与 Host 主机的 DNS 设置有关。我的解决方案之一是删除所有由 GitLab 创建的运行状态或等待状态的 Container，再重新开始任务。这里提供一个便捷的命令来删除所有由 GitLab 创建的 Container</p>
+
+<p><code>docker ps -a | grep gitlab | awk '{print $1}' | xargs docker rm</code></p>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-10-28T16:01:00+08:00" pubdate data-updated="true">2016.10.28</time></div>
+	<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/docker/'>docker</a>, <a class='category' href='/blog/blog/categories/tech/'>tech</a>
+
+
+</div>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2016
+
+    Xu Jingxin
+
+</footer>
+	<script src="/blog/javascripts/jquery-2.1.1.min.js"></script>
+<script src="/blog/javascripts/slash.js"></script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'sailxjx';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://jingxin.me/blog/blog/2016/10/28/shi-yong-gitlab-da-jian-chi-xu-jiao-fu-xi-tong/';
+        var disqus_url = 'http://jingxin.me/blog/blog/2016/10/28/shi-yong-gitlab-da-jian-chi-xu-jiao-fu-xi-tong/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+</body>
+</html>
