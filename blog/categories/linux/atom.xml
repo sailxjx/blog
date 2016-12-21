@@ -4,7 +4,7 @@
   <title><![CDATA[Category: linux | CodeBean]]></title>
   <link href="http://jingxin.me/blog/blog/categories/linux/atom.xml" rel="self"/>
   <link href="http://jingxin.me/blog/"/>
-  <updated>2016-11-15T18:01:22+08:00</updated>
+  <updated>2016-12-21T18:09:39+08:00</updated>
   <id>http://jingxin.me/blog/</id>
   <author>
     <name><![CDATA[Xu Jingxin]]></name>
@@ -290,11 +290,11 @@
 
 <p>然后配置my.cnf，从support-files里面拷贝一个my-medium.cnf到/etc/my.cnf，里面mysqld配置段的内容基本是这个样子</p>
 
-<p>Liquid error: ClassNotFound: no lexer for alias 'cnf' found</p>
+<p>Liquid error: No header received back.</p>
 
 <p>默认mysqld只启动一个实例，既然我们的目的是启动多个mysqld实例，需要使用mysqld_multi。它是一个perl脚本，在使用之前，需要给my.cnf加一些料。</p>
 
-<p>Liquid error: ClassNotFound: no lexer for alias 'cnf' found</p>
+<p>Liquid error: undefined method `[]' for nil:NilClass</p>
 
 <p>然后依配置创建mysql运行时文件夹并用mysql_install_db脚本初始化系统库
 <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
