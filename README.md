@@ -1,3 +1,3 @@
 CodeBean
 ===
-Just a blog
+Moved to https://sailxjx.medium.com
